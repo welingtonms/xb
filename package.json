@@ -4,14 +4,24 @@
 	"engines": {
 		"node": ">=16"
 	},
-  "packageManager": "yarn@3.2.1",
-  "workspaces": ["packages/*"],
-  "scripts": {
-    "bootstrap": "lerna bootstrap"
-  },
+	"packageManager": "yarn@3.2.1",
+	"workspaces": [
+		"packages/*"
+	],
+	"scripts": {
+		"bootstrap": "lerna bootstrap"
+	},
 	"devDependencies": {
 		"lerna": "^5.1.6",
 		"nx": "14.4.0",
 		"prettier": "npm:wp-prettier@latest"
-	}
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/welingtonms/xb"
+	},
+	"bugs": {
+		"url": "https://github.com/welingtonms/xb/issues"
+	},
+	"homepage": "https://github.com/welingtonms/xb#readme"
 }
