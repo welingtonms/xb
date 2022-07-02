@@ -1,0 +1,33 @@
+{
+	"name": "@welingtonms/xb-tokens",
+	"version": "0.0.0",
+	"description": "Design tokens for the XB Design System",
+	"main": "dist/index.js",
+	"types": "dist",
+	"files": [
+		"dist/*"
+	],
+	"scripts": {
+		"build": "rm -rf dist && rollup -c --environment BUILD:prod",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [
+		"tokens"
+	],
+	"author": "Welington Silva",
+	"license": "MIT",
+	"devDependencies": {
+		"@babel/core": "7.18.6",
+		"@babel/preset-env": "7.18.6",
+		"@rollup/plugin-babel": "5.3.1",
+		"@rollup/plugin-node-resolve": "13.3.0",
+		"jest": "28.1.2",
+		"rollup": "2.75.7",
+		"rollup-plugin-analyzer": "4.0.0",
+		"rollup-plugin-terser": "7.0.2",
+		"typescript": "4.7.4"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}

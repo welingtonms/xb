@@ -1,0 +1,60 @@
+{
+	"name": "@welingtonms/xb-react",
+	"version": "0.0.0",
+	"description": "XB react component library",
+	"main": "dist/index.js",
+	"types": "dist",
+	"files": [
+		"dist/*"
+	],
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": "start-storybook -p 6006",
+		"build-storybook": "build-storybook"
+	},
+	"keywords": [
+		"xb",
+		"react",
+		"components"
+	],
+	"author": "Welington Silva",
+	"license": "MIT",
+	"peerDependencies": {
+		"react": ">=17.0.2",
+		"react-dom": ">=17.0.2"
+	},
+	"dependencies": {
+		"@welingtonms/classy": "1.1.4",
+		"@welingtonms/use-value": "1.0.3",
+		"@welingtonms/xb-tokens": "*"
+	},
+	"devDependencies": {
+		"@babel/core": "7.18.6",
+		"@babel/preset-env": "7.18.2",
+		"@babel/preset-react": "7.18.6",
+		"@rollup/plugin-babel": "5.3.1",
+		"@rollup/plugin-node-resolve": "13.3.0",
+		"@storybook/addon-actions": "6.5.9",
+		"@storybook/addon-essentials": "6.5.9",
+		"@storybook/addon-interactions": "6.5.9",
+		"@storybook/addon-links": "6.5.9",
+		"@storybook/builder-webpack4": "6.5.9",
+		"@storybook/jest": "0.0.10",
+		"@storybook/manager-webpack4": "6.5.9",
+		"@storybook/react": "6.5.9",
+		"@storybook/testing-library": "0.0.13",
+		"babel-loader": "8.2.5",
+		"chromatic": "6.7.0",
+		"jest": "28.1.2",
+		"react": "18.2.0",
+		"react-dom": "18.2.0",
+		"rollup": "2.75.7",
+		"rollup-plugin-analyzer": "4.0.0",
+		"rollup-plugin-peer-deps-external": "2.2.4",
+		"rollup-plugin-terser": "7.0.2",
+		"typescript": "4.7.4"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}
