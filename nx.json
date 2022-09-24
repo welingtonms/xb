@@ -1,0 +1,40 @@
+{
+	"tasksRunnerOptions": {
+		"default": {
+			"runner": "nx/tasks-runners/default",
+			"options": {
+				"cacheableOperations": [ "build" ]
+			}
+		}
+	},
+	"namedInputs": {
+		"default": [ "{projectRoot}/**/*" ],
+		"prod": [
+			"!{projectRoot}/**/*.stories.*",
+			"!{projectRoot}/**/*.test.*",
+			"!{projectRoot}/**/*.cy.*"
+		]
+	},
+	"targetDefaults": {
+		"build": {
+			"inputs": [ "prod", "^prod" ],
+			"dependsOn": [ "^build" ]
+		},
+		"dev": {
+			"dependsOn": [ "^build" ]
+		},
+		"test": {
+			"inputs": [ "default" ],
+			"dependsOn": [ "^build" ]
+		},
+		"release": {
+			"inputs": [ "default", "^prod" ],
+			"dependsOn": [ "^build" ]
+		}
+	},
+	"pluginsConfig": {
+		"@nrwl/js": {
+			"analyzeSourceFiles": false
+		}
+	}
+}

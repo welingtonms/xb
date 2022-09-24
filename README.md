@@ -1,0 +1,72 @@
+# xb
+
+Welcome to the XB component library.
+
+## How to develop
+
+This project uses [Lerna](https://lerna.js.org/) alongside [Yarn workspaces](https://classic.yarnpkg.com/lang/en/docs/workspaces/). Lerna uses the amazing [`Nx`](https://nx.dev/) tooling under the hood.
+
+First, start by running the bootstrap command that will install the dependencies for all the packages in the project and link the packages that depend on each other.
+
+```bash
+yarn bootstrap
+```
+
+To run the `@welingtonms/xb-wc` Storybook, run:
+
+```bash
+yarn lerna run --scope=@welingtonms/xb-wc dev
+```
+
+To run commands only in the affected packages affected:
+
+```bash
+nx affected --target=test
+```
+
+Run specific command for package:
+
+```bash
+nx run myapp:build
+```
+
+Run specific command for all packages:
+
+```bash
+nx run build
+```
+
+In the example above, we are running `test` only for the packages affected by any change we have made. Check the command [reference](https://nx.dev/using-nx/affected) for more details.
+
+## How to use
+
+The libraries generated from this project are [published through Gitlab](To use the published module), add an _.npmrc_ file to your project.
+
+For example, to use the `@welingtonms/xb-wc` module:
+
+```bash
+@welington:registry=https://gitlab.com/api/v4/packages/npm/
+```
+
+Then, install the module:
+
+```bash
+npm install --save @welingtonms/xb-wc
+```
+
+Or
+
+```bash
+yarn add --save @welingtonms/xb-wc
+```
+
+## How to build
+
+```bash
+yarn lerna run build --scope=@welingtonms/xb-tokens
+```
+
+## References
+
+- [NPM Workspaces](https://docs.npmjs.com/cli/v8/using-npm/workspaces)
+- [Gitlab with Semanti Release](https://docs.gitlab.com/ee/ci/examples/semantic-release.html)
