@@ -1,0 +1,52 @@
+import './button';
+
+# Button
+
+Buttons drive the user to an action. Their labels should clearly communicate what action will occur when the user interacts with them.
+
+## Usage
+
+```jsx
+import '@welingtonms/xb-wc/dist/button';
+
+<xb-button emphasis="text">Click</xb-button>;
+<xb-button>Click</xb-button>;
+<xb-button emphasis="flat">Click</xb-button>;
+```
+
+## Properties
+
+| Property   | type                                         | Description                                        |
+| :--------- | :------------------------------------------- | :------------------------------------------------- |
+| `disabled` | `Boolean`                                    | **Optional**. Should the button be disabled.       |
+| `emphasis` | `'text'` &#124; `'ghost'` &#124; `'flat'`    | **Optional**. Emphasis variant. Default `'ghost'`. |
+| `size`     | `'small'` &#124; `'medium'` &#124; `'large'` | **Optional**. Size variant. Default `'small'`.     |
+
+## Named Slots
+
+```html
+<xb-button>
+	<span slot="leading">Leading</span>
+	Content
+	<span slot="trailing">Trailing</span>
+</xb-button>
+```
+
+| Slot Name  | Description                                                   |
+| :--------- | :------------------------------------------------------------ |
+| `leading`  | **Optional**. Element to be rendered before the main content. |
+| `trailing` | **Optional**. Element to be rendered after the main content.  |
+
+## CSS Properties
+
+| CSS Property                   | Description         |
+| :----------------------------- | :------------------ |
+| `--xb-button-padding-x`        | Horizontal padding. |
+| `--xb-button-padding-y`        | Vertical padding.   |
+| `--xb-button-background-color` | Background color.   |
+
+## Events
+
+| Event      | type    | Description         |
+| :--------- | :------ | :------------------ |
+| `xb-click` | `Event` | Custom click event. |

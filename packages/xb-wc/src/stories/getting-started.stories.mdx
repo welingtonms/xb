@@ -1,0 +1,62 @@
+import { Meta } from '@storybook/addon-docs';
+
+<Meta title="Getting started" />
+
+# Getting started
+
+[![build status](https://img.shields.io/travis/cheesebit/ui?style=flat-square)](https://gitlab.com/cheesebit/cheesebit-ui)
+
+[![Coverage Status](https://img.shields.io/coveralls/github/cheesebit/ui?style=flat-square)](https://coveralls.io/github/cheesebit/ui)
+
+[![npm package](https://img.shields.io/npm/v/@welingtonms/xb-wc?style=flat-square)](https://coveralls.io/github/cheesebit/ui)
+
+**Welcome to `@welingtonms/xb-wc`**, thank you very much for being here.
+
+**This is my canvas**, my library of components I'm building for my own enjoyment. Here is the playground where I come when I want to practice, have some cool idea, or work on a proof of concept of something I need to build.
+
+I've been putting my heart here and I do hope someone can make good use of it as much as I do.
+
+`@welingtonms/xb-wc` contains a collection of components, built using React, compliant to an ever-evolving experimental Design System.
+
+## Using this project
+
+You can use either `npm` or `yarn` to manage dependencies for this project, and to run the scripts available for your your convenience.
+
+To add this library to your dependencies, run:
+
+`npm install --save @welingtonms/xb-wc`
+
+Or with `yarn`:
+
+`yarn add @welingtonms/xb-wc`
+
+## Configuring _Babel_
+
+This project is build only as [ESModule](https://hacks.mozilla.org/2018/03/es-modules-a-cartoon-deep-dive/); to keep our bundled code as clean as possible, I try to use the latest possible ECMAScript version as target. That mean, if you have to support browsers that don't support certain modern ECMAScript features, you may want to configure your build tools accordingly. Here's an example for Babel:
+
+```js
+// babel.config.js
+const path = require('path');
+module.exports {
+  include: [
+    ...,
+    path.resolve('node_modules/@welingtonms/xb-wc'),
+  ],
+  ...
+}
+```
+
+## Technical references
+
+TBD
+
+<!--
+- [A modern CSS reset](https://dev.to/hankchizljaw/a-modern-css-reset-6p3)
+- CSS naming/architectures
+  - [ITCSS](https://www.xfive.co/blog/itcss-scalable-maintainable-css-architecture/)
+  - [RSCSS](https://rscss.io/)
+  - [SMACSS](http://smacss.com/)
+- [Atomic Design](https://atomicdesign.bradfrost.com/)
+- [Testing Library](https://testing-library.com/)
+- [Every Layout](https://every-layout.dev/)
+- [Preventing Content Reflow From Lazy-Loaded Images](https://css-tricks.com/preventing-content-reflow-from-lazy-loaded-images/) -->

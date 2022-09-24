@@ -1,0 +1,59 @@
+{
+	"name": "@welingtonms/xb-wc",
+	"version": "1.0.2",
+	"description": "XB web components component library",
+	"main": "dist/index.js",
+	"types": "dist",
+	"files": [
+		"dist/*"
+	],
+	"scripts": {
+		"prebuild": "rm -rf dist",
+		"build": "yarn prebuild && rollup -c --environment BUILD:prod",
+		"dev": "start-storybook -p 6006",
+		"build-storybook": "build-storybook",
+		"test": "cypress run --component --browser chrome",
+		"cypress": "cypress open --component --browser chrome"
+	},
+	"keywords": [
+		"xb",
+		"web components",
+		"lit"
+	],
+	"dependencies": {
+		"@welingtonms/xb-tokens": "*",
+		"@welingtonms/xb-toolset": "*",
+		"@welingtonms/classy": "1.2.0",
+		"lit": "2.3.1"
+	},
+	"devDependencies": {
+		"@cypress/mount-utils": "2.1.0",
+		"@cypress/webpack-dev-server": "2.3.0",
+		"@rollup/plugin-replace": "4.0.0",
+		"@storybook/addon-actions": "6.5.12",
+		"@storybook/addon-essentials": "6.5.12",
+		"@storybook/addon-links": "6.5.12",
+		"@storybook/builder-webpack5": "6.5.12",
+		"@storybook/manager-webpack5": "6.5.12",
+		"@storybook/web-components": "6.5.12",
+		"babel-loader": "8.2.5",
+		"cypress": "10.8.0",
+		"lit-html": "2.3.1"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://gitlab.com/welington/xb"
+	},
+	"bugs": {
+		"url": "https://gitlab.com/welington/xb/-/issues"
+	},
+	"author": {
+		"name": "Welington Silva"
+	},
+	"readme": "https://gitlab.com/welington/xb/-#readme",
+	"homepage": "https://gitlab.com/welington/xb/-#readme"
+}

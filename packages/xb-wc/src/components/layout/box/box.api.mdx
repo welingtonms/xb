@@ -1,0 +1,57 @@
+import { Story, Canvas } from '@storybook/addon-docs';
+
+import './box';
+
+# Box Layout
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin maximus pellentesque maximus. Etiam tempor massa ut ex lacinia, quis venenatis nisi sollicitudin. Nulla eu vulputate quam. Vivamus non ante id mi dapibus dapibus vitae eu quam. Donec lorem nibh, fringilla a mollis ac, mattis efficitur arcu. Integer sollicitudin laoreet aliquam. Suspendisse pretium ac purus sed tempus. Cras porttitor ipsum metus, ac vulputate neque ornare in. Aliquam sollicitudin tincidunt facilisis. Ut accumsan tempor fermentum. Mauris sed mauris ac nisi cursus elementum.
+
+## Usage
+
+```jsx
+import '@welingtonms/xb-wc/dist/box';
+```
+
+<Canvas>
+	<Story id="foundation-layouts-box--playground" />
+</Canvas>
+
+## Properties
+
+| Property      | type                                                      | Description                                           |
+| :------------ | :-------------------------------------------------------- | :---------------------------------------------------- |
+| `paddingless` | `Boolean` &#124; `DirectionPropType[,DirectionPropType]*` | **Optional**. Which padding side should be supressed. |
+| `borderless`  | `Boolean` &#124; `DirectionPropType[,DirectionPropType]*` | **Optional**. Which border side should be supressed.  |
+| `as`          | `?`                                                       | **Optional**. Tag to be rendered.                     |
+
+## Named Slots
+
+```html
+<xb-box>
+	<span slot="leading">Leading</span>
+	Content
+	<span slot="trailing">Trailing</span>
+</xb-box>
+```
+
+| Slot Name  | Description                                                   |
+| :--------- | :------------------------------------------------------------ |
+| `leading`  | **Optional**. Element to be rendered before the main content. |
+| `trailing` | **Optional**. Element to be rendered after the main content.  |
+
+## CSS Properties
+
+| CSS Property                | Description                                                    |
+| :-------------------------- | :------------------------------------------------------------- |
+| `--xb-box-background-color` | Background color.                                              |
+| `--xb-box-border-color`     | Border color.                                                  |
+| `--xb-box-border-style`     | Border style.                                                  |
+| `--xb-box-border-width`     | Border width.                                                  |
+| `--xb-box-color`            | Text color.                                                    |
+| `--xb-box-gap`              | Gap between `leading` and content, and content and `trailing`. |
+| `--xb-box-padding-x`        | Horizontal padding.                                            |
+| `--xb-box-padding-y`        | Vertical padding.                                              |
+
+## Events
+
+Not applicable.
