@@ -1,0 +1,31 @@
+{
+	"name": "@welingtonms/xb-tokens",
+	"version": "0.0.0",
+	"description": "Design tokens for the XB Design System",
+	"main": "dist/index.js",
+	"types": "dist",
+	"files": [
+		"dist/*"
+	],
+	"scripts": {
+		"prebuild-tokens": "rm -rf dist",
+		"build-tokens": "node ./src/scripts/build-tokens.js",
+		"build": "yarn prebuild && yarn build-tokens && rollup -c --environment BUILD:prod",
+		"test": "jest"
+	},
+	"keywords": [
+		"tokens"
+	],
+	"author": "Welington Silva",
+	"license": "MIT",
+	"dependencies": {
+		"@welingtonms/xb-toolset": "*"
+	},
+	"devDependencies": {
+		"jest": "29.0.3",
+		"style-dictionary": "3.7.1"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}
