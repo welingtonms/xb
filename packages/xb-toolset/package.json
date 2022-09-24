@@ -1,0 +1,25 @@
+{
+	"private": true,
+	"name": "@welingtonms/xb-toolset",
+	"version": "0.0.0",
+	"description": "Utils for the XB Design System",
+	"main": "dist",
+	"types": "dist",
+	"files": [
+		"dist/*"
+	],
+	"scripts": {
+		"prebuild": "rm -rf dist",
+		"build": "yarn prebuild && rollup -c --environment BUILD:prod",
+		"test": "jest"
+	},
+	"keywords": [
+		"toolset",
+		"utils"
+	],
+	"author": "Welington Silva",
+	"license": "MIT",
+	"devDependencies": {
+		"jest": "29.0.3"
+	}
+}
