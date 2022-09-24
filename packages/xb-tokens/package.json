@@ -8,9 +8,8 @@
 		"dist/*"
 	],
 	"scripts": {
-		"prebuild-tokens": "rm -rf dist",
-		"build-tokens": "node ./src/scripts/build-tokens.js",
-		"build": "yarn prebuild && yarn build-tokens && rollup -c --environment BUILD:prod",
+		"prebuild": "rm -rf dist && node ./src/scripts/build-tokens.js",
+		"build": "yarn prebuild && rollup -c --environment BUILD:prod",
 		"test": "jest"
 	},
 	"keywords": [
@@ -19,7 +18,7 @@
 	"author": "Welington Silva",
 	"license": "MIT",
 	"dependencies": {
-		"@welingtonms/xb-toolset": "*"
+		"@welingtonms/xb-toolset": "workspace:*"
 	},
 	"devDependencies": {
 		"jest": "29.0.3",

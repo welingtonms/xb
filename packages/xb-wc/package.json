@@ -21,9 +21,9 @@
 		"lit"
 	],
 	"dependencies": {
-		"@welingtonms/xb-tokens": "*",
-		"@welingtonms/xb-toolset": "*",
 		"@welingtonms/classy": "1.2.0",
+		"@welingtonms/xb-tokens": "workspace:*",
+		"@welingtonms/xb-toolset": "workspace:*",
 		"lit": "2.3.1"
 	},
 	"devDependencies": {
