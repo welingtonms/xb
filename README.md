@@ -4,12 +4,12 @@ Welcome to the XB component library.
 
 ## How to develop
 
-This project uses [Lerna](https://lerna.js.org/) alongside [Yarn workspaces](https://classic.yarnpkg.com/lang/en/docs/workspaces/). Lerna uses the amazing [`Nx`](https://nx.dev/) tooling under the hood.
+This project uses [Lerna](https://lerna.js.org/) alongside [Yarn workspaces](https://yarnpkg.com/features/workspaces). Lerna uses the amazing [`Nx`](https://nx.dev/) tooling under the hood.
 
-First, start by running the bootstrap command that will install the dependencies for all the packages in the project and link the packages that depend on each other.
+First, start by running the command that will install the dependencies for all the packages in the project and link the packages that depend on each other.
 
 ```bash
-yarn bootstrap
+yarn install
 ```
 
 To run the `@welingtonms/xb-wc` Storybook, run:

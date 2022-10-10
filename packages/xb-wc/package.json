@@ -28,7 +28,6 @@
 	},
 	"devDependencies": {
 		"@cypress/mount-utils": "2.1.0",
-		"@cypress/webpack-dev-server": "2.3.0",
 		"@rollup/plugin-replace": "4.0.0",
 		"@storybook/addon-actions": "6.5.12",
 		"@storybook/addon-essentials": "6.5.12",
