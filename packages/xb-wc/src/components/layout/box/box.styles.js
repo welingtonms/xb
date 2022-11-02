@@ -30,6 +30,9 @@ function styles() {
 					var( --xb-box-border-color );
 				color: var( --xb-box-color );
 				background-color: var( --xb-box-background-color );
+
+				height: 100%;
+				box-sizing: border-box;
 			}
 
 			::slotted( * ),
