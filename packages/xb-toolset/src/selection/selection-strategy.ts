@@ -2,23 +2,66 @@ import toArray from '../to-array';
 
 type AcceptedType = string;
 
-export type SelectionType = 'single' | 'single-strict' | 'multiple';
+export const SELECTION_TYPES = [
+	'single',
+	'single-strict',
+	'multiple',
+] as const;
+
+export type SelectionType = typeof SELECTION_TYPES[ number ];
 
 export type SelectionState = Set< AcceptedType >;
 
 export type SelectionStrategy = {
 	type: SelectionType;
+	/**
+	 * Set the initial selection.
+	 * @param {AcceptedType[]} values
+	 * @returns {SelectionState}
+	 */
 	init: { ( values: AcceptedType[] ): SelectionState };
+	/**
+	 * Add the provided `values` to the `selection`, respecting
+	 * the rules for the current strategy.
+	 * @param {AcceptedType[]} values
+	 * @param {SelectionState} selection
+	 * @returns {SelectionState}
+	 */
 	select: {
 		( values: AcceptedType[], selection: SelectionState ): SelectionState;
 	};
+	/**
+	 * Remove the provided `values` from the `selection`, respecting
+	 * the rules for the current strategy.
+	 * @param {AcceptedType[]} values
+	 * @param {SelectionState} selection
+	 * @returns {SelectionState}
+	 */
 	unselect: {
 		( values: AcceptedType[], selection: SelectionState ): SelectionState;
 	};
+	/**
+	 * Toggle the provided `values` from the `selection` (add to the selection if
+	 * not in the `selection`, remove from the `selection` otherwise respecting
+	 * the rules for the current strategy.
+	 * @param {AcceptedType[]} values
+	 * @param {SelectionState} selection
+	 * @returns {SelectionState}
+	 */
 	toggle: {
 		( values: AcceptedType[], selection: SelectionState ): SelectionState;
 	};
+	/**
+	 * Reset `selection` to the provided value, or to and empty `Set` otherwise.
+	 * @param {AcceptedType[]} values
+	 * @returns {SelectionState}
+	 */
 	reset: { ( selection?: SelectionState ): SelectionState };
+	/**
+	 * Return selection as a value, based on the `AcceptedType`.
+	 * @param {SelectionState} selection
+	 */
+	value: { ( selection?: SelectionState ): unknown };
 };
 
 export type SelectionStrategyCreationProps = {
@@ -35,15 +78,22 @@ function createSelectionStrategy(
 ): SelectionStrategy {
 	const { type = 'multiple' } = props;
 
-	if ( type === 'single' ) {
-		return SingleSelectionStrategy();
+	let strategy;
+
+	switch ( type ) {
+		case 'single':
+			strategy = SingleSelectionStrategy();
+			break;
+		case 'single-strict':
+			strategy = SingleStrictSelectionStrategy();
+			break;
+		case 'multiple':
+		default:
+			strategy = MultipleSelectionStrategy();
+			break;
 	}
 
-	if ( type === 'single-strict' ) {
-		return SingleStrictSelectionStrategy();
-	}
-
-	return MultipleSelectionStrategy();
+	return Object.freeze( strategy );
 }
 
 /**
@@ -54,18 +104,9 @@ function createSelectionStrategy(
 export function SingleStrictSelectionStrategy(): SelectionStrategy {
 	return {
 		type: 'single-strict',
-		/**
-		 * @param {string[]} values
-		 * @returns {SelectionState}
-		 */
 		init( values: AcceptedType[] ): SelectionState {
 			return this.select( values, new Set() );
 		},
-		/**
-		 * @param {string[]} values
-		 * @param {SelectionState} selection
-		 * @returns {SelectionState}
-		 */
 		select(
 			values: AcceptedType[],
 			selection: SelectionState
@@ -83,11 +124,6 @@ export function SingleStrictSelectionStrategy(): SelectionStrategy {
 
 			return newSelection;
 		},
-		/**
-		 * @param {string[]} values
-		 * @param {SelectionState} selection
-		 * @returns {SelectionState}
-		 */
 		unselect(
 			values: AcceptedType[],
 			selection: SelectionState
@@ -107,11 +143,6 @@ export function SingleStrictSelectionStrategy(): SelectionStrategy {
 
 			return newSelection;
 		},
-		/**
-		 * @param {string[]} values
-		 * @param {SelectionState} selection
-		 * @returns {SelectionState}
-		 */
 		toggle(
 			values: AcceptedType[],
 			selection: SelectionState
@@ -136,16 +167,20 @@ export function SingleStrictSelectionStrategy(): SelectionStrategy {
 
 			return newSelection;
 		},
-		/**
-		 * @param {SelectionState} selection
-		 * @returns {SelectionState}
-		 */
 		reset( selection?: SelectionState ) {
 			if ( selection == null ) {
 				return new Set< AcceptedType >();
 			}
 
 			return selection;
+		},
+		value( selection?: SelectionState ): AcceptedType | null {
+			if ( selection == null || selection.size === 0 ) {
+				return null;
+			}
+
+			const [ first ] = Array.from( selection );
+			return first;
 		},
 	};
 }
@@ -157,18 +192,9 @@ export function SingleStrictSelectionStrategy(): SelectionStrategy {
 export function SingleSelectionStrategy(): SelectionStrategy {
 	return {
 		type: 'single',
-		/**
-		 * @param {string[]} values
-		 * @returns {SelectionState}
-		 */
 		init( values: AcceptedType[] ): SelectionState {
 			return this.select( values, new Set() );
 		},
-		/**
-		 * @param {string[]} values
-		 * @param {SelectionState} selection
-		 * @returns {SelectionState}
-		 */
 		select(
 			values: AcceptedType[],
 			selection: SelectionState
@@ -186,11 +212,6 @@ export function SingleSelectionStrategy(): SelectionStrategy {
 
 			return newSelection;
 		},
-		/**
-		 * @param {string[]} values
-		 * @param {SelectionState} selection
-		 * @returns {SelectionState}
-		 */
 		unselect(
 			values: AcceptedType[],
 			selection: SelectionState
@@ -210,11 +231,6 @@ export function SingleSelectionStrategy(): SelectionStrategy {
 
 			return newSelection;
 		},
-		/**
-		 * @param {string[]} values
-		 * @param {SelectionState} selection
-		 * @returns {SelectionState}
-		 */
 		toggle(
 			values: AcceptedType[],
 			selection: SelectionState
@@ -250,6 +266,14 @@ export function SingleSelectionStrategy(): SelectionStrategy {
 
 			return selection;
 		},
+		value( selection?: SelectionState ): AcceptedType | null {
+			if ( selection == null || selection.size === 0 ) {
+				return null;
+			}
+
+			const [ first ] = Array.from( selection );
+			return first;
+		},
 	};
 }
 
@@ -260,18 +284,9 @@ export function SingleSelectionStrategy(): SelectionStrategy {
 export function MultipleSelectionStrategy(): SelectionStrategy {
 	return {
 		type: 'multiple',
-		/**
-		 * @param {string[]} values
-		 * @returns {SelectionState}
-		 */
 		init( values: AcceptedType[] ): SelectionState {
 			return this.select( values, new Set() );
 		},
-		/**
-		 * @param {string[]} values
-		 * @param {SelectionState} selection
-		 * @returns {SelectionState}
-		 */
 		select(
 			values: AcceptedType[],
 			selection: SelectionState
@@ -291,11 +306,6 @@ export function MultipleSelectionStrategy(): SelectionStrategy {
 
 			return newSelection;
 		},
-		/**
-		 * @param {string[]} values
-		 * @param {SelectionState} selection
-		 * @returns {SelectionState}
-		 */
 		unselect(
 			values: AcceptedType[],
 			selection: SelectionState
@@ -315,11 +325,6 @@ export function MultipleSelectionStrategy(): SelectionStrategy {
 
 			return newSelection;
 		},
-		/**
-		 * @param {string[]} values
-		 * @param {SelectionState} selection
-		 * @returns {SelectionState}
-		 */
 		toggle(
 			values: AcceptedType[],
 			selection: SelectionState
@@ -345,16 +350,19 @@ export function MultipleSelectionStrategy(): SelectionStrategy {
 
 			return newSelection;
 		},
-		/**
-		 * @param {SelectionState} selection
-		 * @returns {SelectionState}
-		 */
 		reset( selection?: SelectionState ) {
 			if ( selection == null ) {
 				return new Set< AcceptedType >();
 			}
 
 			return selection;
+		},
+		value( selection?: SelectionState ): AcceptedType[] | null {
+			if ( selection == null || selection.size === 0 ) {
+				return null;
+			}
+
+			return Array.from( selection );
 		},
 	};
 }
