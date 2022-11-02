@@ -5,7 +5,7 @@ import { unsafeCSS } from 'lit';
  * @param {string} selector
  */
 function hoverable( selector ) {
-	return unsafeCSS( `${ selector }:not(.is-disabled):not(:disabled):hover` );
+	return unsafeCSS( `${ selector }:not(.is-disabled, :disabled):hover` );
 }
 
 export default hoverable;

@@ -5,7 +5,7 @@ import { unsafeCSS } from 'lit';
  * @param {string} selector
  */
 function activable( selector ) {
-	return unsafeCSS( `${ selector }:not(.is-disabled):not(:disabled):active` );
+	return unsafeCSS( `${ selector }:not(.is-disabled, :disabled):active` );
 }
 
 export default activable;

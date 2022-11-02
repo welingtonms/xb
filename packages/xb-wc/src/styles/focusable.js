@@ -6,9 +6,9 @@ import { unsafeCSS } from 'lit';
  * @param {CSSResult} content
  */
 function focusable( selector ) {
-	return unsafeCSS( `${ selector }:not(.is-disabled):not(:disabled):focus,
-		${ selector }:not(.is-disabled):not(:disabled):focus-within,
-		${ selector }:not(.is-disabled):not(:disabled).is-focused` );
+	return unsafeCSS( `${ selector }:not(.is-disabled, :disabled):focus,
+		${ selector }:not(.is-disabled, :disabled):focus-within,
+		${ selector }:not(.is-disabled, :disabled).is-focused` );
 }
 
 export default focusable;
