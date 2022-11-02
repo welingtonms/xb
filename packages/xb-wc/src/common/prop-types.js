@@ -13,4 +13,8 @@
  * @typedef {boolean | DirectionPropType | DirectionPropType[]} PaddinglessProp
  */
 
+/**
+ * @typedef { 'ltr' | 'rtl' | 'auto' } DirProp
+ */
+
 export default function noop() {}

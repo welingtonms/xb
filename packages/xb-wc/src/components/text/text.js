@@ -1,9 +1,10 @@
 import { LitElement, html } from 'lit';
 import withClassy from '@welingtonms/classy';
 
+import XBElement from '../../common/xb-element';
 import styles from './text.styles';
 
-export class Text extends LitElement {
+export class Text extends XBElement {
 	static styles = [ styles() ];
 
 	static get properties() {

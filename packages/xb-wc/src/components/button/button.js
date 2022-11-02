@@ -3,9 +3,10 @@ import withClassy from '@welingtonms/classy';
 
 import { sided } from '../../common/prop-toolset';
 import { converterDirectionFromAttribute } from '../layout/layout.helpers';
+import XBElement from '../../common/xb-element';
 import styles from './button.styles';
 
-export class Button extends LitElement {
+export class Button extends XBElement {
 	static styles = [ styles() ];
 
 	static get properties() {
@@ -23,7 +24,7 @@ export class Button extends LitElement {
 
 			/**
 			 * Determine paddings to be supressed.
-			 * @type {import('../../../common/prop-types').PaddinglessProp} paddingless
+			 * @type {import('../../../common/prop-types').PaddinglessProp}
 			 */
 			paddingless: {
 				// type: String | Boolean,
@@ -37,6 +38,7 @@ export class Button extends LitElement {
 			 */
 			role: {
 				reflect: true,
+				attribute: false,
 			},
 
 			/**

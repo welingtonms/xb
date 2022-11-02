@@ -1,13 +1,14 @@
-import { LitElement, html } from 'lit';
+import { html } from 'lit';
 import withClassy from '@welingtonms/classy';
 
 import { TOGGLE_EVENT } from './toggle-group.constants';
 import SelectionController from '../../controllers/selection';
 import styles from './toggle-group.styles';
+import XBElement from '../../common/xb-element';
 
 import '../layout/cluster';
 
-export class ToggleGroup extends LitElement {
+export class ToggleGroup extends XBElement {
 	static styles = [ styles() ];
 
 	/** @type {SelectionController} */
@@ -87,7 +88,7 @@ export class ToggleGroup extends LitElement {
 				paddingless="none"
 				?disabled="${ this.disabled }"
 			>
-				<slot @slotchange=${ this.handleSlotChange }></slot>
+				<slot @slotchange=${ this._handleSlotChange }></slot>
 			</xb-cluster>
 		`;
 	}
