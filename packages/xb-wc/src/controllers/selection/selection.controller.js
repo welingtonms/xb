@@ -6,61 +6,35 @@ import toArray from '@welingtonms/xb-toolset/dist/to-array';
  * It's expected that `host` has a `selection` state.
  */
 class SelectionController {
+	/** @type {XBElement} */
 	host = null;
+
+	/** @type {import('@welingtonms/xb-toolset/dist/selection').SelectionStrategy} */
+	strategy = null;
 
 	/**
 	 *
-	 * @param {import('lit').ReactiveControllerHost & HTMLElement} host
+	 * @param {ReactiveControllerHost & XBElement} host
 	 * @param {import('@welingtonms/xb-toolset/dist/selection').SelectionType} type - Type of selection to be managed.
 	 * @param {string} event - Name of the event that should be listened to.
 	 */
 	constructor( host, type, event = 'xb-select' ) {
 		this.type = type;
 		this.event = event;
+		this.host = host;
 
-		/** @type {import('@welingtonms/xb-toolset/dist/selection').SelectionStrategy} */
 		this.strategy = createSelectionStrategy( { type } );
 
-		( this.host = host ).addController( this );
+		this.host.addController( this );
 	}
 
 	hostConnected() {
-		this.host.addEventListener( this.event, this._handleSelectionEvent );
+		this.subscribe();
 	}
 
-	/**
-	 * using arrow function so we keep the lexical context this is necessary
-	 * because the event itself will happen in the context of the host element.
-	 */
-
-	_handleSelectionEvent = ( e ) => {
-		if ( this.disabled ) {
-			return;
-		}
-
-		if ( this.type == null ) {
-			console.warn(
-				'[SelectionController] Did you forget to set the selection type?'
-			);
-			return;
-		}
-
-		const {
-			detail: { type, value },
-		} = e;
-
-		switch ( type ) {
-			case 'select':
-				this.select( toArray( value ) );
-				break;
-			case 'unselect':
-				this.unselect( toArray( value ) );
-				break;
-			case 'toggle':
-				this.toggle( toArray( value ) );
-				break;
-		}
-	};
+	hostDisconnected() {
+		this.unsubscribe();
+	}
 
 	init = ( values ) => {
 		this.host._selection = this.strategy.init( values );
@@ -84,6 +58,69 @@ class SelectionController {
 	reset = () => {
 		this.host._selection = this.strategy.reset();
 	};
+
+	subscribe = () => {
+		this.host.addEventListener( this.event, this._handleSelectionEvent );
+	};
+
+	unsubscribe = () => {
+		this.host.removeEventListener( this.event, this._handleSelectionEvent );
+	};
+
+	/**
+	 * using arrow function so we keep the lexical context this is necessary
+	 * because the event itself will happen in the context of the host element.
+	 */
+	_handleSelectionEvent = ( e ) => {
+		if ( this.disabled ) {
+			return;
+		}
+
+		const {
+			detail: { type, value },
+		} = e;
+
+		if (
+			this.type == null ||
+			! [ 'select', 'unselect', 'toggle' ].includes( type )
+		) {
+			console.warn(
+				'[SelectionController] Did you forget to set the selection type?'
+			);
+			return;
+		}
+
+		switch ( type ) {
+			case 'select':
+				this.select( toArray( value ) );
+				break;
+			case 'unselect':
+				this.unselect( toArray( value ) );
+				break;
+			case 'toggle':
+				this.toggle( toArray( value ) );
+				break;
+		}
+
+		this._publish();
+	};
+
+	_publish = () => {
+		const options = {
+			detail: {
+				type: this.type,
+				value: this.strategy.value( this.host._selection ),
+			},
+			composed: false,
+		};
+
+		this.host.emit( 'xb-change', options );
+	};
 }
 
 export default SelectionController;
+
+/**
+ * @typedef {import('lit').ReactiveControllerHost} ReactiveControllerHost
+ * @typedef {import('../../common/xb-element').default} XBElement
+ */
