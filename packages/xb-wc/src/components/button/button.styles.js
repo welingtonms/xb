@@ -9,57 +9,57 @@ function styles() {
 		baseButtonStyles(),
 		css`
 			.-text {
-				background: ${ color( 'color-white', 0 ) };
-				border-color: ${ color( 'color-white', 0 ) };
-				color: ${ color( 'color-primary-500' ) };
+				--xb-button-background-color: ${ color( 'color-white', 0 ) };
+				--xb-button-border-color: ${ color( 'color-white', 0 ) };
+				--xb-button-color: ${ color( 'color-primary-500' ) };
 			}
 
 			${ when.hovered( '.-text' ) } {
-				background: ${ color( 'color-white', 0 ) };
-				border-color: ${ color( 'color-white', 0 ) };
-				color: ${ color( 'color-secondary-500' ) };
+				--xb-button-background-color: ${ color( 'color-white', 0 ) };
+				--xb-button-border-color: ${ color( 'color-white', 0 ) };
+				--xb-button-color: ${ color( 'color-secondary-500' ) };
 			}
 
 			${ when.active( '.-text' ) } {
-				background: ${ color( 'color-white', 0 ) };
-				border-color: ${ color( 'color-white', 0 ) };
-				color: ${ color( 'color-secondary-300' ) };
+				--xb-button-background-color: ${ color( 'color-white', 0 ) };
+				--xb-button-border-color: ${ color( 'color-white', 0 ) };
+				--xb-button-color: ${ color( 'color-secondary-300' ) };
 			}
 
 			.-ghost {
-				background: ${ color( 'color-white', 0 ) };
-				border-color: ${ color( 'color-primary-500' ) };
-				color: ${ color( 'color-primary-500' ) };
+				--xb-button-background-color: ${ color( 'color-white', 0 ) };
+				--xb-button-border-color: ${ color( 'color-primary-500' ) };
+				--xb-button-color: ${ color( 'color-primary-500' ) };
 			}
 
 			${ when.hovered( '.-ghost' ) } {
-				background: ${ color( 'color-primary-500' ) };
-				border-color: ${ color( 'color-primary-500' ) };
-				color: ${ color( 'color-white' ) };
+				--xb-button-background-color: ${ color( 'color-primary-500' ) };
+				--xb-button-border-color: ${ color( 'color-primary-500' ) };
+				--xb-button-color: ${ color( 'color-white' ) };
 			}
 
 			${ when.active( '.-ghost' ) } {
-				background: ${ color( 'color-primary-300' ) };
-				border-color: ${ color( 'color-primary-300' ) };
-				color: ${ color( 'color-white' ) };
+				--xb-button-background-color: ${ color( 'color-primary-300' ) };
+				--xb-button-border-color: ${ color( 'color-primary-300' ) };
+				--xb-button-color: ${ color( 'color-white' ) };
 			}
 
 			.-flat {
-				background: ${ color( 'color-primary-500' ) };
-				border-color: ${ color( 'color-primary-500' ) };
-				color: ${ color( 'color-white' ) };
+				--xb-button-background-color: ${ color( 'color-primary-500' ) };
+				--xb-button-border-color: ${ color( 'color-primary-500' ) };
+				--xb-button-color: ${ color( 'color-white' ) };
 			}
 
 			${ when.hovered( '.-flat' ) } {
-				background: ${ color( 'color-secondary-500' ) };
-				border-color: ${ color( 'color-secondary-500' ) };
-				color: ${ color( 'color-white' ) };
+				--xb-button-background-color: ${ color( 'color-secondary-500' ) };
+				--xb-button-border-color: ${ color( 'color-secondary-500' ) };
+				--xb-button-color: ${ color( 'color-white' ) };
 			}
 
 			${ when.active( '.-flat' ) } {
-				background: ${ color( 'color-secondary-300' ) };
-				border-color: ${ color( 'color-secondary-300' ) };
-				color: ${ color( 'color-white' ) };
+				--xb-button-background-color: ${ color( 'color-secondary-300' ) };
+				--xb-button-border-color: ${ color( 'color-secondary-300' ) };
+				--xb-button-color: ${ color( 'color-white' ) };
 			}
 		`,
 	];

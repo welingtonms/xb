@@ -1,4 +1,4 @@
-import { LitElement, html } from 'lit';
+import { html } from 'lit';
 import withClassy from '@welingtonms/classy';
 
 import { sided } from '../../common/prop-toolset';
@@ -13,10 +13,9 @@ export class Button extends XBElement {
 		return {
 			/**
 			 * Determine borders to be supressed.
-			 * @type {import('../../common/prop-types').BorderlessProp} borderless
+			 * @type {ButtonAttributes['borderless']}
 			 */
 			borderless: {
-				// type: String | Boolean,
 				converter: {
 					fromAttribute: converterDirectionFromAttribute,
 				},
@@ -24,10 +23,9 @@ export class Button extends XBElement {
 
 			/**
 			 * Determine paddings to be supressed.
-			 * @type {import('../../../common/prop-types').PaddinglessProp}
+			 * @type {ButtonAttributes['paddingless']}
 			 */
 			paddingless: {
-				// type: String | Boolean,
 				converter: {
 					fromAttribute: converterDirectionFromAttribute,
 				},
@@ -35,6 +33,7 @@ export class Button extends XBElement {
 
 			/**
 			 * Aria role
+			 * @type {ButtonAttributes['role']}
 			 */
 			role: {
 				reflect: true,
@@ -43,19 +42,19 @@ export class Button extends XBElement {
 
 			/**
 			 * Should the button be disabled.
-			 * @type {Boolean}
+			 * @type {ButtonAttributes['disabled']}
 			 */
 			disabled: { type: Boolean, reflect: true },
 
 			/**
 			 * Button emphasis variant.
-			 * @type {ButtonEmphasis}
+			 * @type {ButtonAttributes['emphasis']}
 			 */
 			emphasis: { type: String },
 
 			/**
 			 * Button size.
-			 * @type {ButtonSize}
+			 * @type {ButtonAttributes['size']}
 			 */
 			size: { type: String },
 		};
@@ -65,10 +64,20 @@ export class Button extends XBElement {
 		super();
 
 		this.role = 'button';
+
+		/** @type {ButtonAttributes['emphasis']} */
 		this.emphasis = 'ghost';
+
+		/** @type {ButtonAttributes['size']} */
 		this.size = 'small';
+
+		/** @type {ButtonAttributes['borderless']} */
 		this.borderless = 'none';
+
+		/** @type {ButtonAttributes['paddingless']} */
 		this.paddingless = 'none';
+
+		/** @type {ButtonAttributes['disabled']} */
 		this.disabled = false;
 	}
 
@@ -124,5 +133,17 @@ window.customElements.define( 'xb-button', Button );
 
 /**
  * @typedef {('text' | 'ghost' | 'flat')} ButtonEmphasis
- * @typedef {('small' | 'medium' | 'large')} ButtonSize
+ * @typedef {import('../../styles/size.styles').ElementSize} ButtonSize
+ * @typedef {import('../../common/prop-types').BorderlessProp} BorderlessProp
+ * @typedef {import('../../common/prop-types').PaddinglessProp} PaddinglessProp
+ */
+
+/**
+ * @typedef {Object} ButtonAttributes
+ * @property {BorderlessProp} borderless
+ * @property {PaddinglessProp} paddingless
+ * @property {string} role
+ * @property {boolean} disabled
+ * @property {ButtonEmphasis} emphasis
+ * @property {ButtonSize} size
  */

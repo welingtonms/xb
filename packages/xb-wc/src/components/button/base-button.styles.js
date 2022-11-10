@@ -2,7 +2,8 @@ import { css } from 'lit';
 
 import { when, m, p, px, py, transition, typography } from '../../styles';
 import color from '../../utils/get-color-token';
-import layoutStyles from '../layout/layout.styles';
+import layoutStyles from '../../styles/layout.styles';
+import sizeStyles from '../../styles/size.styles';
 import token from '../../utils/get-token';
 
 function styles() {
@@ -10,9 +11,11 @@ function styles() {
 		layoutStyles(),
 		css`
 			:host {
-				--xb-button-height: 40px;
+				--xb-button-height: initial;
 
-				/* TODO: extract features to custom properties */
+				--xb-button-background-color: ${ color( 'color-white', 0 ) };
+				--xb-button-color: ${ color( 'color-gray-600' ) };
+				--xb-button-border-color: ${ color( 'color-white', 0 ) };
 			}
 
 			.button {
@@ -20,6 +23,7 @@ function styles() {
 					{ property: 'color' },
 					{ property: 'background-color' },
 					{ property: 'border-color' },
+					{ property: 'box-shadow' },
 				] ) };
 
 				${ typography( 'button' ) };
@@ -33,16 +37,17 @@ function styles() {
 				overflow: hidden;
 				text-decoration: none;
 
-				gap: 2px;
+				gap: ${ token( 'spacing-1' ) };
 
 				${ px( token( 'spacing-4' ) ) };
 				${ py( token( 'spacing-2' ) ) };
 
-				background: ${ color( 'color-white', 0 ) };
-				color: ${ color( 'color-gray-600' ) };
-				border: 1px solid;
+				background-color: var( --xb-button-background-color );
+				color: var( --xb-button-color );
+				border: 1px solid var( --xb-button-border-color );
 
 				height: var( --xb-button-height );
+				min-width: var( --xb-button-height );
 			}
 
 			${ when.disabled( '.button' ) } {
@@ -64,11 +69,8 @@ function styles() {
 
 			slot[name='leading']::slotted( * ),
 			slot[name='trailing']::slotted( * ) {
-				display: none;
-			}
+				--xb-global-color: var( --xb-button-color );
 
-			slot[name='leading']::slotted( span ),
-			slot[name='trailing']::slotted( span ) {
 				display: inline-flex;
 				align-items: center;
 				justify-content: center;
@@ -81,24 +83,17 @@ function styles() {
 				${ px( token( 'spacing-2' ) ) };
 
 				font-size: ${ token( 'font-size-sm' ) };
-
-				min-width: 40px;
 			}
 
 			.-medium {
-				--xb-button-height: 56px;
 				font-size: ${ token( 'font-size-sm' ) };
-
-				min-width: 56px;
 			}
 
 			.-large {
-				--xb-button-height: 72px;
 				font-size: ${ token( 'font-size-base' ) };
-
-				min-width: 72px;
 			}
 		`,
+		sizeStyles( '--xb-button-height' ),
 	];
 }
 
