@@ -14,7 +14,8 @@
 		"test": "lerna run --ignore=@welingtonms/xb-{demo} test",
 		"pkg:wc": "lerna --scope=@welingtonms/xb-wc run",
 		"pkg:tokens": "lerna --scope=@welingtonms/xb-tokens run",
-		"pkg:toolset": "lerna --scope=@welingtonms/xb-toolset run"
+		"pkg:toolset": "lerna --scope=@welingtonms/xb-toolset run",
+		"pkg:icons": "lerna --scope=@welingtonms/xb-icons run"
 	},
 	"devDependencies": {
 		"@babel/core": "7.19.1",
