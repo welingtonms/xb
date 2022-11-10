@@ -1,14 +1,13 @@
-import { LitElement, html } from 'lit';
+import { html } from 'lit';
 import withClassy from '@welingtonms/classy';
 
 import { TOGGLE_EVENT } from './toggle-group.constants';
+import XBElement from '../../common/xb-element';
 import styles from './toggle.styles';
 
 import '../button';
 
-export class ToggleButton extends LitElement {
-	// ariaButtonController = new AriaButtonController( this );
-
+export class ToggleButton extends XBElement {
 	static styles = [ styles() ];
 
 	static get properties() {
@@ -69,7 +68,7 @@ export class ToggleButton extends LitElement {
 			composed: false,
 		};
 
-		this.dispatchEvent( new CustomEvent( TOGGLE_EVENT, options ) );
+		this.emit( TOGGLE_EVENT, options );
 	}
 
 	render() {
