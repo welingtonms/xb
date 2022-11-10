@@ -2,7 +2,7 @@ import { css } from 'lit';
 
 import { m, px, py, typography } from '../../../styles';
 import color from '../../../utils/get-color-token';
-import layoutStyles from '../layout.styles';
+import layoutStyles from '../../../styles/layout.styles';
 import token from '../../../utils/get-token';
 
 function styles() {
@@ -10,7 +10,7 @@ function styles() {
 		layoutStyles(),
 		css`
 			:host {
-				--xb-stack-align: center;
+				--xb-stack-align: flex-start;
 				--xb-stack-background-color: initial;
 				--xb-stack-border-color: ${ color( 'color-gray-300' ) };
 				--xb-stack-border-style: none;

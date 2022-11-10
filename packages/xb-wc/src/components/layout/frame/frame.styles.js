@@ -2,7 +2,7 @@ import { css } from 'lit';
 
 import { m, mx, px, py, typography } from '../../../styles';
 import color from '../../../utils/get-color-token';
-import layoutStyles from '../layout.styles';
+import layoutStyles from '../../../styles/layout.styles';
 import token from '../../../utils/get-token';
 
 function styles() {
