@@ -5,10 +5,16 @@ import { unsafeCSS } from 'lit';
  * @param {string} selector
  * @param {CSSResult} content
  */
-function focusable( selector ) {
-	return unsafeCSS( `${ selector }:not(.is-disabled, :disabled):focus,
-		${ selector }:not(.is-disabled, :disabled):focus-within,
-		${ selector }:not(.is-disabled, :disabled).is-focused` );
+function focusable( selector, subselector = '' ) {
+	return unsafeCSS(
+		[
+			`${ selector }:not(.is-disabled, :disabled):focus`,
+			`${ selector }:not(.is-disabled, :disabled):focus-within`,
+			`${ selector }:not(.is-disabled, :disabled).is-focused`,
+		]
+			.map( ( rule ) => [ rule, subselector ].join( ' ' ) )
+			.join( ', ' )
+	);
 }
 
 export default focusable;
