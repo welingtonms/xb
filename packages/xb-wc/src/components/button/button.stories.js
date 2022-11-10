@@ -48,22 +48,28 @@ export const Playground = ( args ) => html`
 		size=${ args.size }
 		?disabled=${ args.disabled }
 		@click=${ args.click }
-		>Button</xb-button
+	>
+		<xb-icon name="favorite" slot="leading"></xb-icon>
+		Button</xb-button
 	>
 	<xb-button
 		emphasis="ghost"
 		size=${ args.size }
 		?disabled=${ args.disabled }
 		@click=${ args.click }
-		>Button</xb-button
 	>
+		<xb-icon name="arrow-back" slot="leading"></xb-icon>
+		Button
+	</xb-button>
 	<xb-button
 		emphasis="flat"
 		size=${ args.size }
 		?disabled=${ args.disabled }
 		@click=${ args.click }
-		>Button</xb-button
 	>
+		Button
+		<xb-icon name="star" slot="trailing"></xb-icon>
+	</xb-button>
 `;
 
 Playground.args = {

@@ -22,6 +22,7 @@
 	],
 	"dependencies": {
 		"@welingtonms/classy": "1.2.0",
+		"@welingtonms/xb-icons": "workspace:*",
 		"@welingtonms/xb-tokens": "workspace:*",
 		"@welingtonms/xb-toolset": "workspace:*",
 		"lit": "2.3.1"
