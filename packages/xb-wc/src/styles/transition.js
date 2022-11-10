@@ -6,7 +6,7 @@ import toArray from '@welingtonms/xb-toolset/dist/to-array';
 const DEFAULT_TRANSITION_CONFIG = {
 	property: 'all',
 	delay: '0s',
-	duration: '0.35s',
+	duration: '0.25s',
 	easing: 'ease-in-out',
 };
 
