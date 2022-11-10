@@ -2,11 +2,13 @@ import createSelectionStrategy from '@welingtonms/xb-toolset/dist/selection';
 import toArray from '@welingtonms/xb-toolset/dist/to-array';
 
 /**
- * Managers selection through the SelectionStrategy.
+ * Manages selection through the SelectionStrategy.
  * It's expected that `host` has a `selection` state.
+ * @class
+ * @implements {import('lit').ReactiveController}
  */
 class SelectionController {
-	/** @type {XBElement} */
+	/** @type {SelectionHost} */
 	host = null;
 
 	/** @type {import('@welingtonms/xb-toolset/dist/selection').SelectionStrategy} */
@@ -14,7 +16,7 @@ class SelectionController {
 
 	/**
 	 *
-	 * @param {ReactiveControllerHost & XBElement} host
+	 * @param {SelectionHost} host
 	 * @param {import('@welingtonms/xb-toolset/dist/selection').SelectionType} type - Type of selection to be managed.
 	 * @param {string} event - Name of the event that should be listened to.
 	 */
@@ -70,6 +72,7 @@ class SelectionController {
 	/**
 	 * using arrow function so we keep the lexical context this is necessary
 	 * because the event itself will happen in the context of the host element.
+	 * @param {CustomEvent<SelectionEventDetail>} e
 	 */
 	_handleSelectionEvent = ( e ) => {
 		if ( this.disabled ) {
@@ -121,6 +124,15 @@ class SelectionController {
 export default SelectionController;
 
 /**
+ * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionType} SelectionType
+ * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionState} SelectionState
  * @typedef {import('lit').ReactiveControllerHost} ReactiveControllerHost
  * @typedef {import('../../common/xb-element').default} XBElement
+ * @typedef {ReactiveControllerHost & XBElement & { _selection: SelectionState, type: SelectionType }} SelectionHost
+ */
+
+/**
+ * @typedef {Object} SelectionEventDetail
+ * @property {SelectionType} type - type of selection being performed
+ * @property {SelectionState} value - currently selected value
  */
