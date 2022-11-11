@@ -1,1 +1,1 @@
-export { Text } from './text';
+export { Badge } from './badge';
