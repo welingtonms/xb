@@ -21,6 +21,7 @@
 		"lit"
 	],
 	"dependencies": {
+		"@floating-ui/dom": "1.0.4",
 		"@welingtonms/classy": "1.2.0",
 		"@welingtonms/xb-icons": "workspace:*",
 		"@welingtonms/xb-tokens": "workspace:*",
