@@ -56,9 +56,19 @@ const SelectionManagerMixin = ( superClass, event ) =>
 				( changedProperties.get( 'type' ) != null && this.type != null ) ||
 				this._selectionController == null
 			) {
-				this._selectionController = new SelectionController( this, this.type, event );
+				/**
+				 * we first unsubscribe the current controller instance
+				 * from this host, before initializating another one.
+				 */
+				this._selectionController?.unsubscribe();
 
-				this._selectionController.init( toArray( this.value ) );
+				this._selectionController = new SelectionController(
+					this,
+					this.type,
+					event
+				);
+
+				this._selectionController.init( Array.from( this._selection ) );
 			}
 
 			/**
