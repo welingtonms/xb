@@ -55,22 +55,6 @@ export class ToggleButton extends XBElement {
 		this.size = 'small';
 	}
 
-	_handleClick( e ) {
-		if ( this.disabled ) {
-			return;
-		}
-
-		this.checked = ! this.checked;
-
-		const options = {
-			detail: { value: this.value, type: 'toggle' },
-			bubbles: true,
-			composed: false,
-		};
-
-		this.emit( TOGGLE_EVENT, options );
-	}
-
 	render() {
 		const { classy, when } = withClassy( {
 			role: this.role,
@@ -97,6 +81,22 @@ export class ToggleButton extends XBElement {
 				<slot name="trailing" slot="trailing"></slot>
 			</button>
 		`;
+	}
+
+	_handleClick( e ) {
+		if ( this.disabled ) {
+			return;
+		}
+
+		this.checked = ! this.checked;
+
+		const options = {
+			detail: { value: this.value, type: 'toggle' },
+			bubbles: true,
+			composed: false,
+		};
+
+		this.emit( TOGGLE_EVENT, options );
 	}
 }
 
