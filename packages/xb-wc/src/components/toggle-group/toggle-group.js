@@ -8,7 +8,10 @@ import XBElement from '../../common/xb-element';
 
 import '../layout/cluster';
 
-export class ToggleGroup extends SelectionManagerMixin( XBElement, TOGGLE_EVENT ) {
+export class ToggleGroup extends SelectionManagerMixin(
+	XBElement,
+	TOGGLE_EVENT
+) {
 	static styles = [ styles() ];
 
 	/** @type {HTMLSlotElement} */
@@ -45,7 +48,12 @@ export class ToggleGroup extends SelectionManagerMixin( XBElement, TOGGLE_EVENT 
 		/** @type {ToggleGroupAttributes['type']} */
 		this.type = 'single-strict';
 
-		this.role = [ 'single', 'single-strict' ].includes( this.type ) ? 'radiogroup' : 'group';
+		/** @type {ToggleGroupAttributes['size']} */
+		this.size = 'small';
+
+		this.role = [ 'single', 'single-strict' ].includes( this.type )
+			? 'radiogroup'
+			: 'group';
 	}
 
 	/**
@@ -63,6 +71,12 @@ export class ToggleGroup extends SelectionManagerMixin( XBElement, TOGGLE_EVENT 
 		if ( changedProperties.has( 'disabled' ) ) {
 			this._getToggles().forEach( ( toggle ) => {
 				this._setToggleDisabled( toggle );
+			} );
+		}
+
+		if ( changedProperties.has( 'size' ) ) {
+			this._getToggles().forEach( ( toggle ) => {
+				this._setToggleSize( toggle );
 			} );
 		}
 
@@ -96,7 +110,8 @@ export class ToggleGroup extends SelectionManagerMixin( XBElement, TOGGLE_EVENT 
 	 * @returns {import('./toggle').ToggleButton[]}
 	 */
 	_getToggles() {
-		this.defaultSlot = this.defaultSlot ?? this.shadowRoot.querySelector( 'slot' );
+		this.defaultSlot =
+			this.defaultSlot ?? this.shadowRoot.querySelector( 'slot' );
 
 		return [ ...this.defaultSlot.assignedElements( { flatten: true } ) ].filter(
 			( item ) => item.tagName.toLowerCase() === 'xb-toggle'
@@ -111,6 +126,13 @@ export class ToggleGroup extends SelectionManagerMixin( XBElement, TOGGLE_EVENT 
 			'role',
 			[ 'single', 'single-strict' ].includes( this.type ) ? 'radio' : 'checkbox'
 		);
+	}
+
+	/**
+	 * @param {import('./toggle').ToggleButton} toggle
+	 */
+	_setToggleSize( toggle ) {
+		toggle.size = this.size;
 	}
 
 	/**

@@ -9,6 +9,10 @@ function styles() {
 		css`
 			.toggle-group {
 				--xb-cluster-width: max-content;
+				--xb-cluster-border-color: ${ color( 'color-primary-500' ) };
+				--xb-cluster-border-style: solid;
+				--xb-cluster-padding-x: 2px;
+				--xb-cluster-padding-y: 2px;
 
 				${ transition( [ { property: 'border-color' } ] ) };
 			}
@@ -18,20 +22,11 @@ function styles() {
 			}
 
 			.-single {
-				--xb-cluster-border-color: ${ color( 'color-primary-500' ) };
-				--xb-cluster-border-style: solid;
-
-				--xb-cluster-padding-x: 2px;
-				--xb-cluster-padding-y: 2px;
-
-				--xb-cluster-gap: 2px;
+				--xb-cluster-gap: ${ token( 'spacing-0' ) };
 			}
 
 			.-multiple {
-				--xb-cluster-padding-x: ${ token( 'spacing-0' ) };
-				--xb-cluster-padding-y: ${ token( 'spacing-0' ) };
-
-				--xb-cluster-gap: ${ token( 'spacing-1' ) };
+				--xb-cluster-gap: 2px;
 			}
 		`,
 	];

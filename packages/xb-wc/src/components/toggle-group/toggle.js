@@ -80,14 +80,13 @@ export class ToggleButton extends XBElement {
 		} );
 
 		return html`
-			<xb-button
-				class=${ classy( 'toggle' ) }
-				emphasis=${ classy( {
-					ghost: when( { role: 'checkbox', checked: false } ),
-					text: when( { role: 'radio', checked: false } ),
-					flat: when( { checked: true } ),
+			<button
+				class=${ classy( 'toggle', 'button', {
+					'-small': when( { size: 'small' } ),
+					'-medium': when( { size: 'medium' } ),
+					'-large': when( { size: 'large' } ),
 				} ) }
-				paddingless="vertical"
+				type="button"
 				role="${ this.role }"
 				aria-checked="${ this.checked ? 'true' : 'false' }"
 				?disabled="${ this.disabled }"
@@ -96,7 +95,7 @@ export class ToggleButton extends XBElement {
 				<slot name="leading" slot="leading"></slot>
 				<slot></slot>
 				<slot name="trailing" slot="trailing"></slot>
-			</xb-button>
+			</button>
 		`;
 	}
 }
