@@ -14,14 +14,17 @@ function styles( args ) {
 		css`
 			.-small {
 				${ unsafeCSS( property ) }: 40px;
+				min-width: 40px;
 			}
 
 			.-medium {
 				${ unsafeCSS( property ) }: 56px;
+				min-width: 56px;
 			}
 
 			.-large {
 				${ unsafeCSS( property ) }: 72px;
+				min-width: 72px;
 			}
 		`,
 	];
