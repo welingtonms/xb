@@ -16,6 +16,8 @@ function styles() {
 				--xb-button-background-color: ${ color( 'color-white', 0 ) };
 				--xb-button-color: ${ color( 'color-gray-600' ) };
 				--xb-button-border-color: ${ color( 'color-white', 0 ) };
+
+				display: inline-block;
 			}
 
 			.button {
@@ -30,6 +32,8 @@ function styles() {
 
 				cursor: pointer;
 				position: relative;
+
+				box-sizing: border-box;
 
 				display: inline-flex;
 				align-items: center;
