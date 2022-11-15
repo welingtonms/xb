@@ -30,9 +30,8 @@ export default {
 	},
 };
 
-export const Playground = ( args ) =>
-	html` <xb-dropdown placement=${ args.placement }></xb-dropdown> `;
+export const Playground = () => html`<xb-dropdown></xb-dropdown>`;
 
 Playground.args = {
-	placement: 'bottom-start',
+	// placement: 'bottom-start',
 };
