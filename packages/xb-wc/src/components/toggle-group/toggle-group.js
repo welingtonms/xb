@@ -2,20 +2,19 @@ import { html } from 'lit';
 import withClassy from '@welingtonms/classy';
 
 import { TOGGLE_EVENT } from './toggle-group.constants';
-import SelectionManagerMixin from '../../mixins/selection';
+import SelectionMixin from '../../mixins/selection';
 import styles from './toggle-group.styles';
 import XBElement from '../../common/xb-element';
 
 import '../layout/cluster';
 
-export class ToggleGroup extends SelectionManagerMixin(
-	XBElement,
-	TOGGLE_EVENT
-) {
+export class ToggleGroup extends SelectionMixin( XBElement, {
+	listen: TOGGLE_EVENT,
+} ) {
 	static styles = [ styles() ];
 
 	/** @type {HTMLSlotElement} */
-	defaultSlot;
+	_defaultSlot;
 
 	static get properties() {
 		return {
@@ -80,11 +79,9 @@ export class ToggleGroup extends SelectionManagerMixin(
 			} );
 		}
 
-		if ( changedProperties.has( '_selection' ) ) {
-			this._getToggles().forEach( ( toggle ) => {
-				this._setToggleChecked( toggle );
-			} );
-		}
+		this._getToggles().forEach( ( toggle ) => {
+			this._setToggleChecked( toggle );
+		} );
 	}
 
 	render() {
@@ -110,12 +107,12 @@ export class ToggleGroup extends SelectionManagerMixin(
 	 * @returns {import('./toggle').ToggleButton[]}
 	 */
 	_getToggles() {
-		this.defaultSlot =
-			this.defaultSlot ?? this.shadowRoot.querySelector( 'slot' );
+		this._defaultSlot =
+			this._defaultSlot ?? this.shadowRoot.querySelector( 'slot' );
 
-		return [ ...this.defaultSlot.assignedElements( { flatten: true } ) ].filter(
-			( item ) => item.tagName.toLowerCase() === 'xb-toggle'
-		);
+		return [
+			...this._defaultSlot.assignedElements( { flatten: true } ),
+		].filter( ( item ) => item.tagName.toLowerCase() === 'xb-toggle' );
 	}
 
 	/**
@@ -139,18 +136,17 @@ export class ToggleGroup extends SelectionManagerMixin(
 	 * @param {import('./toggle').ToggleButton} toggle
 	 */
 	_setToggleChecked( toggle ) {
-		if ( toggle.checked !== this._selection.has( toggle.value ) ) {
-			toggle.checked = this._selection.has( toggle.value );
-		}
+		/** @type {SelectionController} */
+		const controller = this._controller;
+
+		toggle.checked = controller.selection.has( toggle.value );
 	}
 
 	/**
 	 * @param {import('./toggle').ToggleButton} toggle
 	 */
 	_setToggleDisabled( toggle ) {
-		if ( toggle.disabled !== this.disabled ) {
-			toggle.disabled = this.disabled;
-		}
+		toggle.disabled = this.disabled;
 	}
 }
 

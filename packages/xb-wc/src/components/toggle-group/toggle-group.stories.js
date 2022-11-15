@@ -1,4 +1,5 @@
 import { html } from 'lit-html';
+import { SELECTION_TYPES } from '@welingtonms/xb-toolset/dist/selection';
 
 // import Docs from './button.api.mdx';
 import '../layout/stack';
@@ -28,7 +29,7 @@ export default {
 		type: {
 			control: {
 				type: 'select',
-				options: [ 'single', 'single-strict', 'multiple' ],
+				options: SELECTION_TYPES,
 			},
 		},
 	},
