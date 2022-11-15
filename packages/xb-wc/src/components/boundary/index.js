@@ -1,0 +1,1 @@
+export { InteractionBoundary } from './boundary';

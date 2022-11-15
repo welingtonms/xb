@@ -1,8 +1,11 @@
 import { html } from 'lit';
 
 import XBElement from '../../common/xb-element';
+import styles from './boundary.styles';
 
 export class InteractionBoundary extends XBElement {
+	static styles = [ styles() ];
+
 	/** @type {boolean} */
 	_active;
 
@@ -104,4 +107,4 @@ export class InteractionBoundary extends XBElement {
 	};
 }
 
-window.customElements.define( 'xb-interaction-boundary', InteractionBoundary );
+window.customElements.define( 'xb-boundary', InteractionBoundary );
