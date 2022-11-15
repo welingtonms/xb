@@ -91,7 +91,7 @@ function styles() {
 			}
 
 			${ when.hovered( '.checkbox' ) } xb-icon {
-				border-color: ${ color( 'color-primary-100' ) };
+				border-color: ${ color( 'color-primary-500' ) };
 			}
 
 			${ when.hovered( '.checkbox' ) }[aria-checked='true'] xb-icon {
@@ -99,11 +99,20 @@ function styles() {
 				background-color: ${ color( 'color-primary-500' ) };
 			}
 
+			${ when.active( '.checkbox' ) } xb-icon {
+				border-color: ${ color( 'color-primary-100' ) };
+			}
+
+			${ when.active( '.checkbox' ) }[aria-checked='true'] xb-icon {
+				border-color: ${ color( 'color-primary-100' ) };
+				background-color: ${ color( 'color-primary-100' ) };
+			}
+
 			.checkbox[aria-checked='true'] xb-icon {
 				--xb-icon-color: ${ color( 'color-white' ) };
 
-				border-color: ${ color( 'color-primary-100' ) };
-				background-color: ${ color( 'color-primary-100' ) };
+				border-color: ${ color( 'color-primary-300' ) };
+				background-color: ${ color( 'color-primary-300' ) };
 			}
 
 			/* .-small {
