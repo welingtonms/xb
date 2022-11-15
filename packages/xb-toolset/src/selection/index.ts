@@ -1,4 +1,4 @@
-export { default } from './selection-strategy';
+export { default, SELECTION_TYPES } from './selection-strategy';
 
 export type {
 	SelectionStrategyCreationProps,
