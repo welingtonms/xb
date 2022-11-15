@@ -1,4 +1,5 @@
 import { html } from 'lit';
+import { createRef, ref } from 'lit/directives/ref.js';
 import withClassy from '@welingtonms/classy';
 
 import { sided } from '../../common/prop-toolset';
@@ -7,6 +8,8 @@ import XBElement from '../../common/xb-element';
 import styles from './button.styles';
 
 export class Button extends XBElement {
+	button = createRef();
+
 	static styles = [ styles() ];
 
 	static get properties() {
@@ -87,6 +90,12 @@ export class Button extends XBElement {
 		this.setAttribute( 'role', 'button' );
 	}
 
+	focus() {
+		const button = this._getButton();
+
+		button.focus();
+	}
+
 	render() {
 		const { classy, when } = withClassy( {
 			emphasis: this.emphasis,
@@ -95,6 +104,7 @@ export class Button extends XBElement {
 
 		return html`
 			<button
+				${ ref( this.button ) }
 				class=${ classy(
 					'button',
 					{
@@ -119,6 +129,13 @@ export class Button extends XBElement {
 				<slot name="trailing"></slot>
 			</button>
 		`;
+	}
+
+	/**
+	 * @returns {HTMLInputElement}
+	 */
+	_getButton() {
+		return this.button.value;
 	}
 }
 
