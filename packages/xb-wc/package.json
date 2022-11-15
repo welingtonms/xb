@@ -11,7 +11,7 @@
 		"prebuild": "rm -rf dist",
 		"build": "yarn prebuild && rollup -c --environment BUILD:prod",
 		"dev": "start-storybook -p 6006",
-		"build-storybook": "build-storybook",
+		"build-storybook": "build-storybook -o docs",
 		"test": "cypress run --component --browser chrome",
 		"cypress": "cypress open --component --browser chrome"
 	},
