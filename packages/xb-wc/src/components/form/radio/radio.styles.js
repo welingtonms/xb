@@ -1,16 +1,6 @@
 import { css } from 'lit';
 
-import {
-	when,
-	transition,
-	px,
-	py,
-	pl,
-	pr,
-	p,
-	m,
-	typography,
-} from '../../../styles';
+import { when, transition, px, p, m, typography } from '../../../styles';
 import sizeStyles from '../../../styles/size.styles';
 import color from '../../../utils/get-color-token';
 import token from '../../../utils/get-token';
@@ -23,12 +13,7 @@ function styles() {
 			}
 
 			.radio {
-				--xb-cluster-gap: ${ token( 'spacing-1' ) };
-
-				${ transition( [
-					{ property: 'color' },
-					{ property: 'box-shadow' },
-				] ) };
+				${ transition( [ { property: 'color' } ] ) };
 
 				${ typography( 'body-2' ) };
 
@@ -47,33 +32,39 @@ function styles() {
 
 				box-sizing: border-box;
 
-				width: 100%;
+				outline: none;
 			}
 
-			input {
+			${ when.focused( '.radio', '.check' ) } {
+				outline: none;
+				box-shadow: ${ color( 'color-primary-200', 0.3 ) } 5px 5px,
+					${ color( 'color-primary-200', 0.2 ) } 10px 10px,
+					${ color( 'color-primary-200', 0.1 ) } 15px 15px;
+			}
+
+			xb-icon {
 				${ transition( [
-					{ property: 'accent-color' },
+					{ property: 'border-color' },
+					{ property: 'background-color' },
+					{ property: 'border-width' },
 					{ property: 'box-shadow' },
 				] ) };
 
-				${ transition( [ { property: 'accent-color' } ] ) };
+				--xb-icon-color: ${ color( 'color-white' ) };
+
+				flex-shrink: 0;
+				outline: none;
+				appearance: none;
 
 				${ p( token( 'spacing-0' ) ) };
 				${ m( token( 'spacing-0' ) ) };
 
-				display: inline-flex;
-				accent-color: ${ color( 'color-primary-100' ) };
+				border: 1px solid;
+				border-color: ${ color( 'color-gray-400' ) };
+				background-color: ${ color( 'color-white' ) };
+				border-radius: 8px;
 
-				inline-size: 16px;
-				block-size: 16px;
-
-				outline: none;
-			}
-
-			${ when.focused( '.radio', 'input' ) } {
-				box-shadow: ${ color( 'color-primary-200', 0.3 ) } 5px 5px,
-					${ color( 'color-primary-200', 0.2 ) } 10px 10px,
-					${ color( 'color-primary-200', 0.1 ) } 15px 15px;
+				box-sizing: border-box;
 			}
 
 			/* When disabled, prevent mouse events from bubbling up */
@@ -89,6 +80,32 @@ function styles() {
 
 				${ p( token( 'spacing-0' ) ) };
 				${ m( token( 'spacing-0' ) ) };
+			}
+
+			${ when.hovered( '.radio' ) } xb-icon {
+				border-color: ${ color( 'color-primary-500' ) };
+			}
+
+			${ when.hovered( '.radio' ) }[aria-checked='true'] xb-icon {
+				border-color: ${ color( 'color-primary-500' ) };
+				background-color: ${ color( 'color-primary-500' ) };
+			}
+
+			${ when.active( '.radio' ) } xb-icon {
+				border-color: ${ color( 'color-primary-100' ) };
+			}
+
+			${ when.active( '.radio' ) }[aria-checked='true'] xb-icon {
+				border-color: ${ color( 'color-primary-100' ) };
+				background-color: ${ color( 'color-primary-100' ) };
+			}
+
+			.radio[aria-checked='true'] xb-icon {
+				--xb-icon-color: ${ color( 'color-white' ) };
+
+				border-color: ${ color( 'color-primary-300' ) };
+				background-color: ${ color( 'color-primary-300' ) };
+				border-width: 2px;
 			}
 
 			/* .-small {

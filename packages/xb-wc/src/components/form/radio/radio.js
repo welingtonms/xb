@@ -5,10 +5,9 @@ import withClassy from '@welingtonms/classy';
 import { CHECK_EVENT } from './radio-group.constants';
 import XBElement from '../../../common/xb-element';
 import styles from './radio.styles';
-import '../../layout/cluster';
 
 export class RadioInput extends XBElement {
-	input = createRef();
+	button = createRef();
 
 	static styles = [ styles() ];
 
@@ -56,6 +55,8 @@ export class RadioInput extends XBElement {
 	connectedCallback() {
 		super.connectedCallback();
 
+		this.setAttribute( 'role', 'radio' );
+
 		this.addEventListener( 'click', this._handleClick );
 	}
 
@@ -82,9 +83,9 @@ export class RadioInput extends XBElement {
 	}
 
 	focus() {
-		const input = this._getInput();
+		const button = this._getButton();
 
-		input.focus();
+		button.focus();
 
 		// to mimic the native behavior
 		this._handleClick();
@@ -94,57 +95,60 @@ export class RadioInput extends XBElement {
 		const { when, classy } = withClassy( { size: this.size } );
 
 		return html`
-			<label
+			<button
+				${ ref( this.button ) }
+				type="button"
 				class=${ classy( 'radio', {
 					'-small': when( { size: 'small' } ),
 					'-medium': when( { size: 'medium' } ),
 					'-large': when( { size: 'large' } ),
 				} ) }
+				role="radio"
+				aria-checked="${ this.checked }"
+				?disabled="${ this.disabled }"
 			>
-				<input
-					${ ref( this.input ) }
-					type="radio"
-					?checked="${ this.checked }"
-					?disabled="${ this.disabled }"
-					name="aaa"
-				/>
+				<xb-icon class="check" name="circle"></xb-icon>
 				<slot name="leading"></slot>
 				<slot></slot>
 				<slot name="trailing"></slot>
-			</label>
+			</button>
 		`;
 	}
 
 	/**
-	 * @returns {HTMLInputElement}
+	 * @returns {HTMLButtonElement}
 	 */
-	_getInput() {
-		return this.input.value;
+	_getButton() {
+		return this.button.value;
 	}
 
 	_setDisabled() {
-		const input = this._getInput();
+		const button = this._getButton();
 
 		this.setAttribute( 'aria-disabled', String( this.disabled ) );
-		input.disabled = this.disabled;
+		button.disabled = this.disabled;
 	}
 
 	_setChecked() {
-		const input = this._getInput();
+		const button = this._getButton();
 
 		this.setAttribute( 'aria-checked', String( this.checked ) );
-		input.checked = this.checked;
+		button.setAttribute( 'aria-checked', String( this.checked ) );
 	}
 
-	_handleClick() {
+	_handleClick( e ) {
 		if ( this.disabled ) {
 			return;
 		}
 
 		this.checked = ! this.checked;
 
+		this._publish();
+	}
+
+	_publish() {
 		const options = {
-			detail: { value: this.value, type: 'toggle' },
+			detail: { value: this.value, type: 'select' },
 		};
 
 		this.emit( CHECK_EVENT, options );

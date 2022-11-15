@@ -2,21 +2,20 @@ import { html } from 'lit';
 import withClassy from '@welingtonms/classy';
 
 import { CHECK_EVENT } from './radio-group.constants';
-import FocusTrapMixin from '../../../mixins/focus-trap';
 import SelectionManagerMixin from '../../../mixins/selection';
 import styles from './radio-group.styles';
 import XBElement from '../../../common/xb-element';
 
+import '../../focus-trap';
 import '../../layout/stack';
 
-export class RadioGroup extends SelectionManagerMixin(
-	FocusTrapMixin( XBElement, [ 'ArrowUp', 'ArrowDown' ] ),
-	CHECK_EVENT
-) {
+export class RadioGroup extends SelectionManagerMixin( XBElement, {
+	listen: CHECK_EVENT,
+} ) {
 	static styles = [ styles() ];
 
 	/** @type {HTMLSlotElement} */
-	defaultSlot;
+	_defaultSlot;
 
 	static get properties() {
 		return {
@@ -59,11 +58,9 @@ export class RadioGroup extends SelectionManagerMixin(
 			} );
 		}
 
-		if ( changedProperties.has( '_selection' ) ) {
-			this._getRadios().forEach( ( radio ) => {
-				this._setRadioChecked( radio );
-			} );
-		}
+		this._getRadios().forEach( ( radio ) => {
+			this._setRadioChecked( radio );
+		} );
 	}
 
 	render() {
@@ -71,14 +68,16 @@ export class RadioGroup extends SelectionManagerMixin(
 
 		// TODO: add proper accessibility features
 		return html`
-			<xb-stack
-				class=${ classy( 'radio-group' ) }
-				borderless="none"
-				paddingless="none"
-				?disabled="${ this.disabled }"
-			>
-				<slot></slot>
-			</xb-stack>
+			<xb-focus-trap>
+				<xb-stack
+					class=${ classy( 'radio-group' ) }
+					borderless="none"
+					paddingless="none"
+					?disabled="${ this.disabled }"
+				>
+					<slot></slot>
+				</xb-stack>
+			</xb-focus-trap>
 		`;
 	}
 
@@ -86,43 +85,37 @@ export class RadioGroup extends SelectionManagerMixin(
 	 * @returns {import('./radio').RadioInput[]}
 	 */
 	_getRadios() {
-		this.defaultSlot = this.defaultSlot ?? this.shadowRoot.querySelector( 'slot' );
+		this._defaultSlot =
+			this._defaultSlot ?? this.shadowRoot.querySelector( 'slot' );
 
-		return [ ...this.defaultSlot.assignedElements( { flatten: true } ) ].filter(
-			( item ) => item.tagName.toLowerCase() === 'xb-radio'
-		);
+		return [
+			...this._defaultSlot.assignedElements( { flatten: true } ),
+		].filter( ( item ) => item.tagName.toLowerCase() === 'xb-radio' );
 	}
 
 	/**
 	 * @param {import('./radio').RadioInput} radio
 	 */
 	_setRadioChecked( radio ) {
-		if ( radio.checked !== this._selection.has( radio.value ) ) {
-			radio.checked = this._selection.has( radio.value );
-		}
+		/** @type {SelectionController} */
+		const controller = this._controller;
+
+		radio.checked = controller.selection.has( radio.value );
 	}
 
 	/**
 	 * @param {import('./radio').RadioInput} radio
 	 */
 	_setRadioDisabled( radio ) {
-		if ( radio.disabled !== this.disabled ) {
-			radio.disabled = this.disabled;
-		}
+		radio.disabled = this.disabled;
 	}
 }
 
 window.customElements.define( 'xb-radio-group', RadioGroup );
 
-// @ts-ignore
-// declare global {
-//   interface HTMLElementTagNameMap {
-//     "xb-radio-group": RadioGroup;
-//   }
-// }
-
 /**
  * @typedef {import('../../../styles/size.styles').ElementSize} ToggleSize
+ * @typedef {import('../../../controllers/selection/selection.controller').default} SelectionController
  */
 
 /**
