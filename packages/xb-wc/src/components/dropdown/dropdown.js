@@ -5,13 +5,10 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import XBElement from '../../common/xb-element';
 import styles from './dropdown.styles';
 
-import './interaction-boundary';
+import '../boundary';
 import '../popover';
 
 export class Dropdown extends XBElement {
-	/** @type {import('lit/directives/ref').Ref<InteractionBoundary>} */
-	boundary = createRef();
-
 	static styles = [ styles() ];
 
 	static get properties() {
@@ -52,30 +49,14 @@ export class Dropdown extends XBElement {
 		this.placement = 'bottom-start';
 	}
 
-	connectedCallback() {
-		super.connectedCallback();
-
-		this.addEventListener( 'xb-click-outside', this._handleClickOutside );
-	}
-
-	disconnectedCallback() {
-		super.disconnectedCallback();
-
-		this.removeEventListener( 'xb-click-outside', this._handleClickOutside );
-	}
-
 	render() {
 		return html`
-			<xb-interaction-boundary ${ ref( this.boundary ) }>
-				<xb-popover-host>
-					<xb-button slot="trigger" @click=${ this._handleClick }
+			<xb-boundary @xb-click-outside=${ this._handleClickOutside }>
+				<xb-popover ?hidden=${ ! this.open }>
+					<xb-button slot="reference" @click=${ this._handleClick }
 						>&hearts;</xb-button
 					>
-
-					<xb-popover
-						placement=${ ifDefined( this.placement ) }
-						?hidden=${ ! this.open }
-					>
+					<div slot="floating">
 						Proin facilisis mauris ut tortor vulputate placerat. Nulla ut ligula
 						mattis, sagittis arcu non, venenatis urna. Praesent tincidunt odio
 						vitae luctus aliquet. Morbi nisl ante, ultricies vel fringilla
@@ -83,9 +64,9 @@ export class Dropdown extends XBElement {
 						non vel erat. In euismod nibh mi, ac volutpat elit placerat id.
 						Nullam condimentum arcu quis massa consequat, nec sodales est
 						rutrum. Duis nisi est, tempus nec hendrerit vel, lobortis a ante.
-					</xb-popover>
-				</xb-popover-host>
-			</xb-interaction-boundary>
+					</div>
+				</xb-popover>
+			</xb-boundary>
 		`;
 	}
 
