@@ -11,21 +11,41 @@ class SelectionController {
 	/** @type {SelectionHost} */
 	host = null;
 
-	/** @type {import('@welingtonms/xb-toolset/dist/selection').SelectionStrategy} */
+	/** @type {SelectionStrategy} */
 	strategy = null;
+
+	/** @type {SelectionState} */
+	selection = new Set();
+
+	/** @type {SelectionType} */
+	_type;
+
+	/**
+	 * Event that should be emitted upon selection change.
+	 * @type {string}
+	 * */
+	_emit;
+
+	/**
+	 * Event that should be listened to to detect selection change.
+	 * @type {string}
+	 * */
+	_listen;
 
 	/**
 	 *
 	 * @param {SelectionHost} host
-	 * @param {import('@welingtonms/xb-toolset/dist/selection').SelectionType} type - Type of selection to be managed.
-	 * @param {string} event - Name of the event that should be listened to.
+	 * @param {SelectionControllerOptions} options - Selection options.
 	 */
-	constructor( host, type, event = 'xb-select' ) {
-		this.type = type;
-		this.event = event;
+	constructor( host, options ) {
 		this.host = host;
 
-		this.strategy = createSelectionStrategy( { type } );
+		const { type, emit, listen } = options || {};
+
+		this.type = type;
+
+		this._emit = emit ?? 'xb-change';
+		this._listen = listen ?? 'xb-select';
 
 		this.host.addController( this );
 	}
@@ -38,36 +58,53 @@ class SelectionController {
 		this.unsubscribe();
 	}
 
-	init = ( values ) => {
-		this.host._selection = this.strategy.init( values );
-	};
+	/**
+	 * @param {SelectionTypes} type - New selection type
+	 */
+	set type( type ) {
+		this._type = type;
 
-	select = ( values ) => {
-		this.host._selection = this.strategy.select( values, this.host._selection );
-	};
+		this.strategy = createSelectionStrategy( { type } );
 
-	unselect = ( values ) => {
-		this.host._selection = this.strategy.unselect(
-			values,
-			this.host._selection
-		);
-	};
+		this.init( Array.from( this.selection ) );
+	}
 
-	toggle = ( values ) => {
-		this.host._selection = this.strategy.toggle( values, this.host._selection );
-	};
+	/**
+	 * @returns {SelectionType}
+	 */
+	get type() {
+		return this._type;
+	}
 
-	reset = () => {
-		this.host._selection = this.strategy.reset();
-	};
+	init( values ) {
+		this.selection = this.strategy.init( values );
 
-	subscribe = () => {
-		this.host.addEventListener( this.event, this._handleSelectionEvent );
-	};
+		this.host.requestUpdate();
+	}
 
-	unsubscribe = () => {
-		this.host.removeEventListener( this.event, this._handleSelectionEvent );
-	};
+	_select( values ) {
+		this.selection = this.strategy.select( values, this.selection );
+	}
+
+	_unselect( values ) {
+		this.selection = this.strategy.unselect( values, this.selection );
+	}
+
+	_toggle( values ) {
+		this.selection = this.strategy.toggle( values, this.selection );
+	}
+
+	// reset() {
+	// 	this.selection = this.strategy.reset();
+	// }
+
+	subscribe() {
+		this.host.addEventListener( this._listen, this._handleSelectionEvent );
+	}
+
+	unsubscribe() {
+		this.host.removeEventListener( this._listen, this._handleSelectionEvent );
+	}
 
 	/**
 	 * using arrow function so we keep the lexical context this is necessary
@@ -95,29 +132,34 @@ class SelectionController {
 
 		switch ( type ) {
 			case 'select':
-				this.select( toArray( value ) );
+				this._select( toArray( value ) );
 				break;
 			case 'unselect':
-				this.unselect( toArray( value ) );
+				this._unselect( toArray( value ) );
 				break;
 			case 'toggle':
-				this.toggle( toArray( value ) );
+				this._toggle( toArray( value ) );
 				break;
 		}
 
-		this._publish();
+		this.host.requestUpdate();
+		this._publish( type );
 	};
 
-	_publish = () => {
+	/**
+	 * Emit event.
+	 * @param {SelectionOperation} type
+	 */
+	_publish = ( type ) => {
 		const options = {
 			detail: {
-				type: this.type,
-				value: this.strategy.value( this.host._selection ),
+				type,
+				value: this.strategy.value( this.selection ),
 			},
 			composed: false,
 		};
 
-		this.host.emit( 'xb-change', options );
+		this.host.emit( this._emit, options );
 	};
 }
 
@@ -126,13 +168,28 @@ export default SelectionController;
 /**
  * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionType} SelectionType
  * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionState} SelectionState
+ * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionStrategy} SelectionStrategy
  * @typedef {import('lit').ReactiveControllerHost} ReactiveControllerHost
  * @typedef {import('../../common/xb-element').default} XBElement
  * @typedef {ReactiveControllerHost & XBElement & { _selection: SelectionState, type: SelectionType }} SelectionHost
+ * @typedef {'select' | 'unselect' | 'toggle'} SelectionOperation
  */
 
 /**
  * @typedef {Object} SelectionEventDetail
- * @property {SelectionType} type - type of selection being performed
+ * @property {SelectionOperation} type - type of selection being performed
  * @property {SelectionState} value - currently selected value
+ */
+
+/**
+ * @typedef {Object} SelectionControllerOptions
+ * @property {SelectionType} type - Type of selection to be managed.
+ * @property {string} listen - Name of the event that should be listened to.
+ * @property {string} emit - Name of the event that should be emitted.
+ */
+
+/**
+ * @typedef {Object} SelectionControllerProps
+ * @property {SelectionHost} host
+ * @property {SelectionControllerOptions} options
  */

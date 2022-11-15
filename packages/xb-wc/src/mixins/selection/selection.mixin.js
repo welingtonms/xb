@@ -6,12 +6,12 @@ import SelectionController from '../../controllers/selection';
  * Traps focus within the given host.
  * @class
  * @param {XBElement} superClass
- * @param {string} event - Name of the event that should be listened to.
+ * @param {SelectionMixinOptions} options - Name of the event that should be listened to.
  */
-const SelectionManagerMixin = ( superClass, event ) =>
-	class SelectionManager extends superClass {
+const SelectionMixin = ( superClass, options ) =>
+	class SelectionHost extends superClass {
 		/** @type {SelectionController} */
-		_selectionController;
+		_controller;
 
 		static get properties() {
 			return {
@@ -26,10 +26,6 @@ const SelectionManagerMixin = ( superClass, event ) =>
 				 * @type {string}
 				 */
 				value: {},
-
-				_selection: {
-					state: true,
-				},
 			};
 		}
 
@@ -38,9 +34,6 @@ const SelectionManagerMixin = ( superClass, event ) =>
 
 			/** @type {SelectionType} */
 			this.type = 'multiple';
-
-			/** @type {SelectionState} */
-			this._selection = new Set();
 		}
 
 		/**
@@ -52,39 +45,37 @@ const SelectionManagerMixin = ( superClass, event ) =>
 			/**
 			 * In case the selection manager's `type` changes after initialization.
 			 */
-			if (
-				( changedProperties.get( 'type' ) != null && this.type != null ) ||
-				this._selectionController == null
+			if ( this._controller == null ) {
+				this._controller = new SelectionController( this, {
+					...( options || {} ),
+					type: this.type,
+				} );
+			} else if (
+				changedProperties.get( 'type' ) != null &&
+				this.type != null
 			) {
-				/**
-				 * we first unsubscribe the current controller instance
-				 * from this host, before initializating another one.
-				 */
-				this._selectionController?.unsubscribe();
-
-				this._selectionController = new SelectionController(
-					this,
-					this.type,
-					event
-				);
-
-				this._selectionController.init( Array.from( this._selection ) );
+				this._controller.type = this.type;
 			}
 
 			/**
 			 * If `value` changed, we need to reset the selection controller.
 			 */
 			if ( changedProperties.has( 'value' ) ) {
-				this._selectionController.init( toArray( this.value ) );
+				this._controller.init( toArray( this.value ) );
 			}
 		}
 	};
 
-export default SelectionManagerMixin;
+export default SelectionMixin;
 
 /**
  * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionType} SelectionType
  * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionState} SelectionState
  * @typedef {import('../../controllers/selection/selection.controller').SelectionEventDetail} SelectionEventDetail
  * @typedef {import('../../common/xb-element').default} XBElement
+ * @typedef {import('../../controllers/selection/selection.controller').SelectionControllerOptions} SelectionControllerOptions
+ */
+
+/**
+ * @typedef {Omit<SelectionControllerOptions, 'type'>} SelectionMixinOptions
  */
