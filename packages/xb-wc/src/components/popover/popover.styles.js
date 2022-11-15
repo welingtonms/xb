@@ -8,10 +8,19 @@ function styles() {
 	return [
 		css`
 			:host {
+				position: relative;
+
+				display: inline-flex;
+			}
+
+			slot[name='reference']::slotted( * ) {
+				display: inline-flex;
+			}
+
+			slot[name='floating']::slotted( * ) {
 				${ transition( [
 					{ property: 'box-shadow' },
-					{ property: 'left' },
-					{ property: 'top' },
+					{ property: 'top', duration: '0.15s' },
 				] ) };
 
 				${ typography( 'body-2' ) };
@@ -21,7 +30,7 @@ function styles() {
 
 				position: relative;
 
-				display: flex;
+				display: inline-block;
 
 				min-height: 48px;
 				width: max-content;
@@ -38,15 +47,15 @@ function styles() {
 					rgba( 0, 0, 0, 0.06 ) 0px 2px 4px -1px;
 			}
 
-			:host( .-absolute ) {
+			:host( .-absolute ) slot[name='floating']::slotted( * ) {
 				position: absolute;
 			}
 
-			:host( .-fixed ) {
+			:host( .-fixed ) slot[name='floating']::slotted( * ) {
 				position: fixed;
 			}
 
-			:host( [hidden] ) {
+			:host( [hidden] ) slot[name='floating']::slotted( * ) {
 				display: none;
 			}
 
