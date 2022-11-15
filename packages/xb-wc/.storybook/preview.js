@@ -20,6 +20,7 @@ export const parameters = {
 				'Contributing',
 				'Foundation',
 				'Components',
+				'Metacomponents',
 				'Type definitions',
 			],
 		},
