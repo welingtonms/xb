@@ -96,7 +96,7 @@ function typography( variant = 'body-1' ) {
 				font-weight: ${ token( 'font-weight-regular' ) };
 				font-size: ${ rem( '15px' ) };
 				letter-spacing: 0.5px; /* 1.25px;*/
-				text-transform: uppercase
+				/*text-transform: uppercase*/
 			` );
 
 		case 'caption':
