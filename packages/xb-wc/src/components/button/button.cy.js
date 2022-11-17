@@ -4,7 +4,7 @@ import './button';
 
 describe( '<xb-button>', () => {
 	it( 'mounts', () => {
-		cy.mount( html`<xb-button></xb-button>` );
+		cy.mount( html`<xb-button>Action</xb-button>` );
 	} );
 
 	it( 'should render children', () => {
@@ -14,13 +14,15 @@ describe( '<xb-button>', () => {
 	} );
 
 	it( 'triggers click', () => {
-		const onClickSpy = cy.spy().as( 'onClickSpy' );
-
-		cy.mount( html`<xb-button @click=${ onClickSpy }>Action</xb-button>` );
+		cy.mount(
+			html`<xb-button @click=${ cy.stub().as( 'onClickSpy' ) }
+				>Action</xb-button
+			>`
+		);
 
 		cy.get( 'xb-button' )
 			.shadow()
-			.get( 'button' )
+			.find( 'button' )
 			.should( 'not.be.disabled' )
 			.click();
 
@@ -30,6 +32,6 @@ describe( '<xb-button>', () => {
 	it( 'disables the wrapped button', () => {
 		cy.mount( html`<xb-button ?disabled=${ true }>Action</xb-button>` );
 
-		cy.get( 'xb-button' ).shadow().get( 'button' ).should( 'be.disabled' );
+		cy.get( 'xb-button' ).shadow().find( 'button' ).should( 'be.disabled' );
 	} );
 } );
