@@ -7200,7 +7200,7 @@ __metadata:
     "@welingtonms/xb-icons": "workspace:*"
     "@welingtonms/xb-tokens": "workspace:*"
     "@welingtonms/xb-toolset": "workspace:*"
-    babel-loader: 8.2.5
+    babel-loader: 9.1.0
     cypress: 11.1.0
     lit: 2.4.1
     lit-html: 2.4.0
@@ -8106,7 +8106,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-loader@npm:8.2.5, babel-loader@npm:^8.0.0, babel-loader@npm:^8.2.3":
+"babel-loader@npm:9.1.0":
+  version: 9.1.0
+  resolution: "babel-loader@npm:9.1.0"
+  dependencies:
+    find-cache-dir: ^3.3.2
+    schema-utils: ^4.0.0
+  peerDependencies:
+    "@babel/core": ^7.12.0
+    webpack: ">=5"
+  checksum: 774758febd1e8ca804abcae3b8f65634330dc688837424d0946f06d1386914de43435cce691710fa144eccdf1292cf883439ac3598ce7320916acfaaa2372641
+  languageName: node
+  linkType: hard
+
+"babel-loader@npm:^8.0.0, babel-loader@npm:^8.2.3":
   version: 8.2.5
   resolution: "babel-loader@npm:8.2.5"
   dependencies:
@@ -12509,7 +12522,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"find-cache-dir@npm:^3.3.1":
+"find-cache-dir@npm:^3.3.1, find-cache-dir@npm:^3.3.2":
   version: 3.3.2
   resolution: "find-cache-dir@npm:3.3.2"
   dependencies:

@@ -37,7 +37,7 @@
 		"@storybook/builder-webpack5": "6.5.13",
 		"@storybook/manager-webpack5": "6.5.13",
 		"@storybook/web-components": "6.5.13",
-		"babel-loader": "8.2.5",
+		"babel-loader": "9.1.0",
 		"cypress": "11.1.0",
 		"lit-html": "2.4.0"
 	},
