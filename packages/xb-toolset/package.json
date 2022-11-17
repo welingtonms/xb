@@ -20,6 +20,6 @@
 	"author": "Welington Silva",
 	"license": "MIT",
 	"devDependencies": {
-		"jest": "29.0.3"
+		"jest": "29.3.1"
 	}
 }
