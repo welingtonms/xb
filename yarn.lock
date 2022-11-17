@@ -2128,10 +2128,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cypress/mount-utils@npm:2.1.0":
-  version: 2.1.0
-  resolution: "@cypress/mount-utils@npm:2.1.0"
-  checksum: 8401effa0985c5b1d738f72a82095be0c05431969bb0441e77de88e5e178412b4e802b1cbabf78325275be8fda33cd39e9b7d2cfb0f00a71a9ffc5a84a23231a
+"@cypress/mount-utils@npm:3.0.0":
+  version: 3.0.0
+  resolution: "@cypress/mount-utils@npm:3.0.0"
+  checksum: a2f08feb2f93f5d8bbe8dd0eb63ceed7b216288d3ec3bd2b3ae08eb5cc12ad3dd0ae88e0010cb5d6b65d8d04b2e683d67702fc44b05e805a63e7adf86f267d69
   languageName: node
   linkType: hard
 
@@ -6914,7 +6914,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@welingtonms/xb-wc@workspace:packages/xb-wc"
   dependencies:
-    "@cypress/mount-utils": 2.1.0
+    "@cypress/mount-utils": 3.0.0
     "@floating-ui/dom": 1.0.4
     "@rollup/plugin-replace": 4.0.0
     "@storybook/addon-actions": 6.5.12
@@ -6928,7 +6928,7 @@ __metadata:
     "@welingtonms/xb-tokens": "workspace:*"
     "@welingtonms/xb-toolset": "workspace:*"
     babel-loader: 8.2.5
-    cypress: 10.8.0
+    cypress: 11.1.0
     lit: 2.3.1
     lit-html: 2.3.1
   languageName: unknown
@@ -10236,9 +10236,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:10.8.0":
-  version: 10.8.0
-  resolution: "cypress@npm:10.8.0"
+"cypress@npm:11.1.0":
+  version: 11.1.0
+  resolution: "cypress@npm:11.1.0"
   dependencies:
     "@cypress/request": ^2.88.10
     "@cypress/xvfb": ^1.2.4
@@ -10284,7 +10284,7 @@ __metadata:
     yauzl: ^2.10.0
   bin:
     cypress: bin/cypress
-  checksum: c052690049980e7721e6fca563b724fde839d87d83c1478dfe26ce7d230992717c2c4028e7157bfb39ec274473e51929f49e5aab6a23c2b25cde2a439b1c3cf9
+  checksum: ee0097778cf3cdf3854325cabf19a60a7486d46ae70082034c05b22b203f21ff85a4871c08dadc6641be649a64c739a443dd3f2d6a5ab112fc9ead703e1f1be3
   languageName: node
   linkType: hard
 
