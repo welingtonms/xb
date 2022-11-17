@@ -35,15 +35,6 @@ export class Button extends XBElement {
 			},
 
 			/**
-			 * Aria role
-			 * @type {ButtonAttributes['role']}
-			 */
-			role: {
-				reflect: true,
-				attribute: false,
-			},
-
-			/**
 			 * Should the button be disabled.
 			 * @type {ButtonAttributes['disabled']}
 			 */
@@ -121,7 +112,6 @@ export class Button extends XBElement {
 					sided( 'border', this.borderless )
 				) }
 				?disabled="${ this.disabled }"
-				role="${ this.role }"
 				aria-disabled=${ this.disabled ? 'true' : 'false' }
 			>
 				<slot name="leading"></slot>
@@ -159,7 +149,6 @@ window.customElements.define( 'xb-button', Button );
  * @typedef {Object} ButtonAttributes
  * @property {BorderlessProp} borderless
  * @property {PaddinglessProp} paddingless
- * @property {string} role
  * @property {boolean} disabled
  * @property {ButtonEmphasis} emphasis
  * @property {ButtonSize} size
