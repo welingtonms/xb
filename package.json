@@ -11,7 +11,7 @@
 	"scripts": {
 		"build": "lerna run --ignore=@welingtonms/xb-{demo} build",
 		"release": "lerna run release --stream",
-		"test": "lerna run --ignore=@welingtonms/xb-{demo} test",
+		"test": "lerna run --ignore=demo test",
 		"pkg:wc": "lerna --scope=@welingtonms/xb-wc run",
 		"pkg:tokens": "lerna --scope=@welingtonms/xb-tokens run",
 		"pkg:toolset": "lerna --scope=@welingtonms/xb-toolset run",
