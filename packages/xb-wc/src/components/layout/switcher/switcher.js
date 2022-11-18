@@ -10,6 +10,9 @@ export class SwitcherLayout extends LitElement {
 
 	static get properties() {
 		return {
+			limit: {
+				type: Number,
+			},
 			/**
 			 * Determine borders to be supressed.
 			 * @type {import('../../../common/prop-types').BorderlessProp} borderless
@@ -39,6 +42,7 @@ export class SwitcherLayout extends LitElement {
 
 		this.borderless = 'none';
 		this.paddingless = 'none';
+		this.limit = 4;
 	}
 
 	render() {
@@ -58,6 +62,15 @@ export class SwitcherLayout extends LitElement {
 		// );
 
 		return html`
+			<style>
+				::slotted( *:nth-last-child( n + ${ this.limit } ) ) {
+					flex-basis: 100%;
+				}
+
+				::slotted( *:nth-last-child( n + ${ this.limit } ) ~ * ) {
+					flex-basis: 100%;
+				}
+			</style>
 			<div
 				class=${ classy(
 					'switcher',

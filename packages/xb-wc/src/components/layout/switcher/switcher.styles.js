@@ -45,12 +45,6 @@ function styles() {
 				flex-grow: 1;
 				flex-basis: calc( ( var( --xb-switcher-threshold ) - 100% ) * 999 );
 			}
-
-			/* TODO: how to accept n as a parameter?  */
-			xb-switcher > :nth-last-child( n + 5 ),
-			xb-switcher > :nth-last-child( n + 5 ) ~ * {
-				flex-basis: 100%;
-			}
 		`,
 	];
 }

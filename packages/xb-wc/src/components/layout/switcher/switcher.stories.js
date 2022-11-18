@@ -40,6 +40,12 @@ export default {
 				disable: true,
 			},
 		},
+		limit: {
+			control: {
+				type: 'select',
+				options: [ 3, 4, 5, 6 ],
+			},
+		},
 	},
 	parameters: {
 		docs: {
@@ -56,6 +62,7 @@ export const Playground = ( args ) => html`
 		style=${ style }
 		paddingless=${ args.paddingless }
 		borderless=${ args.borderless }
+		limit=${ args.limit }
 	>
 		<xb-box paddingless="none" borderless="none"
 			>Here is the content from Box 1</xb-box
@@ -66,10 +73,17 @@ export const Playground = ( args ) => html`
 		<xb-box paddingless="none" borderless="none"
 			>Here is the content from Box 3</xb-box
 		>
+		<xb-box paddingless="none" borderless="none"
+			>Here is the content from Box 4</xb-box
+		>
+		<xb-box paddingless="none" borderless="none"
+			>Here is the content from Box 5</xb-box
+		>
 	</xb-switcher>
 `;
 
 Playground.args = {
+	limit: 4,
 	paddingless: 'none',
 	borderless: 'none',
 };
