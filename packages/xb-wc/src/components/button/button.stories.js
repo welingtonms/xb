@@ -70,6 +70,15 @@ export const Playground = ( args ) => html`
 		Button
 		<xb-icon name="star" slot="trailing"></xb-icon>
 	</xb-button>
+	<xb-button
+		as="a"
+		emphasis="text"
+		size=${ args.size }
+		?disabled=${ args.disabled }
+		href="https://www.google.com/"
+	>
+		Link
+	</xb-button>
 `;
 
 Playground.args = {

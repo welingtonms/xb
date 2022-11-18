@@ -20,6 +20,11 @@ function styles() {
 				display: inline-block;
 			}
 
+			:host( [disabled] ) {
+				pointer-events: none;
+				user-select: none;
+			}
+
 			.button {
 				${ transition( [
 					{ property: 'color' },
@@ -55,7 +60,6 @@ function styles() {
 			}
 
 			${ when.disabled( '.button' ) } {
-				cursor: not-allowed;
 				opacity: 0.25;
 			}
 
