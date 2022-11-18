@@ -1,6 +1,7 @@
 import { css } from 'lit';
 
-import { transition, typography } from '../../styles';
+import { transition, typography, m } from '../../styles';
+import token from '../../utils/get-token';
 
 function styles() {
 	return [
@@ -11,6 +12,9 @@ function styles() {
 				${ typography( 'body-1' ) };
 
 				display: inline-flex;
+				align-items: center;
+
+				${ m( token( 'spacing-0' ) ) };
 			}
 
 			.-h-1 {
