@@ -17,4 +17,8 @@
  * @typedef { 'ltr' | 'rtl' | 'auto' } DirProp
  */
 
+/**
+ * @typedef {keyof HTMLElementTagNameMap} HTMLTag
+ */
+
 export default function noop() {}
