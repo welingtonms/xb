@@ -5,9 +5,7 @@ import { unsafeCSS } from 'lit';
  * @param {unknown} padding
  */
 export function pr( padding ) {
-	return unsafeCSS( `
-		padding-inline-end: ${ padding }
-	` );
+	return unsafeCSS( `padding-inline-end: ${ padding }` );
 }
 
 /**
@@ -15,9 +13,7 @@ export function pr( padding ) {
  * @param {unknown} padding
  */
 export function pl( padding ) {
-	return unsafeCSS( `
-		padding-inline-start: ${ padding }
-	` );
+	return unsafeCSS( `padding-inline-start: ${ padding }` );
 }
 
 /**
@@ -36,9 +32,7 @@ export function px( padding ) {
  * @param {unknown} padding
  */
 export function pt( padding ) {
-	return unsafeCSS( `
-		padding-block-start: ${ padding }
-	` );
+	return unsafeCSS( `padding-block-start: ${ padding }` );
 }
 
 /**
@@ -46,9 +40,7 @@ export function pt( padding ) {
  * @param {unknown} padding
  */
 export function pb( padding ) {
-	return unsafeCSS( `
-		padding-block-end: ${ padding }
-	` );
+	return unsafeCSS( `padding-block-end: ${ padding }` );
 }
 
 /**

@@ -5,9 +5,7 @@ import { unsafeCSS } from 'lit';
  * @param {unknown} margin
  */
 export function mr( margin ) {
-	return unsafeCSS( `
-		margin-inline-end: ${ margin }
-	` );
+	return unsafeCSS( `margin-inline-end: ${ margin }` );
 }
 
 /**
@@ -15,9 +13,7 @@ export function mr( margin ) {
  * @param {unknown} margin
  */
 export function ml( margin ) {
-	return unsafeCSS( `
-		margin-inline-start: ${ margin }
-	` );
+	return unsafeCSS( `margin-inline-start: ${ margin }` );
 }
 
 /**
@@ -36,9 +32,7 @@ export function mx( margin ) {
  * @param {unknown} margin
  */
 export function mt( margin ) {
-	return unsafeCSS( `
-		margin-block-start: ${ margin }
-	` );
+	return unsafeCSS( `margin-block-start: ${ margin }` );
 }
 
 /**
@@ -46,9 +40,7 @@ export function mt( margin ) {
  * @param {unknown} margin
  */
 export function mb( margin ) {
-	return unsafeCSS( `
-		margin-block-end: ${ margin }
-	` );
+	return unsafeCSS( `margin-block-end: ${ margin }` );
 }
 
 /**
