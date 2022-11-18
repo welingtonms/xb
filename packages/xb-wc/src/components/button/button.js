@@ -203,13 +203,13 @@ window.customElements.define( 'xb-button', Button );
 
 /**
  * @typedef {Object} ButtonAttributes
- * @property {BorderlessProp} [borderless]
- * @property {PaddinglessProp} [paddingless]
- * @property {boolean} [disabled]
- * @property {ButtonEmphasis} [emphasis]
- * @property {ButtonSize} [size]
- * @property {HTMLTag} [as]
- * @property {'button' | 'submit' | 'reset'} [type]
- * @property {string} [href]
- * @property {'_blank' | '_parent' | '_self' | '_top'} [target]
+ * @property {BorderlessProp} borderless
+ * @property {PaddinglessProp} paddingless
+ * @property {boolean} disabled
+ * @property {ButtonEmphasis} emphasis
+ * @property {ButtonSize} size
+ * @property {HTMLTag} as
+ * @property {'button' | 'submit' | 'reset'} type
+ * @property {string} href
+ * @property {'_blank' | '_parent' | '_self' | '_top'} target
  */
