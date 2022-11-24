@@ -2,7 +2,7 @@ import { css } from 'lit';
 
 import token from '../../utils/get-token';
 import color from '../../utils/get-color-token';
-import { transition, typography, px, py } from '../../styles';
+import { transition, typography, p, m } from '../../styles';
 
 function styles() {
 	return [
@@ -11,6 +11,7 @@ function styles() {
 				position: relative;
 
 				display: inline-flex;
+				flex-direction: column;
 			}
 
 			slot[name='reference']::slotted( * ) {
@@ -25,8 +26,8 @@ function styles() {
 
 				${ typography( 'body-2' ) };
 
-				${ px( token( 'spacing-4' ) ) };
-				${ py( token( 'spacing-2' ) ) };
+				${ p( token( 'spacing-0' ) ) };
+				${ m( token( 'spacing-0' ) ) };
 
 				position: relative;
 
