@@ -53,6 +53,14 @@ export const Playground = ( args ) => html`
 		Button</xb-button
 	>
 	<xb-button
+		emphasis="text"
+		size=${ args.size }
+		?disabled=${ args.disabled }
+		@click=${ args.click }
+	>
+		<xb-icon name="favorite" slot="leading"></xb-icon>
+	</xb-button>
+	<xb-button
 		emphasis="ghost"
 		size=${ args.size }
 		?disabled=${ args.disabled }
@@ -62,12 +70,28 @@ export const Playground = ( args ) => html`
 		Button
 	</xb-button>
 	<xb-button
+		emphasis="ghost"
+		size=${ args.size }
+		?disabled=${ args.disabled }
+		@click=${ args.click }
+	>
+		<xb-icon name="favorite" slot="leading"></xb-icon>
+	</xb-button>
+	<xb-button
 		emphasis="flat"
 		size=${ args.size }
 		?disabled=${ args.disabled }
 		@click=${ args.click }
 	>
 		Button
+		<xb-icon name="star" slot="trailing"></xb-icon>
+	</xb-button>
+	<xb-button
+		emphasis="flat"
+		size=${ args.size }
+		?disabled=${ args.disabled }
+		@click=${ args.click }
+	>
 		<xb-icon name="star" slot="trailing"></xb-icon>
 	</xb-button>
 	<xb-button
