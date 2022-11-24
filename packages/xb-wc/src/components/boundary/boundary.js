@@ -2,6 +2,7 @@ import { html } from 'lit';
 
 import XBElement from '../../common/xb-element';
 import styles from './boundary.styles';
+import Keyboard from '../../common/keyboard';
 
 export class InteractionBoundary extends XBElement {
 	static styles = [ styles() ];
@@ -83,7 +84,10 @@ export class InteractionBoundary extends XBElement {
 
 		if ( isInside && ! this._active ) {
 			this.activate();
-		} else if ( ! isInside && this._active ) {
+		} else if (
+			( ! isInside || Keyboard( e ).is( [ 'ESC' ] ) ) &&
+			this._active
+		) {
 			this.deactivate();
 			this._publish();
 		}
