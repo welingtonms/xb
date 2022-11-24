@@ -7,9 +7,15 @@ import styles from './dropdown.styles';
 
 import '../boundary';
 import '../popover';
+import './dropdown-trigger';
+import './dropdown-menu';
+import './dropdown-item';
 
 export class Dropdown extends XBElement {
 	static styles = [ styles() ];
+
+	/** @type {import('./dropdown-trigger').DropdownTrigger} */
+	_trigger;
 
 	static get properties() {
 		return {
@@ -47,24 +53,54 @@ export class Dropdown extends XBElement {
 
 		/** @type {DropdownAttributes['placement']} */
 		this.placement = 'bottom-start';
+
+		/** @type {DropdownAttributes['disabled']} */
+		this.disabled = false;
+	}
+
+	connectedCallback() {
+		super.connectedCallback();
+
+		this.addEventListener( 'xb-dropdown-trigger', this._handleTriggerEvent );
+	}
+
+	disconnectedCallback() {
+		super.disconnectedCallback();
+
+		this.removeEventListener( 'xb-dropdown-trigger', this._handleTriggerEvent );
+	}
+
+	/**
+	 * @param {import('lit').PropertyValues<ToggleGroup>} changedProperties
+	 */
+	updated( changedProperties ) {
+		super.updated( changedProperties );
+
+		if ( changedProperties.has( 'open' ) ) {
+			const trigger = this._getTrigger();
+			trigger.open = this.open;
+		}
 	}
 
 	render() {
 		return html`
 			<xb-boundary @xb-click-outside=${ this._handleClickOutside }>
 				<xb-popover ?hidden=${ ! this.open }>
-					<xb-button slot="reference" @click=${ this._handleClick }
-						>&hearts;</xb-button
-					>
-					<div slot="floating">
-						Proin facilisis mauris ut tortor vulputate placerat. Nulla ut ligula
-						mattis, sagittis arcu non, venenatis urna. Praesent tincidunt odio
-						vitae luctus aliquet. Morbi nisl ante, ultricies vel fringilla
-						pulvinar, lacinia quis mi. Mauris a lectus quis est feugiat cursus
-						non vel erat. In euismod nibh mi, ac volutpat elit placerat id.
-						Nullam condimentum arcu quis massa consequat, nec sodales est
-						rutrum. Duis nisi est, tempus nec hendrerit vel, lobortis a ante.
-					</div>
+					<!-- <slot name="trigger" slot="reference" @click=${ this
+						._handleClick }> -->
+					<xb-dropdown-trigger
+						slot="reference"
+						@click=${ this._handleClick }
+					></xb-dropdown-trigger>
+					<!-- </slot> -->
+
+					<!-- <slot name="menu" slot="floating"> -->
+					<xb-dropdown-menu slot="floating">
+						<xb-dropdown-item>Change</xb-dropdown-item>
+						<xb-dropdown-item>Accept</xb-dropdown-item>
+						<xb-dropdown-item>Leave</xb-dropdown-item>
+					</xb-dropdown-menu>
+					<!-- </slot> -->
 				</xb-popover>
 			</xb-boundary>
 		`;
@@ -76,16 +112,45 @@ export class Dropdown extends XBElement {
 		}
 
 		this.open = ! this.open;
+	}
 
-		const options = {
-			detail: { value: this.open, type: 'toggle' },
-		};
+	_handleTriggerEvent( event ) {
+		console.log( '[dropdown]', event );
 
-		this.emit( 'xb-dropdown', options );
+		const {
+			detail: { action },
+		} = event;
+
+		switch ( action ) {
+			case 'open':
+			case 'expand':
+				this.open = true;
+				break;
+			case 'close':
+			case 'collapse':
+				this.open = false;
+				break;
+			case 'toggle':
+				this.open = ! this.open;
+				break;
+		}
 	}
 
 	_handleClickOutside() {
 		this.open = false;
+	}
+
+	_getTrigger() {
+		if ( this._trigger ) {
+			return this._trigger;
+		}
+
+		// const [ triggerSlot ] = this.shadowRoot.querySelectorAll( 'slot' );
+		// [ this._trigger ] = triggerSlot.assignedElements( { flatten: true } );
+
+		this._trigger = this.shadowRoot.querySelector( 'xb-dropdown-trigger' );
+
+		return this._trigger;
 	}
 }
 
