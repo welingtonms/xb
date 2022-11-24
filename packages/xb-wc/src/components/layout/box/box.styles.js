@@ -1,6 +1,16 @@
 import { css } from 'lit';
 
-import { m, mx, my, ml, mr, px, py, typography } from '../../../styles';
+import {
+	m,
+	mx,
+	my,
+	ml,
+	mr,
+	px,
+	py,
+	typography,
+	transition,
+} from '../../../styles';
 import color from '../../../utils/get-color-token';
 import layoutStyles from '../../../styles/layout.styles';
 import token from '../../../utils/get-token';
@@ -23,6 +33,15 @@ function styles() {
 			}
 
 			.box {
+				${ transition( [
+					{
+						property: 'background-color',
+					},
+					{
+						property: 'color',
+					},
+				] ) };
+
 				${ px( 'var(--xb-box-padding-x)' ) };
 				${ py( 'var(--xb-box-padding-y)' ) };
 
