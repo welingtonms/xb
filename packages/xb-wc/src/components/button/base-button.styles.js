@@ -18,6 +18,9 @@ function styles() {
 				--xb-button-border-color: ${ color( 'color-white', 0 ) };
 
 				display: inline-block;
+
+				height: var( --xb-button-height );
+				min-width: var( --xb-button-height );
 			}
 
 			:host( [disabled] ) {
@@ -55,8 +58,8 @@ function styles() {
 				color: var( --xb-button-color );
 				border: 1px solid var( --xb-button-border-color );
 
-				height: var( --xb-button-height );
-				min-width: var( --xb-button-height );
+				height: 100%;
+				width: 100%;
 			}
 
 			${ when.disabled( '.button' ) } {
@@ -73,6 +76,10 @@ function styles() {
 				box-shadow: ${ color( 'color-primary-200', 0.3 ) } 5px 5px,
 					${ color( 'color-primary-200', 0.2 ) } 10px 10px,
 					${ color( 'color-primary-200', 0.1 ) } 15px 15px;
+			}
+
+			${ when.active( '.button' ) } {
+				--xb-button-color: ${ color( 'color-gray-500' ) };
 			}
 
 			slot[name='leading']::slotted( * ),
