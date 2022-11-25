@@ -133,11 +133,10 @@ export class Button extends PolymorphicElementMixin( XBElement ) {
 			size: this.size,
 		} );
 
-		const tag = this.getTag();
 		const isLink = this._isLink();
 
 		return html`
-			<${ tag }
+			<${ this.tag }
 				${ ref( this.button ) }
 				class=${ classy(
 					'button',
@@ -169,7 +168,7 @@ export class Button extends PolymorphicElementMixin( XBElement ) {
 				<slot name="leading"></slot>
 				<slot></slot>
 				<slot name="trailing"></slot>
-			</${ tag }>
+			</${ this.tag }>
 		`;
 	}
 

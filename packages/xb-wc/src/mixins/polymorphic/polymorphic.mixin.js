@@ -31,7 +31,7 @@ const PolymorphicElementMixin = ( superClass ) =>
 			this.as = 'span';
 		}
 
-		getTag() {
+		get tag() {
 			return literal`${ unsafeStatic( this.as ) }`;
 		}
 	};

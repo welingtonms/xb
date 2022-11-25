@@ -36,7 +36,7 @@ export class Text extends PolymorphicElementMixin( XBElement ) {
 		const { when, classy } = withClassy( { variant: this.variant } );
 
 		return html`
-			<${ this.getTag() }
+			<${ this.tag }
 				class=${ classy( 'text', {
 					'-body-1': when( { variant: 'body-1' } ),
 					'-body-2': when( { variant: 'body-2' } ),
@@ -54,7 +54,7 @@ export class Text extends PolymorphicElementMixin( XBElement ) {
 				} ) }
 			>
 				<slot></slot>
-			</${ this.getTag() }>
+			</${ this.tag }>
 		`;
 	}
 }
