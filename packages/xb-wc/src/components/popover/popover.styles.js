@@ -19,10 +19,7 @@ function styles() {
 			}
 
 			slot[name='floating']::slotted( * ) {
-				${ transition( [
-					{ property: 'box-shadow' },
-					{ property: 'top', duration: '0.15s' },
-				] ) };
+				${ transition( [ { property: 'box-shadow' } ] ) };
 
 				${ typography( 'body-2' ) };
 
