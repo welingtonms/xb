@@ -1,6 +1,6 @@
 # xb
 
-Welcome to the XB component library.
+Welcome to the XB component library. This is just a playground for practicing web components development.
 
 ## How to develop
 
@@ -15,7 +15,7 @@ yarn install
 To run the `@welingtonms/xb-wc` Storybook, run:
 
 ```bash
-yarn lerna run --scope=@welingtonms/xb-wc dev
+yarn pkg:wc dev
 ```
 
 To run commands only in the affected packages affected:
@@ -38,7 +38,7 @@ nx run build
 
 In the example above, we are running `test` only for the packages affected by any change we have made. Check the command [reference](https://nx.dev/using-nx/affected) for more details.
 
-## How to use
+<!-- ## How to use
 
 The libraries generated from this project are [published through Gitlab](To use the published module), add an _.npmrc_ file to your project.
 
@@ -58,7 +58,7 @@ Or
 
 ```bash
 yarn add --save @welingtonms/xb-wc
-```
+``` -->
 
 ## How to build
 
@@ -68,5 +68,5 @@ yarn lerna run build --scope=@welingtonms/xb-tokens
 
 ## References
 
-- [NPM Workspaces](https://docs.npmjs.com/cli/v8/using-npm/workspaces)
-- [Gitlab with Semanti Release](https://docs.gitlab.com/ee/ci/examples/semantic-release.html)
+- [Yarn Workspaces](https://yarnpkg.com/features/workspaces)
+- [Lerna & Nx](https://lerna.js.org/docs/lerna-and-nx)
