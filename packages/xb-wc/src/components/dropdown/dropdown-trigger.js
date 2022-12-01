@@ -26,6 +26,12 @@ export class DropdownTrigger extends XBElement {
 		super();
 	}
 
+	connectedCallback() {
+		super.connectedCallback();
+
+		this.setAttribute( 'slot', 'trigger' );
+	}
+
 	render() {
 		const { classy, when } = withClassy( { open: this.open } );
 
@@ -36,6 +42,7 @@ export class DropdownTrigger extends XBElement {
 				} ) }"
 				emphasis="flat"
 			>
+				<slot></slot>
 				<xb-icon
 					class=${ classy( 'indicator', {
 						'is-open': when( { open: true } ),
@@ -44,7 +51,6 @@ export class DropdownTrigger extends XBElement {
 					name="expand-more"
 					size="16"
 				></xb-icon>
-				Actions
 			</xb-button>
 		`;
 	}

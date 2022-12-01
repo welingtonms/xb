@@ -54,6 +54,9 @@ export class Dropdown extends XBElement {
 		/** @type {DropdownAttributes['placement']} */
 		this.placement = 'bottom-start';
 
+		/** @type {DropdownAttributes['size']} */
+		this.size = 'medium';
+
 		/** @type {DropdownAttributes['disabled']} */
 		this.disabled = false;
 	}
@@ -86,21 +89,13 @@ export class Dropdown extends XBElement {
 		return html`
 			<xb-boundary @xb-click-outside=${ this._handleClickOutside }>
 				<xb-popover ?hidden=${ ! this.open }>
-					<!-- <slot name="trigger" slot="reference" @click=${ this
-						._handleClick }> -->
-					<xb-dropdown-trigger
+					<slot
+						name="trigger"
 						slot="reference"
 						@click=${ this._handleClick }
-					></xb-dropdown-trigger>
-					<!-- </slot> -->
+					></slot>
 
-					<!-- <slot name="menu" slot="floating"> -->
-					<xb-dropdown-menu slot="floating">
-						<xb-dropdown-item>Change</xb-dropdown-item>
-						<xb-dropdown-item>Accept</xb-dropdown-item>
-						<xb-dropdown-item>Leave</xb-dropdown-item>
-					</xb-dropdown-menu>
-					<!-- </slot> -->
+					<slot name="menu" slot="floating"></slot>
 				</xb-popover>
 			</xb-boundary>
 		`;
@@ -115,8 +110,6 @@ export class Dropdown extends XBElement {
 	}
 
 	_handleTriggerEvent( event ) {
-		console.log( '[dropdown]', event );
-
 		const {
 			detail: { action },
 		} = event;
@@ -145,10 +138,8 @@ export class Dropdown extends XBElement {
 			return this._trigger;
 		}
 
-		// const [ triggerSlot ] = this.shadowRoot.querySelectorAll( 'slot' );
-		// [ this._trigger ] = triggerSlot.assignedElements( { flatten: true } );
-
-		this._trigger = this.shadowRoot.querySelector( 'xb-dropdown-trigger' );
+		const [ triggerSlot ] = this.shadowRoot.querySelectorAll( 'slot' );
+		[ this._trigger ] = triggerSlot.assignedElements( { flatten: true } );
 
 		return this._trigger;
 	}
@@ -158,6 +149,7 @@ window.customElements.define( 'xb-dropdown', Dropdown );
 
 /**
  * @typedef {import('../popover/popover').PopoverPlacement} DropdownPlacement
+ * @typedef {import('../../styles/size.styles').ElementSize} DropdownSize
  */
 
 /**
@@ -165,6 +157,7 @@ window.customElements.define( 'xb-dropdown', Dropdown );
  * @property {DropdownPlacement} [placement] - Dropdown placement.
  * @property {boolean} [open] - Should the dropdown menu be open.
  * @property {boolean} [disabled] - Should the dropdown be disabled.
+ * @property {DropdownSize} size
  */
 
 /**

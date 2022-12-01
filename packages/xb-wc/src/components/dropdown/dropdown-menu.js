@@ -4,8 +4,6 @@ import withClassy from '@welingtonms/classy';
 import XBElement from '../../common/xb-element';
 import styles from './dropdown-menu.styles';
 
-import '../list';
-
 export class DropdownMenu extends XBElement {
 	static styles = [ styles() ];
 
@@ -17,6 +15,12 @@ export class DropdownMenu extends XBElement {
 		super();
 	}
 
+	connectedCallback() {
+		super.connectedCallback();
+
+		this.setAttribute( 'slot', 'menu' );
+	}
+
 	render() {
 		const { classy, when } = withClassy( {} );
 
@@ -25,15 +29,6 @@ export class DropdownMenu extends XBElement {
 				<slot></slot>
 			</xb-stack>
 		`;
-	}
-
-	_handleClick() {
-		const options = {
-			composed: true,
-			detail: { action: 'toggle' },
-		};
-
-		this.emit( 'xb-dropdown-menu', options );
 	}
 }
 
