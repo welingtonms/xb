@@ -1,5 +1,6 @@
 import { html } from 'lit-html';
 
+import { SizeArg } from '../../common/arg-types';
 import Docs from './button.api.mdx';
 import './button';
 
@@ -28,12 +29,7 @@ export default {
 				type: 'boolean',
 			},
 		},
-		size: {
-			control: {
-				type: 'select',
-				options: [ 'small', 'medium', 'large' ],
-			},
-		},
+		size: SizeArg,
 	},
 	parameters: {
 		docs: {

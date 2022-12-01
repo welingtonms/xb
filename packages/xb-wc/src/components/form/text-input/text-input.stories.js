@@ -1,5 +1,6 @@
 import { html } from 'lit-html';
 
+import { SizeArg } from '../../../common/arg-types';
 import Docs from './text-input.api.mdx';
 import './text-input';
 
@@ -24,12 +25,7 @@ export default {
 				disable: true,
 			},
 		},
-		size: {
-			control: {
-				type: 'select',
-				options: [ 'small', 'medium', 'large' ],
-			},
-		},
+		size: SizeArg,
 	},
 	parameters: {
 		docs: {
