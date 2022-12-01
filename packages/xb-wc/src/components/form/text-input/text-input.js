@@ -50,17 +50,14 @@ export class TextInput extends XBElement {
 		return html`
 			<div
 				class=${ classy( 'text-input', {
+					'-extra-small': when( { size: 'extra-small' } ),
 					'-small': when( { size: 'small' } ),
 					'-medium': when( { size: 'medium' } ),
 					'-large': when( { size: 'large' } ),
 				} ) }
 			>
 				<slot name="leading"></slot>
-				<input
-					type="${ this.type }"
-					value="The quick brown fox jumps over the lazy dog"
-					?disabled="${ this.disabled }"
-				/>
+				<input type="${ this.type }" ?disabled="${ this.disabled }" />
 				<slot name="trailing"></slot>
 			</div>
 		`;

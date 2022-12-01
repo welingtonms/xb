@@ -146,6 +146,7 @@ export class Button extends PolymorphicElementMixin( XBElement ) {
 						'-text': when( { emphasis: 'text' } ),
 					},
 					{
+						'-extra-small': when( { size: 'extra-small' } ),
 						'-small': when( { size: 'small' } ),
 						'-medium': when( { size: 'medium' } ),
 						'-large': when( { size: 'large' } ),
