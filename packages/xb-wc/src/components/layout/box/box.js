@@ -1,59 +1,30 @@
 import { html } from 'lit/static-html.js';
 import withClassy from '@welingtonms/classy';
 
-import { converterDirectionFromAttribute } from '../layout.helpers';
 import { sided } from '../../../common/prop-toolset';
 import PolymorphicElementMixin from '../../../mixins/polymorphic';
+import BaseLayout from '../base-layout';
+
 import styles from './box.styles';
-import XBElement from '../../../common/xb-element';
 
 /**
  * @class
  * @mixes PolymorphicElementMixin
  */
-export class BoxLayout extends PolymorphicElementMixin( XBElement ) {
+export class BoxLayout extends BaseLayout {
 	static styles = [ styles() ];
 
 	static get properties() {
-		return {
-			/**
-			 * Determine borders to be supressed.
-			 * @type {BoxAttributes['borderless']}
-			 */
-			borderless: {
-				converter: {
-					fromAttribute: converterDirectionFromAttribute,
-				},
-			},
-
-			/**
-			 * Determine paddings to be supressed.
-			 * @type {BoxAttributes['paddingless']}
-			 */
-			paddingless: {
-				converter: {
-					fromAttribute: converterDirectionFromAttribute,
-				},
-			},
-		};
+		return {};
 	}
 
 	constructor() {
 		super();
-
-		/** @type {BoxAttributes['as']} */
-		this.as = 'div';
-
-		/** @type {BoxAttributes['borderless']} */
-		this.borderless = 'none';
-
-		/** @type {BoxAttributes['paddingless']} */
-		this.paddingless = 'none';
 	}
 
 	render() {
 		const { classy } = withClassy( {} );
-		const tag = this.getTag();
+		const tag = this.tag;
 
 		return html`
 			<${ tag }

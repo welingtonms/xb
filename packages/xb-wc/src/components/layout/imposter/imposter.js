@@ -1,57 +1,42 @@
-import { LitElement, html } from 'lit';
+import { html } from 'lit/static-html.js';
 import withClassy from '@welingtonms/classy';
 
 import { sided } from '../../../common/prop-toolset';
-import { converterDirectionFromAttribute } from '../layout.helpers';
+import PolymorphicElementMixin from '../../../mixins/polymorphic';
+import BaseLayout from '../base-layout';
+
 import styles from './imposter.styles';
 
-export class ClusterLayout extends LitElement {
+/**
+ * @class
+ * @mixes PolymorphicElementMixin
+ */
+export class ClusterLayout extends BaseLayout {
 	static styles = [ styles() ];
 
 	static get properties() {
 		return {
 			/**
 			 * imposter positioning variant.
-			 * @type {ImposterVariant}
+			 * @type {ImposterAttributes['variant']}
 			 */
 			variant: { type: String },
 
 			/**
 			 * Should the imposter breakout of the page content overflow.
-			 * @type {Boolean}
+			 * @type {ImposterAttributes['breakout']}
 			 */
 			breakout: { type: Boolean },
-
-			/**
-			 * Determine borders to be supressed.
-			 * @type {import('../../../common/prop-types').BorderlessProp} borderless
-			 */
-			borderless: {
-				// type: String | Boolean,
-				converter: {
-					fromAttribute: converterDirectionFromAttribute,
-				},
-			},
-
-			/**
-			 * Determine paddings to be supressed.
-			 * @type {import('../../../common/prop-types').PaddinglessProp} paddingless
-			 */
-			paddingless: {
-				// type: String | Boolean,
-				converter: {
-					fromAttribute: converterDirectionFromAttribute,
-				},
-			},
 		};
 	}
 
 	constructor() {
 		super();
 
-		this.borderless = 'none';
-		this.paddingless = 'none';
+		/** @type {ImposterAttributes['variant']} */
 		this.variant = 'absolute';
+
+		/** @type {ImposterAttributes['breakout']} */
 		this.breakout = false;
 	}
 
@@ -60,22 +45,10 @@ export class ClusterLayout extends LitElement {
 			variant: this.variant,
 			breakout: this.breakout,
 		} );
-
-		// console.log(
-		// 	'border:',
-		// 	this.borderless,
-		// 	'padding:',
-		// 	this.paddingless,
-		// 	'|',
-		// 	classy(
-		// 		'xb-imposter',
-		// 		sided( 'border', this.borderless ),
-		// 		sided( 'padding', this.paddingless )
-		// 	)
-		// );
+		const tag = this.tag;
 
 		return html`
-			<div
+			<${ tag }
 				class=${ classy(
 					'imposter',
 					{
@@ -88,20 +61,28 @@ export class ClusterLayout extends LitElement {
 				) }
 			>
 				<slot></slot>
-			</div>
+			</${ tag }>
 		`;
 	}
 }
 
 window.customElements.define( 'xb-imposter', ClusterLayout );
 
-// @ts-ignore
-// declare global {
-//   interface HTMLElementTagNameMap {
-//     "xb-imposter": ClusterLayout;
-//   }
-// }
+/**
+ * @typedef {import('../../../common/prop-types').BorderlessProp} BorderlessProp
+ * @typedef {import('../../../common/prop-types').PaddinglessProp} PaddinglessProp
+ * @typedef {import('../../../common/prop-types').HTMLTag} HTMLTag
+ */
 
 /**
  * @typedef {('absolute' | 'fixed')} ImposterVariant
+ */
+
+/**
+ * @typedef {Object} ImposterAttributes
+ * @property {BorderlessProp} borderless
+ * @property {PaddinglessProp} paddingless
+ * @property {HTMLTag} as
+ * @property {ImposterVariant} variant
+ * @property {boolean} breakout
  */

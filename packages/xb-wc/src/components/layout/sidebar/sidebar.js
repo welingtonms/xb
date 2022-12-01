@@ -1,43 +1,27 @@
-import { LitElement, html } from 'lit';
+import { html } from 'lit/static-html.js';
 import withClassy from '@welingtonms/classy';
 
 import { sided } from '../../../common/prop-toolset';
-import { converterDirectionFromAttribute } from '../layout.helpers';
+import PolymorphicElementMixin from '../../../mixins/polymorphic';
+import BaseLayout from '../base-layout';
+
 import styles from './sidebar.styles';
 
-export class SidebarLayout extends LitElement {
+/**
+ * @class
+ * @mixes PolymorphicElementMixin
+ */
+export class SidebarLayout extends BaseLayout {
 	static styles = [ styles() ];
 
 	static get properties() {
 		return {
 			/**
 			 * Where the side content should be positioned.
-			 * @type {SidePosition}
+			 * @type {SidebarAttributes['sidePosition']}
 			 */
 			sidePosition: {
 				attribute: 'side-position',
-			},
-
-			/**
-			 * Determine borders to be supressed.
-			 * @type {import('../../../common/prop-types').BorderlessProp}
-			 */
-			borderless: {
-				// type: String | Boolean,
-				converter: {
-					fromAttribute: converterDirectionFromAttribute,
-				},
-			},
-
-			/**
-			 * Determine paddings to be supressed.
-			 * @type {import('../../../common/prop-types').PaddinglessProp} paddingless
-			 */
-			paddingless: {
-				// type: String | Boolean,
-				converter: {
-					fromAttribute: converterDirectionFromAttribute,
-				},
 			},
 		};
 	}
@@ -45,29 +29,16 @@ export class SidebarLayout extends LitElement {
 	constructor() {
 		super();
 
-		this.borderless = 'none';
-		this.paddingless = 'none';
+		/** @type {SidebarAttributes['sidePosition']} */
 		this.sidePosition = 'left';
 	}
 
 	render() {
 		const { when, classy } = withClassy( { sidePosition: this.sidePosition } );
-
-		// console.log(
-		// 	'border:',
-		// 	this.borderless,
-		// 	'padding:',
-		// 	this.paddingless,
-		// 	'|',
-		// 	classy(
-		// 		'xb-sidebar',
-		// 		sided( 'border', this.borderless ),
-		// 		sided( 'padding', this.paddingless )
-		// 	)
-		// );
+		const tag = this.tag;
 
 		return html`
-			<div
+			<${ tag }
 				class=${ classy(
 					'sidebar',
 					{
@@ -79,20 +50,27 @@ export class SidebarLayout extends LitElement {
 				) }
 			>
 				<slot></slot>
-			</div>
+			</${ tag }>
 		`;
 	}
 }
 
 window.customElements.define( 'xb-sidebar', SidebarLayout );
 
-// @ts-ignore
-// declare global {
-//   interface HTMLElementTagNameMap {
-//     "xb-sidebar": SidebarLayout;
-//   }
-// }
-
 /**
  * @typedef {'left' | 'right'} SidePosition
+ */
+
+/**
+ * @typedef {import('../../../common/prop-types').BorderlessProp} BorderlessProp
+ * @typedef {import('../../../common/prop-types').PaddinglessProp} PaddinglessProp
+ * @typedef {import('../../../common/prop-types').HTMLTag} HTMLTag
+ */
+
+/**
+ * @typedef {Object} SidebarAttributes
+ * @property {BorderlessProp} borderless
+ * @property {PaddinglessProp} paddingless
+ * @property {HTMLTag} as
+ * @property {SidePosition} sidePosition
  */

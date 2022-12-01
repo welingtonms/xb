@@ -1,64 +1,33 @@
-import { LitElement, html } from 'lit';
+import { html } from 'lit/static-html.js';
 import withClassy from '@welingtonms/classy';
 
 import { sided } from '../../../common/prop-toolset';
-import { converterDirectionFromAttribute } from '../layout.helpers';
+import PolymorphicElementMixin from '../../../mixins/polymorphic';
+import BaseLayout from '../base-layout';
+
 import styles from './center.styles';
 
-export class CenterLayout extends LitElement {
+/**
+ * @class
+ * @mixes PolymorphicElementMixin
+ */
+export class CenterLayout extends BaseLayout {
 	static styles = [ styles() ];
 
 	static get properties() {
-		return {
-			/**
-			 * Determine borders to be supressed.
-			 * @type {import('../../../common/prop-types').BorderlessProp} borderless
-			 */
-			borderless: {
-				// type: String | Boolean,
-				converter: {
-					fromAttribute: converterDirectionFromAttribute,
-				},
-			},
-
-			/**
-			 * Determine paddings to be supressed.
-			 * @type {import('../../../common/prop-types').PaddinglessProp} paddingless
-			 */
-			paddingless: {
-				// type: String | Boolean,
-				converter: {
-					fromAttribute: converterDirectionFromAttribute,
-				},
-			},
-		};
+		return {};
 	}
 
 	constructor() {
 		super();
-
-		this.borderless = 'none';
-		this.paddingless = 'none';
 	}
 
 	render() {
 		const { classy } = withClassy( {} );
-
-		console.log(
-			'border:',
-			this.borderless,
-			'padding:',
-			this.paddingless,
-			'|',
-			classy(
-				'xb-box',
-				sided( 'border', this.borderless ),
-				sided( 'padding', this.paddingless )
-			)
-		);
+		const tag = this.tag;
 
 		return html`
-			<div
+			<${ tag }
 				class=${ classy(
 					'center',
 					sided( 'border', this.borderless ),
@@ -66,16 +35,22 @@ export class CenterLayout extends LitElement {
 				) }
 			>
 				<slot></slot>
-			</div>
+			</${ tag }>
 		`;
 	}
 }
 
 window.customElements.define( 'xb-center', CenterLayout );
 
-// @ts-ignore
-// declare global {
-//   interface HTMLElementTagNameMap {
-//     "xb-center": CenterLayout;
-//   }
-// }
+/**
+ * @typedef {import('../../../common/prop-types').BorderlessProp} BorderlessProp
+ * @typedef {import('../../../common/prop-types').PaddinglessProp} PaddinglessProp
+ * @typedef {import('../../../common/prop-types').HTMLTag} HTMLTag
+ */
+
+/**
+ * @typedef {Object} CenterAttributes
+ * @property {BorderlessProp} borderless
+ * @property {PaddinglessProp} paddingless
+ * @property {HTMLTag} as
+ */

@@ -1,47 +1,28 @@
-import { LitElement, html } from 'lit';
+import { html } from 'lit/static-html.js';
 import { createRef, ref } from 'lit/directives/ref.js';
 import withClassy from '@welingtonms/classy';
 
 import { sided } from '../../../common/prop-toolset';
-import { converterDirectionFromAttribute } from '../layout.helpers';
+import PolymorphicElementMixin from '../../../mixins/polymorphic';
+import BaseLayout from '../base-layout';
+
 import styles from './reel.styles';
 
-export class ReelLayout extends LitElement {
+/**
+ * @class
+ * @mixes PolymorphicElementMixin
+ */
+export class ReelLayout extends BaseLayout {
 	element = createRef();
 
 	static styles = [ styles() ];
 
 	static get properties() {
-		return {
-			/**
-			 * Determine borders to be supressed.
-			 * @type {import('../../../common/prop-types').BorderlessProp} borderless
-			 */
-			borderless: {
-				// type: String | Boolean,
-				converter: {
-					fromAttribute: converterDirectionFromAttribute,
-				},
-			},
-
-			/**
-			 * Determine paddings to be supressed.
-			 * @type {import('../../../common/prop-types').PaddinglessProp} paddingless
-			 */
-			paddingless: {
-				// type: String | Boolean,
-				converter: {
-					fromAttribute: converterDirectionFromAttribute,
-				},
-			},
-		};
+		return {};
 	}
 
 	constructor() {
 		super();
-
-		this.borderless = 'none';
-		this.paddingless = 'none';
 	}
 
 	connectedCallback() {
@@ -86,22 +67,10 @@ export class ReelLayout extends LitElement {
 
 	render() {
 		const { classy } = withClassy( {} );
-
-		// console.log(
-		// 	'border:',
-		// 	this.borderless,
-		// 	'padding:',
-		// 	this.paddingless,
-		// 	'|',
-		// 	classy(
-		// 		'xb-reel',
-		// 		sided( 'border', this.borderless ),
-		// 		sided( 'padding', this.paddingless )
-		// 	)
-		// );
+		const tag = this.tag;
 
 		return html`
-			<div
+			<${ tag }
 				${ ref( this.element ) }
 				class=${ classy(
 					'reel',
@@ -110,16 +79,22 @@ export class ReelLayout extends LitElement {
 				) }
 			>
 				<slot></slot>
-			</div>
+			</${ tag }>
 		`;
 	}
 }
 
 window.customElements.define( 'xb-reel', ReelLayout );
 
-// @ts-ignore
-// declare global {
-//   interface HTMLElementTagNameMap {
-//     "xb-reel": ReelLayout;
-//   }
-// }
+/**
+ * @typedef {import('../../../common/prop-types').BorderlessProp} BorderlessProp
+ * @typedef {import('../../../common/prop-types').PaddinglessProp} PaddinglessProp
+ * @typedef {import('../../../common/prop-types').HTMLTag} HTMLTag
+ */
+
+/**
+ * @typedef {Object} ReelAttributes
+ * @property {BorderlessProp} borderless
+ * @property {PaddinglessProp} paddingless
+ * @property {HTMLTag} as
+ */
