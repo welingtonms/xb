@@ -54,7 +54,7 @@ function styles() {
 				overflow: hidden;
 				text-decoration: none;
 
-				gap: ${ token( 'spacing-1' ) };
+				gap: ${ token( 'spacing-2' ) };
 
 				${ px( token( 'spacing-4' ) ) };
 				${ py( token( 'spacing-1' ) ) };

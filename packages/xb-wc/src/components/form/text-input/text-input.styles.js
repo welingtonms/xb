@@ -39,7 +39,7 @@ function styles() {
 
 				display: flex;
 				flex-flow: row nowrap;
-				gap: ${ token( 'spacing-1' ) };
+				gap: ${ token( 'spacing-2' ) };
 				align-items: center;
 
 				height: var( --xb-text-input-height );
