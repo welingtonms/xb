@@ -1,6 +1,5 @@
 import { unsafeCSS } from 'lit';
 
-import color from '../utils/get-color-token';
 import token from '../utils/get-token';
 import rem from '../utils/rem';
 
@@ -22,7 +21,7 @@ function typography( variant = 'body-1' ) {
 		-moz-osx-font-smoothing: grayscale;
 		-webkit-text-size-adjust: 100%;
 
-		color: ${ color( 'color-gray-700' ) };
+		color: ${ token( 'color-gray-700' ) };
 	` );
 
 	switch ( variant ) {

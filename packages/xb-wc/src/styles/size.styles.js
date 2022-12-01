@@ -12,6 +12,11 @@ function styles( args ) {
 
 	return [
 		css`
+			.-extra-small {
+				${ unsafeCSS( property ) }: 24px;
+				min-width: 24px;
+			}
+
 			.-small {
 				${ unsafeCSS( property ) }: 40px;
 				min-width: 40px;
@@ -38,5 +43,5 @@ export default styles;
  */
 
 /**
- * @typedef {('small' | 'medium' | 'large')} ElementSize
+ * @typedef {('extra-small' | 'small' | 'medium' | 'large')} ElementSize
  */
