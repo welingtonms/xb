@@ -2,14 +2,14 @@ import { html } from 'lit';
 import withClassy from '@welingtonms/classy';
 
 import { CHECK_EVENT } from './radio-group.constants';
-import SelectionManagerMixin from '../../../mixins/selection';
+import SelectionMixin from '../../../mixins/selection';
 import styles from './radio-group.styles';
 import XBElement from '../../../common/xb-element';
 
 import '../../focus-trap';
 import '../../layout/stack';
 
-export class RadioGroup extends SelectionManagerMixin( XBElement, {
+export class RadioGroup extends SelectionMixin( XBElement, {
 	listen: CHECK_EVENT,
 } ) {
 	static styles = [ styles() ];

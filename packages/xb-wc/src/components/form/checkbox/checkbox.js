@@ -98,7 +98,7 @@ export class CheckboxInput extends XBElement {
 				aria-checked="${ this.checked }"
 				?disabled="${ this.disabled }"
 			>
-				<xb-icon class="check" name="check"></xb-icon>
+				<xb-icon name="check" class="check"></xb-icon>
 				<slot name="leading"></slot>
 				<slot></slot>
 				<slot name="trailing"></slot>
