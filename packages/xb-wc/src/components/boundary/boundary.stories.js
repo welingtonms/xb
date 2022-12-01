@@ -6,7 +6,14 @@ import './boundary';
 export default {
 	title: 'Metacomponents/boundary',
 
-	argTypes: {},
+	argTypes: {
+		'click-outside': {
+			action: 'click-outside',
+			table: {
+				disable: true,
+			},
+		},
+	},
 	parameters: {
 		docs: {
 			page: Docs,
@@ -16,11 +23,7 @@ export default {
 
 export const Playground = ( args ) =>
 	html`
-		<xb-boundary
-			@xb-click-outside=${ ( e ) => {
-				console.log( 'Interaction outside boundary', e );
-			} }
-		>
+		<xb-boundary @xb-click-outside=${ args[ 'click-outside' ] }>
 			Proin facilisis mauris ut tortor vulputate placerat. Nulla ut ligula
 			mattis, sagittis arcu non, venenatis urna. Praesent tincidunt odio vitae
 			luctus aliquet. Morbi nisl ante, ultricies vel fringilla pulvinar, lacinia
