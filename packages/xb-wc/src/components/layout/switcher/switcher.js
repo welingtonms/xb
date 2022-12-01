@@ -1,38 +1,27 @@
-import { LitElement, html } from 'lit';
+import { html } from 'lit/static-html.js';
 import withClassy from '@welingtonms/classy';
 
 import { sided } from '../../../common/prop-toolset';
-import { converterDirectionFromAttribute } from '../layout.helpers';
+import PolymorphicElementMixin from '../../../mixins/polymorphic';
+import BaseLayout from '../base-layout';
+
 import styles from './switcher.styles';
 
-export class SwitcherLayout extends LitElement {
+/**
+ * @class
+ * @mixes PolymorphicElementMixin
+ */
+export class SwitcherLayout extends BaseLayout {
 	static styles = [ styles() ];
 
 	static get properties() {
 		return {
-			limit: {
-				type: Number,
-			},
 			/**
 			 * Determine borders to be supressed.
-			 * @type {import('../../../common/prop-types').BorderlessProp} borderless
+			 * @type {SwitcherAttributes['limit']}
 			 */
-			borderless: {
-				// type: String | Boolean,
-				converter: {
-					fromAttribute: converterDirectionFromAttribute,
-				},
-			},
-
-			/**
-			 * Determine paddings to be supressed.
-			 * @type {import('../../../common/prop-types').PaddinglessProp} paddingless
-			 */
-			paddingless: {
-				// type: String | Boolean,
-				converter: {
-					fromAttribute: converterDirectionFromAttribute,
-				},
+			limit: {
+				type: Number,
 			},
 		};
 	}
@@ -40,26 +29,15 @@ export class SwitcherLayout extends LitElement {
 	constructor() {
 		super();
 
-		this.borderless = 'none';
-		this.paddingless = 'none';
+		/**
+		 * @type {SwitcherAttributes['limit']}
+		 */
 		this.limit = 4;
 	}
 
 	render() {
 		const { classy } = withClassy( {} );
-
-		// console.log(
-		// 	'border:',
-		// 	this.borderless,
-		// 	'padding:',
-		// 	this.paddingless,
-		// 	'|',
-		// 	classy(
-		// 		'xb-switcher',
-		// 		sided( 'border', this.borderless ),
-		// 		sided( 'padding', this.paddingless )
-		// 	)
-		// );
+		const tag = this.tag;
 
 		return html`
 			<style>
@@ -71,7 +49,7 @@ export class SwitcherLayout extends LitElement {
 					flex-basis: 100%;
 				}
 			</style>
-			<div
+			<${ tag }
 				class=${ classy(
 					'switcher',
 					sided( 'border', this.borderless ),
@@ -79,16 +57,23 @@ export class SwitcherLayout extends LitElement {
 				) }
 			>
 				<slot></slot>
-			</div>
+			</${ tag }>
 		`;
 	}
 }
 
 window.customElements.define( 'xb-switcher', SwitcherLayout );
 
-// @ts-ignore
-// declare global {
-//   interface HTMLElementTagNameMap {
-//     "xb-switcher": SwitcherLayout;
-//   }
-// }
+/**
+ * @typedef {import('../../../common/prop-types').BorderlessProp} BorderlessProp
+ * @typedef {import('../../../common/prop-types').PaddinglessProp} PaddinglessProp
+ * @typedef {import('../../../common/prop-types').HTMLTag} HTMLTag
+ */
+
+/**
+ * @typedef {Object} SwitcherAttributes
+ * @property {BorderlessProp} borderless
+ * @property {PaddinglessProp} paddingless
+ * @property {HTMLTag} as
+ * @property {number} limit
+ */

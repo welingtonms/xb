@@ -1,10 +1,15 @@
 import { css } from 'lit';
 
-import { when, m, p, px, py, transition, typography } from '../../styles';
-import color from '../../utils/get-color-token';
+import { active, disabled, focused } from '../../styles/state.styles';
+import m from '../../styles/margin.styles';
+import outline from '../../styles/outline.styles';
+import p, { px, py } from '../../styles/padding.styles';
+import token from '../../utils/get-token';
+import transition from '../../styles/transition.styles';
+import typography from '../../styles/typography.styles';
+
 import layoutStyles from '../../styles/layout.styles';
 import sizeStyles from '../../styles/size.styles';
-import token from '../../utils/get-token';
 
 function styles() {
 	return [
@@ -13,11 +18,12 @@ function styles() {
 			:host {
 				--xb-button-height: initial;
 
-				--xb-button-background-color: ${ color( 'color-white', 0 ) };
-				--xb-button-color: ${ color( 'color-gray-600' ) };
-				--xb-button-border-color: ${ color( 'color-white', 0 ) };
+				--xb-button-background-color: ${ token( 'color-white', 0 ) };
+				--xb-button-color: ${ token( 'color-gray-600' ) };
+				--xb-button-border-color: ${ token( 'color-white', 0 ) };
+				--xb-button-outline-color: ${ token( 'color-white', 0 ) };
 
-				display: inline-block;
+				display: inline-flex;
 
 				height: var( --xb-button-height );
 				min-width: var( --xb-button-height );
@@ -25,7 +31,6 @@ function styles() {
 
 			:host( [disabled] ) {
 				pointer-events: none;
-				user-select: none;
 			}
 
 			.button {
@@ -33,7 +38,7 @@ function styles() {
 					{ property: 'color' },
 					{ property: 'background-color' },
 					{ property: 'border-color' },
-					{ property: 'box-shadow' },
+					{ property: 'outline-color' },
 				] ) };
 
 				${ typography( 'button' ) };
@@ -52,46 +57,56 @@ function styles() {
 				gap: ${ token( 'spacing-1' ) };
 
 				${ px( token( 'spacing-4' ) ) };
-				${ py( token( 'spacing-2' ) ) };
+				${ py( token( 'spacing-1' ) ) };
 
 				background-color: var( --xb-button-background-color );
-				color: var( --xb-button-color );
 				border: 1px solid var( --xb-button-border-color );
+				border-radius: 4px;
+
+				color: var( --xb-button-color );
+				--xb-global-color: var( --xb-button-color );
+
+				${ outline( '--xb-button-outline-color' ) };
 
 				height: 100%;
 				width: 100%;
 			}
 
-			${ when.disabled( '.button' ) } {
+			${ disabled( '.button' ) } {
 				opacity: 0.25;
-			}
 
-			/* When disabled, prevent mouse events from bubbling up */
-			${ when.disabled( '.button', '*' ) } {
+				cursor: default;
 				pointer-events: none;
 			}
 
-			${ when.focused( '.button' ) } {
-				outline: none; //1px solid ${ color( 'color-primary-200', 0.85 ) };
-				box-shadow: ${ color( 'color-primary-200', 0.3 ) } 5px 5px,
-					${ color( 'color-primary-200', 0.2 ) } 10px 10px,
-					${ color( 'color-primary-200', 0.1 ) } 15px 15px;
+			/* When disabled, prevent mouse events from bubbling up */
+			${ disabled( '.button' ) } * {
+				pointer-events: none;
+				user-select: none;
 			}
 
-			${ when.active( '.button' ) } {
-				--xb-button-color: ${ color( 'color-gray-500' ) };
+			${ focused( '.button' ) } {
+				--xb-button-outline-color: ${ token( 'color-primary-200', 0.2 ) };
+			}
+
+			${ active( '.button' ) } {
+				--xb-button-color: ${ token( 'color-gray-500' ) };
 			}
 
 			slot[name='leading']::slotted( * ),
 			slot[name='trailing']::slotted( * ) {
-				--xb-global-color: var( --xb-button-color );
-
 				display: inline-flex;
 				align-items: center;
 				justify-content: center;
 
 				${ p( token( 'spacing-0' ) ) };
 				${ m( token( 'spacing-0' ) ) };
+			}
+
+			.-extra-small {
+				${ px( token( 'spacing-1' ) ) };
+
+				font-size: ${ token( 'font-size-xs' ) };
 			}
 
 			.-small {

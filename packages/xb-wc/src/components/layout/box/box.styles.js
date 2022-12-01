@@ -1,19 +1,12 @@
 import { css } from 'lit';
 
-import {
-	m,
-	mx,
-	my,
-	ml,
-	mr,
-	px,
-	py,
-	typography,
-	transition,
-} from '../../../styles';
-import color from '../../../utils/get-color-token';
-import layoutStyles from '../../../styles/layout.styles';
+import { px, py } from '../../../styles/padding.styles';
+import m, { mx, my, mr, ml } from '../../../styles/margin.styles';
 import token from '../../../utils/get-token';
+import transition from '../../../styles/transition.styles';
+import typography from '../../../styles/typography.styles';
+
+import layoutStyles from '../../../styles/layout.styles';
 
 function styles() {
 	return [
@@ -21,7 +14,7 @@ function styles() {
 		css`
 			:host {
 				--xb-box-background-color: initial;
-				--xb-box-border-color: ${ color( 'color-gray-300' ) };
+				--xb-box-border-color: ${ token( 'color-gray-300' ) };
 				--xb-box-border-style: solid;
 				--xb-box-border-width: 1px;
 				--xb-box-color: unset;

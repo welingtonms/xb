@@ -1,8 +1,10 @@
 import { css } from 'lit';
 
+import m from '../../styles/margin.styles';
+import p from '../../styles/padding.styles';
 import token from '../../utils/get-token';
-import color from '../../utils/get-color-token';
-import { transition, typography, p, m } from '../../styles';
+import transition from '../../styles/transition.styles';
+import typography from '../../styles/typography.styles';
 
 function styles() {
 	return [
@@ -34,12 +36,14 @@ function styles() {
 				width: max-content;
 				max-width: 40ch;
 
+				overflow-x: hidden;
+
 				top: var( --xb-popover-top, 0 );
 				left: var( --xb-popover-left, 0 );
 
-				border-radius: 6px;
+				border-radius: 4px;
 
-				background-color: ${ color( 'color-white' ) };
+				background-color: ${ token( 'color-white' ) };
 
 				box-shadow: rgba( 0, 0, 0, 0.1 ) 0px 4px 6px -1px,
 					rgba( 0, 0, 0, 0.06 ) 0px 2px 4px -1px;

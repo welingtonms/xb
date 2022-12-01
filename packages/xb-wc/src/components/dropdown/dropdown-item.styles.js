@@ -1,17 +1,22 @@
 import { css } from 'lit';
 
-import { when, m, p, px, py, transition, typography } from '../../styles';
-import color from '../../utils/get-color-token';
+import { active, disabled, focused, hovered } from '../../styles/state.styles';
+import m from '../../styles/margin.styles';
+import p, { px, py } from '../../styles/padding.styles';
 import token from '../../utils/get-token';
+import transition from '../../styles/transition.styles';
+import typography from '../../styles/typography.styles';
+
+import sizeStyles from '../../styles/size.styles';
 
 function styles() {
 	return [
 		css`
 			:host {
-				--xb-dropdown-item-height: 40px;
+				--xb-dropdown-item-height: initial;
 
-				--xb-dropdown-item-background-color: ${ color( 'color-white', 0 ) };
-				--xb-dropdown-item-color: ${ color( 'color-gray-600' ) };
+				--xb-dropdown-item-background-color: ${ token( 'color-white', 0 ) };
+				--xb-dropdown-item-color: ${ token( 'color-gray-600' ) };
 
 				display: inline-block;
 
@@ -59,24 +64,25 @@ function styles() {
 				width: 100%;
 			}
 
-			${ when.disabled( '.dropdown-menu-item' ) } {
+			${ disabled( '.dropdown-menu-item' ) } {
 				opacity: 0.25;
 			}
 
 			/* When disabled, prevent mouse events from bubbling up */
-			${ when.disabled( '.dropdown-menu-item', '*' ) } {
+			${ disabled( '.dropdown-menu-item' ) } * {
 				pointer-events: none;
 			}
 
-			${ when.hovered( '.dropdown-menu-item' ) },
-			${ when.focused( '.dropdown-menu-item' ) } {
-				--xb-dropdown-item-background-color: ${ color( 'color-gray-200' ) };
-				--xb-dropdown-item-color: ${ color( 'color-gray-700' ) };
+			${ hovered( '.dropdown-menu-item' ) },
+			${ focused( '.dropdown-menu-item' ) } {
+				--xb-dropdown-item-background-color: ${ token( 'color-gray-200' ) };
+				--xb-dropdown-item-color: ${ token( 'color-gray-700' ) };
+
 				outline: none;
 			}
 
-			${ when.active( '.dropdown-menu-item' ) } {
-				--xb-dropdown-item-color: ${ color( 'color-gray-500' ) };
+			${ active( '.dropdown-menu-item' ) } {
+				--xb-dropdown-item-color: ${ token( 'color-gray-500' ) };
 			}
 
 			slot[name='leading']::slotted( * ),
@@ -91,6 +97,7 @@ function styles() {
 				${ m( token( 'spacing-0' ) ) };
 			}
 		`,
+		sizeStyles( '--xb-dropdown-item-height' ),
 	];
 }
 

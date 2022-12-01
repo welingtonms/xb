@@ -1,8 +1,7 @@
 import { css } from 'lit';
 
+import { px } from '../../styles/padding.styles';
 import token from '../../utils/get-token';
-import color from '../../utils/get-color-token';
-import { transition, px } from '../../styles';
 
 function styles() {
 	return [
@@ -40,18 +39,18 @@ function styles() {
 				width: 0;
 				height: var( --xb-spinner-height );
 
-				background-color: ${ color( 'color-primary-100' ) };
+				background-color: ${ token( 'color-primary-100' ) };
 				background-image: linear-gradient(
 					90deg,
-					${ color( 'color-primary-100' ) } 0%,
-					${ color( 'color-secondary-100' ) } 100%
+					${ token( 'color-primary-100' ) } 0%,
+					${ token( 'color-secondary-100' ) } 100%
 				);
 
 				background-size: 400% 400%;
 
-				filter: progid:dximagetransform.microsoft.gradient(startColorstr="${ color(
+				filter: progid:dximagetransform.microsoft.gradient(startColorstr="${ token(
 					'color-primary-100'
-				) }",endColorstr="${ color( 'color-secondary-100' ) }",GradientType=1);
+				) }",endColorstr="${ token( 'color-secondary-100' ) }",GradientType=1);
 				animation: borealis-bar 2s ease infinite;
 			}
 

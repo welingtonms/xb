@@ -1,6 +1,6 @@
 import { css } from 'lit';
 
-import { when, m, p, px, py, transition, typography } from '../../styles';
+import transition from '../../styles/transition.styles';
 
 function styles() {
 	return [

@@ -103,7 +103,7 @@ export class Popover extends XBElement {
 		computePosition( reference, floating, {
 			strategy,
 			placement,
-			middleware: [ offset( 6 ), flip(), shift() ],
+			middleware: [ offset( 4 ), flip(), shift() ],
 		} ).then( ( { x, y } ) => {
 			floating.style.setProperty( '--xb-popover-left', `${ x }px` );
 			floating.style.setProperty( '--xb-popover-top', `${ y }px` );

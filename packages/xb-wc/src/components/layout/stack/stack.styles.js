@@ -1,9 +1,11 @@
 import { css } from 'lit';
 
-import { m, px, py, typography } from '../../../styles';
-import color from '../../../utils/get-color-token';
-import layoutStyles from '../../../styles/layout.styles';
+import { px, py } from '../../../styles/padding.styles';
+import m from '../../../styles/margin.styles';
 import token from '../../../utils/get-token';
+import typography from '../../../styles/typography.styles';
+
+import layoutStyles from '../../../styles/layout.styles';
 
 function styles() {
 	return [
@@ -12,7 +14,7 @@ function styles() {
 			:host {
 				--xb-stack-align: flex-start;
 				--xb-stack-background-color: initial;
-				--xb-stack-border-color: ${ color( 'color-gray-300' ) };
+				--xb-stack-border-color: ${ token( 'color-gray-300' ) };
 				--xb-stack-border-style: none;
 				--xb-stack-border-width: 1px;
 				--xb-stack-color: unset;

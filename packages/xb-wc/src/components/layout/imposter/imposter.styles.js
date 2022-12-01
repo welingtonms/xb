@@ -1,9 +1,11 @@
 import { css } from 'lit';
 
-import { m, mx, px, py, typography } from '../../../styles';
-import color from '../../../utils/get-color-token';
-import layoutStyles from '../../../styles/layout.styles';
+import { px, py } from '../../../styles/padding.styles';
+import m from '../../../styles/margin.styles';
 import token from '../../../utils/get-token';
+import typography from '../../../styles/typography.styles';
+
+import layoutStyles from '../../../styles/layout.styles';
 
 function styles() {
 	return [
@@ -11,7 +13,7 @@ function styles() {
 		css`
 			:host {
 				--xb-imposter-background-color: initial;
-				--xb-imposter-border-color: ${ color( 'color-gray-300' ) };
+				--xb-imposter-border-color: ${ token( 'color-gray-300' ) };
 				--xb-imposter-border-style: none;
 				--xb-imposter-border-width: 1px;
 				--xb-imposter-color: unset;

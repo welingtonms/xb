@@ -5,7 +5,6 @@ import withClassy from '@welingtonms/classy';
 import XBElement from '../../common/xb-element';
 import styles from './spinner.styles';
 
-// this.hostElement.innerHTML !== '';
 export class Spinner extends XBElement {
 	element = createRef();
 

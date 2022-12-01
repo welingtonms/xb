@@ -1,11 +1,17 @@
 import { css } from 'lit';
 
-import { transition, typography, m } from '../../styles';
+import m from '../../styles/margin.styles';
 import token from '../../utils/get-token';
+import transition from '../../styles/transition.styles';
+import typography from '../../styles/typography.styles';
 
 function styles() {
 	return [
 		css`
+			:host {
+				--xb-text-color: ${ token( 'color-gray-700' ) };
+			}
+
 			.text {
 				${ transition( [ { property: 'color' } ] ) };
 
@@ -15,6 +21,8 @@ function styles() {
 				align-items: center;
 
 				${ m( token( 'spacing-0' ) ) };
+
+				color: var( --xb-text-color );
 			}
 
 			.-h-1 {

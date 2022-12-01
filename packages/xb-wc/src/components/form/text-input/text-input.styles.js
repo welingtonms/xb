@@ -1,15 +1,31 @@
 import { css } from 'lit';
 
-import { when, transition, px, py, p, m, typography } from '../../../styles';
-import sizeStyles from '../../../styles/size.styles';
-import color from '../../../utils/get-color-token';
+import {
+	active,
+	disabled,
+	focused,
+	hovered,
+} from '../../../styles/state.styles';
+import m from '../../../styles/margin.styles';
+import outline from '../../../styles/outline.styles';
+import p, { px, py } from '../../../styles/padding.styles';
 import token from '../../../utils/get-token';
+import transition from '../../../styles/transition.styles';
+import typography from '../../../styles/typography.styles';
+
+import sizeStyles from '../../../styles/size.styles';
 
 function styles() {
 	return [
 		css`
 			:host {
 				--xb-text-input-height: initial;
+				--xb-text-input-border-color: ${ token( 'color-gray-400' ) };
+				--xb-text-input-outline-color: ${ token( 'color-white', 0 ) };
+			}
+
+			:host( [disabled] ) {
+				pointer-events: none;
 			}
 
 			.text-input {
@@ -17,7 +33,6 @@ function styles() {
 					{ property: 'color' },
 					{ property: 'background-color' },
 					{ property: 'border-color' },
-					{ property: 'box-shadow' },
 				] ) };
 
 				${ typography( 'body-2' ) };
@@ -28,21 +43,21 @@ function styles() {
 				align-items: center;
 
 				height: var( --xb-text-input-height );
-				background-color: ${ color( 'color-white' ) };
-				border: 1px solid;
+				background-color: ${ token( 'color-white' ) };
+				border: 1px solid var( --xb-text-input-border-color );
+				border-radius: 4px;
 
 				${ px( token( 'spacing-2' ) ) };
 				${ py( token( 'spacing-0' ) ) };
 
 				box-sizing: border-box;
 				width: 100%;
+
+				${ outline( '--xb-text-input-outline-color' ) };
 			}
 
-			${ when.focused( '.text-input' ) } {
-				outline: none; //1px solid ${ color( 'color-primary-200', 0.85 ) };
-				box-shadow: ${ color( 'color-primary-200', 0.3 ) } 5px 5px,
-					${ color( 'color-primary-200', 0.2 ) } 10px 10px,
-					${ color( 'color-primary-200', 0.1 ) } 15px 15px;
+			${ focused( '.text-input' ) } {
+				--xb-text-input-outline-color: ${ token( 'color-primary-200', 0.2 ) };
 			}
 
 			input {
@@ -60,19 +75,17 @@ function styles() {
 				box-sizing: border-box;
 			}
 
-			${ when.disabled( 'input' ) } {
-				cursor: not-allowed;
+			${ disabled( 'input' ) } {
 				opacity: 0.25;
-			}
 
-			/* When disabled, prevent mouse events from bubbling up */
-			${ when.disabled( '.text-input', '*' ) } {
+				cursor: default;
 				pointer-events: none;
 			}
 
-			slot[name='leading']::slotted( * ),
-			slot[name='trailing']::slotted( * ) {
-				display: none;
+			/* When disabled, prevent mouse events from bubbling up */
+			${ disabled( '.text-input' ) } * {
+				pointer-events: none;
+				user-select: none;
 			}
 
 			slot[name='leading']::slotted( span ),
@@ -85,29 +98,37 @@ function styles() {
 				${ m( token( 'spacing-0' ) ) };
 			}
 
-			${ when.hovered( '.text-input' ) } {
-				border-color: ${ color( 'color-primary-300' ) };
+			${ hovered( '.text-input' ) } {
+				--xb-text-input-border-color: ${ token( 'color-gray-500' ) };
 			}
 
-			${ when.active( '.text-input' ) },
-			${ when.focused( '.text-input' ) } {
-				border-color: ${ color( 'color-primary-500' ) };
+			${ active( '.text-input' ) },
+			${ focused( '.text-input' ) } {
+				--xb-text-input-border-color: ${ token( 'color-primary-400' ) };
+			}
+
+			.-extra-small {
+				${ px( token( 'spacing-1' ) ) };
+
+				font-size: ${ token( 'font-size-xs' ) };
 			}
 
 			.-small {
 				${ px( token( 'spacing-2' ) ) };
 
-				/* font-size: ${ token( 'font-size-sm' ) }; */
+				font-size: ${ token( 'font-size-sm' ) };
 			}
 
 			.-medium {
 				--xb-text-input-height: 56px;
-				/* font-size: ${ token( 'font-size-sm' ) }; */
+
+				font-size: ${ token( 'font-size-sm' ) };
 			}
 
 			.-large {
 				--xb-text-input-height: 72px;
-				/* font-size: ${ token( 'font-size-base' ) }; */
+
+				font-size: ${ token( 'font-size-base' ) };
 			}
 
 			.-large input {

@@ -1,9 +1,8 @@
 import { css } from 'lit';
 
-import { when } from '../../styles';
-import baseButtonStyles from '../button/base-button.styles';
-import color from '../../utils/get-color-token';
+import { active, hovered } from '../../styles/state.styles';
 import token from '../../utils/get-token';
+import baseButtonStyles from '../button/base-button.styles';
 
 function styles() {
 	return [
@@ -16,46 +15,46 @@ function styles() {
 			/* .toggle[role='radio']:before {
 				content: '';
 				width: 1px;
-				background-color: ${ color( 'color-secondary-600' ) };
+				background-color: ${ token( 'color-secondary-600' ) };
 				height: 60%;
 				left: 0px;
 				position: absolute;
 			} */
 
 			[aria-checked='false'] {
-				--xb-button-background-color: ${ color( 'color-white', 0 ) };
-				--xb-button-border-color: ${ color( 'color-white', 0 ) };
-				--xb-button-color: ${ color( 'color-primary-500' ) };
+				--xb-button-background-color: ${ token( 'color-white', 0 ) };
+				--xb-button-border-color: ${ token( 'color-white', 0 ) };
+				--xb-button-color: ${ token( 'color-primary-500' ) };
 			}
 
-			${ when.hovered( '[aria-checked="false"]' ) } {
-				--xb-button-background-color: ${ color( 'color-white', 0 ) };
-				--xb-button-border-color: ${ color( 'color-white', 0 ) };
-				--xb-button-color: ${ color( 'color-secondary-500' ) };
+			${ hovered( '[aria-checked="false"]' ) } {
+				--xb-button-background-color: ${ token( 'color-white', 0 ) };
+				--xb-button-border-color: ${ token( 'color-white', 0 ) };
+				--xb-button-color: ${ token( 'color-secondary-500' ) };
 			}
 
-			${ when.active( '[aria-checked="false"]' ) } {
-				--xb-button-background-color: ${ color( 'color-white', 0 ) };
-				--xb-button-border-color: ${ color( 'color-white', 0 ) };
-				--xb-button-color: ${ color( 'color-secondary-300' ) };
+			${ active( '[aria-checked="false"]' ) } {
+				--xb-button-background-color: ${ token( 'color-white', 0 ) };
+				--xb-button-border-color: ${ token( 'color-white', 0 ) };
+				--xb-button-color: ${ token( 'color-secondary-300' ) };
 			}
 
 			[aria-checked='true'] {
-				--xb-button-background-color: ${ color( 'color-primary-500' ) };
-				--xb-button-border-color: ${ color( 'color-primary-500' ) };
-				--xb-button-color: ${ color( 'color-white' ) };
+				--xb-button-background-color: ${ token( 'color-primary-500' ) };
+				--xb-button-border-color: ${ token( 'color-primary-500' ) };
+				--xb-button-color: ${ token( 'color-white' ) };
 			}
 
-			${ when.hovered( '[aria-checked="true"]' ) } {
-				--xb-button-background-color: ${ color( 'color-secondary-500' ) };
-				--xb-button-border-color: ${ color( 'color-secondary-500' ) };
-				--xb-button-color: ${ color( 'color-white' ) };
+			${ hovered( '[aria-checked="true"]' ) } {
+				--xb-button-background-color: ${ token( 'color-secondary-500' ) };
+				--xb-button-border-color: ${ token( 'color-secondary-500' ) };
+				--xb-button-color: ${ token( 'color-white' ) };
 			}
 
-			${ when.active( '[aria-checked="true"]' ) } {
-				--xb-button-background-color: ${ color( 'color-secondary-300' ) };
-				--xb-button-border-color: ${ color( 'color-secondary-300' ) };
-				--xb-button-color: ${ color( 'color-white' ) };
+			${ active( '[aria-checked="true"]' ) } {
+				--xb-button-background-color: ${ token( 'color-secondary-300' ) };
+				--xb-button-border-color: ${ token( 'color-secondary-300' ) };
+				--xb-button-color: ${ token( 'color-white' ) };
 			}
 		`,
 		css`

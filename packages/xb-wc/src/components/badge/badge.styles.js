@@ -1,19 +1,23 @@
 import { css } from 'lit';
 
+import { px, py } from '../../styles/padding.styles';
 import token from '../../utils/get-token';
-import color from '../../utils/get-color-token';
-import { transition, typography, px, py } from '../../styles';
+import transition from '../../styles/transition.styles';
+import typography from '../../styles/typography.styles';
 
 function styles() {
 	return [
 		css`
 			:host {
-				--xb-badge-color: ${ color( 'color-white' ) };
-				--xb-badge-background-color: ${ color( 'color-gray-600' ) };
+				--xb-badge-color: ${ token( 'color-white' ) };
+				--xb-badge-background-color: ${ token( 'color-gray-600' ) };
 			}
 
 			.badge {
-				${ transition( [ { property: 'background-color' }, { property: 'color' } ] ) };
+				${ transition( [
+					{ property: 'background-color' },
+					{ property: 'color' },
+				] ) };
 
 				${ typography( 'caption' ) };
 				${ px( token( 'spacing-4' ) ) };
@@ -32,16 +36,16 @@ function styles() {
 			}
 
 			.-primary {
-				--xb-badge-background-color: ${ color( 'color-primary-100' ) };
+				--xb-badge-background-color: ${ token( 'color-primary-100' ) };
 			}
 
 			.-secondary {
-				--xb-badge-background-color: ${ color( 'color-secondary-500' ) };
+				--xb-badge-background-color: ${ token( 'color-secondary-500' ) };
 			}
 
 			.-terciary {
-				--xb-badge-background-color: ${ color( 'color-terciary-500' ) };
-				--xb-badge-color: ${ color( 'color-black' ) };
+				--xb-badge-background-color: ${ token( 'color-terciary-500' ) };
+				--xb-badge-color: ${ token( 'color-black' ) };
 			}
 		`,
 	];

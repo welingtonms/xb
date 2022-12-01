@@ -1,5 +1,6 @@
 import { html } from 'lit-html';
 
+import { PlacementArg } from '../../common/arg-types';
 import Docs from './popover.api.mdx';
 import './popover';
 import '../icon';
@@ -8,7 +9,7 @@ export default {
 	title: 'Components/popover',
 
 	argTypes: {
-		// backgroundColor: { control: 'color' },
+		placement: PlacementArg,
 		variant: {
 			control: {
 				type: 'select',
