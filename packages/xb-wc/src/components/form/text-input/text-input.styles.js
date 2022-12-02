@@ -22,6 +22,7 @@ function styles() {
 				--xb-text-input-height: initial;
 				--xb-text-input-border-color: ${ token( 'color-gray-400' ) };
 				--xb-text-input-outline-color: ${ token( 'color-white', 0 ) };
+				--xb-text-placeholder-color: ${ token( 'color-gray-400' ) };
 			}
 
 			:host( [disabled] ) {
@@ -73,6 +74,10 @@ function styles() {
 				${ py( token( 'spacing-2' ) ) };
 
 				box-sizing: border-box;
+			}
+
+			input::placeholder {
+				color: var( --xb-text-placeholder-color );
 			}
 
 			${ disabled( 'input' ) } {

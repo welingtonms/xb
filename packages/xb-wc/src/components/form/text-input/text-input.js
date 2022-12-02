@@ -28,6 +28,24 @@ export class TextInput extends XBElement {
 			 * @type {TextInputAttributes['size']}
 			 */
 			size: { type: String },
+
+			/**
+			 * Input value.
+			 * @type {TextInputAttributes['value']}
+			 */
+			value: {
+				type: String,
+				reflect: true,
+			},
+
+			/**
+			 * Placeholder value.
+			 * @type {TextInputAttributes['placeholder']}
+			 */
+			placeholder: {
+				type: String,
+				reflect: true,
+			},
 		};
 	}
 
@@ -42,6 +60,12 @@ export class TextInput extends XBElement {
 
 		/** @type {TextInputAttributes['size']} */
 		this.size = 'small';
+
+		/** @type {TextInputAttributes['value']} */
+		this.value = '';
+
+		/** @type {TextInputAttributes['placeholder']} */
+		this.placeholder = '';
 	}
 
 	render() {
@@ -57,7 +81,12 @@ export class TextInput extends XBElement {
 				} ) }
 			>
 				<slot name="leading"></slot>
-				<input type="${ this.type }" ?disabled="${ this.disabled }" />
+				<input
+					type="${ this.type }"
+					?disabled="${ this.disabled }"
+					value="${ this.value }"
+					placeholder="${ this.placeholder }"
+				/>
 				<slot name="trailing"></slot>
 			</div>
 		`;
@@ -76,4 +105,6 @@ window.customElements.define( 'xb-text-input', TextInput );
  * @property {TextInputType} type
  * @property {boolean} disabled
  * @property {ButtonSize} size
+ * @property {string} value
+ * @property {string} placeholder
  */
