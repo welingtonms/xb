@@ -31,7 +31,7 @@ export default class XBElement extends LitElement {
 		const event = new CustomEvent( name, {
 			bubbles: true,
 			cancelable: true,
-			composed: false,
+			composed: true,
 			detail: {},
 			...options,
 		} );
