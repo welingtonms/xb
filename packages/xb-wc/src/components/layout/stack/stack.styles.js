@@ -22,9 +22,11 @@ function styles() {
 				--xb-stack-justify: flex-start;
 				--xb-stack-padding-x: ${ token( 'spacing-2' ) };
 				--xb-stack-padding-y: ${ token( 'spacing-2' ) };
+				--xb-stack-min-width: initial;
 
 				${ m( token( 'spacing-0' ) ) };
 
+				min-width: var( --xb-stack-min-width );
 				width: 100%;
 			}
 
@@ -36,12 +38,14 @@ function styles() {
 				flex-direction: column;
 				justify-content: var( --xb-stack-justify );
 				align-items: var( --xb-stack-align );
-				/* gap: var( --xb-stack-gap ); */
+				gap: var( --xb-stack-gap );
 
 				border: var( --xb-stack-border-width ) var( --xb-stack-border-style )
 					var( --xb-stack-border-color );
 				color: var( --xb-stack-color );
 				background-color: var( --xb-stack-background-color );
+
+				min-width: var( --xb-stack-min-width );
 			}
 
 			::slotted( * ) {
