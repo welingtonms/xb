@@ -45,6 +45,12 @@ PERFORMANCE OF THIS SOFTWARE.
  */
 
 /**
+ * @license
+ * Copyright 2021 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+/**
  * @license React
  * react.production.min.js
  *
