@@ -21,10 +21,9 @@ function styles() {
 	return [
 		css`
 			:host {
-				--xb-select-option-height: initial;
-
 				--xb-select-option-background-color: ${ token( 'color-white', 0 ) };
 				--xb-select-option-color: ${ token( 'color-gray-600' ) };
+				--xb-select-option-height: initial;
 
 				display: inline-block;
 

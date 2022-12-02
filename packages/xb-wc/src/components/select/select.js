@@ -174,7 +174,10 @@ export class Select extends SelectionMixin( XBElement, {
 			trigger.placeholder =
 				selectedOption?.getTextLabel() ?? trigger.placeholder;
 		} else {
-			trigger.placeholder = `${ controller.selection.size } selected`;
+			trigger.placeholder =
+				controller.selection.size > 0
+					? `${ controller.selection.size } selected`
+					: trigger.placeholder;
 		}
 	}
 
