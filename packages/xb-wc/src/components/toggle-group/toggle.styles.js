@@ -21,40 +21,43 @@ function styles() {
 				position: absolute;
 			} */
 
-			[aria-checked='false'] {
+			.toggle[aria-checked='false'] {
 				--xb-button-background-color: ${ token( 'color-white', 0 ) };
 				--xb-button-border-color: ${ token( 'color-white', 0 ) };
 				--xb-button-color: ${ token( 'color-primary-500' ) };
 			}
 
-			${ hovered( '[aria-checked="false"]' ) } {
+			${ hovered( '.toggle[aria-checked="false"]' ) } {
 				--xb-button-background-color: ${ token( 'color-white', 0 ) };
 				--xb-button-border-color: ${ token( 'color-white', 0 ) };
 				--xb-button-color: ${ token( 'color-secondary-500' ) };
 			}
 
-			${ active( '[aria-checked="false"]' ) } {
+			${ active( '.toggle[aria-checked="false"]' ) } {
 				--xb-button-background-color: ${ token( 'color-white', 0 ) };
 				--xb-button-border-color: ${ token( 'color-white', 0 ) };
 				--xb-button-color: ${ token( 'color-secondary-300' ) };
+				--xb-button-outline-color: ${ token( 'color-secondary-500', 0.2 ) };
 			}
 
-			[aria-checked='true'] {
+			.toggle[aria-checked='true'] {
 				--xb-button-background-color: ${ token( 'color-primary-500' ) };
 				--xb-button-border-color: ${ token( 'color-primary-500' ) };
 				--xb-button-color: ${ token( 'color-white' ) };
 			}
 
-			${ hovered( '[aria-checked="true"]' ) } {
+			${ hovered( '.toggle[aria-checked="true"]' ) } {
 				--xb-button-background-color: ${ token( 'color-secondary-500' ) };
 				--xb-button-border-color: ${ token( 'color-secondary-500' ) };
 				--xb-button-color: ${ token( 'color-white' ) };
+				--xb-button-outline-color: ${ token( 'color-secondary-500', 0.2 ) };
 			}
 
-			${ active( '[aria-checked="true"]' ) } {
+			${ active( '.toggle[aria-checked="true"]' ) } {
 				--xb-button-background-color: ${ token( 'color-secondary-300' ) };
 				--xb-button-border-color: ${ token( 'color-secondary-300' ) };
 				--xb-button-color: ${ token( 'color-white' ) };
+				--xb-button-outline-color: ${ token( 'color-secondary-500', 0.2 ) };
 			}
 		`,
 		css`

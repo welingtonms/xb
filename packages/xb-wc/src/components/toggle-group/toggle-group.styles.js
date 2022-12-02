@@ -12,6 +12,7 @@ function styles() {
 				--xb-cluster-border-style: solid;
 				--xb-cluster-padding-x: 2px;
 				--xb-cluster-padding-y: 2px;
+				--xb-cluster-border-radius: 4px;
 
 				${ transition( [ { property: 'border-color' } ] ) };
 			}
