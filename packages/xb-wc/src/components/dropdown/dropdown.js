@@ -1,6 +1,4 @@
 import { html } from 'lit';
-import { createRef, ref } from 'lit/directives/ref.js';
-import { ifDefined } from 'lit/directives/if-defined.js';
 
 import XBElement from '../../common/xb-element';
 import styles from './dropdown.styles';
@@ -64,13 +62,15 @@ export class Dropdown extends XBElement {
 	connectedCallback() {
 		super.connectedCallback();
 
-		this.addEventListener( 'xb-dropdown', this._handleEvent );
+		this.addEventListener( 'xb-dropdown', this._handleDropdownEvent );
+		this.addEventListener( 'xb-select', this._handleMenuEvent );
 	}
 
 	disconnectedCallback() {
 		super.disconnectedCallback();
 
-		this.removeEventListener( 'xb-dropdown', this._handleEvent );
+		this.removeEventListener( 'xb-dropdown', this._handleDropdownEvent );
+		this.removeEventListener( 'xb-select', this._handleMenuEvent );
 	}
 
 	/**
@@ -101,15 +101,35 @@ export class Dropdown extends XBElement {
 		`;
 	}
 
+	expand() {
+		this.open = true;
+	}
+
+	collapse() {
+		this.open = false;
+	}
+
+	toggle() {
+		this.open = ! this.open;
+	}
+
 	_handleClick() {
 		if ( this.disabled ) {
 			return;
 		}
 
-		this.open = ! this.open;
+		this.toggle();
 	}
 
-	_handleEvent( event ) {
+	_handleMenuEvent( event ) {
+		event.stopPropagation();
+
+		this.collapse();
+
+		this.emit( 'xb-click', { detail: event.detail } );
+	}
+
+	_handleDropdownEvent( event ) {
 		const {
 			detail: { action },
 		} = event;
@@ -117,20 +137,20 @@ export class Dropdown extends XBElement {
 		switch ( action ) {
 			case 'open':
 			case 'expand':
-				this.open = true;
+				this.expand();
 				break;
 			case 'close':
 			case 'collapse':
-				this.open = false;
+				this.collapse();
 				break;
 			case 'toggle':
-				this.open = ! this.open;
+				this.toggle();
 				break;
 		}
 	}
 
 	_handleClickOutside() {
-		this.open = false;
+		this.collapse();
 	}
 
 	_getTrigger() {

@@ -1,18 +1,21 @@
 import { html } from 'lit';
+import { createRef, ref } from 'lit/directives/ref.js';
 
-import { SELECT_EVENT } from './select.constants';
 import SelectionMixin from '../../mixins/selection';
 import XBElement from '../../common/xb-element';
 
 import '../dropdown';
+import '../menu';
 
 import './select-trigger';
 import './select-menu';
 import './select-option';
 
 export class Select extends SelectionMixin( XBElement, {
-	listen: SELECT_EVENT,
+	listen: 'xb-select',
 } ) {
+	dropdown = createRef();
+
 	/** @type {HTMLSlotElement} */
 	_defaultSlot;
 
@@ -98,6 +101,18 @@ export class Select extends SelectionMixin( XBElement, {
 		this.role = 'radiogroup';
 	}
 
+	connectedCallback() {
+		super.connectedCallback();
+
+		this.addEventListener( 'xb-select', this._handleMenuEvent );
+	}
+
+	disconnectedCallback() {
+		super.disconnectedCallback();
+
+		this.removeEventListener( 'xb-select', this._handleMenuEvent );
+	}
+
 	/**
 	 * @param {import('lit').PropertyValues<OptionGroup>} changedProperties
 	 */
@@ -105,7 +120,6 @@ export class Select extends SelectionMixin( XBElement, {
 		super.updated( changedProperties );
 
 		if ( changedProperties.has( 'multiple' ) ) {
-			console.log( 'type changed', this.type );
 			this.type = this.multiple ? 'multiple' : 'single';
 			this.role = [ 'single' ].includes( this.type ) ? 'radiogroup' : 'group';
 		}
@@ -130,12 +144,25 @@ export class Select extends SelectionMixin( XBElement, {
 	}
 
 	render() {
-		return html`<xb-dropdown>
+		return html`<xb-dropdown ${ ref( this.dropdown ) }>
 			<xb-select-trigger slot="trigger"></xb-select-trigger>
-			<xb-select-menu slot="menu" ?loading=${ this.loading }>
+			<xb-menu slot="menu" ?loading=${ this.loading }>
 				<slot></slot>
-			</xb-select-menu>
+			</xb-menu>
 		</xb-dropdown>`;
+	}
+
+	_handleMenuEvent() {
+		if ( ! this.multiple ) {
+			this._getDropdown().collapse();
+		}
+	}
+
+	/**
+	 * @returns {Dropdown}
+	 */
+	_getDropdown() {
+		return this.dropdown.value;
 	}
 
 	/**
@@ -157,7 +184,9 @@ export class Select extends SelectionMixin( XBElement, {
 
 		return [
 			...this._defaultSlot.assignedElements( { flatten: true } ),
-		].filter( ( item ) => item.tagName.toLowerCase() === 'xb-option' );
+		].filter( ( item ) =>
+			[ 'xb-option', 'xb-menu-item' ].includes( item.tagName.toLowerCase() )
+		);
 	}
 
 	_setTriggerValue() {
@@ -171,13 +200,12 @@ export class Select extends SelectionMixin( XBElement, {
 				controller.selection.has( option.value )
 			);
 
-			trigger.placeholder =
-				selectedOption?.getTextLabel() ?? trigger.placeholder;
+			trigger.value = selectedOption?.getTextLabel() ?? '';
 		} else {
-			trigger.placeholder =
+			trigger.value =
 				controller.selection.size > 0
 					? `${ controller.selection.size } selected`
-					: trigger.placeholder;
+					: '';
 		}
 	}
 
@@ -198,14 +226,14 @@ export class Select extends SelectionMixin( XBElement, {
 		/** @type {SelectionController} */
 		const controller = this._controller;
 
-		option.selected = controller.selection.has( option.value );
+		option.checked = controller.selection.has( option.value );
 	}
 
 	/**
 	 * @param {import('./select-option').SelectOption} option
 	 */
 	_setOptionDisabled( option ) {
-		option.disabled = this.disabled;
+		option.disabled = this.disabled || option.disabled;
 	}
 }
 
@@ -214,6 +242,8 @@ window.customElements.define( 'xb-select', Select );
 /**
  * @typedef {import('../popover/popover').PopoverPlacement} SelectPlacement
  * @typedef {import('../../controllers/selection/selection.controller').default} SelectionController
+ * @typedef {import('../dropdown/dropdown').Dropdown} Dropdown
+ * @typedef {import('lit/directives/ref.js').Ref}
  */
 
 /**
