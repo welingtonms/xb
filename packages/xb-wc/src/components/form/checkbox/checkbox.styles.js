@@ -133,24 +133,21 @@ function styles() {
 				border-color: ${ token( 'color-primary-300' ) };
 				background-color: ${ token( 'color-primary-300' ) };
 			}
-
-			/* .-small {
-				${ px( token( 'spacing-2' ) ) };
-
-
+		`,
+		sizeStyles( { property: '--xb-checkbox-height' } ),
+		css`
+			.-small {
+				min-width: 16px;
 			}
 
 			.-medium {
-				--xb-checkbox-height: 56px;
-
+				min-width: 16px;
 			}
 
 			.-large {
-				--xb-checkbox-height: 72px;
-
-			} */
+				min-width: 16px;
+			}
 		`,
-		sizeStyles( { property: '--xb-checkbox-height' } ),
 	];
 }
 
