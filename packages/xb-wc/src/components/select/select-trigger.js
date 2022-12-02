@@ -19,17 +19,46 @@ export class SelectTrigger extends XBElement {
 				type: Boolean,
 				reflect: true,
 			},
+
+			/**
+			 * Is the dropdown menu open.
+			 * @type {SelectTriggerAttributes['value']}
+			 */
+			value: {
+				type: String,
+				reflect: true,
+			},
+
+			/**
+			 * Placeholder value.
+			 * @type {TextInputAttributes['placeholder']}
+			 */
+			placeholder: {
+				type: String,
+				reflect: true,
+			},
 		};
 	}
 
 	constructor() {
 		super();
+
+		/** @type {SelectTriggerAttributes['open']} */
+		this.open = false;
+
+		/** @type {SelectTriggerAttributes['value']} */
+		this.value = '';
+
+		/** @type {SelectTriggerAttributes['placeholder']} */
+		this.placeholder = 'Search & Select';
 	}
 
 	connectedCallback() {
 		super.connectedCallback();
+	}
 
-		// this.setAttribute( 'slot', 'trigger' );
+	disconnectedCallback() {
+		super.disconnectedCallback();
 	}
 
 	render() {
@@ -40,8 +69,9 @@ export class SelectTrigger extends XBElement {
 				class="${ classy( 'select-trigger', {
 					'is-open': when( { open: true } ),
 				} ) }"
+				value="${ this.value }"
+				placeholder="${ this.placeholder }"
 			>
-				<slot></slot>
 				<xb-button
 					slot="trailing"
 					emphasis="text"
@@ -66,4 +96,6 @@ window.customElements.define( 'xb-select-trigger', SelectTrigger );
 /**
  * @typedef {Object} SelectTriggerAttributes
  * @property {boolean} [open] - Is the dropdown menu open.
+ * @property {string} value - Representation of the currently selected value.
+ * @property {string} placeholder
  */

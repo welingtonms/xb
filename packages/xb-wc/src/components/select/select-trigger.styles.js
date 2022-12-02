@@ -6,6 +6,10 @@ import transition from '../../styles/transition.styles';
 function styles() {
 	return [
 		css`
+			.select-trigger {
+				--xb-text-placeholder-color: ${ token( 'color-gray-700' ) };
+			}
+
 			.indicator {
 				/* --xb-icon-color: ${ token( 'color-gray-600' ) }; */
 

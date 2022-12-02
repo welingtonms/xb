@@ -16,6 +16,9 @@ export class Select extends SelectionMixin( XBElement, {
 	/** @type {HTMLSlotElement} */
 	_defaultSlot;
 
+	/** @type {import('./select-trigger').SelectTrigger} */
+	_trigger;
+
 	static get properties() {
 		return {
 			/**
@@ -119,6 +122,8 @@ export class Select extends SelectionMixin( XBElement, {
 			} );
 		}
 
+		this._setTriggerValue();
+
 		this._getOptions().forEach( ( option ) => {
 			this._setOptionSelected( option );
 		} );
@@ -134,6 +139,16 @@ export class Select extends SelectionMixin( XBElement, {
 	}
 
 	/**
+	 * @returns {import('./select-trigger').SelectTrigger}
+	 */
+	_getTrigger() {
+		this._trigger =
+			this._trigger ?? this.shadowRoot.querySelector( 'xb-select-trigger' );
+
+		return this._trigger;
+	}
+
+	/**
 	 * @returns {import('./select-option').SelectOption[]}
 	 */
 	_getOptions() {
@@ -143,6 +158,24 @@ export class Select extends SelectionMixin( XBElement, {
 		return [
 			...this._defaultSlot.assignedElements( { flatten: true } ),
 		].filter( ( item ) => item.tagName.toLowerCase() === 'xb-option' );
+	}
+
+	_setTriggerValue() {
+		/** @type {SelectionController} */
+		const controller = this._controller;
+
+		const trigger = this._getTrigger();
+
+		if ( ! this.multiple ) {
+			const selectedOption = this._getOptions().find( ( option ) =>
+				controller.selection.has( option.value )
+			);
+
+			trigger.placeholder =
+				selectedOption?.getTextLabel() ?? trigger.placeholder;
+		} else {
+			trigger.placeholder = `${ controller.selection.size } selected`;
+		}
 	}
 
 	/**
@@ -177,6 +210,7 @@ window.customElements.define( 'xb-select', Select );
 
 /**
  * @typedef {import('../popover/popover').PopoverPlacement} SelectPlacement
+ * @typedef {import('../../controllers/selection/selection.controller').default} SelectionController
  */
 
 /**
