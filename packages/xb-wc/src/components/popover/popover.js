@@ -7,7 +7,7 @@ import styles from './popover.styles';
 
 export class Popover extends XBElement {
 	/** @type {HTMLElement | null} */
-	_reference = null;
+	_anchor = null;
 
 	/** @type {HTMLElement | null} */
 	_floating = null;
@@ -50,10 +50,10 @@ export class Popover extends XBElement {
 	}
 
 	firstUpdated() {
-		const [ referenceSlot, floatingSlot ] =
+		const [ anchorSlot, floatingSlot ] =
 			this.shadowRoot.querySelectorAll( 'slot' );
 
-		[ this._reference ] = referenceSlot.assignedElements( { flatten: true } );
+		[ this._anchor ] = anchorSlot.assignedElements( { flatten: true } );
 		[ this._floating ] = floatingSlot.assignedElements( { flatten: true } );
 	}
 
@@ -75,7 +75,7 @@ export class Popover extends XBElement {
 
 	render() {
 		return html`
-			<slot name="reference"></slot>
+			<slot name="anchor"></slot>
 			<slot
 				name="floating"
 				@slotchange=${ this._updateFloationPosition }
@@ -84,14 +84,14 @@ export class Popover extends XBElement {
 	}
 
 	_updateFloationPosition() {
-		const reference = this._getReference();
+		const anchor = this._getAnchor();
 		const floating = this._getFloating();
 
-		if ( floating == null || reference == null ) {
+		if ( floating == null || anchor == null ) {
 			console.warn(
 				'[popover-host]',
-				'both floating and reference elements should be available',
-				{ reference, floating }
+				'both floating and anchor elements should be available',
+				{ anchor, floating }
 			);
 
 			return;
@@ -100,7 +100,7 @@ export class Popover extends XBElement {
 		const strategy = floating.position || 'fixed';
 		const placement = floating.placement || 'bottom-start';
 
-		computePosition( reference, floating, {
+		computePosition( anchor, floating, {
 			strategy,
 			placement,
 			middleware: [ offset( 4 ), flip(), shift() ],
@@ -110,8 +110,8 @@ export class Popover extends XBElement {
 		} );
 	}
 
-	_getReference() {
-		return this._reference;
+	_getAnchor() {
+		return this._anchor;
 	}
 
 	_getFloating() {

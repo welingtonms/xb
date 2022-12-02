@@ -28,7 +28,7 @@ export const Playground = ( args ) => html`
 	<xb-popover>
 		<xb-icon
 			name="star"
-			slot="reference"
+			slot="anchor"
 			style="--xb-icon-color: rgb(var(--xb-color-secondary-500));"
 		></xb-icon>
 		<span slot="floating">

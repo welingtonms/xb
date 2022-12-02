@@ -91,7 +91,7 @@ export class Dropdown extends XBElement {
 				<xb-popover ?hidden=${ ! this.open }>
 					<slot
 						name="trigger"
-						slot="reference"
+						slot="anchor"
 						@click=${ this._handleClick }
 					></slot>
 

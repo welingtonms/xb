@@ -16,7 +16,7 @@ function styles() {
 				flex-direction: column;
 			}
 
-			slot[name='reference']::slotted( * ) {
+			slot[name='anchor']::slotted( * ) {
 				display: inline-flex;
 			}
 
