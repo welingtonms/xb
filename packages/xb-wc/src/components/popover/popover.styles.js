@@ -10,6 +10,9 @@ function styles() {
 	return [
 		css`
 			:host {
+				--xb-popover-background-color: ${ token( 'color-white' ) };
+				--xb-popover-color: ${ token( 'color-gray-700' ) };
+
 				position: relative;
 
 				display: inline-flex;
@@ -28,11 +31,9 @@ function styles() {
 				${ p( token( 'spacing-0' ) ) };
 				${ m( token( 'spacing-0' ) ) };
 
-				position: relative;
-
 				display: inline-block;
 
-				min-height: 48px;
+				min-height: 24px;
 				width: max-content;
 				max-width: 40ch;
 
@@ -43,17 +44,18 @@ function styles() {
 
 				border-radius: 4px;
 
-				background-color: ${ token( 'color-white' ) };
+				background-color: var( --xb-popover-background-color );
+				color: var( --xb-popover-color );
 
 				box-shadow: rgba( 0, 0, 0, 0.1 ) 0px 4px 6px -1px,
 					rgba( 0, 0, 0, 0.06 ) 0px 2px 4px -1px;
 			}
 
-			:host( .-absolute ) slot[name='floating']::slotted( * ) {
+			:host( [position='absolute'] ) slot[name='floating']::slotted( * ) {
 				position: absolute;
 			}
 
-			:host( .-fixed ) slot[name='floating']::slotted( * ) {
+			:host( [position='fixed'] ) slot[name='floating']::slotted( * ) {
 				position: fixed;
 			}
 

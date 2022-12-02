@@ -20,7 +20,7 @@ export class Popover extends XBElement {
 			 * Popover positioning strategy.
 			 * @type {PopoverAttributes['position']}
 			 */
-			position: { type: String },
+			position: { type: String, reflect: true },
 
 			/**
 			 * Popover placement.
@@ -40,7 +40,7 @@ export class Popover extends XBElement {
 		super();
 
 		/** @type {PopoverAttributes['position']} */
-		this.position = 'absolute';
+		this.position = 'fixed';
 
 		/** @type {PopoverAttributes['placement']} */
 		this.placement = 'top-end';
@@ -60,36 +60,23 @@ export class Popover extends XBElement {
 	updated() {
 		super.updated();
 
-		const { when, classy } = withClassy( { position: this.position } );
-
-		this.classList.add(
-			'popover',
-			classy( {
-				'-absolute': when( { position: 'absolute' } ),
-				'-fixed': when( { position: 'fixed' } ),
-			} )
-		);
-
-		this._updateFloationPosition();
+		this.reposition();
 	}
 
 	render() {
 		return html`
 			<slot name="anchor"></slot>
-			<slot
-				name="floating"
-				@slotchange=${ this._updateFloationPosition }
-			></slot>
+			<slot name="floating" @slotchange=${ this.reposition }></slot>
 		`;
 	}
 
-	_updateFloationPosition() {
+	reposition() {
 		const anchor = this._getAnchor();
 		const floating = this._getFloating();
 
 		if ( floating == null || anchor == null ) {
 			console.warn(
-				'[popover-host]',
+				'[popover]',
 				'both floating and anchor elements should be available',
 				{ anchor, floating }
 			);
@@ -97,8 +84,8 @@ export class Popover extends XBElement {
 			return;
 		}
 
-		const strategy = floating.position || 'fixed';
-		const placement = floating.placement || 'bottom-start';
+		const strategy = this.position || 'fixed'; // floating.position || 'fixed';
+		const placement = this.placement || 'bottom-start'; // floating.placement || 'bottom-start';
 
 		computePosition( anchor, floating, {
 			strategy,
