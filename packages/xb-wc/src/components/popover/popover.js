@@ -1,6 +1,5 @@
 import { html } from 'lit';
 import { computePosition, flip, shift, offset } from '@floating-ui/dom';
-import withClassy from '@welingtonms/classy';
 
 import XBElement from '../../common/xb-element';
 import styles from './popover.styles';
@@ -91,9 +90,26 @@ export class Popover extends XBElement {
 			strategy,
 			placement,
 			middleware: [ offset( 4 ), flip(), shift() ],
-		} ).then( ( { x, y } ) => {
+		} ).then( ( { x, y, placement } ) => {
 			floating.style.setProperty( '--xb-popover-left', `${ x }px` );
 			floating.style.setProperty( '--xb-popover-top', `${ y }px` );
+
+			floating.style.setProperty(
+				'--xb-popover-border-top-left-radius',
+				`${ [ 'bottom-start', 'right-start' ].includes( placement ) ? 0 : 4 }px`
+			);
+			floating.style.setProperty(
+				'--xb-popover-border-top-right-radius',
+				`${ [ 'bottom-end', 'left-start' ].includes( placement ) ? 0 : 4 }px`
+			);
+			floating.style.setProperty(
+				'--xb-popover-border-bottom-right-radius',
+				`${ [ 'left-end', 'top-end' ].includes( placement ) ? 0 : 4 }px`
+			);
+			floating.style.setProperty(
+				'--xb-popover-border-bottom-left-radius',
+				`${ [ 'top-start', 'right-end' ].includes( placement ) ? 0 : 4 }px`
+			);
 		} );
 	}
 

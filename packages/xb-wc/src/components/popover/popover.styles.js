@@ -13,6 +13,11 @@ function styles() {
 				--xb-popover-background-color: ${ token( 'color-white' ) };
 				--xb-popover-color: ${ token( 'color-gray-700' ) };
 
+				--xb-popover-border-top-left-radius: 4px;
+				--xb-popover-border-top-right-radius: 4px;
+				--xb-popover-border-bottom-right-radius: 4px;
+				--xb-popover-border-bottom-left-radius: 4px;
+
 				position: relative;
 
 				display: inline-flex;
@@ -42,7 +47,14 @@ function styles() {
 				top: var( --xb-popover-top, 0 );
 				left: var( --xb-popover-left, 0 );
 
-				border-radius: 4px;
+				border-top-left-radius: var( --xb-popover-border-top-left-radius );
+				border-top-right-radius: var( --xb-popover-border-top-right-radius );
+				border-bottom-right-radius: var(
+					--xb-popover-border-bottom-right-radius
+				);
+				border-bottom-left-radius: var(
+					--xb-popover-border-bottom-left-radius
+				);
 
 				background-color: var( --xb-popover-background-color );
 				color: var( --xb-popover-color );
