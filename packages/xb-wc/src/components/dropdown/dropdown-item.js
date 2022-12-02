@@ -41,7 +41,7 @@ export class DropdownMenuItem extends XBElement {
 		return html`
 			<button
 				type="button"
-				class="${ classy( 'dropdown-menu-item', {
+				class="${ classy( 'dropdown-item', {
 					'-extra-small': when( { size: 'extra-small' } ),
 					'-small': when( { size: 'small' } ),
 					'-medium': when( { size: 'medium' } ),

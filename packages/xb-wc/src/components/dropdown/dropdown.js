@@ -88,7 +88,7 @@ export class Dropdown extends XBElement {
 	render() {
 		return html`
 			<xb-boundary @xb-click-outside=${ this._handleClickOutside }>
-				<xb-popover ?hidden=${ ! this.open }>
+				<xb-popover position="absolute" ?hidden=${ ! this.open }>
 					<slot
 						name="trigger"
 						slot="anchor"
