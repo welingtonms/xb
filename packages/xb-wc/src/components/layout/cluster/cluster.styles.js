@@ -17,6 +17,7 @@ function styles() {
 				--xb-cluster-border-color: ${ token( 'color-gray-300' ) };
 				--xb-cluster-border-style: none;
 				--xb-cluster-border-width: 1px;
+				--xb-cluster-border-radius: 0;
 				--xb-cluster-color: unset;
 				--xb-cluster-gap: ${ token( 'spacing-2' ) };
 				--xb-cluster-justify: flex-start;
@@ -42,6 +43,7 @@ function styles() {
 
 				border: var( --xb-cluster-border-width )
 					var( --xb-cluster-border-style ) var( --xb-cluster-border-color );
+				border-radius: var( --xb-cluster-border-radius );
 				color: var( --xb-cluster-color );
 				background-color: var( --xb-cluster-background-color );
 			}
