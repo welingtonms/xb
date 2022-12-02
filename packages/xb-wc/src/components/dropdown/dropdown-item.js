@@ -10,6 +10,12 @@ export class DropdownMenuItem extends XBElement {
 	static get properties() {
 		return {
 			/**
+			 * Should the button be disabled.
+			 * @type {DropdownMenuItemAttributes['disabled']}
+			 */
+			disabled: { type: Boolean, reflect: true },
+
+			/**
 			 * Dropdown item size.
 			 * @type {DropdownMenuItemAttributes['size']}
 			 */
@@ -22,6 +28,9 @@ export class DropdownMenuItem extends XBElement {
 
 		/** @type {DropdownMenuItemAttributes['size']} */
 		this.size = 'small';
+
+		/** @type {DropdownMenuItemAttributes['disabled']} */
+		this.disabled = false;
 	}
 
 	render() {
@@ -38,6 +47,8 @@ export class DropdownMenuItem extends XBElement {
 					'-medium': when( { size: 'medium' } ),
 					'-large': when( { size: 'large' } ),
 				} ) }"
+				?disabled="${ this.disabled }"
+				@click=${ this._handleClick }
 			>
 				<slot></slot>
 			</button>
@@ -46,11 +57,10 @@ export class DropdownMenuItem extends XBElement {
 
 	_handleClick() {
 		const options = {
-			composed: true,
 			detail: { action: 'toggle' },
 		};
 
-		this.emit( 'xb-dropdown-trigger', options );
+		this.emit( 'xb-dropdown', options );
 	}
 }
 
@@ -63,5 +73,6 @@ window.customElements.define( 'xb-dropdown-item', DropdownMenuItem );
 /**
  * @typedef {Object} DropdownMenuItemAttributes
  * @property {boolean} [open] - Is the dropdown menu open.
+ * @property {boolean} disabled Should the button be disabled.
  * @property {DropdownItemSize} size
  */

@@ -64,13 +64,13 @@ export class Dropdown extends XBElement {
 	connectedCallback() {
 		super.connectedCallback();
 
-		this.addEventListener( 'xb-dropdown-trigger', this._handleTriggerEvent );
+		this.addEventListener( 'xb-dropdown', this._handleEvent );
 	}
 
 	disconnectedCallback() {
 		super.disconnectedCallback();
 
-		this.removeEventListener( 'xb-dropdown-trigger', this._handleTriggerEvent );
+		this.removeEventListener( 'xb-dropdown', this._handleEvent );
 	}
 
 	/**
@@ -109,7 +109,7 @@ export class Dropdown extends XBElement {
 		this.open = ! this.open;
 	}
 
-	_handleTriggerEvent( event ) {
+	_handleEvent( event ) {
 		const {
 			detail: { action },
 		} = event;
