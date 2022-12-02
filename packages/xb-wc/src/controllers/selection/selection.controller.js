@@ -82,6 +82,13 @@ class SelectionController {
 		this.host.requestUpdate();
 	}
 
+	/**
+	 * @returns {string}
+	 */
+	value() {
+		return toArray( this.strategy.value( this.selection ) ).join( ', ' );
+	}
+
 	_select( values ) {
 		this.selection = this.strategy.select( values, this.selection );
 	}
