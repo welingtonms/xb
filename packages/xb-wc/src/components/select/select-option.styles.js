@@ -74,11 +74,11 @@ function styles() {
 
 			.select-option.is-selected {
 				--xb-select-option-background-color: ${ token(
-					'color-secondary-100',
-					0.2
+					'color-primary-100',
+					0.1
 				) };
 
-				--xb-select-option-color: ${ token( 'color-secondary-600' ) };
+				--xb-select-option-color: ${ token( 'color-primary-600' ) };
 			}
 
 			${ disabled( '.select-option' ) } {
@@ -96,7 +96,7 @@ function styles() {
 
 			${ hovered( '.select-option' ) },
 			${ focused( '.select-option' ) } {
-				--xb-select-option-background-color: ${ token( 'color-gray-200' ) };
+				--xb-select-option-background-color: ${ token( 'color-gray-300' ) };
 				--xb-select-option-color: ${ token( 'color-gray-700' ) };
 
 				outline: none;
@@ -118,13 +118,13 @@ function styles() {
 			}
 
 			.check {
-				--xb-icon-color: ${ token( 'color-white', 0 ) };
+				--xb-icon-color: ${ token( 'color-blue-600' ) };
 
-				margin-left: auto;
+				visibility: hidden;
 			}
 
 			.select-option.is-selected .check {
-				--xb-icon-color: ${ token( 'color-secondary-300' ) };
+				visibility: visible;
 			}
 		`,
 		sizeStyles( '--xb-select-option-height' ),

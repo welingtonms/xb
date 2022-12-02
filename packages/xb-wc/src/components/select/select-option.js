@@ -1,12 +1,19 @@
-import { html, nothing } from 'lit';
+import { html } from 'lit';
 import withClassy from '@welingtonms/classy';
 
+import { getTextContent } from '../../utils/slot';
 import { SELECT_EVENT } from './select.constants';
 import XBElement from '../../common/xb-element';
 import styles from './select-option.styles';
 
+import '../form/checkbox';
+import '../icon';
+
 export class SelectOption extends XBElement {
 	static styles = [ styles() ];
+
+	/** @type {HTMLSlotElement} */
+	_defaultSlot;
 
 	static get properties() {
 		return {
@@ -51,10 +58,14 @@ export class SelectOption extends XBElement {
 		/** @type {SelectOptionAttributes['size']} */
 		this.size = 'small';
 
-		/**
-		 * @type {SelectOptionAttributes['selected']}
-		 */
+		/** @type {SelectOptionAttributes['selected']} */
 		this.selected = false;
+
+		/** @type {SelectOptionAttributes['disabled']} */
+		this.disabled = false;
+
+		/** @type {SelectOptionAttributes['value']} */
+		this.value = '';
 	}
 
 	render() {
@@ -65,6 +76,7 @@ export class SelectOption extends XBElement {
 
 		return html`
 			<button
+				type="button"
 				class="${ classy(
 					'select-option',
 					{
@@ -77,32 +89,45 @@ export class SelectOption extends XBElement {
 						'is-selected': when( { selected: true } ),
 					}
 				) }"
-				type="button"
 				role="${ this.role }"
-				aria-checked="${ this.checked ? 'true' : 'false' }"
+				aria-checked="${ this.selected ? 'true' : 'false' }"
 				?disabled="${ this.disabled }"
 				@click=${ this._handleClick }
 			>
+				${ this.role == 'radio'
+					? html`<xb-icon name="check" class="check"></xb-icon>`
+					: html` <xb-checkbox
+							tabindex="-1"
+							?checked=${ this.selected }
+					  ></xb-checkbox>` }
 				<slot name="leading"></slot>
 				<slot></slot>
-				${ this.selected
-					? html`<xb-icon name="check" class="check"></xb-icon>`
-					: nothing }
 			</button>
 		`;
+	}
+
+	/** Returns a text label based on the contents of the menu item's default slot. */
+	getTextLabel() {
+		this._defaultSlot =
+			this._defaultSlot ?? this.shadowRoot.querySelector( 'slot:not([name])' );
+
+		console.log( this._defaultSlot );
+
+		return getTextContent( this._defaultSlot );
 	}
 
 	_handleClick() {
 		this.emit( SELECT_EVENT, {
 			detail: { value: this.value, type: 'toggle' },
-			bubbles: true,
 			composed: false,
 		} );
 
-		this.emit( 'xb-dropdown-trigger', {
-			composed: true,
-			detail: { action: 'toggle' },
-		} );
+		// we want to close the dropdown only for single selection
+		if ( this.role == 'radio' ) {
+			this.emit( 'xb-dropdown', {
+				detail: { action: 'toggle' },
+			} );
+		}
 	}
 }
 
