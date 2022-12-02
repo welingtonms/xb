@@ -3,7 +3,7 @@ import { html } from 'lit/static-html.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import withClassy from '@welingtonms/classy';
 
-import { converterDirectionFromAttribute } from '../layout/layout.helpers';
+import { convertDirectionFromAttribute } from '../layout/layout.helpers';
 import { sided } from '../../common/prop-toolset';
 import PolymorphicElementMixin from '../../mixins/polymorphic';
 import styles from './button.styles';
@@ -26,7 +26,7 @@ export class Button extends PolymorphicElementMixin( XBElement ) {
 			 */
 			borderless: {
 				converter: {
-					fromAttribute: converterDirectionFromAttribute,
+					fromAttribute: convertDirectionFromAttribute,
 				},
 			},
 
@@ -36,7 +36,7 @@ export class Button extends PolymorphicElementMixin( XBElement ) {
 			 */
 			paddingless: {
 				converter: {
-					fromAttribute: converterDirectionFromAttribute,
+					fromAttribute: convertDirectionFromAttribute,
 				},
 			},
 

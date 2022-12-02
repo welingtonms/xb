@@ -2,7 +2,7 @@ function trim( value ) {
 	return String( value ).trim();
 }
 
-export function converterDirectionFromAttribute( value ) {
+export function convertDirectionFromAttribute( value ) {
 	if ( value === '' ) {
 		return true;
 	}

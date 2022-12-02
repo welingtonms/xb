@@ -1,4 +1,4 @@
-import { converterDirectionFromAttribute } from './layout.helpers';
+import { convertDirectionFromAttribute } from './layout.helpers';
 import PolymorphicElementMixin from '../../mixins/polymorphic';
 import XBElement from '../../common/xb-element';
 
@@ -15,7 +15,7 @@ export default class BaseLayout extends PolymorphicElementMixin( XBElement ) {
 			 */
 			borderless: {
 				converter: {
-					fromAttribute: converterDirectionFromAttribute,
+					fromAttribute: convertDirectionFromAttribute,
 				},
 			},
 
@@ -25,7 +25,7 @@ export default class BaseLayout extends PolymorphicElementMixin( XBElement ) {
 			 */
 			paddingless: {
 				converter: {
-					fromAttribute: converterDirectionFromAttribute,
+					fromAttribute: convertDirectionFromAttribute,
 				},
 			},
 		};
