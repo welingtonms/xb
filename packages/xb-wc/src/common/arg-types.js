@@ -4,6 +4,10 @@ export const PlacementArg = Object.freeze( {
 	control: {
 		type: 'select',
 		options: [
+			'top',
+			'left',
+			'right',
+			'bottom',
 			'top-start',
 			'top-end',
 			'right-start',
