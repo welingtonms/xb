@@ -98,6 +98,7 @@ class SelectionController {
 	}
 
 	_toggle( values ) {
+		console.log( '>>>', values );
 		this.selection = this.strategy.toggle( values, this.selection );
 	}
 
@@ -124,17 +125,13 @@ class SelectionController {
 		}
 
 		const {
-			detail: { type, value },
+			detail: { type = 'toggle', value },
 		} = e;
 
-		if (
-			this.type == null ||
-			! [ 'select', 'unselect', 'toggle' ].includes( type )
-		) {
+		if ( this.type == null ) {
 			console.warn(
-				'[SelectionController] Did you forget to set the selection type?'
+				"[SelectionController] ou forget to set the selection type; we'll assume it's a toggle operation."
 			);
-			return;
 		}
 
 		switch ( type ) {
@@ -145,6 +142,7 @@ class SelectionController {
 				this._unselect( toArray( value ) );
 				break;
 			case 'toggle':
+			default:
 				this._toggle( toArray( value ) );
 				break;
 		}
