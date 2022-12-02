@@ -184,9 +184,7 @@ export class Select extends SelectionMixin( XBElement, {
 
 		return [
 			...this._defaultSlot.assignedElements( { flatten: true } ),
-		].filter( ( item ) =>
-			[ 'xb-option', 'xb-menu-item' ].includes( item.tagName.toLowerCase() )
-		);
+		].filter( ( item ) => item.tagName.toLowerCase() == 'xb-option' );
 	}
 
 	_setTriggerValue() {

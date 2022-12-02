@@ -128,7 +128,6 @@ export class MenuItem extends XBElement {
 
 		this.emit( 'xb-select', {
 			detail: { value: this.value, label: this.getTextLabel() },
-			composed: false,
 		} );
 	}
 }

@@ -98,13 +98,8 @@ class SelectionController {
 	}
 
 	_toggle( values ) {
-		console.log( '>>>', values );
 		this.selection = this.strategy.toggle( values, this.selection );
 	}
-
-	// reset() {
-	// 	this.selection = this.strategy.reset();
-	// }
 
 	subscribe() {
 		this.host.addEventListener( this._listen, this._handleSelectionEvent );

@@ -63,14 +63,12 @@ export class Dropdown extends XBElement {
 		super.connectedCallback();
 
 		this.addEventListener( 'xb-dropdown', this._handleDropdownEvent );
-		this.addEventListener( 'xb-select', this._handleMenuEvent );
 	}
 
 	disconnectedCallback() {
 		super.disconnectedCallback();
 
 		this.removeEventListener( 'xb-dropdown', this._handleDropdownEvent );
-		this.removeEventListener( 'xb-select', this._handleMenuEvent );
 	}
 
 	/**
@@ -119,14 +117,6 @@ export class Dropdown extends XBElement {
 		}
 
 		this.toggle();
-	}
-
-	_handleMenuEvent( event ) {
-		event.stopPropagation();
-
-		this.collapse();
-
-		this.emit( 'xb-click', { detail: event.detail } );
 	}
 
 	_handleDropdownEvent( event ) {
