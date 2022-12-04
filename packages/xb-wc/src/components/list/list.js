@@ -5,6 +5,8 @@ import XBElement from '../../common/xb-element';
 
 import styles from './list.styles';
 
+import './list-item';
+
 export class List extends XBElement {
 	static styles = [ styles() ];
 
@@ -79,7 +81,6 @@ export class List extends XBElement {
 					'-hoverable': this.hoverable,
 					'-striped': this.striped,
 				} ) }
-				borderless=${ this.borderless }
 			>
 				<slot></slot>
 			</xb-stack>

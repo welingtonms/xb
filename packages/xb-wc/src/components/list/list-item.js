@@ -3,10 +3,12 @@ import withClassy from '@welingtonms/classy';
 
 import XBElement from '../../common/xb-element';
 
-import styles from './list.styles';
+import styles from './list-item.styles';
 import '../layout/box';
 
 export class ListItem extends LitElement {
+	static styles = [ styles() ];
+
 	static get properties() {
 		return {
 			/**
