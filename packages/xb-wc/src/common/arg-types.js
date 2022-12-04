@@ -26,3 +26,33 @@ export const SizeArg = Object.freeze( {
 		options: [ 'extra-small', 'small', 'medium', 'large' ],
 	},
 } );
+
+export const PaddinglessArg = Object.freeze( {
+	control: {
+		type: 'select',
+		options: [
+			'none',
+			'horizontal',
+			'vertical',
+			'top',
+			'right',
+			'bottom',
+			'left',
+		],
+	},
+} );
+
+export const BorderlessArg = Object.freeze( {
+	control: {
+		type: 'select',
+		options: [
+			'none',
+			'horizontal',
+			'vertical',
+			'top',
+			'right',
+			'bottom',
+			'left',
+		],
+	},
+} );
