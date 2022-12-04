@@ -7,8 +7,8 @@ export default {
 	title: 'Metacomponents/boundary',
 
 	argTypes: {
-		'click-outside': {
-			action: 'click-outside',
+		interact: {
+			action: 'interact-out',
 			table: {
 				disable: true,
 			},
@@ -23,7 +23,7 @@ export default {
 
 export const Playground = ( args ) =>
 	html`
-		<xb-boundary @xb-click-outside=${ args[ 'click-outside' ] }>
+		<xb-boundary @xb-interact-out=${ args.interact }>
 			Proin facilisis mauris ut tortor vulputate placerat. Nulla ut ligula
 			mattis, sagittis arcu non, venenatis urna. Praesent tincidunt odio vitae
 			luctus aliquet. Morbi nisl ante, ultricies vel fringilla pulvinar, lacinia

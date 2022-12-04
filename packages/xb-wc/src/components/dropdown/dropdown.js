@@ -86,7 +86,7 @@ export class Dropdown extends XBElement {
 
 	render() {
 		return html`
-			<xb-boundary @xb-click-outside=${ this._handleClickOutside }>
+			<xb-boundary @xb-interact-out=${ this._handleClickOutside }>
 				<xb-popover
 					position="absolute"
 					placement="${ ifDefined( this.placement ) }"

@@ -107,7 +107,7 @@ export class InteractionBoundary extends XBElement {
 	};
 
 	_publish = () => {
-		this.emit( 'xb-click-outside' );
+		this.emit( 'xb-interact-out' );
 	};
 }
 
