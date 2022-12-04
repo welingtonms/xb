@@ -24,6 +24,9 @@ function styles() {
 				--xb-menu-item-background-color: ${ token( 'color-white', 0 ) };
 				--xb-menu-item-color: ${ token( 'color-gray-600' ) };
 				--xb-menu-item-height: initial;
+				--xb-menu-item-border-width: 1px;
+				--xb-menu-item-border-style: none;
+				--xb-menu-item-border-color: ${ token( 'color-gray-200' ) }
 
 				display: inline-block;
 
@@ -38,10 +41,7 @@ function styles() {
 			}
 
 			.menu-item {
-				${ transition( [
-					{ property: 'color' },
-					{ property: 'background-color' },
-				] ) };
+				${ transition( [ { property: 'color' }, { property: 'background-color' } ] ) };
 
 				${ typography( 'button' ) };
 
@@ -58,11 +58,17 @@ function styles() {
 
 				gap: ${ token( 'spacing-2' ) };
 
-				${ p( token( 'spacing-2' ) ) };
+				${ px( token( 'spacing-4' ) ) };
+				${ py( token( 'spacing-2' ) ) };
 
 				background-color: var( --xb-menu-item-background-color );
 				color: var( --xb-menu-item-color );
-				border: none;
+
+				border-top: none;
+				border-inline: none;
+				border-bottom-width: var(--xb-menu-item-border-width) ;
+				border-bottom-style: var(--xb-menu-item-border-style) ;
+				border-bottom-color: var(--xb-menu-item-border-color) ;
 
 				font-size: ${ token( 'font-size-sm' ) };
 
@@ -91,7 +97,7 @@ function styles() {
 
 			${ hovered( '.menu-item' ) },
 			${ focused( '.menu-item' ) } {
-				--xb-menu-item-background-color: ${ token( 'color-gray-300' ) };
+				--xb-menu-item-background-color: ${ token( 'color-gray-200' ) };
 				--xb-menu-item-color: ${ token( 'color-gray-700' ) };
 
 				outline: none;
@@ -116,6 +122,7 @@ function styles() {
 				--xb-icon-color: ${ token( 'color-blue-600' ) };
 
 				visibility: hidden;
+				margin-left: auto;
 			}
 
 			.menu-item[aria-checked='true'] .check {

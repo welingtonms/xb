@@ -17,6 +17,14 @@ function styles() {
 
 				--xb-stack-background-color: ${ token( 'color-white' ) };
 			}
+
+			.-bordered ::slotted( :not( :last-of-type ) ) {
+				--xb-menu-item-border-style: dotted;
+			}
+
+			.-striped ::slotted( :nth-of-type( odd ) ) {
+				--xb-menu-item-background-color: ${ token( 'color-gray-100' ) };
+			}
 		`,
 	];
 }

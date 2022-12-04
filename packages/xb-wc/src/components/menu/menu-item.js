@@ -88,25 +88,19 @@ export class MenuItem extends XBElement {
 				?disabled="${ this.disabled }"
 				@click=${ this._handleClick }
 			>
-				${ choose(
-					this.role,
-					[
-						[
-							'radio',
-							() => html`<xb-icon name="check" class="check"></xb-icon>`,
-						],
-						[
-							'checkbox',
-							() => html`<xb-checkbox
-								tabindex="-1"
-								?checked=${ this.checked }
-							></xb-checkbox>`,
-						],
-					],
-					() => nothing
-				) }
+				${ this.role == 'checkbox'
+					? html`<xb-checkbox
+							tabindex="-1"
+							?checked=${ this.checked }
+					  ></xb-checkbox>`
+					: nothing }
+
 				<slot name="leading"></slot>
 				<slot></slot>
+
+				${ this.role == 'radio'
+					? html`<xb-icon name="check" class="check"></xb-icon>`
+					: nothing }
 			</button>
 		`;
 	}
