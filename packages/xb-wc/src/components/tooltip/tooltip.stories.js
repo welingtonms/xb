@@ -28,7 +28,10 @@ export const Playground = ( args ) => html`<xb-tooltip
 	placement=${ args.placement }
 	trigger=${ args.trigger }
 >
-	<xb-box borderless slot="floating">Hello, world!</xb-box>
+	<xb-box borderless slot="floating"
+		>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc lectus erat,
+		bibendum non mollis eu, pharetra et est.</xb-box
+	>
 
 	<xb-button emphasis="text">
 		<xb-icon name="favorite" slot="leading"></xb-icon>
