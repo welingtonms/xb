@@ -23,6 +23,9 @@ function styles() {
 				--xb-button-border-color: ${ token( 'color-white', 0 ) };
 				--xb-button-outline-color: ${ token( 'color-white', 0 ) };
 
+				--xb-button-padding-x: ${ token( 'spacing-2' ) };
+				--xb-button-padding-y: ${ token( 'spacing-1' ) };
+
 				display: inline-flex;
 
 				height: var( --xb-button-height );
@@ -56,8 +59,8 @@ function styles() {
 
 				gap: ${ token( 'spacing-2' ) };
 
-				${ px( token( 'spacing-4' ) ) };
-				${ py( token( 'spacing-1' ) ) };
+				${ px( 'var(--xb-button-padding-x)' ) };
+				${ py( 'var(--xb-button-padding-y)' ) };
 
 				background-color: var( --xb-button-background-color );
 				border: 1px solid var( --xb-button-border-color );
@@ -110,7 +113,7 @@ function styles() {
 			}
 
 			.-small {
-				${ px( token( 'spacing-2' ) ) };
+				/* ${ px( token( 'spacing-2' ) ) }; */
 
 				font-size: ${ token( 'font-size-sm' ) };
 			}

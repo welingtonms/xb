@@ -22,7 +22,9 @@ function styles() {
 				--xb-text-input-height: initial;
 				--xb-text-input-border-color: ${ token( 'color-gray-400' ) };
 				--xb-text-input-outline-color: ${ token( 'color-white', 0 ) };
-				--xb-text-placeholder-color: ${ token( 'color-gray-400' ) };
+				--xb-text-input-placeholder-color: ${ token( 'color-gray-400' ) };
+				--xb-text-input-padding-x: ${ token( 'spacing-2' ) };
+				--xb-text-input-padding-y: ${ token( 'spacing-0' ) };
 			}
 
 			:host( [disabled] ) {
@@ -48,8 +50,8 @@ function styles() {
 				border: 1px solid var( --xb-text-input-border-color );
 				border-radius: 4px;
 
-				${ px( token( 'spacing-2' ) ) };
-				${ py( token( 'spacing-0' ) ) };
+				${ px( 'var(--xb-text-input-padding-x)' ) };
+				${ py( 'var(--xb-text-input-padding-y)' ) };
 
 				box-sizing: border-box;
 				width: 100%;
@@ -77,7 +79,7 @@ function styles() {
 			}
 
 			input::placeholder {
-				color: var( --xb-text-placeholder-color );
+				color: var( --xb-text-input-placeholder-color );
 			}
 
 			${ disabled( 'input' ) } {
@@ -119,7 +121,7 @@ function styles() {
 			}
 
 			.-small {
-				${ px( token( 'spacing-2' ) ) };
+				/* ${ px( token( 'spacing-2' ) ) }; */
 
 				font-size: ${ token( 'font-size-sm' ) };
 			}
