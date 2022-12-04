@@ -26,6 +26,7 @@ export default {
 };
 
 export const Playground = ( args ) => html`<xb-dropdown
+	placement=${ args.placement }
 	@xb-click=${ args.click }
 >
 	<xb-dropdown-trigger>Actions</xb-dropdown-trigger>
@@ -47,5 +48,5 @@ export const Playground = ( args ) => html`<xb-dropdown
 </xb-dropdown>`;
 
 Playground.args = {
-	// placement: 'bottom-start',
+	placement: 'bottom-start',
 };

@@ -1,4 +1,5 @@
 import { html } from 'lit';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 import XBElement from '../../common/xb-element';
 import styles from './dropdown.styles';
@@ -86,7 +87,11 @@ export class Dropdown extends XBElement {
 	render() {
 		return html`
 			<xb-boundary @xb-click-outside=${ this._handleClickOutside }>
-				<xb-popover position="absolute" ?hidden=${ ! this.open }>
+				<xb-popover
+					position="absolute"
+					placement="${ ifDefined( this.placement ) }"
+					?hidden=${ ! this.open }
+				>
 					<slot
 						name="trigger"
 						slot="anchor"

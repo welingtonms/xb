@@ -1,5 +1,6 @@
 import { html } from 'lit';
 import { createRef, ref } from 'lit/directives/ref.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 import SelectionMixin from '../../mixins/selection';
 import XBElement from '../../common/xb-element';
@@ -144,7 +145,10 @@ export class Select extends SelectionMixin( XBElement, {
 	}
 
 	render() {
-		return html`<xb-dropdown ${ ref( this.dropdown ) }>
+		return html`<xb-dropdown
+			${ ref( this.dropdown ) }
+			placement="${ ifDefined( this.placement ) }"
+		>
 			<xb-select-trigger slot="trigger"></xb-select-trigger>
 			<xb-menu slot="menu" ?loading=${ this.loading }>
 				<slot></slot>
