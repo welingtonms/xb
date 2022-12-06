@@ -1,8 +1,10 @@
 import { html } from 'lit';
-import { computePosition, flip, shift, offset } from '@floating-ui/dom';
+import { computePosition, flip, shift, offset, arrow } from '@floating-ui/dom';
 
 import XBElement from '../../common/xb-element';
 import styles from './popover.styles';
+
+import '../resize-observer';
 
 export class Popover extends XBElement {
 	/** @type {HTMLElement | null} */
@@ -10,6 +12,9 @@ export class Popover extends XBElement {
 
 	/** @type {HTMLElement | null} */
 	_floating = null;
+
+	/** @type {HTMLElement | null} */
+	_arrow = null;
 
 	static styles = [ styles() ];
 
@@ -54,18 +59,22 @@ export class Popover extends XBElement {
 
 		[ this._anchor ] = anchorSlot.assignedElements( { flatten: true } );
 		[ this._floating ] = floatingSlot.assignedElements( { flatten: true } );
+		this._arrow = this.shadowRoot.querySelector( '.arrow' );
 	}
 
-	updated() {
-		super.updated();
+	update() {
+		super.update();
 
 		this.reposition();
 	}
 
 	render() {
 		return html`
-			<slot name="anchor"></slot>
-			<slot name="floating" @slotchange=${ this.reposition }></slot>
+			<xb-resize-observer type="window" @xb-resize=${ this._handleResize }>
+				<slot name="anchor"></slot>
+				<slot name="floating" @slotchange=${ this.reposition }></slot>
+				<!-- <span class="arrow"></span> -->
+			</xb-resize-observer>
 		`;
 	}
 
@@ -83,14 +92,29 @@ export class Popover extends XBElement {
 			return;
 		}
 
-		const strategy = this.position || 'fixed'; // floating.position || 'fixed';
-		const placement = this.placement || 'bottom-start'; // floating.placement || 'bottom-start';
+		const strategy = this.position || 'fixed';
+		const placement = this.placement || 'bottom-start';
 
 		computePosition( anchor, floating, {
 			strategy,
 			placement,
-			middleware: [ offset( 4 ), flip(), shift() ],
+			middleware: [
+				offset( 4 ),
+				flip(),
+				shift(),
+				// arrow( { element: this._getArrow() } ),
+			],
 		} ).then( ( { x, y, placement } ) => {
+			console.debug(
+				'[xb-popover]',
+				'requested placement at',
+				this.placement,
+				'; was placed at',
+				placement
+			);
+
+			// this.dataset.placedAt = placement;
+
 			floating.style.setProperty( '--xb-popover-left', `${ x }px` );
 			floating.style.setProperty( '--xb-popover-top', `${ y }px` );
 
@@ -110,6 +134,55 @@ export class Popover extends XBElement {
 				'--xb-popover-border-bottom-left-radius',
 				`${ [ 'top-start', 'right-end' ].includes( placement ) ? 0 : 4 }px`
 			);
+
+			// Accessing the data
+			// const { x: arrowX, y: arrowY } = arrow;
+
+			// const staticSide = {
+			// 	top: 'bottom',
+			// 	right: 'left',
+			// 	bottom: 'top',
+			// 	left: 'right',
+			// }[ placement.split( '-' )[ 0 ] ];
+
+			// const anchorHeight = this._getAnchor().getBoundingClientRect().height;
+			// const anchorWidth = this._getAnchor().getBoundingClientRect().width;
+			// const batata = {
+			// 	top: anchorHeight,
+			// 	right: anchorWidth,
+			// 	bottom: anchorHeight,
+			// 	left: anchorWidth,
+			// };
+
+			// const cebola = {
+			// 	top: {
+			// 		left: `calc(${ Math.floor( anchorWidth / 2 ) }px - 4px)`, // left value
+			// 	},
+			// 	right: {
+			// 		top: `calc(${ Math.floor( anchorHeight / 2 ) }px - 4px)`, // top value
+			// 	},
+			// 	bottom: {
+			// 		left: `calc(${ Math.floor( anchorWidth / 2 ) }px - 4px)`, // left value
+			// 	},
+			// 	left: {
+			// 		top: `calc(${ Math.floor( anchorHeight / 2 ) }px - 4px)`, // top value
+			// 	},
+			// };
+
+			// console.log(
+			// 	staticSide,
+			// 	`calc(-4px + ${ batata[ staticSide ] }px)`,
+			// 	cebola[ staticSide ]
+			// );
+
+			// Object.assign( this._getArrow().style, {
+			// 	left: arrowX != null ? `${ arrowX }px` : '',
+			// 	top: arrowY != null ? `${ arrowY }px` : '',
+			// 	right: '',
+			// 	bottom: '',
+			// 	...cebola[ staticSide ],
+			// 	[ staticSide ]: `calc(2px + ${ batata[ staticSide ] }px)`,
+			// } );
 		} );
 	}
 
@@ -119,6 +192,14 @@ export class Popover extends XBElement {
 
 	_getFloating() {
 		return this._floating;
+	}
+
+	_getArrow() {
+		return this._arrow;
+	}
+
+	_handleResize() {
+		this.reposition();
 	}
 }
 

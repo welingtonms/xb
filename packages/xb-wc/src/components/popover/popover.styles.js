@@ -13,10 +13,10 @@ function styles() {
 				--xb-popover-background-color: ${ token( 'color-white' ) };
 				--xb-popover-color: ${ token( 'color-gray-700' ) };
 
-				--xb-popover-border-top-left-radius: 4px;
-				--xb-popover-border-top-right-radius: 4px;
-				--xb-popover-border-bottom-right-radius: 4px;
-				--xb-popover-border-bottom-left-radius: 4px;
+				--xb-popover-border-top-left-radius: 8px;
+				--xb-popover-border-top-right-radius: 8px;
+				--xb-popover-border-bottom-right-radius: 8px;
+				--xb-popover-border-bottom-left-radius: 8px;
 
 				position: relative;
 
@@ -59,8 +59,9 @@ function styles() {
 				background-color: var( --xb-popover-background-color );
 				color: var( --xb-popover-color );
 
-				box-shadow: rgba( 0, 0, 0, 0.1 ) 0px 4px 6px -1px,
-					rgba( 0, 0, 0, 0.06 ) 0px 2px 4px -1px;
+				box-shadow: rgba( 0, 0, 0, 0.07 ) 0px 1px 1px,
+					rgba( 0, 0, 0, 0.07 ) 0px 2px 2px, rgba( 0, 0, 0, 0.07 ) 0px 4px 4px,
+					rgba( 0, 0, 0, 0.07 ) 0px 8px 8px, rgba( 0, 0, 0, 0.07 ) 0px 16px 16px;
 			}
 
 			:host( [position='absolute'] ) slot[name='floating']::slotted( * ) {
@@ -71,8 +72,17 @@ function styles() {
 				position: fixed;
 			}
 
-			:host( [hidden] ) slot[name='floating']::slotted( * ) {
+			:host( [hidden] ) slot[name='floating']::slotted( * ),
+			:host( [hidden] ) .arrow {
 				display: none;
+			}
+
+			.arrow {
+				position: absolute;
+				background-color: var( --xb-popover-background-color );
+				width: 8px;
+				height: 8px;
+				transform: rotate( 45deg );
 			}
 
 			/* .-absolute {
