@@ -43,8 +43,8 @@ glob( './src/assets/*', ( error, files ) => {
 
 			const name = svg.filename
 				.replace( 'ic_', '' )
-				.replace( '_48px', '' )
-				.replace( '_', '-' )
+				.replace( /_48(px|dp)/gi, '' )
+				.replace( /_/g, '-' )
 				.toLowerCase();
 
 			return `'${ name }': svg\`${ svg.data }\`,`;
