@@ -27,7 +27,7 @@ function styles() {
 			slot[name='label']::slotted( * ) {
 				${ typography( 'body-2' ) };
 
-				font-weight: ${ token( 'font-weight-medium' ) };
+				/* font-weight: ${ token( 'font-weight-medium' ) };*/
 				font-size: 12px;
 			}
 
