@@ -56,7 +56,8 @@ function styles() {
 			}
 
 			::slotted( *:not( :first-child ) ) {
-				margin-block-start: var( --xb-stack-gap );
+				/** using flexbox gap */
+				/* margin-block-start: var( --xb-stack-gap ); */
 			}
 		`,
 	];

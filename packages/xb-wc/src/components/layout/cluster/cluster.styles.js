@@ -38,7 +38,7 @@ function styles() {
 				flex-flow: row wrap;
 				justify-content: var( --xb-cluster-justify );
 				align-items: var( --xb-cluster-align );
-				/* gap: var( --xb-cluster-gap ); */
+				gap: var( --xb-cluster-gap );
 				width: var( --xb-cluster-width );
 
 				border: var( --xb-cluster-border-width )
@@ -55,7 +55,8 @@ function styles() {
 			}
 
 			::slotted( *:not( :first-child ) ) {
-				margin-inline-start: var( --xb-cluster-gap );
+				/** using flexbox gap */
+				/* margin-inline-start: var( --xb-cluster-gap ); */
 			}
 		`,
 	];
