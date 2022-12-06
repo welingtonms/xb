@@ -4,7 +4,7 @@ function styles() {
 	return [
 		css`
 			:host {
-				display: block;
+				display: contents;
 			}
 		`,
 	];
