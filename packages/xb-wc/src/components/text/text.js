@@ -29,7 +29,7 @@ export class Text extends PolymorphicElementMixin( XBElement ) {
 		this.variant = 'body-1';
 
 		/** @type {TextAttributes['as']} */
-		this.as = 'p';
+		this.as = 'span';
 	}
 
 	render() {
