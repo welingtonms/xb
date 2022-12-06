@@ -10,12 +10,11 @@ function styles() {
 			}
 
 			.tooltip {
-				--xb-popover-background-color: ${ token( 'color-gray-800' ) };
-				--xb-popover-color: ${ token( 'color-white' ) };
+				/* Placeholder */
 			}
 
 			.content {
-				/* display: none; */
+				/* Placeholder */
 			}
 		`,
 	];

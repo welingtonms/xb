@@ -33,12 +33,12 @@ export const Playground = ( args ) => html`<xb-tooltip
 		bibendum non mollis eu, pharetra et est.</xb-box
 	>
 
-	<xb-button emphasis="text">
+	<xb-button emphasis="ghost">
 		<xb-icon name="favorite" slot="leading"></xb-icon>
 	</xb-button>
 </xb-tooltip>`;
 
 Playground.args = {
 	placement: 'bottom-start',
-	trigger: 'hover',
+	trigger: 'click',
 };
