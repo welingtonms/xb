@@ -196,18 +196,19 @@ export class Select extends SelectionMixin( XBElement, {
 		const controller = this._controller;
 
 		const trigger = this._getTrigger();
+		trigger.value = '';
 
 		if ( ! this.multiple ) {
 			const selectedOption = this._getOptions().find( ( option ) =>
 				controller.selection.has( option.value )
 			);
 
-			trigger.value = selectedOption?.getTextLabel() ?? '';
+			trigger.placeholder = selectedOption?.getTextLabel() ?? this.placeholder;
 		} else {
-			trigger.value =
+			trigger.placeholder =
 				controller.selection.size > 0
 					? `${ controller.selection.size } selected`
-					: '';
+					: this.placeholder;
 		}
 	}
 
