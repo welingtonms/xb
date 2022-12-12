@@ -1,5 +1,5 @@
 import { html, nothing } from 'lit';
-import { choose } from 'lit/directives/choose.js';
+import { createRef, ref } from 'lit/directives/ref.js';
 import withClassy from '@welingtonms/classy';
 
 import { getTextContent } from '../../utils/slot';
@@ -10,6 +10,8 @@ import '../form/checkbox';
 import '../icon';
 
 export class MenuItem extends XBElement {
+	button = createRef();
+
 	static styles = [ styles() ];
 
 	/** @type {HTMLSlotElement} */
@@ -68,6 +70,12 @@ export class MenuItem extends XBElement {
 		this.value = '';
 	}
 
+	focus() {
+		const button = this._getButton();
+
+		button.focus();
+	}
+
 	render() {
 		const { classy, when } = withClassy( {
 			checked: this.checked,
@@ -76,6 +84,7 @@ export class MenuItem extends XBElement {
 
 		return html`
 			<button
+				${ ref( this.button ) }
 				type="button"
 				class="${ classy( 'menu-item', {
 					'-extra-small': when( { size: 'extra-small' } ),
@@ -111,6 +120,13 @@ export class MenuItem extends XBElement {
 			this._defaultSlot ?? this.shadowRoot.querySelector( 'slot:not([name])' );
 
 		return getTextContent( this._defaultSlot );
+	}
+
+	/**
+	 * @returns {HTMLButtonElement}
+	 */
+	_getButton() {
+		return this.button.value;
 	}
 
 	/**

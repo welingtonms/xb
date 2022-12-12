@@ -1,10 +1,13 @@
 import { html } from 'lit';
+import { createRef, ref } from 'lit/directives/ref.js';
 import withClassy from '@welingtonms/classy';
 
 import XBElement from '../../../common/xb-element';
 import styles from './text-input.styles';
 
 export class TextInput extends XBElement {
+	input = createRef();
+
 	static styles = [ styles() ];
 
 	static get properties() {
@@ -68,6 +71,10 @@ export class TextInput extends XBElement {
 		this.placeholder = '';
 	}
 
+	focus() {
+		this._getInput()?.focus();
+	}
+
 	render() {
 		const { when, classy } = withClassy( { size: this.size } );
 
@@ -82,6 +89,7 @@ export class TextInput extends XBElement {
 			>
 				<slot name="leading"></slot>
 				<input
+					${ ref( this.input ) }
 					type="${ this.type }"
 					?disabled="${ this.disabled }"
 					value="${ this.value }"
@@ -90,6 +98,13 @@ export class TextInput extends XBElement {
 				<slot name="trailing"></slot>
 			</div>
 		`;
+	}
+
+	/**
+	 * @returns {HTMLInputElement}
+	 */
+	_getInput() {
+		return this.input.value;
 	}
 }
 

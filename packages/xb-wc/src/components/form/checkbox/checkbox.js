@@ -82,6 +82,10 @@ export class CheckboxInput extends XBElement {
 		}
 	}
 
+	focus() {
+		this._getButton().focus();
+	}
+
 	render() {
 		const { when, classy } = withClassy( { size: this.size } );
 

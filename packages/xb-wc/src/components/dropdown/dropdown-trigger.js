@@ -1,4 +1,5 @@
 import { html } from 'lit';
+import { createRef, ref } from 'lit/directives/ref.js';
 import withClassy from '@welingtonms/classy';
 
 import XBElement from '../../common/xb-element';
@@ -7,6 +8,8 @@ import styles from './dropdown-trigger.styles';
 import '../button';
 
 export class DropdownTrigger extends XBElement {
+	button = createRef();
+
 	static styles = [ styles() ];
 
 	static get properties() {
@@ -32,15 +35,21 @@ export class DropdownTrigger extends XBElement {
 		this.setAttribute( 'slot', 'trigger' );
 	}
 
+	focus() {
+		this._getButton()?.focus();
+	}
+
 	render() {
 		const { classy, when } = withClassy( { open: this.open } );
 
 		return html`
 			<xb-button
+				${ ref( this.button ) }
 				class="${ classy( 'dropdown-trigger', {
 					'is-open': when( { open: true } ),
 				} ) }"
 				emphasis="flat"
+				@click=${ this._handleClick }
 			>
 				<slot></slot>
 				<xb-icon
@@ -55,13 +64,20 @@ export class DropdownTrigger extends XBElement {
 		`;
 	}
 
+	/**
+	 * @returns {HTMLButtonElement}
+	 */
+	_getButton() {
+		return this.button.value;
+	}
+
 	_handleClick() {
 		const options = {
 			composed: true,
 			detail: { action: 'toggle' },
 		};
 
-		this.emit( 'xb-dropdown-trigger', options );
+		this.emit( 'xb-dropdown', options );
 	}
 }
 

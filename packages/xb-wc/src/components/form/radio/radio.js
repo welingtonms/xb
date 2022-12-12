@@ -83,9 +83,7 @@ export class RadioInput extends XBElement {
 	}
 
 	focus() {
-		const button = this._getButton();
-
-		button.focus();
+		this._getButton().focus();
 
 		// to mimic the native behavior
 		this._handleClick();

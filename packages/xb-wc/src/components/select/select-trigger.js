@@ -1,4 +1,5 @@
 import { html } from 'lit';
+import { createRef, ref } from 'lit/directives/ref.js';
 import withClassy from '@welingtonms/classy';
 
 import XBElement from '../../common/xb-element';
@@ -7,6 +8,8 @@ import styles from './select-trigger.styles';
 import '../form/text-input';
 
 export class SelectTrigger extends XBElement {
+	search = createRef();
+
 	static styles = [ styles() ];
 
 	static get properties() {
@@ -53,12 +56,8 @@ export class SelectTrigger extends XBElement {
 		this.placeholder = 'Search & Select';
 	}
 
-	connectedCallback() {
-		super.connectedCallback();
-	}
-
-	disconnectedCallback() {
-		super.disconnectedCallback();
+	focus() {
+		this._getSearch()?.focus();
 	}
 
 	render() {
@@ -66,17 +65,20 @@ export class SelectTrigger extends XBElement {
 
 		return html`
 			<xb-text-input
+				${ ref( this.search ) }
 				class="${ classy( 'select-trigger', {
 					'is-open': when( { open: true } ),
 				} ) }"
 				value="${ this.value }"
 				placeholder="${ this.placeholder }"
+				@click=${ this._handleTriggerClick }
 			>
 				<xb-button
 					slot="trailing"
+					paddingless
 					emphasis="text"
 					size="extra-small"
-					paddingless
+					@click=${ this._handleTrailingClick }
 				>
 					<xb-icon
 						class=${ classy( 'indicator', {
@@ -88,6 +90,33 @@ export class SelectTrigger extends XBElement {
 				</xb-button>
 			</xb-text-input>
 		`;
+	}
+
+	/**
+	 * @returns {HTMLInputElement}
+	 */
+	_getSearch() {
+		return this.search.value;
+	}
+
+	_handleTriggerClick() {
+		const options = {
+			composed: true,
+			detail: { action: 'open' },
+		};
+
+		this.emit( 'xb-dropdown', options );
+	}
+
+	_handleTrailingClick( e ) {
+		e.stopPropagation();
+
+		const options = {
+			composed: true,
+			detail: { action: 'toggle' },
+		};
+
+		this.emit( 'xb-dropdown', options );
 	}
 }
 
