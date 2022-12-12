@@ -166,14 +166,16 @@ export class Tooltip extends XBElement {
 	_handleMouseOver() {
 		if ( this._hasTrigger( 'hover' ) ) {
 			clearTimeout( this.hoverTimeout );
-			this.hoverTimeout = window.setTimeout( () => this.show(), 750 );
+
+			this.hoverTimeout = window.setTimeout( () => this.show(), 450 );
 		}
 	}
 
 	_handleMouseOut() {
 		if ( this._hasTrigger( 'hover' ) ) {
 			clearTimeout( this.hoverTimeout );
-			this.hoverTimeout = window.setTimeout( () => this.hide(), 1000 );
+
+			this.hoverTimeout = window.setTimeout( () => this.hide(), 250 );
 		}
 	}
 
