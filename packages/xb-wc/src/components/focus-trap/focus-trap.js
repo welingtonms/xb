@@ -1,6 +1,6 @@
 import { html } from 'lit';
-import toArray from '@welingtonms/xb-toolset/dist/to-array';
 
+import { getIncrementByKey } from './focus-trap.helpers';
 import XBElement from '../../common/xb-element';
 import styles from './focus-trap.styles';
 import Keyboard from '../../common/keyboard';
@@ -26,7 +26,7 @@ export class FocusTrap extends XBElement {
 			 * Should the focus trap be active.
 			 * @type {boolean}
 			 */
-			active: { type: Boolean },
+			active: { type: Boolean, reflect: true },
 			/**
 			 * Should the focus trap be active.
 			 * @type {SupportedKey | SupportedKey[]}
@@ -47,37 +47,67 @@ export class FocusTrap extends XBElement {
 		this.active = false;
 	}
 
-	connectedCallback() {
-		super.connectedCallback();
-
-		this._subscribe();
-	}
-
-	disconnectedCallback() {
-		super.disconnectedCallback();
-
-		this._unsubscribe();
-	}
-
+	/**
+	 * @param {import('lit').PropertyValues<ToggleGroup>} changedProperties
+	 */
 	updated( changedProperties ) {
 		super.updated( changedProperties );
 
-		this._focusableDescendants = this._getTabbableDescendants();
+		if ( changedProperties.has( 'active' ) ) {
+			if ( this.active ) {
+				this._focusableDescendants = this._getFocusableDescendants();
+				this._subscribe();
+			} else {
+				this._unsubscribe();
+			}
+		}
 	}
+
+	activate = () => {
+		if ( this.active ) {
+			return;
+		}
+
+		this.active = true;
+	};
+
+	deactivate = () => {
+		if ( ! this.active ) {
+			return;
+		}
+
+		this.active = false;
+	};
 
 	render() {
 		return html`<slot></slot>`;
 	}
 
 	_subscribe() {
-		this.addEventListener( 'keydown', this._handleKeyboardEvent );
+		window.addEventListener( 'keydown', this._handleKeyboardEvent );
 		this._subscribeToDOMMutationEvents();
+
+		this._currentFocused = -1;
 	}
 
+	_subscribeToDOMMutationEvents = () => {
+		this._mutationObserver = new MutationObserver( () => {
+			this._focusableDescendants = this._getFocusableDescendants();
+		} );
+
+		this._mutationObserver.observe( this, { childList: true } );
+	};
+
 	_unsubscribe() {
-		this.removeEventListener( 'keydown', this._handleKeyboardEvent );
+		window.removeEventListener( 'keydown', this._handleKeyboardEvent );
 		this._unsubscribeToDOMMutationEvents();
 	}
+
+	_unsubscribeToDOMMutationEvents = () => {
+		if ( this._mutationObserver ) {
+			this._mutationObserver.disconnect();
+		}
+	};
 
 	/**
 	 * @param {KeyboardEvent} e
@@ -88,99 +118,25 @@ export class FocusTrap extends XBElement {
 			...( this.keys || [
 				Keyboard.getKey( 'ArrowUp' ),
 				Keyboard.getKey( 'ArrowDown' ),
+				Keyboard.getKey( 'ArrowRight' ),
+				Keyboard.getKey( 'ArrowLeft' ),
 			] ),
 		];
 
 		if (
-			! Keyboard( e ).is( supportedKeys ) ||
-			this._focusableDescendants.length == 0
+			! this.active ||
+			this._focusableDescendants.length == 0 ||
+			! Keyboard( e ).is( supportedKeys )
 		) {
 			return;
 		}
 
-		e.preventDefault();
+		e.stopPropagation();
 
-		/**
-		 * Checks if `_currentFocused` is outdated by comparing it with `document.activeElement`.
-		 */
-		if (
-			this._currentFocused === -1 ||
-			this._focusableDescendants[ this._currentFocused ] !==
-				document.activeElement
-		) {
-			this._currentFocused = this._getCurrentActiveDescendantIndex();
-		}
-
-		const newCurrentFocused = this._getFocusedIndexAfterKeyPress(
-			e,
-			this._focusableDescendants.length
-		);
+		const newCurrentFocused = this._getFocusedIndexAfterKeyPress( e );
 
 		this._currentFocused = newCurrentFocused;
-
 		this._focusableDescendants[ newCurrentFocused ]?.focus();
-	};
-
-	/**
-	 *
-	 * @param {KeyboardEvent} e
-	 * @param {number} focusableCounter
-	 * @return {number} get index of new focused element
-	 */
-	_getFocusedIndexAfterKeyPress = ( e, focusableCounter ) => {
-		/** @type {Record<KeyboardEvent['key'], ( e: KeyboardEvent ) => number>} */
-		const keyHandler = {
-			/**
-			 *
-			 * @param {KeyboardEvent} e
-			 * @return {number} increment for new focused element index
-			 */
-			Tab( e ) {
-				return e.shiftKey ? -1 : 1;
-			},
-			ArrowUp() {
-				return -1;
-			},
-			ArrowDown() {
-				return 1;
-			},
-		};
-
-		function unknownKey() {
-			return 0;
-		}
-
-		const key = Keyboard.getEventKey( e );
-		const increment = ( keyHandler[ key ] || unknownKey )( e );
-
-		if ( this._currentFocused === -1 && increment === -1 ) {
-			/**
-			 * Prevent to skip one element when the initial increment is -1
-			 * and `this._currentFocused` is -1, we don't .
-			 * e.g.: focus has just been activated and user presses arrow up.
-			 */
-			return ( increment + focusableCounter ) % focusableCounter;
-		}
-
-		return (
-			( this._currentFocused + increment + focusableCounter ) % focusableCounter
-		);
-	};
-
-	_subscribeToDOMMutationEvents = () => {
-		this._mutationObserver = new MutationObserver( () => {
-			this._focusableDescendants = this._getTabbableDescendants();
-		} );
-
-		this._mutationObserver.observe( this, { childList: true } );
-	};
-
-	_unsubscribeToDOMMutationEvents = () => {
-		this._currentFocused = -1;
-
-		if ( this._mutationObserver ) {
-			this._mutationObserver.disconnect();
-		}
 	};
 
 	/**
@@ -188,7 +144,7 @@ export class FocusTrap extends XBElement {
 	 * @return {HTMLElement[]} Array of tabbable elements inside `container`.
 	 * For now, only `button`s are considered.
 	 */
-	_getTabbableDescendants = ( root ) => {
+	_getFocusableDescendants = ( root ) => {
 		const slots = ( root ?? this.shadowRoot ).querySelectorAll( 'slot' );
 
 		const descendants = [ ...slots ]
@@ -202,21 +158,67 @@ export class FocusTrap extends XBElement {
 
 				// TODO: all focusable by the focus-trap should expose a focus method
 				// TODO: add support for other focusable elements
-				if ( [ 'xb-radio', 'xb-button' ].includes( tagName ) ) {
+				if (
+					[
+						'xb-button',
+						'xb-checkbox',
+						'xb-dropdown-item',
+						'xb-menu-item',
+						'xb-option',
+						'xb-radio',
+						'xb-text-input',
+					].includes( tagName )
+				) {
 					return array.concat( node );
 				}
 
-				return array.concat( this._getTabbableDescendants( node ) );
+				return array.concat( this._getFocusableDescendants( node ) );
 			}, [] );
 
 		return descendants;
 	};
 
-	_getCurrentActiveDescendantIndex() {
-		return this._focusableDescendants.findIndex(
-			( descendant ) => descendant === document.activeElement
-		);
+	_updateCurrentFocused() {
+		/**
+		 * Checks if `_currentFocused` is outdated by comparing it with `document.activeElement`.
+		 */
+		if (
+			this._currentFocused === -1 ||
+			this._focusableDescendants[ this._currentFocused ] !==
+				document.activeElement
+		) {
+			this._currentFocused = this._focusableDescendants.findIndex(
+				( descendant ) => descendant === document.activeElement
+			);
+		}
+
+		return this._currentFocused;
 	}
+
+	/**
+	 *
+	 * @param {KeyboardEvent} e
+	 * @return {number} get index of new focused element
+	 */
+	_getFocusedIndexAfterKeyPress = ( e ) => {
+		this._updateCurrentFocused();
+
+		const focusableCounter = this._focusableDescendants.length;
+		const increment = getIncrementByKey( e );
+
+		if ( this._currentFocused === -1 && increment === -1 ) {
+			/**
+			 * Prevent to skip one element when the initial increment is -1
+			 * and `this._currentFocused` is -1 (no descendant focused).
+			 * e.g.: focus has just been activated and user presses arrow up.
+			 */
+			return ( increment + focusableCounter ) % focusableCounter;
+		}
+
+		return (
+			( this._currentFocused + increment + focusableCounter ) % focusableCounter
+		);
+	};
 }
 
 window.customElements.define( 'xb-focus-trap', FocusTrap );
