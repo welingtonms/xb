@@ -32,6 +32,12 @@ export class Select extends SelectionMixin( XBElement, {
 			placement: { type: String },
 
 			/**
+			 * Select placeholder.
+			 * @type {SelectAttributes['placeholder']}
+			 */
+			placeholder: { type: String },
+
+			/**
 			 * Should the dropdown menu be open.
 			 * @type {SelectAttributes['open']}
 			 */
@@ -85,6 +91,9 @@ export class Select extends SelectionMixin( XBElement, {
 
 		/** @type {SelectAttributes['placement']} */
 		this.placement = 'bottom-start';
+
+		/** @type {SelectAttributes['placeholder']} */
+		this.placeholder = 'Search & Select';
 
 		/** @type {SelectAttributes['disabled']} */
 		this.disabled = false;
@@ -256,7 +265,8 @@ window.customElements.define( 'xb-select', Select );
  * @property {boolean} [disabled] - Should the dropdown be disabled.
  * @property {boolean} [loading] - Is the select options being loaded.
  * @property {boolean} [multiple] - Is this a multiple selection?
- * @property {'group' | 'radiogroup'} role Aria role
+ * @property {'group' | 'radiogroup'} role - Aria role
+ * @property {string} placeholder - Select placeholder
  */
 
 /**
