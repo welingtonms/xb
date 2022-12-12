@@ -4,6 +4,8 @@ import withClassy from '@welingtonms/classy';
 import XBElement from '../../common/xb-element';
 import styles from './menu.styles';
 
+import '../focus-trap';
+
 export class Menu extends XBElement {
 	static styles = [ styles() ];
 
@@ -55,13 +57,6 @@ export class Menu extends XBElement {
 		this.bordered = false;
 	}
 
-	connectedCallback() {
-		super.connectedCallback();
-
-		// this.setAttribute( 'slot', 'menu' );
-		// this.style.setProperty( 'min-width', '100%' );
-	}
-
 	render() {
 		const { classy, when } = withClassy( {
 			hoverable: this.hoverable,
@@ -71,15 +66,17 @@ export class Menu extends XBElement {
 
 		return html`
 			${ this.loading ? html`<xb-spinner></xb-spinner>` : nothing }
-			<xb-stack
-				class="${ classy( 'menu', {
-					'-hoverable': when( { hoverable: true } ),
-					'-striped': when( { striped: true } ),
-					'-bordered': when( { bordered: true } ),
-				} ) }"
-			>
-				<slot></slot>
-			</xb-stack>
+			<xb-focus-trap>
+				<xb-stack
+					class="${ classy( 'menu', {
+						'-hoverable': when( { hoverable: true } ),
+						'-striped': when( { striped: true } ),
+						'-bordered': when( { bordered: true } ),
+					} ) }"
+				>
+					<slot></slot>
+				</xb-stack>
+			</xb-focus-trap>
 		`;
 	}
 }
