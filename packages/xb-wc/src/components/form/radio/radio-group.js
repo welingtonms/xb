@@ -1,4 +1,5 @@
 import { html } from 'lit';
+import { createRef, ref } from 'lit/directives/ref.js';
 import withClassy from '@welingtonms/classy';
 
 import { CHECK_EVENT } from './radio-group.constants';
@@ -12,6 +13,9 @@ import '../../layout/stack';
 export class RadioGroup extends SelectionMixin( XBElement, {
 	listen: CHECK_EVENT,
 } ) {
+	/** @type {import('../../focus-trap').FocusTrap} */
+	_trap = createRef();
+
 	static styles = [ styles() ];
 
 	/** @type {HTMLSlotElement} */
@@ -44,6 +48,15 @@ export class RadioGroup extends SelectionMixin( XBElement, {
 		super.connectedCallback();
 
 		this.setAttribute( 'role', 'radiogroup' );
+		this.addEventListener( 'focusin', this._handleFocus );
+		this.addEventListener( 'focusout', this._handleBlur );
+	}
+
+	disconnectedCallback() {
+		super.disconnectedCallback();
+
+		this.removeEventListener( 'focusin', this._handleFocus );
+		this.removeEventListener( 'focusout', this._handleBlur );
 	}
 
 	/**
@@ -68,8 +81,9 @@ export class RadioGroup extends SelectionMixin( XBElement, {
 
 		// TODO: add proper accessibility features
 		return html`
-			<xb-focus-trap>
+			<xb-focus-trap ${ ref( this._trap ) }>
 				<xb-stack
+					as="fieldset"
 					class=${ classy( 'radio-group' ) }
 					borderless="none"
 					paddingless="none"
@@ -109,6 +123,21 @@ export class RadioGroup extends SelectionMixin( XBElement, {
 	_setRadioDisabled( radio ) {
 		radio.disabled = this.disabled;
 	}
+
+	_handleFocus() {
+		this._getFocusTrap().activate();
+	}
+
+	_handleBlur() {
+		this._getFocusTrap().deactivate();
+	}
+
+	/**
+	 * @returns {FocusTrap}
+	 */
+	_getFocusTrap() {
+		return this._trap.value;
+	}
 }
 
 window.customElements.define( 'xb-radio-group', RadioGroup );
@@ -116,6 +145,7 @@ window.customElements.define( 'xb-radio-group', RadioGroup );
 /**
  * @typedef {import('../../../styles/size.styles').ElementSize} ToggleSize
  * @typedef {import('../../../controllers/selection/selection.controller').default} SelectionController
+ * @typedef {import('../../focus-trap').FocusTrap} FocusTrap
  */
 
 /**
