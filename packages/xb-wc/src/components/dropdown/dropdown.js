@@ -9,12 +9,20 @@ import '../popover';
 import './dropdown-trigger';
 import './dropdown-menu';
 import './dropdown-item';
+import '../menu';
+import '../focus-trap';
 
 export class Dropdown extends XBElement {
 	static styles = [ styles() ];
 
 	/** @type {import('./dropdown-trigger').DropdownTrigger} */
 	_trigger;
+
+	/** @type {import('./dropdown-menu').DropdownMenu} */
+	_menu;
+
+	/** @type {import('../focus-trap').FocusTrap} */
+	_trap;
 
 	static get properties() {
 		return {
@@ -81,6 +89,13 @@ export class Dropdown extends XBElement {
 		if ( changedProperties.has( 'open' ) ) {
 			const trigger = this._getTrigger();
 			trigger.open = this.open;
+
+			if ( this.open ) {
+				this._getFocusTrap().activate();
+			} else {
+				this._getFocusTrap()?.deactivate();
+				this._getTrigger().focus();
+			}
 		}
 	}
 
@@ -92,11 +107,7 @@ export class Dropdown extends XBElement {
 					placement="${ ifDefined( this.placement ) }"
 					?hidden=${ ! this.open }
 				>
-					<slot
-						name="trigger"
-						slot="anchor"
-						@click=${ this._handleClick }
-					></slot>
+					<slot name="trigger" slot="anchor"></slot>
 
 					<slot name="menu" slot="floating"></slot>
 				</xb-popover>
@@ -113,7 +124,44 @@ export class Dropdown extends XBElement {
 	}
 
 	toggle() {
-		this.open = ! this.open;
+		if ( this.open ) {
+			this.collapse();
+		} else {
+			this.expand();
+		}
+	}
+
+	_getTrigger() {
+		if ( this._trigger == null ) {
+			const triggerSlot = this.shadowRoot.querySelector(
+				'slot[name="trigger"]'
+			);
+			[ this._trigger ] = triggerSlot.assignedElements( { flatten: true } );
+		}
+
+		return this._trigger;
+	}
+
+	_getMenu() {
+		if ( this._menu == null ) {
+			const menuSlot = this.shadowRoot.querySelector( 'slot[name="menu"]' );
+			[ this._menu ] = menuSlot.assignedElements( { flatten: true } );
+		}
+
+		return this._menu;
+	}
+
+	_getFocusTrap() {
+		if ( this._trap == null ) {
+			/**
+			 * FIXME: find a better way to query the focus-trap element.
+			 * For some reason, querySelector('xb-focus-trap') in the menu
+			 * Shadow DOM is not working.
+			 */
+			[ this._trap ] = [ ...this._getMenu().shadowRoot.children ];
+		}
+
+		return this._trap;
 	}
 
 	_handleClick() {
@@ -146,17 +194,6 @@ export class Dropdown extends XBElement {
 
 	_handleClickOutside() {
 		this.collapse();
-	}
-
-	_getTrigger() {
-		if ( this._trigger ) {
-			return this._trigger;
-		}
-
-		const [ triggerSlot ] = this.shadowRoot.querySelectorAll( 'slot' );
-		[ this._trigger ] = triggerSlot.assignedElements( { flatten: true } );
-
-		return this._trigger;
 	}
 }
 
