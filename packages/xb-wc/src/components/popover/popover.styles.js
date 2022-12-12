@@ -18,6 +18,10 @@ function styles() {
 				--xb-popover-border-bottom-right-radius: 8px;
 				--xb-popover-border-bottom-left-radius: 8px;
 
+				--xb-popover-box-shadow: rgba( 0, 0, 0, 0.07 ) 0px 1px 1px,
+					rgba( 0, 0, 0, 0.07 ) 0px 2px 2px, rgba( 0, 0, 0, 0.07 ) 0px 4px 4px,
+					rgba( 0, 0, 0, 0.07 ) 0px 8px 8px, rgba( 0, 0, 0, 0.07 ) 0px 16px 16px;
+
 				position: relative;
 
 				display: inline-flex;
@@ -59,9 +63,7 @@ function styles() {
 				background-color: var( --xb-popover-background-color );
 				color: var( --xb-popover-color );
 
-				box-shadow: rgba( 0, 0, 0, 0.07 ) 0px 1px 1px,
-					rgba( 0, 0, 0, 0.07 ) 0px 2px 2px, rgba( 0, 0, 0, 0.07 ) 0px 4px 4px,
-					rgba( 0, 0, 0, 0.07 ) 0px 8px 8px, rgba( 0, 0, 0, 0.07 ) 0px 16px 16px;
+				box-shadow: var( --xb-popover-box-shadow );
 			}
 
 			:host( [position='absolute'] ) slot[name='floating']::slotted( * ) {
