@@ -10,7 +10,9 @@ function styles() {
 			}
 
 			.tooltip {
-				/* Placeholder */
+				--xb-popover-background-color: ${ token( 'color-gray-800' ) };
+				--xb-popover-color: ${ token( 'color-white' ) };
+				--xb-popover-box-shadow: none;
 			}
 
 			.content {
