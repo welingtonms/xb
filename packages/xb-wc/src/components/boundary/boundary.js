@@ -7,20 +7,23 @@ import Keyboard from '../../common/keyboard';
 export class InteractionBoundary extends XBElement {
 	static styles = [ styles() ];
 
-	/** @type {boolean} */
-	_active;
-
 	/** @type {HTMLSlotElement} */
 	_defaultSlot;
 
 	static get properties() {
-		return {};
+		return {
+			/**
+			 * Should the focus trap be active.
+			 * @type {boolean}
+			 */
+			active: { type: Boolean, reflect: true },
+		};
 	}
 
 	constructor() {
 		super();
 
-		this._active = false;
+		this.active = false;
 
 		/** @type {boolean} */
 		this.disabled = false;
@@ -43,33 +46,33 @@ export class InteractionBoundary extends XBElement {
 	}
 
 	activate = () => {
-		if ( this._active ) {
+		if ( this.active ) {
 			return;
 		}
 
-		this._active = true;
+		this.active = true;
 	};
 
 	deactivate = () => {
-		if ( ! this._active ) {
+		if ( ! this.active ) {
 			return;
 		}
 
-		this._active = false;
+		this.active = false;
 	};
 
 	_subscribe() {
 		document.addEventListener( 'mousedown', this._handleEvent );
 		document.addEventListener( 'keyup', this._handleEvent );
 		document.addEventListener( 'touchend', this._handleEvent );
-		document.addEventListener( 'blur', this._handleBlurEvent );
+		window.addEventListener( 'blur', this._handleBlurEvent );
 	}
 
 	_unsubscribe() {
 		document.removeEventListener( 'mousedown', this._handleEvent );
 		document.removeEventListener( 'keyup', this._handleEvent );
 		document.removeEventListener( 'touchend', this._handleEvent );
-		document.removeEventListener( 'blur', this._handleBlurEvent );
+		window.removeEventListener( 'blur', this._handleBlurEvent );
 	}
 
 	_getHost() {
@@ -82,12 +85,9 @@ export class InteractionBoundary extends XBElement {
 	_handleEvent = ( e ) => {
 		const isInside = e.composedPath().includes( this );
 
-		if ( isInside && ! this._active ) {
+		if ( isInside && ! this.active ) {
 			this.activate();
-		} else if (
-			( ! isInside || Keyboard( e ).is( [ 'ESC' ] ) ) &&
-			this._active
-		) {
+		} else if ( ( ! isInside || Keyboard( e ).is( 'ESC' ) ) && this.active ) {
 			this.deactivate();
 			this._publish();
 		}
@@ -96,7 +96,7 @@ export class InteractionBoundary extends XBElement {
 	_handleBlurEvent = ( e ) => {
 		const isInside = e.composedPath().includes( this );
 
-		if ( isInside && this._active ) {
+		if ( ! isInside && this.active ) {
 			/**
 			 * if the blur event happened in the watched element and the click outside
 			 * watcher is activated, then we deactivate it
