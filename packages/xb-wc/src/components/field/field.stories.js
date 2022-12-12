@@ -25,12 +25,6 @@ export const Playground = ( args ) => html`<xb-stack
 		label="Your life decision"
 		prompt="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
 	>
-		<!-- <xb-text slot="label" variant="caption"
-			>Your
-			<b>life</b>
-			decision</xb-text
-		> -->
-
 		<xb-toggle-group>
 			<xb-toggle value="change">Change</xb-toggle>
 
@@ -40,7 +34,11 @@ export const Playground = ( args ) => html`<xb-stack
 		</xb-toggle-group>
 	</xb-field>
 
-	<xb-field label="Name" tip="Your name.">
+	<xb-field
+		label="Name"
+		tip="Your name."
+		prompt="Lorem consectetur adipiscing elit."
+	>
 		<xb-text-input type="text"></xb-text-input>
 	</xb-field>
 
@@ -49,7 +47,7 @@ export const Playground = ( args ) => html`<xb-stack
 		required
 		tip="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc lectus erat, bibendum non mollis eu, pharetra et est."
 	>
-		<xb-stack paddingless>
+		<xb-stack as="fieldset" paddingless>
 			<xb-checkbox
 				value="change"
 				size=${ args.size }
@@ -72,6 +70,17 @@ export const Playground = ( args ) => html`<xb-stack
 				>Leave</xb-checkbox
 			>
 		</xb-stack>
+	</xb-field>
+
+	<xb-field
+		label="Additional options"
+		tip="Consectetur adipiscing elit. Nunc lectus erat, bibendum non mollis eu, pharetra et est."
+	>
+		<xb-select>
+			<xb-option value="change">Change</xb-option>
+			<xb-option value="accept">Accept</xb-option>
+			<xb-option value="leave">Leave</xb-option>
+		</xb-select>
 	</xb-field>
 </xb-stack>`;
 
