@@ -21,4 +21,8 @@
  * @typedef {keyof HTMLElementTagNameMap} HTMLTag
  */
 
+/**
+ * @typedef {'info' | 'success' | 'warn' | 'danger'} StatusProp
+ */
+
 export default function noop() {}

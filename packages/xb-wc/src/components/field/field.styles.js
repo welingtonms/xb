@@ -12,6 +12,7 @@ function styles() {
 
 			.field {
 				--xb-stack-gap: ${ token( 'spacing-1' ) };
+				--xb-stack-border-radius: 4px;
 			}
 
 			xb-icon {
@@ -28,7 +29,7 @@ function styles() {
 				${ typography( 'body-2' ) };
 
 				/* font-weight: ${ token( 'font-weight-medium' ) };*/
-				font-size: 12px;
+				/* font-size: 12px; */
 			}
 
 			.-required .label::before {
@@ -39,8 +40,24 @@ function styles() {
 				content: '*';
 			}
 
+			.prompt {
+				font-size: 12px;
+			}
+
 			.content {
 				/* display: none; */
+			}
+
+			:host( [status='danger'] ) {
+				outline: 2px dotted ${ token( 'color-danger', 0.75 ) };
+				outline-offset: 4px;
+
+				border-radius: 4px;
+				/* box-shadow: 0 0 0 0.2rem rgb( 53 116 172 / 25% ); */
+			}
+
+			.is-danger .prompt {
+				--xb-text-color: ${ token( 'color-danger' ) };
 			}
 		`,
 	];
