@@ -7,6 +7,9 @@ import XBElement from '../../common/xb-element';
 
 import '../dropdown';
 import '../menu';
+import '../text';
+
+import '../layout/box';
 
 import './select-trigger';
 import './select-menu';
@@ -154,15 +157,21 @@ export class Select extends SelectionMixin( XBElement, {
 	}
 
 	render() {
-		return html`<xb-dropdown
-			${ ref( this.dropdown ) }
-			placement="${ ifDefined( this.placement ) }"
-		>
-			<xb-select-trigger slot="trigger"></xb-select-trigger>
-			<xb-menu slot="menu" ?loading=${ this.loading }>
-				<slot></slot>
-			</xb-menu>
-		</xb-dropdown>`;
+		return html`
+			<xb-dropdown
+				${ ref( this.dropdown ) }
+				placement="${ ifDefined( this.placement ) }"
+			>
+				<xb-select-trigger slot="trigger"></xb-select-trigger>
+				<xb-menu slot="menu" ?loading=${ this.loading }>
+					<slot>
+						<xb-box borderless>
+							<xb-text variant="body-2">No options available.</xb-text>
+						</xb-box>
+					</slot>
+				</xb-menu>
+			</xb-dropdown>
+		`;
 	}
 
 	_handleMenuEvent() {
