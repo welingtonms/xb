@@ -85,8 +85,7 @@ export class RadioGroup extends SelectionMixin( XBElement, {
 				<xb-stack
 					as="fieldset"
 					class=${ classy( 'radio-group' ) }
-					borderless="none"
-					paddingless="none"
+					paddingless
 					?disabled="${ this.disabled }"
 				>
 					<slot></slot>
