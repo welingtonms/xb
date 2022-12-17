@@ -2,6 +2,8 @@ import { html } from 'lit';
 import { createRef, ref } from 'lit/directives/ref.js';
 import withClassy from '@welingtonms/classy';
 
+import { convertDirectionFromAttribute } from '../../layout/layout.helpers';
+import { sided } from '../../../common/prop-toolset';
 import XBElement from '../../../common/xb-element';
 import styles from './text-input.styles';
 
@@ -49,6 +51,26 @@ export class TextInput extends XBElement {
 				type: String,
 				reflect: true,
 			},
+
+			/**
+			 * Determine borders to be supressed.
+			 * @type {TextInputAttributes['borderless']}
+			 */
+			borderless: {
+				converter: {
+					fromAttribute: convertDirectionFromAttribute,
+				},
+			},
+
+			/**
+			 * Determine paddings to be supressed.
+			 * @type {TextInputAttributes['paddingless']}
+			 */
+			paddingless: {
+				converter: {
+					fromAttribute: convertDirectionFromAttribute,
+				},
+			},
 		};
 	}
 
@@ -69,6 +91,12 @@ export class TextInput extends XBElement {
 
 		/** @type {TextInputAttributes['placeholder']} */
 		this.placeholder = '';
+
+		/** @type {TextInputAttributes['borderless']} */
+		this.borderless = 'none';
+
+		/** @type {TextInputAttributes['paddingless']} */
+		this.paddingless = 'none';
 	}
 
 	focus() {
@@ -80,12 +108,20 @@ export class TextInput extends XBElement {
 
 		return html`
 			<div
-				class=${ classy( 'text-input', {
-					'-extra-small': when( { size: 'extra-small' } ),
-					'-small': when( { size: 'small' } ),
-					'-medium': when( { size: 'medium' } ),
-					'-large': when( { size: 'large' } ),
-				} ) }
+				class=${ classy(
+					'text-input',
+					{
+						'-extra-small': when( { size: 'extra-small' } ),
+						'-small': when( { size: 'small' } ),
+						'-medium': when( { size: 'medium' } ),
+						'-large': when( { size: 'large' } ),
+					},
+					{
+						'is-disabled': this.disabled,
+					},
+					sided( 'padding', this.paddingless ),
+					sided( 'border', this.borderless )
+				) }
 			>
 				<slot name="leading"></slot>
 				<input
@@ -113,6 +149,8 @@ window.customElements.define( 'xb-text-input', TextInput );
 /**
  * @typedef {('text' | 'password' | 'number' )} TextInputType
  * @typedef {import('../../../styles/size.styles').ElementSize} TextInputSize
+ * @typedef {import('../../../common/prop-types').BorderlessProp} BorderlessProp
+ * @typedef {import('../../../common/prop-types').PaddinglessProp} PaddinglessProp
  */
 
 /**
@@ -122,4 +160,6 @@ window.customElements.define( 'xb-text-input', TextInput );
  * @property {ButtonSize} size
  * @property {string} value
  * @property {string} placeholder
+ * @property {BorderlessProp} borderless
+ * @property {PaddinglessProp} paddingless
  */

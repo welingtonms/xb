@@ -7,7 +7,7 @@ function styles() {
 	return [
 		css`
 			.select-trigger {
-				--xb-text-input-padding-x: ${ token( 'spacing-4' ) };
+				--xb-text-input-padding-l: ${ token( 'spacing-4' ) };
 				--xb-text-input-placeholder-color: ${ token( 'color-gray-700' ) };
 			}
 
