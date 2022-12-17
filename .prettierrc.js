@@ -6,9 +6,9 @@ module.exports = {
 	bracketSpacing: true,
 	parenSpacing: true,
 	jsxBracketSameLine: false,
+	htmlWhitespaceSensitivity: 'ignore',
 	semi: true,
 	arrowParens: 'always',
-	jsxBracketSameLine: false,
 	overrides: [
 		{
 			files: '*.{css,sass,scss}',
