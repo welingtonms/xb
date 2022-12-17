@@ -1,6 +1,6 @@
 /**
  * Do not edit directly
- * Generated on Fri, 23 Sep 2022 17:58:26 GMT
+ * Generated on Fri, 16 Dec 2022 21:42:38 GMT
  */
 
 module.exports = {
@@ -121,10 +121,8 @@ module.exports = {
   "line-height-snug": 1.375,
   "line-height-default": 1.5,
   "line-height-relaxed": 1.62,
-  "layer-0": 0,
-  "layer-1": 1,
-  "layer-2": 2,
-  "layer-3": 3,
+  "layer-default": 0,
+  "layer-popover": 1,
   "spacing-0": 0,
   "spacing-1": "4px",
   "spacing-2": "8px",
