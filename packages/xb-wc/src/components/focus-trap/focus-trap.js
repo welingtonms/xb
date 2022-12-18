@@ -8,9 +8,6 @@ import Keyboard from '../../common/keyboard';
 export class FocusTrap extends XBElement {
 	static styles = [ styles() ];
 
-	/** @type {MutationObserver | null} */
-	_mutationObserver = null;
-
 	/** @type {HTMLElement[]} */
 	_focusableDescendants = [];
 
@@ -24,12 +21,12 @@ export class FocusTrap extends XBElement {
 		return {
 			/**
 			 * Should the focus trap be active.
-			 * @type {boolean}
+			 * @type {FocusTrapAttributes['active']}
 			 */
 			active: { type: Boolean, reflect: true },
 			/**
 			 * Should the focus trap be active.
-			 * @type {SupportedKey | SupportedKey[]}
+			 * @type {FocusTrapAttributes['keys']}
 			 */
 			keys: {},
 		};
@@ -44,6 +41,7 @@ export class FocusTrap extends XBElement {
 			Keyboard.getKey( 'ArrowDown' ),
 		];
 
+		/** @type {FocusTrapAttributes['active']} */
 		this.active = false;
 	}
 
@@ -55,7 +53,6 @@ export class FocusTrap extends XBElement {
 
 		if ( changedProperties.has( 'active' ) ) {
 			if ( this.active ) {
-				this._focusableDescendants = this._getFocusableDescendants();
 				this._subscribe();
 			} else {
 				this._unsubscribe();
@@ -80,34 +77,24 @@ export class FocusTrap extends XBElement {
 	};
 
 	render() {
-		return html`<slot></slot>`;
+		return html`
+			<slot @slotchange=${ this._handleSlotChange }></slot>
+		`;
 	}
 
 	_subscribe() {
 		window.addEventListener( 'keydown', this._handleKeyboardEvent );
-		this._subscribeToDOMMutationEvents();
 
 		this._currentFocused = -1;
 	}
 
-	_subscribeToDOMMutationEvents = () => {
-		this._mutationObserver = new MutationObserver( () => {
-			this._focusableDescendants = this._getFocusableDescendants();
-		} );
-
-		this._mutationObserver.observe( this, { childList: true } );
-	};
-
 	_unsubscribe() {
 		window.removeEventListener( 'keydown', this._handleKeyboardEvent );
-		this._unsubscribeToDOMMutationEvents();
 	}
 
-	_unsubscribeToDOMMutationEvents = () => {
-		if ( this._mutationObserver ) {
-			this._mutationObserver.disconnect();
-		}
-	};
+	_handleSlotChange() {
+		this._focusableDescendants = this._getFocusableDescendants();
+	}
 
 	/**
 	 * @param {KeyboardEvent} e
@@ -224,10 +211,6 @@ export class FocusTrap extends XBElement {
 window.customElements.define( 'xb-focus-trap', FocusTrap );
 
 /**
- * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionType} SelectionType
- * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionState} SelectionState
- * @typedef {import('lit').ReactiveControllerHost} ReactiveControllerHost
- * @typedef {import('../../common/xb-element').default} XBElement
  * @typedef {ReactiveControllerHost & XBElement & { _selection: SelectionState, type: SelectionType }} SelectionHost
  * @typedef {import('../../common/keyboard').SupportedKey} SupportedKey
  */
@@ -235,4 +218,5 @@ window.customElements.define( 'xb-focus-trap', FocusTrap );
 /**
  * @typedef {Object} FocusTrapAttributes
  * @property {SupportedKey | SupportedKey[]} [keys] - Keys used to navigate through the focusable descendants.
+ * @property {boolean} active
  */
