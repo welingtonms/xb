@@ -137,7 +137,7 @@ export class ToggleGroup extends SelectionMixin( XBElement, {
 	 */
 	_setToggleChecked( toggle ) {
 		/** @type {SelectionController} */
-		const controller = this._controller;
+		const controller = this._selectionController;
 
 		toggle.checked = controller.selection.has( toggle.value );
 	}

@@ -11,7 +11,7 @@ import SelectionController from '../../controllers/selection';
 const SelectionMixin = ( superClass, options ) =>
 	class SelectionHost extends superClass {
 		/** @type {SelectionController} */
-		_controller;
+		_selectionController;
 
 		static get properties() {
 			return {
@@ -45,8 +45,8 @@ const SelectionMixin = ( superClass, options ) =>
 			/**
 			 * In case the selection manager's `type` changes after initialization.
 			 */
-			if ( this._controller == null ) {
-				this._controller = new SelectionController( this, {
+			if ( this._selectionController == null ) {
+				this._selectionController = new SelectionController( this, {
 					...( options || {} ),
 					type: this.type,
 				} );
@@ -54,14 +54,14 @@ const SelectionMixin = ( superClass, options ) =>
 				changedProperties.get( 'type' ) != null &&
 				this.type != null
 			) {
-				this._controller.type = this.type;
+				this._selectionController.type = this.type;
 			}
 
 			/**
 			 * If `value` changed, we need to reset the selection controller.
 			 */
 			if ( changedProperties.has( 'value' ) ) {
-				this._controller.init( toArray( this.value ) );
+				this._selectionController.init( toArray( this.value ) );
 			}
 		}
 	};

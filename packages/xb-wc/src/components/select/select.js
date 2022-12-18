@@ -28,7 +28,7 @@ export class Select extends SelectionMixin( XBElement, {
 	_options;
 
 	/** @type {SelectController} */
-	_banana;
+	_selectController;
 
 	static get properties() {
 		return {
@@ -145,7 +145,7 @@ export class Select extends SelectionMixin( XBElement, {
 			this.type = this.multiple ? 'multiple' : 'single';
 			this.role = [ 'single' ].includes( this.type ) ? 'radiogroup' : 'group';
 
-			this._banana = createSelectController( this );
+			this._selectController = createSelectController( this );
 		}
 
 		// if ( changedProperties.has( 'role' ) ) {
@@ -229,7 +229,7 @@ export class Select extends SelectionMixin( XBElement, {
 
 	get selection() {
 		/** @type {SelectionController} */
-		const controller = this._controller;
+		const controller = this._selectionController;
 
 		return controller.selection;
 	}
@@ -238,7 +238,7 @@ export class Select extends SelectionMixin( XBElement, {
 		// we set to null so the getter will re-run the query
 		this._options = null;
 
-		this._banana._updateOptions();
+		this._selectController._updateOptions();
 	}
 
 	_handleMenuEvent() {

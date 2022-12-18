@@ -111,7 +111,7 @@ export class RadioGroup extends SelectionMixin( XBElement, {
 	 */
 	_setRadioChecked( radio ) {
 		/** @type {SelectionController} */
-		const controller = this._controller;
+		const controller = this._selectionController;
 
 		radio.checked = controller.selection.has( radio.value );
 	}
