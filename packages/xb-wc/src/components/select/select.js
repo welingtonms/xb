@@ -1,7 +1,7 @@
 import { html } from 'lit';
-import { createRef, ref } from 'lit/directives/ref.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
+import { createSelectController } from './select.controller';
 import SelectionMixin from '../../mixins/selection';
 import XBElement from '../../common/xb-element';
 
@@ -18,13 +18,17 @@ import './select-option';
 export class Select extends SelectionMixin( XBElement, {
 	listen: 'xb-select',
 } ) {
-	dropdown = createRef();
+	/** @type {Dropdown} */
+	_dropdown;
 
-	/** @type {HTMLSlotElement} */
-	_defaultSlot;
-
-	/** @type {import('./select-trigger').SelectTrigger} */
+	/** @type {SelectTrigger} */
 	_trigger;
+
+	/** @type {SelectOption[]} */
+	_options;
+
+	/** @type {SelectController} */
+	_banana;
 
 	static get properties() {
 		return {
@@ -83,6 +87,8 @@ export class Select extends SelectionMixin( XBElement, {
 				type: String,
 				reflect: true,
 			},
+
+			datasources: {},
 		};
 	}
 
@@ -112,6 +118,9 @@ export class Select extends SelectionMixin( XBElement, {
 
 		/** @type {SelectAttributes['role']} */
 		this.role = 'radiogroup';
+
+		/** @type {SelectAttributes['datasources']} */
+		this.datasources = [];
 	}
 
 	connectedCallback() {
@@ -135,36 +144,54 @@ export class Select extends SelectionMixin( XBElement, {
 		if ( changedProperties.has( 'multiple' ) ) {
 			this.type = this.multiple ? 'multiple' : 'single';
 			this.role = [ 'single' ].includes( this.type ) ? 'radiogroup' : 'group';
+
+			this._banana = createSelectController( this );
 		}
 
-		if ( changedProperties.has( 'role' ) ) {
-			this._getOptions().forEach( ( option ) => {
-				this._setOptionRole( option );
-			} );
-		}
+		// if ( changedProperties.has( 'role' ) ) {
+		// 	this._getOptions().forEach( ( option ) => {
+		// 		this._setOptionRole( option );
+		// 	} );
+		// }
 
-		if ( changedProperties.has( 'disabled' ) ) {
-			this._getOptions().forEach( ( option ) => {
-				this._setOptionDisabled( option );
-			} );
-		}
+		// if ( changedProperties.has( 'disabled' ) ) {
+		// 	this._getOptions().forEach( ( option ) => {
+		// 		this._setOptionDisabled( option );
+		// 	} );
+		// }
 
-		this._setTriggerValue();
+		// if ( changedProperties.has( 'datasources' ) ) {
+		// 	console.log( 'handling datasources' );
+		// }
 
-		this._getOptions().forEach( ( option ) => {
-			this._setOptionSelected( option );
-		} );
+		// this._getOptions().forEach( ( option ) => {
+		// 	this._setOptionSelected( option );
+		// } );
+
+		// this._setTriggerValue();
+
+		// to remove all options
+		// while ( this.firstChild ) {
+		// 	this.removeChild( this.firstChild );
+		// }
+
+		// this.appendChild(
+		// 	Object.assign( document.createElement( 'xb-option' ), {
+		// 		value: 'change' + i,
+		// 		innerHTML: 'Change ' + i,
+		// 	} )
+		// );
+
+		// i++;
 	}
 
 	render() {
 		return html`
-			<xb-dropdown
-				${ ref( this.dropdown ) }
-				placement="${ ifDefined( this.placement ) }"
-			>
+			<xb-dropdown placement="${ ifDefined( this.placement ) }">
 				<xb-select-trigger slot="trigger"></xb-select-trigger>
+
 				<xb-menu slot="menu" ?loading=${ this.loading }>
-					<slot>
+					<slot @slotchange=${ this._handleSlotChanged }>
 						<xb-box borderless>
 							<xb-text variant="body-2">No options available.</xb-text>
 						</xb-box>
@@ -174,87 +201,50 @@ export class Select extends SelectionMixin( XBElement, {
 		`;
 	}
 
-	_handleMenuEvent() {
-		if ( ! this.multiple ) {
-			this._getDropdown().collapse();
-		}
+	get dropdown() {
+		this._dropdown =
+			this._dropdown ?? this.shadowRoot.querySelector( 'xb-dropdown' );
+
+		return this._dropdown;
 	}
 
-	/**
-	 * @returns {Dropdown}
-	 */
-	_getDropdown() {
-		return this.dropdown.value;
-	}
-
-	/**
-	 * @returns {import('./select-trigger').SelectTrigger}
-	 */
-	_getTrigger() {
+	get trigger() {
 		this._trigger =
 			this._trigger ?? this.shadowRoot.querySelector( 'xb-select-trigger' );
 
 		return this._trigger;
 	}
 
-	/**
-	 * @returns {import('./select-option').SelectOption[]}
-	 */
-	_getOptions() {
-		this._defaultSlot =
-			this._defaultSlot ?? this.shadowRoot.querySelector( 'slot' );
+	get options() {
+		if ( this._options == null ) {
+			const defaultSlot = this.shadowRoot.querySelector( 'slot' );
 
-		return [
-			...this._defaultSlot.assignedElements( { flatten: true } ),
-		].filter( ( item ) => item.tagName.toLowerCase() == 'xb-option' );
-	}
-
-	_setTriggerValue() {
-		/** @type {SelectionController} */
-		const controller = this._controller;
-
-		const trigger = this._getTrigger();
-		trigger.value = '';
-
-		if ( ! this.multiple ) {
-			const selectedOption = this._getOptions().find( ( option ) =>
-				controller.selection.has( option.value )
-			);
-
-			trigger.placeholder = selectedOption?.getTextLabel() ?? this.placeholder;
-		} else {
-			trigger.placeholder =
-				controller.selection.size > 0
-					? `${ controller.selection.size } selected`
-					: this.placeholder;
+			this._options = [
+				...defaultSlot.assignedElements( { flatten: true } ),
+			].filter( ( item ) => item.tagName.toLowerCase() == 'xb-option' );
 		}
+
+		return this._options;
 	}
 
-	/**
-	 * @param {import('./select-option').SelectOption} option
-	 */
-	_setOptionRole( option ) {
-		option.setAttribute(
-			'role',
-			[ 'single' ].includes( this.type ) ? 'radio' : 'checkbox'
-		);
-	}
-
-	/**
-	 * @param {import('./select-option').SelectOption} option
-	 */
-	_setOptionSelected( option ) {
+	get selection() {
 		/** @type {SelectionController} */
 		const controller = this._controller;
 
-		option.checked = controller.selection.has( option.value );
+		return controller.selection;
 	}
 
-	/**
-	 * @param {import('./select-option').SelectOption} option
-	 */
-	_setOptionDisabled( option ) {
-		option.disabled = this.disabled || option.disabled;
+	_handleSlotChanged() {
+		// we set to null so the getter will re-run the query
+		this._options = null;
+
+		this._banana._updateOptions();
+	}
+
+	_handleMenuEvent() {
+		if ( ! this.multiple ) {
+			this.dropdown.collapse();
+		}
 	}
 }
 
@@ -264,7 +254,10 @@ window.customElements.define( 'xb-select', Select );
  * @typedef {import('../popover/popover').PopoverPlacement} SelectPlacement
  * @typedef {import('../../controllers/selection/selection.controller').default} SelectionController
  * @typedef {import('../dropdown/dropdown').Dropdown} Dropdown
- * @typedef {import('lit/directives/ref.js').Ref}
+ * @typedef {import('lit/directives/ref.js').Ref} Ref
+ * @typedef {import('./select-trigger').SelectTrigger} SelectTrigger
+ * @typedef {import('./select-option').SelectOption} SelectOption
+ * @typedef {import('./select.controller').default} SelectController
  */
 
 /**
