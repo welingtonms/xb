@@ -91,7 +91,7 @@ export class Dropdown extends XBElement {
 			trigger.open = this.open;
 
 			if ( this.open ) {
-				this._getFocusTrap().activate();
+				this._getFocusTrap()?.activate();
 			} else {
 				this._getFocusTrap()?.deactivate();
 				this._getTrigger().focus();
@@ -153,12 +153,7 @@ export class Dropdown extends XBElement {
 
 	_getFocusTrap() {
 		if ( this._trap == null ) {
-			/**
-			 * FIXME: find a better way to query the focus-trap element.
-			 * For some reason, querySelector('xb-focus-trap') in the menu
-			 * Shadow DOM is not working.
-			 */
-			[ this._trap ] = [ ...this._getMenu().shadowRoot.children ];
+			this._trap = this._getMenu().shadowRoot.querySelector( 'xb-focus-trap' );
 		}
 
 		return this._trap;
