@@ -32,6 +32,7 @@ function styles() {
 			}
 
 			.stack {
+				${ m( 0 ) };
 				${ px( 'var(--xb-stack-padding-x)' ) };
 				${ py( 'var(--xb-stack-padding-y)' ) };
 
@@ -48,9 +49,6 @@ function styles() {
 				background-color: var( --xb-stack-background-color );
 
 				min-width: var( --xb-stack-min-width );
-
-				margin: 0;
-				padding: 0;
 			}
 
 			::slotted( * ) {

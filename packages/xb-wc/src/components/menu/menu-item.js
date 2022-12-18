@@ -1,5 +1,6 @@
 import { html, nothing } from 'lit';
 import { createRef, ref } from 'lit/directives/ref.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import withClassy from '@welingtonms/classy';
 
 import { getTextContent } from '../../utils/slot';
@@ -47,7 +48,7 @@ export class MenuItem extends XBElement {
 			},
 
 			/**
-			 * Calue Value that this option represents.
+			 * Value that this option represents.
 			 * @type {MenuItemAttributes['value']}
 			 */
 			value: { type: String },
@@ -92,23 +93,27 @@ export class MenuItem extends XBElement {
 					'-medium': when( { size: 'medium' } ),
 					'-large': when( { size: 'large' } ),
 				} ) }"
-				role="${ this.role }"
+				role="${ ifDefined( this.role ) }"
 				aria-checked="${ this.checked ? 'true' : 'false' }"
 				?disabled="${ this.disabled }"
 				@click=${ this._handleClick }
 			>
 				${ this.role == 'checkbox'
-					? html`<xb-checkbox
-							tabindex="-1"
-							?checked=${ this.checked }
-					  ></xb-checkbox>`
+					? html`
+							<xb-checkbox
+								tabindex="-1"
+								?checked=${ this.checked }
+							></xb-checkbox>
+					  `
 					: nothing }
 
 				<slot name="leading"></slot>
 				<slot></slot>
 
 				${ this.role == 'radio'
-					? html`<xb-icon name="check" class="check"></xb-icon>`
+					? html`
+							<xb-icon name="check" class="check"></xb-icon>
+					  `
 					: nothing }
 			</button>
 		`;

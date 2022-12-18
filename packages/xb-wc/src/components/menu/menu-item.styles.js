@@ -97,7 +97,7 @@ function styles() {
 
 			${ hovered( '.menu-item' ) },
 			${ focused( '.menu-item' ) } {
-				--xb-menu-item-background-color: ${ token( 'color-gray-200', 0.4 ) };
+				--xb-menu-item-background-color: ${ token( 'color-gray-200', 0.5 ) };
 				--xb-menu-item-color: ${ token( 'color-gray-700' ) };
 
 				outline: none;
