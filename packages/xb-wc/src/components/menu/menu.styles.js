@@ -7,11 +7,13 @@ function styles() {
 		css`
 			:host {
 				min-width: 100%;
+
+				position: relative;
 			}
 
 			.menu {
 				--xb-stack-padding-x: ${ token( 'spacing-0' ) };
-				--xb-stack-padding-y: ${ token( 'spacing-2' ) };
+				--xb-stack-padding-y: ${ token( 'spacing-1' ) };
 				--xb-stack-gap: ${ token( 'spacing-0' ) };
 				--xb-stack-min-width: 100%;
 
@@ -24,6 +26,11 @@ function styles() {
 
 			.-striped ::slotted( :nth-of-type( odd ) ) {
 				--xb-menu-item-background-color: ${ token( 'color-gray-100' ) };
+			}
+
+			.spinner {
+				position: absolute;
+				top: 0;
 			}
 		`,
 	];
