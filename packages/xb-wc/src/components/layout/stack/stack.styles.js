@@ -24,6 +24,8 @@ function styles() {
 				--xb-stack-padding-x: ${ token( 'spacing-2' ) };
 				--xb-stack-padding-y: ${ token( 'spacing-2' ) };
 				--xb-stack-min-width: initial;
+				--xb-stack-max-height: initial;
+				--xb-stack-overflow-y: initial;
 
 				${ m( token( 'spacing-0' ) ) };
 
@@ -49,6 +51,9 @@ function styles() {
 				background-color: var( --xb-stack-background-color );
 
 				min-width: var( --xb-stack-min-width );
+
+				max-height: var( --xb-stack-max-height );
+				overflow-y: var( --xb-stack-overflow-y );
 			}
 
 			::slotted( * ) {

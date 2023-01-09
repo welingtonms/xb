@@ -16,6 +16,8 @@ function styles() {
 				--xb-stack-padding-y: ${ token( 'spacing-1' ) };
 				--xb-stack-gap: ${ token( 'spacing-0' ) };
 				--xb-stack-min-width: 100%;
+				--xb-stack-max-height: 10rem;
+				--xb-stack-overflow-y: auto;
 
 				--xb-stack-background-color: ${ token( 'color-white' ) };
 			}
