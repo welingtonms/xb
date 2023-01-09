@@ -19,6 +19,9 @@
 	],
 	"author": "Welington Silva",
 	"license": "MIT",
+	"dependencies": {
+		"lodash.debounce": "4.0.8"
+	},
 	"devDependencies": {
 		"jest": "29.3.1"
 	}
