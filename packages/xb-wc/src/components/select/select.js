@@ -24,6 +24,9 @@ export class Select extends SelectionMixin( XBElement, {
 	/** @type {SelectTrigger} */
 	_trigger;
 
+	/** @type {SelectMenu} */
+	_menu;
+
 	/** @type {SelectOption[]} */
 	_options;
 
@@ -147,42 +150,6 @@ export class Select extends SelectionMixin( XBElement, {
 
 			this._selectController = createSelectController( this );
 		}
-
-		// if ( changedProperties.has( 'role' ) ) {
-		// 	this._getOptions().forEach( ( option ) => {
-		// 		this._setOptionRole( option );
-		// 	} );
-		// }
-
-		// if ( changedProperties.has( 'disabled' ) ) {
-		// 	this._getOptions().forEach( ( option ) => {
-		// 		this._setOptionDisabled( option );
-		// 	} );
-		// }
-
-		// if ( changedProperties.has( 'datasources' ) ) {
-		// 	console.log( 'handling datasources' );
-		// }
-
-		// this._getOptions().forEach( ( option ) => {
-		// 	this._setOptionSelected( option );
-		// } );
-
-		// this._setTriggerValue();
-
-		// to remove all options
-		// while ( this.firstChild ) {
-		// 	this.removeChild( this.firstChild );
-		// }
-
-		// this.appendChild(
-		// 	Object.assign( document.createElement( 'xb-option' ), {
-		// 		value: 'change' + i,
-		// 		innerHTML: 'Change ' + i,
-		// 	} )
-		// );
-
-		// i++;
 	}
 
 	render() {
@@ -190,13 +157,13 @@ export class Select extends SelectionMixin( XBElement, {
 			<xb-dropdown placement="${ ifDefined( this.placement ) }">
 				<xb-select-trigger slot="trigger"></xb-select-trigger>
 
-				<xb-menu slot="menu" ?loading=${ this.loading }>
+				<xb-select-menu slot="menu" ?loading=${ this.loading }>
 					<slot @slotchange=${ this._handleSlotChanged }>
 						<xb-box borderless>
 							<xb-text variant="body-2">No options available.</xb-text>
 						</xb-box>
 					</slot>
-				</xb-menu>
+				</xb-select-menu>
 			</xb-dropdown>
 		`;
 	}
@@ -213,6 +180,13 @@ export class Select extends SelectionMixin( XBElement, {
 			this._trigger ?? this.shadowRoot.querySelector( 'xb-select-trigger' );
 
 		return this._trigger;
+	}
+
+	get menu() {
+		this._menu =
+			this._menu ?? this.shadowRoot.querySelector( 'xb-select-menu' );
+
+		return this._menu;
 	}
 
 	get options() {
@@ -256,6 +230,7 @@ window.customElements.define( 'xb-select', Select );
  * @typedef {import('../dropdown/dropdown').Dropdown} Dropdown
  * @typedef {import('lit/directives/ref.js').Ref} Ref
  * @typedef {import('./select-trigger').SelectTrigger} SelectTrigger
+ * @typedef {import('./select-menu').SelectMenu} SelectMenu
  * @typedef {import('./select-option').SelectOption} SelectOption
  * @typedef {import('./select.controller').default} SelectController
  */
