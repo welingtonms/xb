@@ -119,6 +119,7 @@ export class FocusTrap extends XBElement {
 		}
 
 		e.stopPropagation();
+		e.preventDefault(); // stop native scroll behavior
 
 		const newCurrentFocused = this._getFocusedIndexAfterKeyPress( e );
 
