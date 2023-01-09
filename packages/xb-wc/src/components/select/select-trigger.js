@@ -50,7 +50,7 @@ export class SelectTrigger extends XBElement {
 		this.open = false;
 
 		/** @type {SelectTriggerAttributes['value']} */
-		this.value = '';
+		this.value;
 
 		/** @type {SelectTriggerAttributes['placeholder']} */
 		this.placeholder = 'Search & Select';
@@ -66,12 +66,13 @@ export class SelectTrigger extends XBElement {
 		return html`
 			<xb-text-input
 				${ ref( this.search ) }
+				clearable
 				class="${ classy( 'select-trigger', {
 					'is-open': when( { open: true } ),
 				} ) }"
-				value="${ this.value }"
 				placeholder="${ this.placeholder }"
 				@click=${ this._handleTriggerClick }
+				@xb-input=${ this._handleTriggerInput }
 			>
 				<xb-button
 					slot="trailing"
@@ -108,6 +109,16 @@ export class SelectTrigger extends XBElement {
 		this.emit( 'xb-dropdown', options );
 	}
 
+	_handleTriggerInput( e ) {
+		e.stopPropagation();
+
+		const query = String( e.target.value ).trim();
+
+		this.emit( 'xb-select-search', {
+			detail: { query },
+		} );
+	}
+
 	_handleTrailingClick( e ) {
 		e.stopPropagation();
 
@@ -121,6 +132,11 @@ export class SelectTrigger extends XBElement {
 }
 
 window.customElements.define( 'xb-select-trigger', SelectTrigger );
+
+/**
+ * @typedef {Object} SearchEventDetail
+ * @property {String} query - Search term
+ */
 
 /**
  * @typedef {Object} SelectTriggerAttributes
