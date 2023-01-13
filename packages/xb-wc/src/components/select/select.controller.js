@@ -1,34 +1,16 @@
-import debounce from '@welingtonms/xb-toolset/dist/debounce';
-import isObject from '@welingtonms/xb-toolset/dist/is-object';
-import to from '@welingtonms/xb-toolset/dist/await-to';
 import toArray from '@welingtonms/xb-toolset/dist/to-array';
 
-function createOption( { value, label } ) {
-	return Object.assign( document.createElement( 'xb-option' ), {
+import DatasourcesHelpers from './datasources.helpers';
+
+function createOption( { value, label, type } ) {
+	const option = Object.assign( document.createElement( 'xb-option' ), {
 		value,
 		innerHTML: label,
 	} );
-}
 
-async function* getData( datasources, query ) {
-	const regex = new RegExp( query, 'i' );
+	option.dataset.type = type;
 
-	for ( const datasource of datasources ) {
-		const [ error, data ] = await to(
-			Promise.resolve( datasource.fetch( { query, regex } ) )
-		);
-
-		if ( ! error ) {
-			const items = ( data || [] ).map( ( item ) => {
-				return {
-					...item,
-					_type: datasource.name,
-				};
-			} );
-
-			yield items;
-		}
-	}
+	return option;
 }
 
 /**
@@ -40,11 +22,10 @@ class SelectController {
 	/** @type {SelectHost} */
 	host = null;
 
-	/** @type {SelectDatasource[]} */
-	datasources = [];
+	/** @type {DatasourcesHelper} */
+	datasources = DatasourcesHelpers();
 
-	/** @type {import('./select-option').SelectOption} */
-	options = [];
+	options = new Map();
 
 	/**
 	 *
@@ -55,65 +36,103 @@ class SelectController {
 	}
 
 	hostConnected() {
+		this._handleChangeEvent = this._handleChangeEvent.bind( this );
+		this._handleDropdownCollapse = this._handleDropdownCollapse.bind( this );
+		this._handleSearchEvent = this._handleSearchEvent.bind( this );
+		this._handleSelectEvent = this._handleSelectEvent.bind( this );
+
+		this.host.addEventListener( 'xb-change', this._handleChangeEvent );
 		this.host.addEventListener( 'xb-select-search', this._handleSearchEvent );
+		this.host.addEventListener( 'xb-select', this._handleSelectEvent );
+		this.host.addEventListener(
+			'xb-dropdown-collapse',
+			this._handleDropdownCollapse
+		);
 	}
 
 	hostDisconnected() {
+		this.host.removeEventListener( 'xb-change', this._handleChangeEvent );
 		this.host.removeEventListener(
 			'xb-select-search',
 			this._handleSearchEvent
 		);
+		this.host.removeEventListener( 'xb-select', this._handleSelectEvent );
+		this.host.removeEventListener(
+			'xb-dropdown-collapse',
+			this._handleDropdownCollapse
+		);
 	}
 
 	hostUpdated() {
+		this._updateDatasources();
 		this._updateOptions();
 		this._updateTriggerValue();
-		this._updateDatasources();
 	}
 
-	async fetch( query = '' ) {
+	async fetch( searchTerm = '' ) {
+		for await ( const items of this.datasources.query( searchTerm ) ) {
+			for ( const item of toArray( items ) ) {
+				const { value } = this.datasources.resolve( item );
+
+				this.options.set( value, item );
+			}
+		}
+	}
+
+	/**
+	 *
+	 * @param {CustomEvent<SearchEventDetail>} e
+	 */
+	async _handleSearchEvent( e ) {
+		const { query } = e.detail;
+
 		if ( query === '' ) {
 			return;
 		}
 
-		this._removeOptions( this.host );
+		this._removeOptions();
 
-		const datasources = this.datasources;
-		for await ( const items of getData( datasources, query ) ) {
-			for ( const item of toArray( items ) ) {
-				const option = createOption( item );
-				this.options.push( option );
-				this.host.appendChild( option );
+		const menu = this.host.menu;
+		const dropdown = this.host.dropdown;
+
+		dropdown.expand();
+
+		menu.loading = true;
+
+		await this.fetch( query );
+
+		this._renderOptions();
+
+		menu.loading = false;
+	}
+
+	/**
+	 *
+	 * @param {CustomEvent<SelectionEventDetail>} event
+	 */
+	_handleChangeEvent( event ) {
+		const {
+			detail: { type, value },
+		} = event;
+
+		const batata = Array.from( this.host.selection ).map( ( key ) => {
+			if ( this.options.has( key ) ) {
+				return this.options.get( key );
 			}
 
-			// setCache( ( cache ) => {
-			// 	const newCache = new Map( cache );
-			// 	newCache.set( query, [
-			// 		...( cache.get( query ) || [] ),
-			// 		...( items || [] ),
-			// 	] );
-			// 	return newCache;
-			// } );
+			return key;
+		} );
+	}
+
+	_handleSelectEvent() {
+		if ( ! this.host.multiple ) {
+			this.host.dropdown.collapse();
 		}
 	}
 
-	_handleSearchEvent = debounce(
-		/**
-		 *
-		 * @param {CustomEvent<SearchEventDetail>} e
-		 */
-		async ( e ) => {
-			const { query } = e.detail;
-			const menu = this.host.menu;
-
-			menu.loading = true;
-
-			await this.fetch( query );
-
-			menu.loading = false;
-		},
-		250
-	);
+	_handleDropdownCollapse() {
+		this.host.trigger.clear();
+	}
 
 	/**
 	 * @param {SelectOption} option
@@ -150,23 +169,44 @@ class SelectController {
 	_updateTriggerValue() {}
 
 	_updateDatasources() {
-		this.datasources = toArray( this.host.datasources ).map( ( datasource ) => {
-			if ( isObject( datasource ) ) {
-				return datasource;
+		this.datasources.reset( this.host.datasources );
+	}
+
+	_renderOptions() {
+		// TODO: render the options that have been selected.
+		Array.from( this.options.values() ).forEach( ( option ) => {
+			const { value, label } = this.datasources.resolve( option );
+
+			if ( this.host.selection.has( value ) ) {
+				// if the option is selected, we have already rendered it
+				return;
 			}
 
-			return datasource();
+			this.host.appendChild(
+				createOption( {
+					type: option._type,
+					value,
+					label,
+				} )
+			);
 		} );
-
-		console.log( 'datasources', this.datasources );
 	}
 
 	_removeOptions() {
-		this.options?.forEach( ( option ) => {
-			this.host.removeChild( option );
-		} );
+		Array.from( this.options.values() ).forEach( ( option ) => {
+			const { value, label } = this.datasources.resolve( option );
 
-		this.options = [];
+			if ( this.host.selection.has( value ) ) {
+				// we dont want to remove the option if it is currently selected.
+				return;
+			}
+
+			this.host.removeChild(
+				this.host.querySelector( `xb-option[value="${ value }"]` )
+			);
+
+			this.options.delete( value );
+		} );
 	}
 }
 
@@ -180,8 +220,7 @@ class SingleSelectController extends SelectController {
 			selection.has( option.value )
 		);
 
-		trigger.placeholder =
-			selectedOption?.getTextLabel() ?? this.host.placeholder;
+		trigger.placeholder = selectedOption?.text() ?? this.host.placeholder;
 	}
 }
 
@@ -221,25 +260,10 @@ export default SelectController;
  * @typedef {import('./select-option').SelectOption} SelectOption
  * @typedef {ReactiveControllerHost & Select} SelectHost
  * @typedef {import('./select-trigger').SearchEventDetail} SearchEventDetail
- */
-
-/**
- * @typedef {Object} SelectDatasourceAdapter
- * @property {(obj: unknown) => string} getID - get unique identifier for the given object
- * @property {(obj: unknown) => string} getLabel - get unique label for the given object
- */
-
-/**
- * @typedef {Object} SelectStaticDatasource
- * @property {string} name - Datasource name, used to differentiate fetched options
- * @property {SelectDatasourceAdapter} adapter - Adapter to get id and label for the fetched options
- * @property {(({ query, regex }: { query: string; regex: RegExp }) => unknown[] | Promise<unknown[]>)} fetch - a function that fetches and/or returns items based on the provided query or regex.
- */
-
-/**
- * @typedef {(...args?: any[]) => SelectStaticDatasource} SelectDynamicDatasource
- */
-
-/**
- * @typedef {SelectStaticDatasource | SelectDynamicDatasource} SelectDatasource
+ * @typedef {import('../../controllers/selection/selection.controller').SelectionEventDetail} SelectionEventDetail
+ * @typedef {import('./datasources.helpers').DatasourceAdapter} SelectDatasourceAdapter
+ * @typedef {import('./datasources.helpers').StaticDatasource} SelectStaticDatasource
+ * @typedef {import('./datasources.helpers').DynamicDatasource} SelectDynamicDatasource
+ * @typedef {import('./datasources.helpers').Datasource} SelectDatasource
+ * @typedef {import('./datasources.helpers').DatasourcesHelper} DatasourcesHelper
  */
