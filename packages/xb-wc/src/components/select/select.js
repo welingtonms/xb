@@ -1,5 +1,6 @@
 import { html } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import toArray from '@welingtonms/xb-toolset/dist/to-array';
 
 import { createSelectController } from './select.controller';
 import SelectionMixin from '../../mixins/selection';
@@ -18,6 +19,9 @@ import './select-option';
 export class Select extends SelectionMixin( XBElement, {
 	listen: 'xb-select',
 } ) {
+	/** @type {SelectController} */
+	_controller;
+
 	/** @type {Dropdown} */
 	_dropdown;
 
@@ -29,9 +33,6 @@ export class Select extends SelectionMixin( XBElement, {
 
 	/** @type {SelectOption[]} */
 	_options;
-
-	/** @type {SelectController} */
-	_selectController;
 
 	static get properties() {
 		return {
@@ -119,23 +120,12 @@ export class Select extends SelectionMixin( XBElement, {
 		/** @type {import('@welingtonms/xb-toolset/dist/selection').SelectionType} */
 		this.type = 'single';
 
+		// TODO: fix the mess in the roles for select and dropdown components
 		/** @type {SelectAttributes['role']} */
 		this.role = 'radiogroup';
 
 		/** @type {SelectAttributes['datasources']} */
 		this.datasources = [];
-	}
-
-	connectedCallback() {
-		super.connectedCallback();
-
-		this.addEventListener( 'xb-select', this._handleMenuEvent );
-	}
-
-	disconnectedCallback() {
-		super.disconnectedCallback();
-
-		this.removeEventListener( 'xb-select', this._handleMenuEvent );
 	}
 
 	/**
@@ -148,8 +138,16 @@ export class Select extends SelectionMixin( XBElement, {
 			this.type = this.multiple ? 'multiple' : 'single';
 			this.role = [ 'single' ].includes( this.type ) ? 'radiogroup' : 'group';
 
-			this._selectController = createSelectController( this );
+			this._controller = createSelectController( this );
 		}
+	}
+
+	getInitialValue( value ) {
+		return toArray( value ).map( ( option ) => {
+			const { value } = this._controller.datasources.resolve( option );
+
+			return value;
+		} );
 	}
 
 	render() {
@@ -191,11 +189,12 @@ export class Select extends SelectionMixin( XBElement, {
 
 	get options() {
 		if ( this._options == null ) {
+			/** @type {HTMLSlotElement} */
 			const defaultSlot = this.shadowRoot.querySelector( 'slot' );
 
 			this._options = [
 				...defaultSlot.assignedElements( { flatten: true } ),
-			].filter( ( item ) => item.tagName.toLowerCase() == 'xb-option' );
+			].filter( ( item ) => item.matches( 'xb-option' ) );
 		}
 
 		return this._options;
@@ -212,13 +211,7 @@ export class Select extends SelectionMixin( XBElement, {
 		// we set to null so the getter will re-run the query
 		this._options = null;
 
-		this._selectController._updateOptions();
-	}
-
-	_handleMenuEvent() {
-		if ( ! this.multiple ) {
-			this.dropdown.collapse();
-		}
+		this._controller._updateOptions();
 	}
 }
 
@@ -233,6 +226,7 @@ window.customElements.define( 'xb-select', Select );
  * @typedef {import('./select-menu').SelectMenu} SelectMenu
  * @typedef {import('./select-option').SelectOption} SelectOption
  * @typedef {import('./select.controller').default} SelectController
+ * @typedef {import('./select.controller').SelectDatasource} SelectDatasource
  */
 
 /**
@@ -244,8 +238,5 @@ window.customElements.define( 'xb-select', Select );
  * @property {boolean} [multiple] - Is this a multiple selection?
  * @property {'group' | 'radiogroup'} role - Aria role
  * @property {string} placeholder - Select placeholder
- */
-
-/**
- * @typedef {import('./interaction-boundary').InteractionBoundary} InteractionBoundary
+ * @property {SelectDatasource | SelectDatasource[]} datasources
  */
