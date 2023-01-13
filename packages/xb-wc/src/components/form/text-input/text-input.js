@@ -113,6 +113,13 @@ export class TextInput extends XBElement {
 		this._getInput()?.focus();
 	}
 
+	clear() {
+		const input = this._getInput();
+
+		this.value = '';
+		input.value = '';
+	}
+
 	render() {
 		const { when, classy } = withClassy( { size: this.size } );
 
@@ -184,10 +191,7 @@ export class TextInput extends XBElement {
 	_handleClear( e ) {
 		e.stopPropagation();
 
-		const input = this._getInput();
-
-		this.value = '';
-		input.value = '';
+		this.clear();
 
 		this.emit( 'xb-clear' );
 	}
