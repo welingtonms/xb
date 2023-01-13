@@ -10,6 +10,9 @@ import '../form/text-input';
 export class SelectTrigger extends XBElement {
 	search = createRef();
 
+	/** @type {number} */
+	timeout;
+
 	static styles = [ styles() ];
 
 	static get properties() {
@@ -58,6 +61,10 @@ export class SelectTrigger extends XBElement {
 
 	focus() {
 		this._getSearch()?.focus();
+	}
+
+	clear() {
+		this._getSearch()?.clear();
 	}
 
 	render() {
@@ -113,10 +120,13 @@ export class SelectTrigger extends XBElement {
 		e.stopPropagation();
 
 		const query = String( e.target.value ).trim();
+		clearTimeout( this.timeout );
 
-		this.emit( 'xb-select-search', {
-			detail: { query },
-		} );
+		this.timeout = setTimeout( () => {
+			this.emit( 'xb-select-search', {
+				detail: { query },
+			} );
+		}, 450 );
 	}
 
 	_handleTrailingClick( e ) {
