@@ -36,8 +36,12 @@ const SelectionMixin = ( superClass, options ) =>
 			this.type = 'multiple';
 		}
 
+		getInitialValue( value ) {
+			return toArray( value );
+		}
+
 		/**
-		 * @param {import('lit').PropertyValues<ToggleGroup>} changedProperties
+		 * @param {import('lit').PropertyValues<SelectionHost>} changedProperties
 		 */
 		update( changedProperties ) {
 			super.update( changedProperties );
@@ -61,7 +65,7 @@ const SelectionMixin = ( superClass, options ) =>
 			 * If `value` changed, we need to reset the selection controller.
 			 */
 			if ( changedProperties.has( 'value' ) ) {
-				this._selectionController.init( toArray( this.value ) );
+				this._selectionController.init( this.getInitialValue( this.value ) );
 			}
 		}
 	};
