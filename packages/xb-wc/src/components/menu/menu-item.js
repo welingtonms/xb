@@ -51,7 +51,7 @@ export class MenuItem extends XBElement {
 			 * Value that this option represents.
 			 * @type {MenuItemAttributes['value']}
 			 */
-			value: { type: String },
+			value: { type: String, reflect: true },
 		};
 	}
 
@@ -69,6 +69,14 @@ export class MenuItem extends XBElement {
 
 		/** @type {MenuItemAttributes['value']} */
 		this.value = '';
+	}
+
+	/** Returns a text label based on the contents of the menu item's default slot. */
+	text() {
+		this._defaultSlot =
+			this._defaultSlot ?? this.shadowRoot.querySelector( 'slot:not([name])' );
+
+		return getTextContent( this._defaultSlot );
 	}
 
 	focus() {
@@ -119,14 +127,6 @@ export class MenuItem extends XBElement {
 		`;
 	}
 
-	/** Returns a text label based on the contents of the menu item's default slot. */
-	getTextLabel() {
-		this._defaultSlot =
-			this._defaultSlot ?? this.shadowRoot.querySelector( 'slot:not([name])' );
-
-		return getTextContent( this._defaultSlot );
-	}
-
 	/**
 	 * @returns {HTMLButtonElement}
 	 */
@@ -142,7 +142,7 @@ export class MenuItem extends XBElement {
 		event.stopPropagation();
 
 		this.emit( 'xb-select', {
-			detail: { value: this.value, label: this.getTextLabel() },
+			detail: { value: this.value, label: this.text() },
 		} );
 	}
 }
