@@ -117,10 +117,14 @@ export class Dropdown extends XBElement {
 
 	expand() {
 		this.open = true;
+
+		this.emit( 'xb-dropdown-expand' );
 	}
 
 	collapse() {
 		this.open = false;
+
+		this.emit( 'xb-dropdown-collapse' );
 	}
 
 	toggle() {
