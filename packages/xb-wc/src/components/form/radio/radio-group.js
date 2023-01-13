@@ -103,7 +103,7 @@ export class RadioGroup extends SelectionMixin( XBElement, {
 
 		return [
 			...this._defaultSlot.assignedElements( { flatten: true } ),
-		].filter( ( item ) => item.tagName.toLowerCase() === 'xb-radio' );
+		].filter( ( item ) => item.matches( 'xb-radio' ) );
 	}
 
 	/**
