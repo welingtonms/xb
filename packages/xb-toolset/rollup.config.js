@@ -6,11 +6,13 @@ import summary from 'rollup-plugin-summary';
 
 module.exports = {
 	input: {
+		'await-to': './src/await-to/index.ts',
 		'is-function': './src/is-function/index.ts',
 		'is-object': './src/is-object/index.ts',
 		'is-promise': './src/is-promise/index.ts',
 		'is-string': './src/is-string/index.ts',
 		'to-array': './src/to-array/index.ts',
+		debounce: './src/debounce/index.ts',
 		rem: './src/rem/index.ts',
 		selection: './src/selection/index.ts',
 	},

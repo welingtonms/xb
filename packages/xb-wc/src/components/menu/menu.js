@@ -65,7 +65,12 @@ export class Menu extends XBElement {
 		} );
 
 		return html`
-			${ this.loading ? html`<xb-spinner></xb-spinner>` : nothing }
+			${ this.loading
+				? html`
+						<xb-spinner class="spinner"></xb-spinner>
+				  `
+				: nothing }
+
 			<xb-focus-trap>
 				<xb-stack
 					class="${ classy( 'menu', {

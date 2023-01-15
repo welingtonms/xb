@@ -105,6 +105,7 @@ dist
 
 # Misc
 .DS_Store
+.vscode
 
 # Yarn 2
 .pnp.*

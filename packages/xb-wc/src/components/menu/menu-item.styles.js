@@ -77,7 +77,7 @@ function styles() {
 			}
 
 			.menu-item[aria-checked='true'] {
-				--xb-menu-item-background-color: ${ token( 'color-primary-100', 0.1 ) };
+				--xb-menu-item-background-color: ${ token( 'color-primary-100', 0.2 ) };
 
 				--xb-menu-item-color: ${ token( 'color-primary-600' ) };
 			}
@@ -97,7 +97,7 @@ function styles() {
 
 			${ hovered( '.menu-item' ) },
 			${ focused( '.menu-item' ) } {
-				--xb-menu-item-background-color: ${ token( 'color-gray-200' ) };
+				--xb-menu-item-background-color: ${ token( 'color-gray-200', 0.5 ) };
 				--xb-menu-item-color: ${ token( 'color-gray-700' ) };
 
 				outline: none;

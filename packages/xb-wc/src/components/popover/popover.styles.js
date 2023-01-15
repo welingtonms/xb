@@ -12,6 +12,7 @@ function styles() {
 			:host {
 				--xb-popover-background-color: ${ token( 'color-white' ) };
 				--xb-popover-color: ${ token( 'color-gray-700' ) };
+				--xb-popover-z-index: ${ token( 'layer-popover' ) };
 
 				--xb-popover-border-top-left-radius: 8px;
 				--xb-popover-border-top-right-radius: 8px;
@@ -64,6 +65,7 @@ function styles() {
 				color: var( --xb-popover-color );
 
 				box-shadow: var( --xb-popover-box-shadow );
+				z-index: var( --xb-popover-z-index );
 			}
 
 			:host( [position='absolute'] ) slot[name='floating']::slotted( * ) {

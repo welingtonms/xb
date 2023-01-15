@@ -18,7 +18,7 @@ export default {
 };
 
 export const Playground = ( args ) => html`<xb-stack
-	style="--xb-stack-gap: var(--xb-spacing-4);"
+	style="--xb-stack-gap: var(--xb-spacing-6);"
 >
 	<xb-field
 		required
@@ -32,6 +32,8 @@ export const Playground = ( args ) => html`<xb-stack
 
 			<xb-toggle value="leave">Leave</xb-toggle>
 		</xb-toggle-group>
+
+		<xb-text slot="prompt" variant="caption" as="small">Cebolas fritas</xb-text>
 	</xb-field>
 
 	<xb-field
@@ -43,32 +45,14 @@ export const Playground = ( args ) => html`<xb-stack
 	</xb-field>
 
 	<xb-field
-		label="Options"
+		label="Multiple options"
 		required
 		tip="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc lectus erat, bibendum non mollis eu, pharetra et est."
 	>
 		<xb-stack as="fieldset" paddingless>
-			<xb-checkbox
-				value="change"
-				size=${ args.size }
-				?disabled=${ args.disabled }
-				@xb-change=${ args.change }
-				>Change</xb-checkbox
-			>
-			<xb-checkbox
-				value="accept"
-				size=${ args.size }
-				?disabled=${ args.disabled }
-				@xb-change=${ args.change }
-				>Accept</xb-checkbox
-			>
-			<xb-checkbox
-				value="leave"
-				size=${ args.size }
-				?disabled=${ args.disabled }
-				@xb-change=${ args.change }
-				>Leave</xb-checkbox
-			>
+			<xb-checkbox value="change">Change</xb-checkbox>
+			<xb-checkbox value="accept">Accept</xb-checkbox>
+			<xb-checkbox value="leave">Leave</xb-checkbox>
 		</xb-stack>
 	</xb-field>
 
@@ -81,6 +65,20 @@ export const Playground = ( args ) => html`<xb-stack
 			<xb-option value="accept">Accept</xb-option>
 			<xb-option value="leave">Leave</xb-option>
 		</xb-select>
+	</xb-field>
+
+	<xb-field
+		label="Exclusive options"
+		required
+		tip="Nunc lectus erat, bibendum non mollis eu, pharetra et est."
+		status="danger"
+		prompt="Select one option here"
+	>
+		<xb-radio-group>
+			<xb-radio value="change">Change</xb-radio>
+			<xb-radio value="accept">Accept</xb-radio>
+			<xb-radio value="leave">Leave</xb-radio>
+		</xb-radio-group>
 	</xb-field>
 </xb-stack>`;
 

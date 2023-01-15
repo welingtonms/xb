@@ -8,22 +8,27 @@ import {
 } from '../../../styles/state.styles';
 import m from '../../../styles/margin.styles';
 import outline from '../../../styles/outline.styles';
-import p, { px, py } from '../../../styles/padding.styles';
+import p, { px, py, pl, pr } from '../../../styles/padding.styles';
 import token from '../../../utils/get-token';
 import transition from '../../../styles/transition.styles';
 import typography from '../../../styles/typography.styles';
 
+import layoutStyles from '../../../styles/layout.styles';
 import sizeStyles from '../../../styles/size.styles';
 
 function styles() {
 	return [
+		layoutStyles(),
 		css`
 			:host {
 				--xb-text-input-height: initial;
 				--xb-text-input-border-color: ${ token( 'color-gray-400' ) };
 				--xb-text-input-outline-color: ${ token( 'color-white', 0 ) };
 				--xb-text-input-placeholder-color: ${ token( 'color-gray-400' ) };
+
 				--xb-text-input-padding-x: ${ token( 'spacing-2' ) };
+				--xb-text-input-padding-r: initial;
+				--xb-text-input-padding-l: initial;
 				--xb-text-input-padding-y: ${ token( 'spacing-0' ) };
 			}
 
@@ -50,8 +55,13 @@ function styles() {
 				border: 1px solid var( --xb-text-input-border-color );
 				border-radius: 4px;
 
-				${ px( 'var(--xb-text-input-padding-x)' ) };
 				${ py( 'var(--xb-text-input-padding-y)' ) };
+				${ pr(
+					'var(--xb-text-input-padding-r, var(--xb-text-input-padding-x))'
+				) };
+				${ pl(
+					'var(--xb-text-input-padding-l, var(--xb-text-input-padding-x))'
+				) };
 
 				box-sizing: border-box;
 				width: 100%;

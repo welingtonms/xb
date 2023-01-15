@@ -17,12 +17,15 @@ function styles() {
 				--xb-stack-border-color: ${ token( 'color-gray-300' ) };
 				--xb-stack-border-style: none;
 				--xb-stack-border-width: 1px;
+				--xb-stack-border-radius: unset;
 				--xb-stack-color: unset;
 				--xb-stack-gap: ${ token( 'spacing-2' ) };
 				--xb-stack-justify: flex-start;
 				--xb-stack-padding-x: ${ token( 'spacing-2' ) };
 				--xb-stack-padding-y: ${ token( 'spacing-2' ) };
 				--xb-stack-min-width: initial;
+				--xb-stack-max-height: initial;
+				--xb-stack-overflow-y: initial;
 
 				${ m( token( 'spacing-0' ) ) };
 
@@ -31,6 +34,7 @@ function styles() {
 			}
 
 			.stack {
+				${ m( 0 ) };
 				${ px( 'var(--xb-stack-padding-x)' ) };
 				${ py( 'var(--xb-stack-padding-y)' ) };
 
@@ -42,10 +46,14 @@ function styles() {
 
 				border: var( --xb-stack-border-width ) var( --xb-stack-border-style )
 					var( --xb-stack-border-color );
+				border-radius: var( --xb-stack-border-radius );
 				color: var( --xb-stack-color );
 				background-color: var( --xb-stack-background-color );
 
 				min-width: var( --xb-stack-min-width );
+
+				max-height: var( --xb-stack-max-height );
+				overflow-y: var( --xb-stack-overflow-y );
 			}
 
 			::slotted( * ) {

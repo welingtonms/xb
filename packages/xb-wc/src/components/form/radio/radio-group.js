@@ -85,8 +85,7 @@ export class RadioGroup extends SelectionMixin( XBElement, {
 				<xb-stack
 					as="fieldset"
 					class=${ classy( 'radio-group' ) }
-					borderless="none"
-					paddingless="none"
+					paddingless
 					?disabled="${ this.disabled }"
 				>
 					<slot></slot>
@@ -104,7 +103,7 @@ export class RadioGroup extends SelectionMixin( XBElement, {
 
 		return [
 			...this._defaultSlot.assignedElements( { flatten: true } ),
-		].filter( ( item ) => item.tagName.toLowerCase() === 'xb-radio' );
+		].filter( ( item ) => item.matches( 'xb-radio' ) );
 	}
 
 	/**
@@ -112,7 +111,7 @@ export class RadioGroup extends SelectionMixin( XBElement, {
 	 */
 	_setRadioChecked( radio ) {
 		/** @type {SelectionController} */
-		const controller = this._controller;
+		const controller = this._selectionController;
 
 		radio.checked = controller.selection.has( radio.value );
 	}

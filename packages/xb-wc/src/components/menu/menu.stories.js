@@ -38,7 +38,7 @@ export const Playground = ( args ) => html`
 		@xb-select=${ args.select }
 	>
 		<xb-menu-item value="change">Change</xb-menu-item>
-		<xb-menu-item value="accept">Accept</xb-menu-item>
+		<xb-menu-item value="accept" checked>Accept</xb-menu-item>
 		<xb-menu-item value="leave">Leave</xb-menu-item>
 	</xb-menu>
 `;

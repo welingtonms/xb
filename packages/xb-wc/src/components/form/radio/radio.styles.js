@@ -13,8 +13,6 @@ import token from '../../../utils/get-token';
 import transition from '../../../styles/transition.styles';
 import typography from '../../../styles/typography.styles';
 
-import sizeStyles from '../../../styles/size.styles';
-
 function styles() {
 	return [
 		css`
@@ -135,24 +133,20 @@ function styles() {
 				background-color: ${ token( 'color-primary-300' ) };
 				border-width: 2px;
 			}
-
-			/* .-small {
-				${ px( token( 'spacing-2' ) ) };
-
-
+		`,
+		css`
+			.-small {
+				--xb-radio-height: 24px;
 			}
 
 			.-medium {
-				--xb-radio-height: 56px;
-
+				--xb-radio-height: 24px;
 			}
 
 			.-large {
-				--xb-radio-height: 72px;
-
-			} */
+				--xb-radio-height: 24px;
+			}
 		`,
-		sizeStyles( { property: '--xb-radio-height' } ),
 	];
 }
 

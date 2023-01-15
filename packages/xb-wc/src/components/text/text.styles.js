@@ -12,19 +12,6 @@ function styles() {
 				--xb-text-color: ${ token( 'color-gray-700' ) };
 			}
 
-			.text {
-				${ transition( [ { property: 'color' } ] ) };
-
-				${ typography( 'body-1' ) };
-
-				display: inline-flex;
-				align-items: center;
-
-				${ m( token( 'spacing-0' ) ) };
-
-				color: var( --xb-text-color );
-			}
-
 			.-h-1 {
 				${ typography( 'h-1' ) };
 			}
@@ -75,6 +62,17 @@ function styles() {
 
 			.-overline {
 				${ typography( 'overline' ) };
+			}
+
+			.text {
+				${ transition( [ { property: 'color' } ] ) };
+
+				display: inline-flex;
+				align-items: center;
+
+				${ m( token( 'spacing-0' ) ) };
+
+				color: var( --xb-text-color );
 			}
 		`,
 	];

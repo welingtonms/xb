@@ -24,6 +24,7 @@ export class Field extends XBElement {
 			tip: { type: String },
 			prompt: { type: String },
 			required: { type: Boolean },
+			status: { type: String },
 		};
 	}
 
@@ -32,52 +33,107 @@ export class Field extends XBElement {
 
 		/** @type {FieldAttributes['required']} */
 		this.required = false;
+
+		/** @type {FieldAttributes['status']} */
+		this.status = 'info';
+	}
+
+	/**
+	 * @param {import('lit').PropertyValues<ToggleGroup>} changedProperties
+	 */
+	updated( changedProperties ) {
+		super.updated( changedProperties );
+
+		this._getToggles();
+		// if ( changedProperties.has( 'role' ) ) {
+		// 	this._getToggles().forEach( ( toggle ) => {
+		// 		this._setToggleRole( toggle );
+		// 	} );
+		// }
+
+		// if ( changedProperties.has( 'disabled' ) ) {
+		// 	this._getToggles().forEach( ( toggle ) => {
+		// 		this._setToggleDisabled( toggle );
+		// 	} );
+		// }
+
+		// if ( changedProperties.has( 'size' ) ) {
+		// 	this._getToggles().forEach( ( toggle ) => {
+		// 		this._setToggleSize( toggle );
+		// 	} );
+		// }
+
+		// this._getToggles().forEach( ( toggle ) => {
+		// 	this._setToggleChecked( toggle );
+		// } );
 	}
 
 	render() {
 		const { classy, when } = withClassy( {
 			required: Boolean( this.required ),
+			status: this.status,
 		} );
 
 		return html`<xb-stack
 			paddingless=${ this.paddingless }
-			borderless==${ this.borderless }
-			class=${ classy( 'field', {
-				'-required': when( { required: true } ),
-			} ) }
+			borderless=${ this.borderless }
+			class=${ classy(
+				'field',
+				{
+					'-required': when( { required: true } ),
+				},
+				{
+					'is-danger': when( { status: 'danger' } ),
+				}
+			) }
 		>
+			<xb-cluster paddingless borderless>
+				${ this.label == null
+					? html`<slot name="label"></slot>`
+					: html`<label class="label"> ${ this.label } </label>` }
 
-		<xb-cluster paddingless borderless>
-			<label class="label">
-				<slot name="label">
-					${ this.label }
-				</slot>
-			</label>
-
-			<slot name="tooltip">
-				${
-					this.tip == null
+				<slot name="tooltip">
+					${ this.tip == null
 						? nothing
 						: html`<xb-tooltip placement="right-end">
 								<xb-box borderless slot="floating">${ this.tip }</xb-box>
 								<xb-icon name="help"></xb-icon>
-						  </xb-tooltip>`
-				}
-			</slot>
-		</xb-cluster>
+						  </xb-tooltip>` }
+				</slot>
+			</xb-cluster>
 
-		<slot></slot>
+			<slot></slot>
 
-		<slot name="prompt">
-			${
-				this.prompt == null
-					? nothing
-					: html`<xb-text variant="caption" as="small"
-							>${ this.prompt }</xb-text
-					  >`
-			}
-		</slot>
+			${ this.prompt == null
+				? html`<slot name="prompt"></slot>`
+				: html`<xb-text class="prompt" variant="caption" as="small"
+						>${ this.prompt }</xb-text
+				  >` }
 		</xb-stack>`;
+	}
+
+	_getToggles() {
+		this._defaultSlot =
+			this._defaultSlot ?? this.shadowRoot.querySelector( 'slot:not([name])' );
+
+		const batata = [
+			...this._defaultSlot.assignedElements( { flatten: true } ),
+		];
+
+		// console.log( '>>', batata );
+		// let el = [ ...this._defaultSlot.assignedElements() ].filter( ( item ) =>
+		// 	[
+		// 		'xb-text-input',
+		// 		'xb-checkbox',
+		// 		'xb-radio-group',
+		// 		'xb-toggle-group',
+		// 		'xb-select',
+		// 	].includes( item.tagName.toLowerCase() )
+		// );
+
+		// el.forEach( ( e ) => {
+		// 	e.classList.add( '-error' );
+		// } );
 	}
 }
 
@@ -86,6 +142,7 @@ window.customElements.define( 'xb-field', Field );
 /**
  * @typedef {import('../../common/prop-types').BorderlessProp} BorderlessProp
  * @typedef {import('../../common/prop-types').PaddinglessProp} PaddinglessProp
+ * @typedef {import('../../common/prop-types').StatusProp} StatusProp
  * @typedef {import('../../common/prop-types').HTMLTag} HTMLTag
  */
 
@@ -97,6 +154,7 @@ window.customElements.define( 'xb-field', Field );
  * @property {string} tip
  * @property {boolean} [required] - Label to render.
  * @property {string} [prompt] - Auxiliary prompt to helper user about the label.
+ * @property {StatusProp} [status]
  */
 
 /**
@@ -113,4 +171,5 @@ window.customElements.define( 'xb-field', Field );
  * @property {string} [prompt] - Auxiliary prompt to helper user about the label.
  * @property {React.ReactNode} [trailing] - Element to be rendered in the leading area of this button.
  * @property {FieldFeedback} [feedback] - Feedback for this label
+ *
  */

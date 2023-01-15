@@ -112,7 +112,7 @@ export class ToggleGroup extends SelectionMixin( XBElement, {
 
 		return [
 			...this._defaultSlot.assignedElements( { flatten: true } ),
-		].filter( ( item ) => item.tagName.toLowerCase() === 'xb-toggle' );
+		].filter( ( item ) => item.matches( 'xb-toggle' ) );
 	}
 
 	/**
@@ -137,7 +137,7 @@ export class ToggleGroup extends SelectionMixin( XBElement, {
 	 */
 	_setToggleChecked( toggle ) {
 		/** @type {SelectionController} */
-		const controller = this._controller;
+		const controller = this._selectionController;
 
 		toggle.checked = controller.selection.has( toggle.value );
 	}

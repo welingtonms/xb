@@ -51,6 +51,8 @@ class SelectionController {
 	}
 
 	hostConnected() {
+		this._handleSelectionEvent = this._handleSelectionEvent.bind( this );
+
 		this.subscribe();
 	}
 
@@ -114,7 +116,7 @@ class SelectionController {
 	 * because the event itself will happen in the context of the host element.
 	 * @param {CustomEvent<SelectionEventDetail>} e
 	 */
-	_handleSelectionEvent = ( e ) => {
+	_handleSelectionEvent( e ) {
 		if ( this.disabled ) {
 			return;
 		}
@@ -144,13 +146,13 @@ class SelectionController {
 
 		this.host.requestUpdate();
 		this._publish( type );
-	};
+	}
 
 	/**
 	 * Emit event.
 	 * @param {SelectionOperation} type
 	 */
-	_publish = ( type ) => {
+	_publish( type ) {
 		const options = {
 			detail: {
 				type,
@@ -160,7 +162,7 @@ class SelectionController {
 		};
 
 		this.host.emit( this._emit, options );
-	};
+	}
 }
 
 export default SelectionController;

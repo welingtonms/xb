@@ -10,6 +10,9 @@ import '../form/text-input';
 export class SelectTrigger extends XBElement {
 	search = createRef();
 
+	/** @type {number} */
+	timeout;
+
 	static styles = [ styles() ];
 
 	static get properties() {
@@ -50,7 +53,7 @@ export class SelectTrigger extends XBElement {
 		this.open = false;
 
 		/** @type {SelectTriggerAttributes['value']} */
-		this.value = '';
+		this.value;
 
 		/** @type {SelectTriggerAttributes['placeholder']} */
 		this.placeholder = 'Search & Select';
@@ -60,18 +63,23 @@ export class SelectTrigger extends XBElement {
 		this._getSearch()?.focus();
 	}
 
+	clear() {
+		this._getSearch()?.clear();
+	}
+
 	render() {
 		const { classy, when } = withClassy( { open: this.open } );
 
 		return html`
 			<xb-text-input
 				${ ref( this.search ) }
+				clearable
 				class="${ classy( 'select-trigger', {
 					'is-open': when( { open: true } ),
 				} ) }"
-				value="${ this.value }"
 				placeholder="${ this.placeholder }"
 				@click=${ this._handleTriggerClick }
+				@xb-input=${ this._handleTriggerInput }
 			>
 				<xb-button
 					slot="trailing"
@@ -108,6 +116,19 @@ export class SelectTrigger extends XBElement {
 		this.emit( 'xb-dropdown', options );
 	}
 
+	_handleTriggerInput( e ) {
+		e.stopPropagation();
+
+		const query = String( e.target.value ).trim();
+		clearTimeout( this.timeout );
+
+		this.timeout = setTimeout( () => {
+			this.emit( 'xb-select-search', {
+				detail: { query },
+			} );
+		}, 450 );
+	}
+
 	_handleTrailingClick( e ) {
 		e.stopPropagation();
 
@@ -121,6 +142,11 @@ export class SelectTrigger extends XBElement {
 }
 
 window.customElements.define( 'xb-select-trigger', SelectTrigger );
+
+/**
+ * @typedef {Object} SearchEventDetail
+ * @property {String} query - Search term
+ */
 
 /**
  * @typedef {Object} SelectTriggerAttributes

@@ -19,7 +19,10 @@ export class DropdownMenuItem extends MenuItem {
 	_handleMenuEvent( event ) {
 		event.stopPropagation();
 
+		// handled by the dropdown
 		this.emit( 'xb-dropdown', { detail: { action: 'collapse' } } );
+
+		// informs the outside world about which item was clicked
 		this.emit( 'xb-click', { detail: event.detail } );
 	}
 }

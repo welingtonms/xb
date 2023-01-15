@@ -1,7 +1,10 @@
-import { html } from 'lit';
+import { html, nothing } from 'lit';
 import { createRef, ref } from 'lit/directives/ref.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import withClassy from '@welingtonms/classy';
 
+import { convertDirectionFromAttribute } from '../../layout/layout.helpers';
+import { sided } from '../../../common/prop-toolset';
 import XBElement from '../../../common/xb-element';
 import styles from './text-input.styles';
 
@@ -27,6 +30,12 @@ export class TextInput extends XBElement {
 			disabled: { type: Boolean, reflect: true },
 
 			/**
+			 * Should the button be clearable.
+			 * @type {TextInputAttributes['clearable']}
+			 */
+			clearable: { type: Boolean, reflect: true },
+
+			/**
 			 * Button size.
 			 * @type {TextInputAttributes['size']}
 			 */
@@ -49,6 +58,26 @@ export class TextInput extends XBElement {
 				type: String,
 				reflect: true,
 			},
+
+			/**
+			 * Determine borders to be supressed.
+			 * @type {TextInputAttributes['borderless']}
+			 */
+			borderless: {
+				converter: {
+					fromAttribute: convertDirectionFromAttribute,
+				},
+			},
+
+			/**
+			 * Determine paddings to be supressed.
+			 * @type {TextInputAttributes['paddingless']}
+			 */
+			paddingless: {
+				converter: {
+					fromAttribute: convertDirectionFromAttribute,
+				},
+			},
 		};
 	}
 
@@ -58,6 +87,9 @@ export class TextInput extends XBElement {
 		/** @type {TextInputAttributes['type']} */
 		this.type = 'text';
 
+		/** @type {TextInputAttributes['clearable']} */
+		this.clearable = false;
+
 		/** @type {TextInputAttributes['disabled']} */
 		this.disabled = false;
 
@@ -65,14 +97,27 @@ export class TextInput extends XBElement {
 		this.size = 'small';
 
 		/** @type {TextInputAttributes['value']} */
-		this.value = '';
+		this.value;
 
 		/** @type {TextInputAttributes['placeholder']} */
 		this.placeholder = '';
+
+		/** @type {TextInputAttributes['borderless']} */
+		this.borderless = 'none';
+
+		/** @type {TextInputAttributes['paddingless']} */
+		this.paddingless = 'none';
 	}
 
 	focus() {
 		this._getInput()?.focus();
+	}
+
+	clear() {
+		const input = this._getInput();
+
+		this.value = '';
+		input.value = '';
 	}
 
 	render() {
@@ -80,21 +125,45 @@ export class TextInput extends XBElement {
 
 		return html`
 			<div
-				class=${ classy( 'text-input', {
-					'-extra-small': when( { size: 'extra-small' } ),
-					'-small': when( { size: 'small' } ),
-					'-medium': when( { size: 'medium' } ),
-					'-large': when( { size: 'large' } ),
-				} ) }
+				class=${ classy(
+					'text-input',
+					{
+						'-extra-small': when( { size: 'extra-small' } ),
+						'-small': when( { size: 'small' } ),
+						'-medium': when( { size: 'medium' } ),
+						'-large': when( { size: 'large' } ),
+					},
+					{
+						'is-disabled': this.disabled,
+					},
+					sided( 'padding', this.paddingless ),
+					sided( 'border', this.borderless )
+				) }
 			>
 				<slot name="leading"></slot>
 				<input
 					${ ref( this.input ) }
 					type="${ this.type }"
 					?disabled="${ this.disabled }"
-					value="${ this.value }"
+					value="${ ifDefined( this.value ) }"
 					placeholder="${ this.placeholder }"
+					@change=${ this._handleChange }
+					@input=${ this._handleInput }
 				/>
+
+				${ this.clearable && this.value
+					? html`
+							<xb-button
+								paddingless
+								emphasis="text"
+								size="extra-small"
+								@click=${ this._handleClear }
+							>
+								<xb-icon name="close" size="16"></xb-icon>
+							</xb-button>
+					  `
+					: nothing }
+
 				<slot name="trailing"></slot>
 			</div>
 		`;
@@ -106,6 +175,26 @@ export class TextInput extends XBElement {
 	_getInput() {
 		return this.input.value;
 	}
+
+	_handleChange( e ) {
+		this.value = e.target.value;
+
+		this.emit( 'xb-change', { detail: { value: e.target.value } } );
+	}
+
+	_handleInput( e ) {
+		this.value = e.target.value;
+
+		this.emit( 'xb-input', { detail: { value: e.target.value } } );
+	}
+
+	_handleClear( e ) {
+		e.stopPropagation();
+
+		this.clear();
+
+		this.emit( 'xb-clear' );
+	}
 }
 
 window.customElements.define( 'xb-text-input', TextInput );
@@ -113,13 +202,18 @@ window.customElements.define( 'xb-text-input', TextInput );
 /**
  * @typedef {('text' | 'password' | 'number' )} TextInputType
  * @typedef {import('../../../styles/size.styles').ElementSize} TextInputSize
+ * @typedef {import('../../../common/prop-types').BorderlessProp} BorderlessProp
+ * @typedef {import('../../../common/prop-types').PaddinglessProp} PaddinglessProp
  */
 
 /**
  * @typedef {Object} TextInputAttributes
  * @property {TextInputType} type
  * @property {boolean} disabled
+ * @property {boolean} clearable
  * @property {ButtonSize} size
  * @property {string} value
  * @property {string} placeholder
+ * @property {BorderlessProp} borderless
+ * @property {PaddinglessProp} paddingless
  */

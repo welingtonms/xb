@@ -1,5 +1,6 @@
 import { html, nothing } from 'lit';
 import { createRef, ref } from 'lit/directives/ref.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import withClassy from '@welingtonms/classy';
 
 import { getTextContent } from '../../utils/slot';
@@ -47,10 +48,10 @@ export class MenuItem extends XBElement {
 			},
 
 			/**
-			 * Calue Value that this option represents.
+			 * Value that this option represents.
 			 * @type {MenuItemAttributes['value']}
 			 */
-			value: { type: String },
+			value: { type: String, reflect: true },
 		};
 	}
 
@@ -68,6 +69,14 @@ export class MenuItem extends XBElement {
 
 		/** @type {MenuItemAttributes['value']} */
 		this.value = '';
+	}
+
+	/** Returns a text label based on the contents of the menu item's default slot. */
+	text() {
+		this._defaultSlot =
+			this._defaultSlot ?? this.shadowRoot.querySelector( 'slot:not([name])' );
+
+		return getTextContent( this._defaultSlot );
 	}
 
 	focus() {
@@ -92,34 +101,30 @@ export class MenuItem extends XBElement {
 					'-medium': when( { size: 'medium' } ),
 					'-large': when( { size: 'large' } ),
 				} ) }"
-				role="${ this.role }"
+				role="${ ifDefined( this.role ) }"
 				aria-checked="${ this.checked ? 'true' : 'false' }"
 				?disabled="${ this.disabled }"
 				@click=${ this._handleClick }
 			>
 				${ this.role == 'checkbox'
-					? html`<xb-checkbox
-							tabindex="-1"
-							?checked=${ this.checked }
-					  ></xb-checkbox>`
+					? html`
+							<xb-checkbox
+								tabindex="-1"
+								?checked=${ this.checked }
+							></xb-checkbox>
+					  `
 					: nothing }
 
 				<slot name="leading"></slot>
 				<slot></slot>
 
 				${ this.role == 'radio'
-					? html`<xb-icon name="check" class="check"></xb-icon>`
+					? html`
+							<xb-icon name="check" class="check"></xb-icon>
+					  `
 					: nothing }
 			</button>
 		`;
-	}
-
-	/** Returns a text label based on the contents of the menu item's default slot. */
-	getTextLabel() {
-		this._defaultSlot =
-			this._defaultSlot ?? this.shadowRoot.querySelector( 'slot:not([name])' );
-
-		return getTextContent( this._defaultSlot );
 	}
 
 	/**
@@ -137,7 +142,7 @@ export class MenuItem extends XBElement {
 		event.stopPropagation();
 
 		this.emit( 'xb-select', {
-			detail: { value: this.value, label: this.getTextLabel() },
+			detail: { value: this.value, label: this.text() },
 		} );
 	}
 }

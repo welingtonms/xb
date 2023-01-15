@@ -13,8 +13,6 @@ import token from '../../../utils/get-token';
 import transition from '../../../styles/transition.styles';
 import typography from '../../../styles/typography.styles';
 
-import sizeStyles from '../../../styles/size.styles';
-
 function styles() {
 	return [
 		css`
@@ -134,17 +132,19 @@ function styles() {
 				background-color: ${ token( 'color-primary-300' ) };
 			}
 		`,
-		sizeStyles( { property: '--xb-checkbox-height' } ),
 		css`
 			.-small {
+				--xb-checkbox-height: 24px;
 				min-width: 16px;
 			}
 
 			.-medium {
+				--xb-checkbox-height: 24px;
 				min-width: 16px;
 			}
 
 			.-large {
+				--xb-checkbox-height: 24px;
 				min-width: 16px;
 			}
 		`,
