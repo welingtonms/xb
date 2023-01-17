@@ -23,7 +23,7 @@ const SelectionMixin = ( superClass, options ) =>
 
 				/**
 				 * Selection value.
-				 * @type {string}
+				 * @type {string | string[] | Object | Object[]}
 				 */
 				value: {},
 			};
@@ -33,7 +33,7 @@ const SelectionMixin = ( superClass, options ) =>
 			super();
 
 			/** @type {SelectionType} */
-			this.type = 'multiple';
+			this.type = 'single';
 		}
 
 		getInitialValue( value ) {
@@ -51,13 +51,10 @@ const SelectionMixin = ( superClass, options ) =>
 			 */
 			if ( this._selectionController == null ) {
 				this._selectionController = new SelectionController( this, {
-					...( options || {} ),
+					...options,
 					type: this.type,
 				} );
-			} else if (
-				changedProperties.get( 'type' ) != null &&
-				this.type != null
-			) {
+			} else if ( changedProperties.get( 'type' ) != null && this.type != null ) {
 				this._selectionController.type = this.type;
 			}
 
