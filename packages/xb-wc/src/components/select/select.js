@@ -2,7 +2,8 @@ import { html } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import toArray from '@welingtonms/xb-toolset/dist/to-array';
 
-import { createSelectController } from './select.controller';
+import styles from './select.styles';
+import DataController from './data.controller';
 import SelectionMixin from '../../mixins/selection';
 import XBElement from '../../common/xb-element';
 
@@ -16,11 +17,22 @@ import './select-trigger';
 import './select-menu';
 import './select-option';
 
+function createOption( { value, label, type } ) {
+	const option = Object.assign( document.createElement( 'xb-option' ), {
+		value,
+		innerHTML: label,
+	} );
+
+	option.dataset.type = type;
+
+	return option;
+}
+
 export class Select extends SelectionMixin( XBElement, {
 	listen: 'xb-select',
 } ) {
-	/** @type {SelectController} */
-	_controller;
+	/** @type {DataController} */
+	_dataController;
 
 	/** @type {Dropdown} */
 	_dropdown;
@@ -33,6 +45,8 @@ export class Select extends SelectionMixin( XBElement, {
 
 	/** @type {SelectOption[]} */
 	_options;
+
+	static styles = [ styles() ];
 
 	static get properties() {
 		return {
@@ -126,6 +140,62 @@ export class Select extends SelectionMixin( XBElement, {
 
 		/** @type {SelectAttributes['datasources']} */
 		this.datasources = [];
+
+		this._dataController = new DataController( this );
+	}
+
+	connectedCallback() {
+		this._dataController.init( this.datasources );
+
+		this._handleSelectionChange = this._handleSelectionChange.bind( this );
+		this._handleDropdownCollapse = this._handleDropdownCollapse.bind( this );
+		this._handleSearch = this._handleSearch.bind( this );
+		this._handleSlotChanged = this._handleSlotChanged.bind( this );
+
+		this.addEventListener(
+			'xb-dropdown-collapse',
+			this._handleDropdownCollapse
+		);
+		this.addEventListener( 'xb-select-search', this._handleSearch );
+		this.addEventListener( 'xb-selection-change', this._handleSelectionChange );
+
+		/**
+		 * It's intentional to call super.connectedCallback() here.
+		 * We need the data controller initialization before the selection controller,
+		 * in the selection mixin, to initialize the selection value, as we need the datasources
+		 * ready to resolve.
+		 */
+		super.connectedCallback();
+	}
+
+	disconnectedCallback() {
+		super.disconnectedCallback();
+
+		this.removeEventListener(
+			'xb-dropdown-collapse',
+			this._handleDropdownCollapse
+		);
+		this.removeEventListener( 'xb-select-search', this._handleSearch );
+		this.removeEventListener(
+			'xb-selection-change',
+			this._handleSelectionChange
+		);
+	}
+
+	/**
+	 * @param {import('lit').PropertyValues<Select>} changedProperties
+	 */
+	update( changedProperties ) {
+		if ( changedProperties.has( 'multiple' ) ) {
+			this.type = this.multiple ? 'multiple' : 'single';
+			this.role = [ 'single' ].includes( this.type ) ? 'radiogroup' : 'group';
+		}
+
+		if ( changedProperties.has( 'datasources' ) ) {
+			this._dataController.reset( this.datasources );
+		}
+
+		super.update( changedProperties );
 	}
 
 	/**
@@ -134,18 +204,19 @@ export class Select extends SelectionMixin( XBElement, {
 	updated( changedProperties ) {
 		super.updated( changedProperties );
 
-		if ( changedProperties.has( 'multiple' ) ) {
-			this.type = this.multiple ? 'multiple' : 'single';
-			this.role = [ 'single' ].includes( this.type ) ? 'radiogroup' : 'group';
-
-			this._controller = createSelectController( this );
-		}
+		this._renderDataOptions();
+		this._syncOptions();
+		this._updateTrigger();
 	}
 
+	/**
+	 * Used in the SelectionMixin class.
+	 * @param {*} value
+	 * @returns
+	 */
 	getInitialValue( value ) {
 		return toArray( value ).map( ( option ) => {
-			const { value } = this._controller.datasources.resolve( option );
-
+			const { value } = this._dataController.resolve( option );
 			return value;
 		} );
 	}
@@ -157,9 +228,9 @@ export class Select extends SelectionMixin( XBElement, {
 
 				<xb-select-menu slot="menu" ?loading=${ this.loading }>
 					<slot @slotchange=${ this._handleSlotChanged }>
-						<xb-box borderless>
-							<xb-text variant="body-2">No options available.</xb-text>
-						</xb-box>
+						<xb-text class="empty" variant="body-2">
+							No options available.
+						</xb-text>
 					</slot>
 				</xb-select-menu>
 			</xb-dropdown>
@@ -207,11 +278,126 @@ export class Select extends SelectionMixin( XBElement, {
 		return controller.selection;
 	}
 
+	_syncOptions() {
+		this.options?.forEach( ( option ) => {
+			option.setAttribute(
+				'role',
+				[ 'single' ].includes( this.type ) ? 'radio' : 'checkbox'
+			);
+
+			option.disabled = this.disabled || option.disabled;
+			option.checked = this.selection.has( option.value );
+		} );
+	}
+
+	_updateTrigger() {
+		const options = this.options;
+		const selection = this.selection;
+		const trigger = this.trigger;
+
+		if ( this.type == 'multiple' ) {
+			trigger.placeholder =
+				selection.size > 0 ? `${ selection.size } selected` : this.placeholder;
+		} else {
+			/**
+			 * TODO: create a datasource with the static options so we can use the
+			 * _datasourceHelpers `resolve` function here.
+			 */
+			const selectedOption = options.find( ( option ) =>
+				selection.has( option.value )
+			);
+
+			trigger.placeholder = selectedOption?.text() ?? this.placeholder;
+		}
+	}
+
+	_renderDataOptions() {
+		this._dataController.data.forEach( ( option ) => {
+			const { value, label } = this._dataController.resolve( option );
+
+			// avoid re-rendering an option previously rendered
+			if ( this.querySelector( `xb-option[value="${ value }"]` ) ) {
+				return;
+			}
+
+			this.appendChild(
+				createOption( {
+					type: option._type,
+					value,
+					label,
+				} )
+			);
+		} );
+	}
+
+	_removeDataOptions() {
+		this._dataController.data.forEach( ( option ) => {
+			const { value } = this._dataController.resolve( option );
+
+			if ( this.selection.has( value ) ) {
+				// we dont want to remove the option if it is currently selected.
+				return;
+			}
+
+			this.removeChild( this.querySelector( `xb-option[value="${ value }"]` ) );
+			this._dataController.delete( value );
+		} );
+	}
+
+	/**
+	 *
+	 * @param {CustomEvent<SearchEventDetail>} e
+	 */
+	async _handleSearch( e ) {
+		const { query } = e.detail;
+
+		if ( query === '' ) {
+			return;
+		}
+
+		this._removeDataOptions();
+
+		const menu = this.menu;
+		const dropdown = this.dropdown;
+
+		dropdown.expand();
+
+		menu.loading = true;
+
+		await this._dataController.query( query );
+
+		menu.loading = false;
+	}
+
+	/**
+	 *
+	 * @param {CustomEvent<SelectionEventDetail>} event
+	 */
+	_handleSelectionChange( event ) {
+		event.stopPropagation();
+
+		const values = Array.from( this.selection ).map( ( key ) => {
+			return this._dataController.get( key ) ?? key;
+		} );
+
+		if ( ! this.multiple ) {
+			this.dropdown.collapse();
+		}
+
+		this.emit( 'xb-change', {
+			detail: { value: this.multiple ? values : values[ 0 ] ?? null },
+		} );
+	}
+
+	_handleDropdownCollapse() {
+		this.trigger.clear();
+	}
+
 	_handleSlotChanged() {
 		// we set to null so the getter will re-run the query
 		this._options = null;
 
-		this._controller._updateOptions();
+		this._syncOptions();
 	}
 }
 
@@ -225,8 +411,13 @@ window.customElements.define( 'xb-select', Select );
  * @typedef {import('./select-trigger').SelectTrigger} SelectTrigger
  * @typedef {import('./select-menu').SelectMenu} SelectMenu
  * @typedef {import('./select-option').SelectOption} SelectOption
- * @typedef {import('./select.controller').default} SelectController
- * @typedef {import('./select.controller').SelectDatasource} SelectDatasource
+ * @typedef {import('./select-trigger').SearchEventDetail} SearchEventDetail
+ * @typedef {import('../../controllers/selection/selection.controller').SelectionEventDetail} SelectionEventDetail
+ * @typedef {import('./data.controller').DatasourceAdapter} SelectDatasourceAdapter
+ * @typedef {import('./data.controller').StaticDatasource} SelectStaticDatasource
+ * @typedef {import('./data.controller').DynamicDatasource} SelectDynamicDatasource
+ * @typedef {import('./data.controller').Datasource} SelectDatasource
+ * @typedef {import('./data.controller').DatasourcesHelper} DatasourcesHelper
  */
 
 /**

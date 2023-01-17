@@ -65,14 +65,14 @@ export class InteractionBoundary extends XBElement {
 		document.addEventListener( 'mousedown', this._handleEvent );
 		document.addEventListener( 'keyup', this._handleEvent );
 		document.addEventListener( 'touchend', this._handleEvent );
-		window.addEventListener( 'blur', this._handleBlurEvent );
+		// window.addEventListener( 'blur', this._handleBlurEvent );
 	}
 
 	_unsubscribe() {
 		document.removeEventListener( 'mousedown', this._handleEvent );
 		document.removeEventListener( 'keyup', this._handleEvent );
 		document.removeEventListener( 'touchend', this._handleEvent );
-		window.removeEventListener( 'blur', this._handleBlurEvent );
+		// window.removeEventListener( 'blur', this._handleBlurEvent );
 	}
 
 	_getHost() {

@@ -87,11 +87,15 @@ export function useSyncFruits() {
 export function useAsyncFruits() {
 	return {
 		name: 'fruit',
-		fetch: async function fetch( { regex } ) {
+		fetch: async function fetch( { query, regex } ) {
 			return new Promise( ( resolve ) => {
+				if ( query.length < 3 ) {
+					return resolve( [] );
+				}
+
 				setTimeout( () => {
 					resolve( FRUITS.filter( ( { value } ) => regex.test( value ) ) );
-				}, 2000 );
+				}, 1000 );
 			} );
 		},
 	};
@@ -580,11 +584,15 @@ export function useAsyncUsers() {
 				return user.name;
 			},
 		},
-		fetch: async function fetch( { regex } ) {
+		fetch: async function fetch( { query, regex } ) {
 			return new Promise( ( resolve ) => {
+				if ( query.length < 3 ) {
+					return resolve( [] );
+				}
+
 				setTimeout( () => {
 					resolve( USERS.filter( ( { name } ) => regex.test( name ) ) );
-				}, 2000 );
+				}, 1000 );
 			} );
 		},
 	};

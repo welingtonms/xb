@@ -80,7 +80,8 @@ export class MenuItem extends XBElement {
 	}
 
 	focus() {
-		const button = this._getButton();
+		/** @type {HTMLButtonElement} */
+		const button = this.button.value;
 
 		button.focus();
 	}
@@ -125,13 +126,6 @@ export class MenuItem extends XBElement {
 					: nothing }
 			</button>
 		`;
-	}
-
-	/**
-	 * @returns {HTMLButtonElement}
-	 */
-	_getButton() {
-		return this.button.value;
 	}
 
 	/**

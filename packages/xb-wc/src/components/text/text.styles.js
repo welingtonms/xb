@@ -67,8 +67,7 @@ function styles() {
 			.text {
 				${ transition( [ { property: 'color' } ] ) };
 
-				display: inline-flex;
-				align-items: center;
+				display: inline-block;
 
 				${ m( token( 'spacing-0' ) ) };
 
