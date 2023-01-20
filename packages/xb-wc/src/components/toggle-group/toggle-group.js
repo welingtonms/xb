@@ -55,6 +55,21 @@ export class ToggleGroup extends SelectionMixin( XBElement, {
 			: 'group';
 	}
 
+	connectedCallback() {
+		super.connectedCallback();
+
+		this.addEventListener( 'xb-selection-change', this._handleSelectionChange );
+	}
+
+	disconnectedCallback() {
+		super.disconnectedCallback();
+
+		this.removeEventListener(
+			'xb-selection-change',
+			this._handleSelectionChange
+		);
+	}
+
 	/**
 	 * @param {import('lit').PropertyValues<ToggleGroup>} changedProperties
 	 */
@@ -147,6 +162,12 @@ export class ToggleGroup extends SelectionMixin( XBElement, {
 	 */
 	_setToggleDisabled( toggle ) {
 		toggle.disabled = this.disabled;
+	}
+
+	_handleSelectionChange( event ) {
+		event.stopPropagation();
+
+		this.emit( 'xb-change', { detail: event.detail } );
 	}
 }
 

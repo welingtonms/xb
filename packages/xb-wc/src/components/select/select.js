@@ -2,9 +2,10 @@ import { html } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import toArray from '@welingtonms/xb-toolset/dist/to-array';
 
-import styles from './select.styles';
+import { SELECT_EVENT } from './select.constants';
 import DataController from './data.controller';
 import SelectionMixin from '../../mixins/selection';
+import styles from './select.styles';
 import XBElement from '../../common/xb-element';
 
 import '../dropdown';
@@ -29,7 +30,7 @@ function createOption( { value, label, type } ) {
 }
 
 export class Select extends SelectionMixin( XBElement, {
-	listen: 'xb-select',
+	listen: SELECT_EVENT,
 } ) {
 	/** @type {DataController} */
 	_dataController;

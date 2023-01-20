@@ -1,5 +1,4 @@
 import { html } from 'lit';
-import { createRef, ref } from 'lit/directives/ref.js';
 import withClassy from '@welingtonms/classy';
 
 import { CHECK_EVENT } from './radio-group.constants';
@@ -14,7 +13,7 @@ export class RadioGroup extends SelectionMixin( XBElement, {
 	listen: CHECK_EVENT,
 } ) {
 	/** @type {import('../../focus-trap').FocusTrap} */
-	_trap = createRef();
+	_trap;
 
 	static styles = [ styles() ];
 
@@ -48,8 +47,10 @@ export class RadioGroup extends SelectionMixin( XBElement, {
 		super.connectedCallback();
 
 		this.setAttribute( 'role', 'radiogroup' );
+
 		this.addEventListener( 'focusin', this._handleFocus );
 		this.addEventListener( 'focusout', this._handleBlur );
+		this.addEventListener( 'xb-selection-change', this._handleSelectionChange );
 	}
 
 	disconnectedCallback() {
@@ -57,6 +58,10 @@ export class RadioGroup extends SelectionMixin( XBElement, {
 
 		this.removeEventListener( 'focusin', this._handleFocus );
 		this.removeEventListener( 'focusout', this._handleBlur );
+		this.removeEventListener(
+			'xb-selection-change',
+			this._handleSelectionChange
+		);
 	}
 
 	/**
@@ -81,7 +86,7 @@ export class RadioGroup extends SelectionMixin( XBElement, {
 
 		// TODO: add proper accessibility features
 		return html`
-			<xb-focus-trap ${ ref( this._trap ) }>
+			<xb-focus-trap>
 				<xb-stack
 					as="fieldset"
 					class=${ classy( 'radio-group' ) }
@@ -92,6 +97,26 @@ export class RadioGroup extends SelectionMixin( XBElement, {
 				</xb-stack>
 			</xb-focus-trap>
 		`;
+	}
+
+	get trap() {
+		this._trap = this._trap ?? this.shadowRoot.querySelector( 'xb-focus-trap' );
+
+		return this._trap;
+	}
+
+	_handleFocus() {
+		this.trap.activate();
+	}
+
+	_handleBlur() {
+		this.trap.deactivate();
+	}
+
+	_handleSelectionChange( event ) {
+		event.stopPropagation();
+
+		this.emit( 'xb-change', { detail: event.detail } );
 	}
 
 	/**
@@ -121,14 +146,6 @@ export class RadioGroup extends SelectionMixin( XBElement, {
 	 */
 	_setRadioDisabled( radio ) {
 		radio.disabled = this.disabled;
-	}
-
-	_handleFocus() {
-		this._getFocusTrap().activate();
-	}
-
-	_handleBlur() {
-		this._getFocusTrap().deactivate();
 	}
 
 	/**

@@ -44,8 +44,8 @@ class SelectionController {
 
 		this.type = type;
 
-		this._emit = emit ?? 'xb-change';
-		this._listen = listen ?? 'xb-select';
+		this._emit = emit ?? 'xb-selection-change';
+		this._listen = listen ?? 'xb-selection-select';
 
 		this.host.addController( this );
 	}

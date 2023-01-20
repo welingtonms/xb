@@ -1,1 +1,1 @@
-export const SELECT_EVENT = 'xb-select';
+export const SELECT_EVENT = 'xb-menu-item-click';

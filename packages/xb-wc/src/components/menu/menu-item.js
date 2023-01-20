@@ -135,7 +135,7 @@ export class MenuItem extends XBElement {
 	_handleClick( event ) {
 		event.stopPropagation();
 
-		this.emit( 'xb-select', {
+		this.emit( 'xb-menu-item-click', {
 			detail: { value: this.value, label: this.text() },
 		} );
 	}

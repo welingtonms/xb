@@ -7,13 +7,13 @@ export class DropdownMenuItem extends MenuItem {
 	connectedCallback() {
 		super.connectedCallback();
 
-		this.addEventListener( 'xb-select', this._handleMenuEvent );
+		this.addEventListener( 'xb-menu-item-click', this._handleMenuEvent );
 	}
 
 	disconnectedCallback() {
 		super.disconnectedCallback();
 
-		this.removeEventListener( 'xb-select', this._handleMenuEvent );
+		this.removeEventListener( 'xb-menu-item-click', this._handleMenuEvent );
 	}
 
 	_handleMenuEvent( event ) {
