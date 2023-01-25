@@ -1,0 +1,235 @@
+import { ContextProvider, ContextRoot, createContext } from '@lit-labs/context';
+import { html, LitElement } from 'lit';
+import createSelectionStrategy from '@welingtonms/xb-toolset/dist/selection';
+import toArray from '@welingtonms/xb-toolset/dist/to-array';
+
+import styles from './selection-keeper.styles';
+
+const root = new ContextRoot();
+/** @type {{ __context__: Selection; }} */
+const selectionContext = createContext( 'selection' );
+
+export class SelectionKeeper extends LitElement {
+	static styles = [ styles() ];
+
+	/** @type {HTMLSlotElement} */
+	_host;
+
+	/** @type {SelectionStrategy} */
+	_strategy = null;
+
+	/** @type {ContextProvider<Selection>} */
+	_provider;
+
+	static get properties() {
+		return {
+			/**
+			 * Selection strategy.
+			 * @type {SelectionKeeperAttributes['emit']}
+			 */
+			emit: { type: String },
+
+			/**
+			 * Selection strategy.
+			 * @type {SelectionKeeperAttributes['listen']}
+			 */
+			listen: { type: String },
+
+			/**
+			 * Selection strategy.
+			 * @type {SelectionKeeperAttributes['type']}
+			 */
+			type: { type: String },
+
+			/**
+			 * Selection value attribute.
+			 * @type {SelectionKeeperAttributes['value']}
+			 */
+			value: {},
+
+			/**
+			 * Selection value state.
+			 * @type {SelectionState}
+			 */
+			_state: {
+				state: true,
+			},
+		};
+	}
+
+	constructor() {
+		super();
+
+		/** @type {SelectionKeeperAttributes['emit']} */
+		this.emit = 'xb-selection-change';
+
+		/** @type {SelectionKeeperAttributes['listen']} */
+		this.listen = 'xb-selection-select';
+
+		/** @type {SelectionKeeperAttributes['type']} */
+		this.type;
+
+		/** @type {SelectionKeeperAttributes['value']} */
+		this.value;
+
+		/** @type {SelectionState} */
+		this._state = new Set();
+
+		// create a provider controller and a default logger
+		this._provider = new ContextProvider( this, selectionContext, {
+			state: this._state,
+		} );
+	}
+
+	connectedCallback() {
+		super.connectedCallback();
+
+		root.detach( document.body );
+		root.attach( document.body );
+
+		this.attachEventListeners();
+	}
+
+	disconnectedCallback() {
+		super.disconnectedCallback();
+
+		this.detachEventListeners();
+	}
+
+	/**
+	 * @param {import('lit').PropertyValues<SelectionHost>} changedProperties
+	 */
+	update( changedProperties ) {
+		/**
+		 * We create a strategy either if we haven't created one yet, or if the
+		 * selection type changed.
+		 */
+		if (
+			this._strategy == null ||
+			( this.type != null && changedProperties.has( 'type' ) )
+		) {
+			this._strategy = createSelectionStrategy( { type: this.type } );
+			this._state = this._strategy.init( Array.from( this._state ) );
+		}
+
+		/**
+		 * If `value` changed, we need to reset the selection controller.
+		 */
+		if ( changedProperties.has( 'value' ) ) {
+			this._state = this._strategy.init( toArray( this.value ) );
+
+			this._publish( toArray( this.value ) );
+		}
+
+		super.update( changedProperties );
+	}
+
+	get host() {
+		this._host = this._host ?? this.shadowRoot.querySelector( 'slot' );
+
+		return this._host.assignedElements( { flatten: true } )[ 0 ];
+	}
+
+	get selection() {
+		return this._state;
+	}
+
+	render() {
+		return html`
+			<slot></slot>
+		`;
+	}
+
+	attachEventListeners() {
+		this.addEventListener( this.listen, this._handleSelectionRequest );
+	}
+
+	detachEventListeners() {
+		this.removeEventListener( this.listen, this._handleSelectionRequest );
+	}
+
+	_handleSelectionRequest( event ) {
+		const {
+			detail: { type = 'toggle', value },
+		} = event;
+
+		if ( this.type == null ) {
+			console.warn(
+				'[SelectionController] you forgot to set the selection type.'
+			);
+			return;
+		}
+
+		switch ( type ) {
+			case 'select':
+				this._state = this._strategy.select( toArray( value ), this._state );
+				break;
+			case 'unselect':
+				this._state = this._strategy.unselect( toArray( value ), this._state );
+				break;
+			case 'toggle':
+			default:
+				this._state = this._strategy.toggle( toArray( value ), this._state );
+				break;
+		}
+
+		this._publish( toArray( value ) );
+	}
+
+	/**
+	 *
+	 * @param {SelectionState} changed
+	 */
+	_publish( changed ) {
+		this._provider.setValue( { state: this._state } );
+
+		this.dispatchEvent(
+			new CustomEvent( this.emit, {
+				bubbles: true,
+				cancelable: true,
+				composed: true,
+				detail: {
+					value: this._state,
+					changed,
+				},
+			} )
+		);
+	}
+}
+
+window.customElements.define( 'xb-selection-keeper', SelectionKeeper );
+
+/**
+ * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionType} SelectionType
+ * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionState} SelectionState
+ * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionStrategy} SelectionStrategy
+ * @typedef {import('../../common/xb-element').default} XBElement
+ */
+
+/**
+ * @typedef {Object} Selection
+ * @property {SelectionState} state
+ */
+
+/**
+ * @typedef {Object} GenericSelectionOption
+ * @property {string} label
+ * @property {string} value
+ */
+
+/**
+ * @typedef {Object} CustomSelectionOption
+ * @property {string} _type
+ */
+
+/**
+ * @typedef {GenericSelectionOption | CustomSelectionOption} SelectionOption
+ */
+
+/**
+ * @typedef {Object} SelectionKeeperAttributes
+ * @property {SelectionType} type
+ * @property {string | string[] | SelectionOption | SelectionOption[]} value
+ * @property {string | string[]} [listen] - Event triggered when a selection happens. Default = 'xb-selection-select'
+ * @property {string} [emit] - Event dispatched when the selection changes. Default = 'xb-selection-change'
+ */
