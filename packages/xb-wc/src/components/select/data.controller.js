@@ -52,7 +52,7 @@ class DataController {
 	 */
 	mode;
 
-	/** @type {import('../selection-keeper/selection-keeper').SelectionState} */
+	/** @type {SelectionState} */
 	selection;
 
 	_initialized = false;
@@ -63,6 +63,7 @@ class DataController {
 	 */
 	constructor( host, datasources ) {
 		this.items = new Map();
+		this.selection = new Set();
 		this.mode = 'default';
 
 		this._initGroups();
@@ -228,11 +229,9 @@ class DataController {
 	setMode( mode ) {
 		if ( mode == 'default' ) {
 			for ( const key of this.getGroup( 'queried' ) ) {
-				if ( this.selection.has( key ) ) {
-					return;
+				if ( ! this.selection.has( key ) ) {
+					this.items.delete( key );
 				}
-
-				this.items.delete( key );
 			}
 		}
 
@@ -299,6 +298,7 @@ export default DataController;
  * @typedef {ReturnType<DatasourcesHelpers>} DatasourcesHelper
  * @typedef {import('lit').ReactiveController} ReactiveController
  * @typedef {import('lit').ReactiveControllerHost} ReactiveControllerHost
+ * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionState} SelectionState
  * @typedef {import('../selection-keeper').SelectionEventDetail} SelectionEventDetail
  * @typedef {import('./select-option').SelectOption} SelectOption
  */

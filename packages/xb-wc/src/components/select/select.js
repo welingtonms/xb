@@ -155,6 +155,8 @@ export class Select extends XBElement {
 	}
 
 	connectedCallback() {
+		super.connectedCallback();
+
 		this._data = new DataController( this, this.datasources );
 
 		this._handleClear = this._handleClear.bind( this );
@@ -163,7 +165,6 @@ export class Select extends XBElement {
 		this._syncOptions = this._syncOptions.bind( this );
 
 		this._attachEventListeners();
-		super.connectedCallback();
 	}
 
 	disconnectedCallback() {
@@ -326,8 +327,6 @@ export class Select extends XBElement {
 		const selection = this.selection;
 		const trigger = this.trigger;
 
-		console.log( '_updateTrigger', this._selectionKeeper.getSelectionValue() );
-
 		if ( this.multiple ) {
 			trigger.placeholder =
 				selection.size > 0 ? `${ selection.size } selected` : this.placeholder;
@@ -402,6 +401,7 @@ export class Select extends XBElement {
 		const { query } = e.detail;
 
 		if ( query === '' ) {
+			this._removeDataOptions();
 			this._data.setMode( 'default' );
 			this._renderDataOptions();
 
@@ -425,6 +425,7 @@ export class Select extends XBElement {
 
 	_handleClear() {
 		this._removeDataOptions();
+
 		this._data.setMode( 'default' );
 		this._data.query( '' );
 	}
@@ -441,11 +442,11 @@ export class Select extends XBElement {
 		event.stopPropagation();
 
 		const {
-			detail: { value, changed },
+			detail: { value, state, changed },
 		} = event;
 
 		let optionsToSync = [];
-		Array.from( new Set( [ ...changed, ...( value || [] ) ] ) ).forEach(
+		Array.from( new Set( [ ...changed, ...state.keys() ] ) ).forEach(
 			( value ) => {
 				const node = this.querySelector( `xb-option[value="${ value }"]` );
 

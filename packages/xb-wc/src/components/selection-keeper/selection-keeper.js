@@ -8,6 +8,20 @@ import styles from './selection-keeper.styles';
 const root = new ContextRoot();
 const selectionContext = createContext( 'selection' );
 
+/**
+ *
+ * @param {SelectionState} state
+ * @param {*} value
+ */
+function getChanged( state, value ) {
+	/**
+	 * TODO: evaluate the need to optimize based on the type (multiple, single, or single-strict),
+	 * for example, returning only `value` (since the existing selected options won't change), and
+	 * returning both the current state and value for single selections.
+	 */
+	return Array.from( new Set( [ ...state.keys(), ...toArray( value ) ] ) );
+}
+
 export class SelectionKeeper extends LitElement {
 	static styles = [ styles() ];
 
@@ -112,9 +126,10 @@ export class SelectionKeeper extends LitElement {
 		 * If `value` changed, we need to reset the strategy.
 		 */
 		if ( changedProperties.has( 'value' ) ) {
+			const changed = getChanged( this._state, toArray( this.value ) );
 			this._state = this._strategy.init( toArray( this.value ) );
 
-			this._publish( toArray( this.value ) );
+			// this._publish( changed );
 		}
 
 		super.update( changedProperties );
@@ -152,6 +167,8 @@ export class SelectionKeeper extends LitElement {
 			return;
 		}
 
+		const changed = getChanged( this._state, toArray( this.value ) );
+
 		switch ( type ) {
 			case 'select':
 				this._state = this._strategy.select( toArray( value ), this._state );
@@ -165,7 +182,7 @@ export class SelectionKeeper extends LitElement {
 				break;
 		}
 
-		this._publish( toArray( value ) );
+		this._publish( changed );
 	}
 
 	/**
@@ -202,7 +219,8 @@ window.customElements.define( 'xb-selection-keeper', SelectionKeeper );
 /**
  * @typedef {Object} SelectionEventDetail
  * @property {SelectionOperation} type - type of selection being performed
- * @property {SelectionState} value - currently selected value
+ * @property {null | string | string[]} value - currently selected value
+ * @property {SelectionState} state - currently selected value
  * @property {string[]} changed - values that changed from the previously selected va\
  */
 

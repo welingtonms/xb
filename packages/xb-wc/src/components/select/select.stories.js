@@ -8,6 +8,9 @@ import {
 	useAsyncUsers,
 } from './select.fixtures';
 import { PlacementArg, SizeArg } from '../../common/arg-types';
+
+import '../layout/stack';
+import '../text';
 import './select';
 
 export default {
@@ -21,8 +24,6 @@ export default {
 				disable: true,
 			},
 		},
-		placement: PlacementArg,
-		size: SizeArg,
 		loading: {
 			control: {
 				type: 'boolean',
