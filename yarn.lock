@@ -7014,7 +7014,7 @@ __metadata:
     "@welingtonms/xb-tokens": "workspace:*"
     "@welingtonms/xb-toolset": "workspace:*"
     babel-loader: 9.1.2
-    cypress: 11.1.0
+    cypress: 12.4.1
     lit: 2.6.1
     lit-html: 2.6.1
     react: 18.2.0
@@ -9753,9 +9753,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:11.1.0":
-  version: 11.1.0
-  resolution: "cypress@npm:11.1.0"
+"cypress@npm:12.4.1":
+  version: 12.4.1
+  resolution: "cypress@npm:12.4.1"
   dependencies:
     "@cypress/request": ^2.88.10
     "@cypress/xvfb": ^1.2.4
@@ -9801,7 +9801,7 @@ __metadata:
     yauzl: ^2.10.0
   bin:
     cypress: bin/cypress
-  checksum: ee0097778cf3cdf3854325cabf19a60a7486d46ae70082034c05b22b203f21ff85a4871c08dadc6641be649a64c739a443dd3f2d6a5ab112fc9ead703e1f1be3
+  checksum: 92693734e2a2e044effae8319315e2bd66a53e4c590caad36199f8b3b92a56189dcc41cbb2636b8a8a88ac20b91dd899897f873af4b26f106c9ea2e3d47caf35
   languageName: node
   linkType: hard
 
