@@ -7,6 +7,7 @@ import '../icon';
 
 export default {
 	title: 'Components/tooltip',
+	component: 'xb-tooltip',
 
 	argTypes: {
 		placement: PlacementArg,
@@ -17,28 +18,25 @@ export default {
 			},
 		},
 	},
-	parameters: {
-		docs: {
-			// page: Docs,
-		},
-	},
+	parameters: {},
 };
 
-export const Playground = ( args ) => html`<xb-tooltip
-	placement=${ args.placement }
-	trigger=${ args.trigger }
->
-	<xb-box borderless slot="floating"
-		>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc lectus erat,
-		bibendum non mollis eu, pharetra et est.</xb-box
-	>
+export const Playground = {
+	render: ( args ) => html`
+		<xb-tooltip placement=${ args.placement } trigger=${ args.trigger }>
+			<xb-box borderless slot="floating">
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc lectus
+				erat, bibendum non mollis eu, pharetra et est.
+			</xb-box>
 
-	<xb-button emphasis="ghost">
-		<xb-icon name="favorite" slot="leading"></xb-icon>
-	</xb-button>
-</xb-tooltip>`;
+			<xb-button emphasis="ghost">
+				<xb-icon name="favorite" slot="leading"></xb-icon>
+			</xb-button>
+		</xb-tooltip>
+	`,
 
-Playground.args = {
-	placement: 'bottom-start',
-	trigger: 'click',
+	args: {
+		placement: 'bottom-start',
+		trigger: 'click',
+	},
 };

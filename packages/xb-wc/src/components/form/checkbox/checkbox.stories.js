@@ -1,10 +1,10 @@
 import { html } from 'lit-html';
 
-import Docs from './checkbox.api.mdx';
 import './checkbox';
 
 export default {
 	title: 'Components/form/checkbox',
+	component: 'xb-checkbox',
 
 	argTypes: {
 		type: {
@@ -37,41 +37,42 @@ export default {
 			},
 		},
 	},
-	parameters: {
-		docs: {
-			page: Docs,
-		},
-	},
+	parameters: {},
 };
 
-export const Playground = ( args ) => html`
-	<xb-stack>
-		<xb-checkbox
-			value="change"
-			size=${ args.size }
-			?disabled=${ args.disabled }
-			@xb-change=${ args.change }
-			>Change</xb-checkbox
-		>
-		<xb-checkbox
-			value="accept"
-			size=${ args.size }
-			?disabled=${ args.disabled }
-			@xb-change=${ args.change }
-			>Accept</xb-checkbox
-		>
-		<xb-checkbox
-			value="leave"
-			size=${ args.size }
-			?disabled=${ args.disabled }
-			@xb-change=${ args.change }
-			>Leave</xb-checkbox
-		>
-	</xb-stack>
-`;
+export const Playground = {
+	render: ( args ) => html`
+		<xb-stack>
+			<xb-checkbox
+				value="change"
+				size=${ args.size }
+				?disabled=${ args.disabled }
+				@xb-change=${ args.change }
+			>
+				Change
+			</xb-checkbox>
+			<xb-checkbox
+				value="accept"
+				size=${ args.size }
+				?disabled=${ args.disabled }
+				@xb-change=${ args.change }
+			>
+				Accept
+			</xb-checkbox>
+			<xb-checkbox
+				value="leave"
+				size=${ args.size }
+				?disabled=${ args.disabled }
+				@xb-change=${ args.change }
+			>
+				Leave
+			</xb-checkbox>
+		</xb-stack>
+	`,
 
-Playground.args = {
-	type: 'text',
-	disabled: false,
-	size: 'small',
+	args: {
+		type: 'text',
+		disabled: false,
+		size: 'small',
+	},
 };

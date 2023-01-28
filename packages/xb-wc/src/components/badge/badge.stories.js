@@ -1,10 +1,10 @@
 import { html } from 'lit-html';
 
-import Docs from './badge.api.mdx';
 import './badge';
 
 export default {
 	title: 'Components/badge',
+	component: 'xb-badge',
 
 	argTypes: {
 		// backgroundColor: { control: 'color' },
@@ -16,16 +16,18 @@ export default {
 		},
 	},
 	parameters: {
-		docs: {
-			page: Docs,
-		},
+		// docs: {
+		// 	// page: Docs,
+		// },
 	},
 };
 
-export const Playground = ( args ) => html`
-	<xb-badge variant=${ args.variant }>Potatoes</xb-badge>
-`;
+export const Playground = {
+	render: ( args ) => html`
+		<xb-badge variant=${ args.variant }>Potatoes</xb-badge>
+	`,
 
-Playground.args = {
-	variant: 'primary',
+	args: {
+		variant: 'primary',
+	},
 };

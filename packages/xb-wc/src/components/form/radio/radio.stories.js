@@ -1,11 +1,11 @@
 import { html } from 'lit-html';
 
-import Docs from './radio.api.mdx';
 import './radio-group';
 import './radio';
 
 export default {
 	title: 'Components/form/radio',
+	component: 'xb-radio',
 
 	argTypes: {
 		type: {
@@ -38,27 +38,25 @@ export default {
 			},
 		},
 	},
-	parameters: {
-		docs: {
-			page: Docs,
-		},
-	},
+	parameters: {},
 };
 
-export const Playground = ( args ) => html`
-	<xb-radio-group
-		size=${ args.size }
-		?disabled=${ args.disabled }
-		@xb-change=${ args.change }
-	>
-		<xb-radio value="change">Change</xb-radio>
-		<xb-radio value="accept">Accept</xb-radio>
-		<xb-radio value="leave">Leave</xb-radio>
-	</xb-radio-group>
-`;
+export const Playground = {
+	render: ( args ) => html`
+		<xb-radio-group
+			size=${ args.size }
+			?disabled=${ args.disabled }
+			@xb-change=${ args.change }
+		>
+			<xb-radio value="change">Change</xb-radio>
+			<xb-radio value="accept">Accept</xb-radio>
+			<xb-radio value="leave">Leave</xb-radio>
+		</xb-radio-group>
+	`,
 
-Playground.args = {
-	type: 'text',
-	disabled: false,
-	size: 'small',
+	args: {
+		type: 'text',
+		disabled: false,
+		size: 'small',
+	},
 };

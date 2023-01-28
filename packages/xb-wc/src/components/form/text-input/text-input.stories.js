@@ -1,11 +1,11 @@
 import { html } from 'lit-html';
 
 import { SizeArg } from '../../../common/arg-types';
-import Docs from './text-input.api.mdx';
 import './text-input';
 
 export default {
 	title: 'Components/form/text input',
+	component: 'xb-text-input',
 
 	argTypes: {
 		type: {
@@ -27,38 +27,18 @@ export default {
 		},
 		size: SizeArg,
 	},
-	parameters: {
-		docs: {
-			page: Docs,
-		},
-	},
+	parameters: {},
 };
 
-export const Playground = ( args ) => html`
-	<xb-stack>
-		<xb-text-input
-			type=${ args.type }
-			size=${ args.size }
-			?disabled=${ args.disabled }
-			@input=${ args.input }
-		></xb-text-input>
-		<xb-text-input
-			type=${ args.type }
-			size=${ args.size }
-			?disabled=${ args.disabled }
-			@input=${ args.input }
-		>
-			<span slot="leading">&hearts;</span>
-		</xb-text-input>
-		<xb-text-input
-			type=${ args.type }
-			size=${ args.size }
-			?disabled=${ args.disabled }
-			@input=${ args.input }
-		>
-			<span slot="trailing">&hearts;</span>
-		</xb-text-input>
-		<xb-cluster paddingless>
+export const Playground = {
+	render: ( args ) => html`
+		<xb-stack>
+			<xb-text-input
+				type=${ args.type }
+				size=${ args.size }
+				?disabled=${ args.disabled }
+				@input=${ args.input }
+			></xb-text-input>
 			<xb-text-input
 				type=${ args.type }
 				size=${ args.size }
@@ -66,15 +46,33 @@ export const Playground = ( args ) => html`
 				@input=${ args.input }
 			>
 				<span slot="leading">&hearts;</span>
-				<span slot="trailing">&clubs;</span>
 			</xb-text-input>
-			<xb-button emphasis="flat" size=${ args.size }>Button</xb-button>
-		</xb-cluster>
-	</xb-stack>
-`;
+			<xb-text-input
+				type=${ args.type }
+				size=${ args.size }
+				?disabled=${ args.disabled }
+				@input=${ args.input }
+			>
+				<span slot="trailing">&hearts;</span>
+			</xb-text-input>
+			<xb-cluster paddingless>
+				<xb-text-input
+					type=${ args.type }
+					size=${ args.size }
+					?disabled=${ args.disabled }
+					@input=${ args.input }
+				>
+					<span slot="leading">&hearts;</span>
+					<span slot="trailing">&clubs;</span>
+				</xb-text-input>
+				<xb-button emphasis="flat" size=${ args.size }>Button</xb-button>
+			</xb-cluster>
+		</xb-stack>
+	`,
 
-Playground.args = {
-	type: 'text',
-	disabled: false,
-	size: 'small',
+	args: {
+		type: 'text',
+		disabled: false,
+		size: 'small',
+	},
 };

@@ -1,10 +1,10 @@
 import { html } from 'lit-html';
 
-import Docs from './center.api.mdx';
 import './center';
 
 export default {
 	title: 'Foundation/Layouts/center',
+	component: 'xb-center',
 	argTypes: {
 		paddingless: {
 			control: {
@@ -40,32 +40,31 @@ export default {
 			},
 		},
 	},
-	parameters: {
-		docs: {
-			page: Docs,
-		},
-	},
+	parameters: {},
 };
 
 const style =
 	'--xb-center-background-color: rgb(var(--xb-color-background)); --xb-center-border-style: solid;';
 
-export const Playground = ( args ) =>
-	html`
-		<div
-			style="display: flex; flex-direction: column; width: 100%; gap: var(--xb-spacing-4);"
-		>
-			<xb-center style=${ style } borderless paddingless>Content</xb-center>
-			<xb-center
-				style=${ style }
-				paddingless=${ args.paddingless }
-				borderless=${ args.borderless }
-				>Content</xb-center
+export const Playground = {
+	render: ( args ) =>
+		html`
+			<div
+				style="display: flex; flex-direction: column; width: 100%; gap: var(--xb-spacing-4);"
 			>
-		</div>
-	`;
+				<xb-center style=${ style } borderless paddingless>Content</xb-center>
+				<xb-center
+					style=${ style }
+					paddingless=${ args.paddingless }
+					borderless=${ args.borderless }
+				>
+					Content
+				</xb-center>
+			</div>
+		`,
 
-Playground.args = {
-	paddingless: 'none',
-	borderless: 'none',
+	args: {
+		paddingless: 'none',
+		borderless: 'none',
+	},
 };

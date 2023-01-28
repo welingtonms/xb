@@ -1,11 +1,11 @@
 import { html } from 'lit';
 
 import { PlacementArg, SizeArg } from '../../common/arg-types';
-import Docs from './dropdown.api.mdx';
 import './dropdown';
 
 export default {
 	title: 'Components/dropdown',
+	component: 'xb-dropdown',
 
 	argTypes: {
 		placement: PlacementArg,
@@ -18,34 +18,32 @@ export default {
 		},
 	},
 
-	parameters: {
-		docs: {
-			page: Docs,
-		},
-	},
+	parameters: {},
 };
 
-export const Playground = ( args ) => html`
-	<xb-dropdown placement=${ args.placement }>
-		<xb-dropdown-trigger>Actions</xb-dropdown-trigger>
+export const Playground = {
+	render: ( args ) => html`
+		<xb-dropdown placement=${ args.placement }>
+			<xb-dropdown-trigger>Actions</xb-dropdown-trigger>
 
-		<xb-dropdown-menu>
-			<xb-dropdown-item value="change" @xb-click=${ args.click }>
-				<!-- <xb-icon name="favorite" slot="leading"></xb-icon> -->
-				Change
-			</xb-dropdown-item>
-			<xb-dropdown-item value="accept" @xb-click=${ args.click }>
-				<!-- <xb-icon name="star" slot="leading"></xb-icon> -->
-				Accept
-			</xb-dropdown-item>
-			<xb-dropdown-item value="leave" @xb-click=${ args.click }>
-				<!-- <xb-icon name="cloud" slot="leading"></xb-icon> -->
-				Leave
-			</xb-dropdown-item>
-		</xb-dropdown-menu>
-	</xb-dropdown>
-`;
+			<xb-dropdown-menu>
+				<xb-dropdown-item value="change" @xb-click=${ args.click }>
+					<!-- <xb-icon name="favorite" slot="leading"></xb-icon> -->
+					Change
+				</xb-dropdown-item>
+				<xb-dropdown-item value="accept" @xb-click=${ args.click }>
+					<!-- <xb-icon name="star" slot="leading"></xb-icon> -->
+					Accept
+				</xb-dropdown-item>
+				<xb-dropdown-item value="leave" @xb-click=${ args.click }>
+					<!-- <xb-icon name="cloud" slot="leading"></xb-icon> -->
+					Leave
+				</xb-dropdown-item>
+			</xb-dropdown-menu>
+		</xb-dropdown>
+	`,
 
-Playground.args = {
-	placement: 'bottom-start',
+	args: {
+		placement: 'bottom-start',
+	},
 };

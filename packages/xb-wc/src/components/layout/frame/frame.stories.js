@@ -1,11 +1,11 @@
 import { html } from 'lit-html';
 
-import Docs from './frame.api.mdx';
 import '../box';
 import './frame';
 
 export default {
 	title: 'Foundation/Layouts/frame',
+	component: 'xb-frame',
 	argTypes: {
 		paddingless: {
 			control: {
@@ -41,26 +41,24 @@ export default {
 			},
 		},
 	},
-	parameters: {
-		docs: {
-			page: Docs,
-		},
-	},
+	parameters: {},
 };
 
 const style = '--xb-frame-background-color: rgb(var(--xb-color-background));';
 
-export const Playground = ( args ) => html`
-	<xb-frame
-		style=${ style }
-		paddingless=${ args.paddingless }
-		borderless=${ args.borderless }
-	>
-		<img src="https://picsum.photos/200/300" />
-	</xb-frame>
-`;
+export const Playground = {
+	render: ( args ) => html`
+		<xb-frame
+			style=${ style }
+			paddingless=${ args.paddingless }
+			borderless=${ args.borderless }
+		>
+			<img src="https://picsum.photos/200/300" />
+		</xb-frame>
+	`,
 
-Playground.args = {
-	paddingless: 'none',
-	borderless: 'none',
+	args: {
+		paddingless: 'none',
+		borderless: 'none',
+	},
 };

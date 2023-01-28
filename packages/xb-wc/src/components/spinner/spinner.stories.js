@@ -1,19 +1,18 @@
 import { html } from 'lit-html';
 
-import Docs from './spinner.api.mdx';
 import './spinner';
 
 export default {
 	title: 'Components/spinner',
-
+	component: 'xb-spinner',
 	argTypes: {},
-	parameters: {
-		docs: {
-			page: Docs,
-		},
-	},
+	parameters: {},
 };
 
-export const Playground = ( args ) => html` <xb-spinner></xb-spinner> `;
-
-Playground.args = {};
+export const Playground = {
+	render: ( args ) =>
+		html`
+			<xb-spinner></xb-spinner>
+		`,
+	args: {},
+};

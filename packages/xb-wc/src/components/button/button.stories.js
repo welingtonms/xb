@@ -1,11 +1,12 @@
 import { html } from 'lit-html';
 
 import { SizeArg } from '../../common/arg-types';
-import Docs from './button.api.mdx';
 import './button';
 
 export default {
 	title: 'Components/button',
+	component: 'xb-button',
+
 	argTypes: {
 		emphasis: {
 			control: {
@@ -31,78 +32,76 @@ export default {
 		},
 		size: SizeArg,
 	},
-	parameters: {
-		docs: {
-			page: Docs,
-		},
-	},
+	parameters: {},
 };
 
-export const Playground = ( args ) => html`
-	<xb-button
-		emphasis="text"
-		size=${ args.size }
-		?disabled=${ args.disabled }
-		@click=${ args.click }
-	>
-		<xb-icon name="favorite" slot="leading"></xb-icon>
-		Button</xb-button
-	>
-	<xb-button
-		emphasis="text"
-		size=${ args.size }
-		?disabled=${ args.disabled }
-		@click=${ args.click }
-	>
-		<xb-icon name="favorite" slot="leading"></xb-icon>
-	</xb-button>
-	<xb-button
-		emphasis="ghost"
-		size=${ args.size }
-		?disabled=${ args.disabled }
-		@click=${ args.click }
-	>
-		<xb-icon name="arrow-back" slot="leading"></xb-icon>
-		Button
-	</xb-button>
-	<xb-button
-		emphasis="ghost"
-		size=${ args.size }
-		?disabled=${ args.disabled }
-		@click=${ args.click }
-	>
-		<xb-icon name="favorite" slot="leading"></xb-icon>
-	</xb-button>
-	<xb-button
-		emphasis="flat"
-		size=${ args.size }
-		?disabled=${ args.disabled }
-		@click=${ args.click }
-	>
-		Button
-		<xb-icon name="star" slot="trailing"></xb-icon>
-	</xb-button>
-	<xb-button
-		emphasis="flat"
-		size=${ args.size }
-		?disabled=${ args.disabled }
-		@click=${ args.click }
-	>
-		<xb-icon name="star" slot="trailing"></xb-icon>
-	</xb-button>
-	<xb-button
-		as="a"
-		emphasis="text"
-		size=${ args.size }
-		?disabled=${ args.disabled }
-		href="https://www.google.com/"
-	>
-		Link
-	</xb-button>
-`;
+export const Playground = {
+	render: ( args ) => html`
+		<xb-button
+			emphasis="text"
+			size=${ args.size }
+			?disabled=${ args.disabled }
+			@click=${ args.click }
+		>
+			<xb-icon name="favorite" slot="leading"></xb-icon>
+			Button
+		</xb-button>
+		<xb-button
+			emphasis="text"
+			size=${ args.size }
+			?disabled=${ args.disabled }
+			@click=${ args.click }
+		>
+			<xb-icon name="favorite" slot="leading"></xb-icon>
+		</xb-button>
+		<xb-button
+			emphasis="ghost"
+			size=${ args.size }
+			?disabled=${ args.disabled }
+			@click=${ args.click }
+		>
+			<xb-icon name="arrow-back" slot="leading"></xb-icon>
+			Button
+		</xb-button>
+		<xb-button
+			emphasis="ghost"
+			size=${ args.size }
+			?disabled=${ args.disabled }
+			@click=${ args.click }
+		>
+			<xb-icon name="favorite" slot="leading"></xb-icon>
+		</xb-button>
+		<xb-button
+			emphasis="flat"
+			size=${ args.size }
+			?disabled=${ args.disabled }
+			@click=${ args.click }
+		>
+			Button
+			<xb-icon name="star" slot="trailing"></xb-icon>
+		</xb-button>
+		<xb-button
+			emphasis="flat"
+			size=${ args.size }
+			?disabled=${ args.disabled }
+			@click=${ args.click }
+		>
+			<xb-icon name="star" slot="trailing"></xb-icon>
+		</xb-button>
+		<xb-button
+			as="a"
+			emphasis="text"
+			size=${ args.size }
+			?disabled=${ args.disabled }
+			href="https://www.google.com/"
+		>
+			Link
+		</xb-button>
+	`,
 
-Playground.args = {
-	emphasis: 'ghost',
-	size: 'small',
-	disabled: false,
+	args: {
+		emphasis: 'ghost',
+		size: 'small',
+		disabled: false,
+	},
 };

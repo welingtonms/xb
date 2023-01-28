@@ -1,13 +1,11 @@
 import { html } from 'lit-html';
 
-import Docs from './text.api.mdx';
 import './text';
 
 export default {
 	title: 'Components/text',
-	// More on argTypes: https://storybook.js.org/docs/react/api/argtypes
+	component: 'xb-text',
 	argTypes: {
-		// backgroundColor: { control: 'color' },
 		variant: {
 			control: {
 				type: 'select',
@@ -29,19 +27,17 @@ export default {
 			},
 		},
 	},
-	parameters: {
-		docs: {
-			page: Docs,
-		},
-	},
+	parameters: {},
 };
 
-export const Playground = ( args ) => html`
-	<xb-text variant=${ args.variant }>
-		The quick brown fox jumps over the lazy dog
-	</xb-text>
-`;
+export const Playground = {
+	render: ( args ) => html`
+		<xb-text variant=${ args.variant }>
+			The quick brown fox jumps over the lazy dog
+		</xb-text>
+	`,
 
-Playground.args = {
-	variant: 'body-1',
+	args: {
+		variant: 'body-1',
+	},
 };

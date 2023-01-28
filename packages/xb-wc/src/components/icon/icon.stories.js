@@ -6,6 +6,7 @@ import './icon';
 
 export default {
 	title: 'Components/icon',
+	component: 'xb-icon',
 
 	argTypes: {
 		name: {
@@ -20,18 +21,22 @@ export default {
 			},
 		},
 	},
+};
+
+export const Playground = {
+	render: ( args ) =>
+		html`
+			<xb-icon
+				name="${ args.name }"
+				size="${ args.size }"
+				style="--xb-icon-color: rgb(var(--xb-color-secondary-500));"
+			></xb-icon>
+		`,
+
+	args: { name: 'star', size: 32 },
 	parameters: {
 		docs: {
 			page: Docs,
 		},
 	},
 };
-
-export const Playground = ( args ) =>
-	html`<xb-icon
-		name="${ args.name }"
-		size="${ args.size }"
-		style="--xb-icon-color: rgb(var(--xb-color-secondary-500));"
-	></xb-icon>`;
-
-Playground.args = { name: 'star', size: 32 };

@@ -8,11 +8,11 @@ import {
 	useAsyncUsers,
 } from './select.fixtures';
 import { PlacementArg, SizeArg } from '../../common/arg-types';
-import Docs from './select.api.mdx';
 import './select';
 
 export default {
 	title: 'Components/select',
+	component: 'xb-select',
 
 	argTypes: {
 		change: {
@@ -34,11 +34,7 @@ export default {
 			},
 		},
 	},
-	parameters: {
-		docs: {
-			page: Docs,
-		},
-	},
+	parameters: {},
 };
 
 const fixtures = html`
@@ -61,124 +57,136 @@ const fixtures = html`
 	</xb-stack>
 `;
 
-export const Playground = ( args ) => html`
-	<xb-select
-		?loading=${ args.loading }
-		?multiple=${ args.multiple }
-		@xb-change=${ args.change }
-	>
-		<xb-option value="change">Change</xb-option>
-		<xb-option value="accept">Accept</xb-option>
-		<xb-option value="leave">Leave</xb-option>
-	</xb-select>
-`;
+export const Playground = {
+	render: ( args ) => html`
+		<xb-select
+			?loading=${ args.loading }
+			?multiple=${ args.multiple }
+			@xb-change=${ args.change }
+		>
+			<xb-option value="change">Change</xb-option>
+			<xb-option value="accept">Accept</xb-option>
+			<xb-option value="leave">Leave</xb-option>
+		</xb-select>
+	`,
 
-Playground.args = {
-	// placement: 'bottom-start',
-	loading: false,
-	multiple: false,
+	args: {
+		// placement: 'bottom-start',
+		loading: false,
+		multiple: false,
+	},
 };
 
-export const StaticOptions = ( args ) => html`
-	<xb-stack>
-		<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
-			<xb-text variant="subtitle-2">Static options</xb-text>
-			<xb-select @xb-change=${ args.change } ?multiple=${ args.multiple }>
-				<xb-option value="change">Change</xb-option>
-				<xb-option value="accept">Accept</xb-option>
-				<xb-option value="leave">Leave</xb-option>
-			</xb-select>
-		</xb-stack>
+export const StaticOptions = {
+	render: ( args ) => html`
+		<xb-stack>
+			<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
+				<xb-text variant="subtitle-2">Static options</xb-text>
+				<xb-select @xb-change=${ args.change } ?multiple=${ args.multiple }>
+					<xb-option value="change">Change</xb-option>
+					<xb-option value="accept">Accept</xb-option>
+					<xb-option value="leave">Leave</xb-option>
+				</xb-select>
+			</xb-stack>
 
-		<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
-			<xb-text variant="subtitle-2">Static options with initial value</xb-text>
-			<xb-select
-				@xb-change=${ args.change }
-				?multiple=${ args.multiple }
-				value="accept"
-			>
-				<xb-option value="change">Change</xb-option>
-				<xb-option value="accept">Accept</xb-option>
-				<xb-option value="leave">Leave</xb-option>
-			</xb-select>
-		</xb-stack>
-	</xb-stack>
-`;
-
-StaticOptions.args = {
-	multiple: false,
-};
-
-export const SyncDatasource = ( args ) => html`
-	<xb-stack>
-		<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
-			<xb-text variant="subtitle-2">Fruits</xb-text>
-			<output>
-				<xb-text variant="caption">
-					${ FRUITS.map( ( { label } ) => label ).join( ', ' ) }
+			<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
+				<xb-text variant="subtitle-2">
+					Static options with initial value
 				</xb-text>
-			</output>
+				<xb-select
+					@xb-change=${ args.change }
+					?multiple=${ args.multiple }
+					value="accept"
+				>
+					<xb-option value="change">Change</xb-option>
+					<xb-option value="accept">Accept</xb-option>
+					<xb-option value="leave">Leave</xb-option>
+				</xb-select>
+			</xb-stack>
 		</xb-stack>
+	`,
 
-		<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
-			<xb-text variant="subtitle-2">Sync datasource</xb-text>
-			<xb-select
-				@xb-change=${ args.change }
-				?multiple=${ args.multiple }
-				.datasources=${ [ useSyncFruits ] }
-			></xb-select>
-		</xb-stack>
-
-		<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
-			<xb-text variant="subtitle-2">Sync datasource with initial value</xb-text>
-			<xb-select
-				@xb-change=${ args.change }
-				?multiple=${ args.multiple }
-				.datasources=${ [ useSyncFruits ] }
-				.value=${ { label: 'Papaya', value: 'papaya' } }
-			></xb-select>
-		</xb-stack>
-	</xb-stack>
-`;
-
-SyncDatasource.args = {
-	multiple: false,
+	args: {
+		multiple: false,
+	},
 };
 
-export const AsyncDatasource = ( args ) => html`
-	<xb-stack>
-		${ fixtures }
+export const SyncDatasource = {
+	render: ( args ) => html`
+		<xb-stack>
+			<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
+				<xb-text variant="subtitle-2">Fruits</xb-text>
+				<output>
+					<xb-text variant="caption">
+						${ FRUITS.map( ( { label } ) => label ).join( ', ' ) }
+					</xb-text>
+				</output>
+			</xb-stack>
 
-		<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
-			<xb-text variant="subtitle-2">Async datasource</xb-text>
-			<xb-select
-				@xb-change=${ args.change }
-				?multiple=${ args.multiple }
-				.datasources=${ [ useAsyncFruits, useAsyncUsers ] }
-			></xb-select>
+			<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
+				<xb-text variant="subtitle-2">Sync datasource</xb-text>
+				<xb-select
+					@xb-change=${ args.change }
+					?multiple=${ args.multiple }
+					.datasources=${ [ useSyncFruits ] }
+				></xb-select>
+			</xb-stack>
+
+			<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
+				<xb-text variant="subtitle-2">
+					Sync datasource with initial value
+				</xb-text>
+				<xb-select
+					@xb-change=${ args.change }
+					?multiple=${ args.multiple }
+					.datasources=${ [ useSyncFruits ] }
+					.value=${ { label: 'Papaya', value: 'papaya' } }
+				></xb-select>
+			</xb-stack>
 		</xb-stack>
+	`,
 
-		<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
-			<xb-text variant="subtitle-2">
-				Async datasource with initial value
-			</xb-text>
-			<xb-select
-				?multiple=${ args.multiple }
-				@xb-change=${ args.change }
-				.datasources=${ [ useAsyncUsers, useAsyncFruits ] }
-				.value=${ [
-					{ label: 'Papaya', value: 'papaya' },
-					{
-						guid: '56d851fa-1036-4c90-9ef4-38ad90488b07',
-						name: 'Enid Myers',
-						_type: 'user',
-					},
-				] }
-			></xb-select>
+	args: {
+		multiple: false,
+	},
+};
+
+export const AsyncDatasource = {
+	render: ( args ) => html`
+		<xb-stack>
+			${ fixtures }
+
+			<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
+				<xb-text variant="subtitle-2">Async datasource</xb-text>
+				<xb-select
+					@xb-change=${ args.change }
+					?multiple=${ args.multiple }
+					.datasources=${ [ useAsyncFruits, useAsyncUsers ] }
+				></xb-select>
+			</xb-stack>
+
+			<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
+				<xb-text variant="subtitle-2">
+					Async datasource with initial value
+				</xb-text>
+				<xb-select
+					?multiple=${ args.multiple }
+					@xb-change=${ args.change }
+					.datasources=${ [ useAsyncUsers, useAsyncFruits ] }
+					.value=${ [
+						{ label: 'Papaya', value: 'papaya' },
+						{
+							guid: '56d851fa-1036-4c90-9ef4-38ad90488b07',
+							name: 'Enid Myers',
+							_type: 'user',
+						},
+					] }
+				></xb-select>
+			</xb-stack>
 		</xb-stack>
-	</xb-stack>
-`;
+	`,
 
-AsyncDatasource.args = {
-	multiple: false,
+	args: {
+		multiple: false,
+	},
 };

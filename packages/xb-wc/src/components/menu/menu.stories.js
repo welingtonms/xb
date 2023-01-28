@@ -1,11 +1,11 @@
 import { html } from 'lit-html';
 
-import Docs from './menu.api.mdx';
 import '../text';
 import './menu';
 
 export default {
 	title: 'Components/menu',
+	component: 'xb-menu',
 	argTypes: {
 		select: {
 			action: 'selected',
@@ -24,26 +24,24 @@ export default {
 			},
 		},
 	},
-	parameters: {
-		docs: {
-			page: Docs,
-		},
-	},
+	parameters: {},
 };
 
-export const Playground = ( args ) => html`
-	<xb-menu
-		?bordered=${ args.bordered }
-		?striped=${ args.striped }
-		@xb-select=${ args.select }
-	>
-		<xb-menu-item value="change">Change</xb-menu-item>
-		<xb-menu-item value="accept" checked>Accept</xb-menu-item>
-		<xb-menu-item value="leave">Leave</xb-menu-item>
-	</xb-menu>
-`;
+export const Playground = {
+	render: ( args ) => html`
+		<xb-menu
+			?bordered=${ args.bordered }
+			?striped=${ args.striped }
+			@xb-select=${ args.select }
+		>
+			<xb-menu-item value="change">Change</xb-menu-item>
+			<xb-menu-item value="accept" checked>Accept</xb-menu-item>
+			<xb-menu-item value="leave">Leave</xb-menu-item>
+		</xb-menu>
+	`,
 
-Playground.args = {
-	striped: false,
-	bordered: false,
+	args: {
+		striped: false,
+		bordered: false,
+	},
 };

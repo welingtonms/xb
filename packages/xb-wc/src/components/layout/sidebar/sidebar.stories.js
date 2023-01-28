@@ -1,11 +1,11 @@
 import { html } from 'lit-html';
 
-import Docs from './sidebar.api.mdx';
 import '../box';
 import './sidebar';
 
 export default {
 	title: 'Foundation/Layouts/sidebar',
+	component: 'sidebar',
 	argTypes: {
 		paddingless: {
 			control: {
@@ -53,37 +53,35 @@ export default {
 			},
 		},
 	},
-	parameters: {
-		docs: {
-			page: Docs,
-		},
-	},
+	parameters: {},
 };
 
-export const Playground = ( args ) => html`
-	<xb-sidebar
-		style="--xb-sidebar-background-color: rgb(var(--xb-color-background)); --xb-sidebar-min-content-width: ${ args.minContentWidth };"
-		side-position=${ args.sidePosition }
-		paddingless=${ args.paddingless }
-		borderless=${ args.borderless }
-	>
-		<xb-box paddingless="none" borderless="none">
-			${ args.sidePosition === 'left'
-				? 'I am the side content.'
-				: 'I am the main content.' }
-		</xb-box>
+export const Playground = {
+	render: ( args ) => html`
+		<xb-sidebar
+			style="--xb-sidebar-background-color: rgb(var(--xb-color-background)); --xb-sidebar-min-content-width: ${ args.minContentWidth };"
+			side-position=${ args.sidePosition }
+			paddingless=${ args.paddingless }
+			borderless=${ args.borderless }
+		>
+			<xb-box paddingless="none" borderless="none">
+				${ args.sidePosition === 'left'
+					? 'I am the side content.'
+					: 'I am the main content.' }
+			</xb-box>
 
-		<xb-box paddingless="none" borderless="none">
-			${ args.sidePosition === 'left'
-				? 'I am the main content.'
-				: 'I am the side content.' }
-		</xb-box>
-	</xb-sidebar>
-`;
+			<xb-box paddingless="none" borderless="none">
+				${ args.sidePosition === 'left'
+					? 'I am the main content.'
+					: 'I am the side content.' }
+			</xb-box>
+		</xb-sidebar>
+	`,
 
-Playground.args = {
-	paddingless: 'none',
-	borderless: 'none',
-	sidePosition: 'left',
-	minContentWidth: '50%',
+	args: {
+		paddingless: 'none',
+		borderless: 'none',
+		sidePosition: 'left',
+		minContentWidth: '50%',
+	},
 };
