@@ -1,27 +1,31 @@
+import { ContextProvider, ContextRoot, createContext } from '@lit-labs/context';
 import { html } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import toArray from '@welingtonms/xb-toolset/dist/to-array';
 
-import { SELECT_EVENT } from './select.constants';
 import DataController from './data.controller';
-import SelectionMixin from '../../mixins/selection';
 import styles from './select.styles';
 import XBElement from '../../common/xb-element';
 
 import '../dropdown';
-import '../menu';
-import '../text';
-
 import '../layout/box';
-
-import './select-trigger';
+import '../menu';
+import '../selection-keeper';
+import '../text';
 import './select-menu';
 import './select-option';
+import './select-trigger';
 
-function createOption( { value, label, type } ) {
+// const root = new ContextRoot();
+// const selectContext = createContext( 'select' );
+
+function createOption( { value, label, type, role, disabled, checked } ) {
 	const option = Object.assign( document.createElement( 'xb-option' ), {
 		value,
 		innerHTML: label,
+		role,
+		disabled,
+		checked,
 	} );
 
 	option.dataset.type = type;
@@ -29,48 +33,30 @@ function createOption( { value, label, type } ) {
 	return option;
 }
 
-export class Select extends SelectionMixin( XBElement, {
-	listen: SELECT_EVENT,
-} ) {
+export class Select extends XBElement {
+	/** @type {import('../selection-keeper').SelectionKeeper} */
+	_selectionKeeper;
+
+	/** @type {null | string[]} */
+	_selectionContextValue;
+
+	/** @type {ContextProvider<Selection>} */
+	_provider;
+
 	/** @type {DataController} */
-	_dataController;
-
-	/** @type {Dropdown} */
-	_dropdown;
-
-	/** @type {SelectTrigger} */
-	_trigger;
-
-	/** @type {SelectMenu} */
-	_menu;
+	_data;
 
 	/** @type {SelectOption[]} */
 	_options;
+
+	/** @type {SelectTrigger} */
+	_trigger;
 
 	static styles = [ styles() ];
 
 	static get properties() {
 		return {
-			/**
-			 * Select variant.
-			 * @type {SelectAttributes['placement']}
-			 */
-			placement: { type: String },
-
-			/**
-			 * Select placeholder.
-			 * @type {SelectAttributes['placeholder']}
-			 */
-			placeholder: { type: String },
-
-			/**
-			 * Should the dropdown menu be open.
-			 * @type {SelectAttributes['open']}
-			 */
-			open: {
-				type: Boolean,
-				reflect: true,
-			},
+			datasources: {},
 
 			/**
 			 * Should the dropdown be disabled.
@@ -99,6 +85,27 @@ export class Select extends SelectionMixin( XBElement, {
 			},
 
 			/**
+			 * Should the dropdown menu be open.
+			 * @type {SelectAttributes['open']}
+			 */
+			open: {
+				type: Boolean,
+				reflect: true,
+			},
+
+			/**
+			 * Select placeholder.
+			 * @type {SelectAttributes['placeholder']}
+			 */
+			placeholder: { type: String },
+
+			/**
+			 * Select variant.
+			 * @type {SelectAttributes['placement']}
+			 */
+			placement: { type: String },
+
+			/**
 			 * Aria role
 			 * @type {SelectAttributes['role']}
 			 */
@@ -107,21 +114,19 @@ export class Select extends SelectionMixin( XBElement, {
 				reflect: true,
 			},
 
-			datasources: {},
+			/**
+			 * Selection value.
+			 * @type {SelectAttributes['value']}
+			 */
+			value: {},
 		};
 	}
 
 	constructor() {
 		super();
 
-		/** @type {SelectAttributes['open']} */
-		this.open = false;
-
-		/** @type {SelectAttributes['placement']} */
-		this.placement = 'bottom-start';
-
-		/** @type {SelectAttributes['placeholder']} */
-		this.placeholder = 'Search & Select';
+		/** @type {SelectAttributes['datasources']} */
+		this.datasources = [];
 
 		/** @type {SelectAttributes['disabled']} */
 		this.disabled = false;
@@ -132,55 +137,57 @@ export class Select extends SelectionMixin( XBElement, {
 		/** @type {SelectAttributes['multiple']} */
 		this.multiple = false;
 
-		/** @type {import('@welingtonms/xb-toolset/dist/selection').SelectionType} */
-		this.type = 'single';
+		/** @type {SelectAttributes['open']} */
+		this.open = false;
+
+		/** @type {SelectAttributes['placeholder']} */
+		this.placeholder = 'Search & Select';
+
+		/** @type {SelectAttributes['placement']} */
+		this.placement = 'bottom-start';
 
 		// TODO: fix the mess in the roles for select and dropdown components
 		/** @type {SelectAttributes['role']} */
 		this.role = 'radiogroup';
 
-		/** @type {SelectAttributes['datasources']} */
-		this.datasources = [];
-
-		this._dataController = new DataController( this );
+		/** @type {SelectAttributes['value']} */
+		this.value = null;
 	}
 
 	connectedCallback() {
-		this._dataController.init( this.datasources );
+		this._data = new DataController( this, this.datasources );
 
-		this._handleSelectionChange = this._handleSelectionChange.bind( this );
+		this._handleClear = this._handleClear.bind( this );
 		this._handleDropdownCollapse = this._handleDropdownCollapse.bind( this );
 		this._handleSearch = this._handleSearch.bind( this );
-		this._handleSlotChanged = this._handleSlotChanged.bind( this );
+		this._syncOptions = this._syncOptions.bind( this );
 
-		this.addEventListener(
-			'xb-dropdown-collapse',
-			this._handleDropdownCollapse
-		);
-		this.addEventListener( 'xb-select-search', this._handleSearch );
-		this.addEventListener( 'xb-selection-change', this._handleSelectionChange );
-
-		/**
-		 * It's intentional to call super.connectedCallback() here.
-		 * We need the data controller initialization before the selection controller,
-		 * in the selection mixin, to initialize the selection value, as we need the datasources
-		 * ready to resolve.
-		 */
+		this._attachEventListeners();
 		super.connectedCallback();
 	}
 
 	disconnectedCallback() {
 		super.disconnectedCallback();
 
-		this.removeEventListener(
-			'xb-dropdown-collapse',
-			this._handleDropdownCollapse
-		);
-		this.removeEventListener( 'xb-select-search', this._handleSearch );
-		this.removeEventListener(
-			'xb-selection-change',
-			this._handleSelectionChange
-		);
+		this._detachEventListeners();
+	}
+
+	firstUpdated() {
+		const defaultSlot = this.shadowRoot.querySelector( 'slot' );
+		const nodes = defaultSlot.assignedNodes( { flatten: true } );
+
+		/**
+		 * Tabs and line breaks are valid nodes when rendering static nodes.
+		 * The problem is that they prevent the slot fallback content (empty options message)
+		 * from being shown. To prevent that, we remove all text nodes.
+		 */
+		nodes.forEach( ( node ) => {
+			if ( node.nodeType == Node.TEXT_NODE && node.parentNode ) {
+				node.parentNode.removeChild( node );
+			}
+		} );
+
+		this._data.query( '', 'static' );
 	}
 
 	/**
@@ -188,12 +195,16 @@ export class Select extends SelectionMixin( XBElement, {
 	 */
 	update( changedProperties ) {
 		if ( changedProperties.has( 'multiple' ) ) {
-			this.type = this.multiple ? 'multiple' : 'single';
-			this.role = [ 'single' ].includes( this.type ) ? 'radiogroup' : 'group';
+			// TODO: fix this a11y role mess
+			this.role = this.multiple ? 'group' : 'radiogroup';
 		}
 
 		if ( changedProperties.has( 'datasources' ) ) {
-			this._dataController.reset( this.datasources );
+			this._data.setDatasources( this.datasources );
+		}
+
+		if ( changedProperties.has( 'value' ) ) {
+			this._contextValue = this._data.toValue( this.value );
 		}
 
 		super.update( changedProperties );
@@ -206,36 +217,7 @@ export class Select extends SelectionMixin( XBElement, {
 		super.updated( changedProperties );
 
 		this._renderDataOptions();
-		this._syncOptions();
 		this._updateTrigger();
-	}
-
-	/**
-	 * Used in the SelectionMixin class.
-	 * @param {*} value
-	 * @returns
-	 */
-	getInitialValue( value ) {
-		return toArray( value ).map( ( option ) => {
-			const { value } = this._dataController.resolve( option );
-			return value;
-		} );
-	}
-
-	render() {
-		return html`
-			<xb-dropdown placement="${ ifDefined( this.placement ) }">
-				<xb-select-trigger slot="trigger"></xb-select-trigger>
-
-				<xb-select-menu slot="menu" ?loading=${ this.loading }>
-					<slot @slotchange=${ this._handleSlotChanged }>
-						<xb-text class="empty" variant="body-2">
-							No options available.
-						</xb-text>
-					</slot>
-				</xb-select-menu>
-			</xb-dropdown>
-		`;
 	}
 
 	get dropdown() {
@@ -243,13 +225,6 @@ export class Select extends SelectionMixin( XBElement, {
 			this._dropdown ?? this.shadowRoot.querySelector( 'xb-dropdown' );
 
 		return this._dropdown;
-	}
-
-	get trigger() {
-		this._trigger =
-			this._trigger ?? this.shadowRoot.querySelector( 'xb-select-trigger' );
-
-		return this._trigger;
 	}
 
 	get menu() {
@@ -260,32 +235,87 @@ export class Select extends SelectionMixin( XBElement, {
 	}
 
 	get options() {
-		if ( this._options == null ) {
-			/** @type {HTMLSlotElement} */
+		if ( this._options == null || this._options.length == 0 ) {
 			const defaultSlot = this.shadowRoot.querySelector( 'slot' );
 
-			this._options = [
-				...defaultSlot.assignedElements( { flatten: true } ),
-			].filter( ( item ) => item.matches( 'xb-option' ) );
+			this._options = ( defaultSlot?.assignedElements() || [] ).filter(
+				( item ) => item.matches( 'xb-option' )
+			);
 		}
 
 		return this._options;
 	}
 
+	/**
+	 * @returns {SelectionState}
+	 */
 	get selection() {
-		/** @type {SelectionController} */
-		const controller = this._selectionController;
+		this._selectionKeeper =
+			this._selectionKeeper ??
+			this.shadowRoot.querySelector( 'xb-selection-keeper' );
 
-		return controller.selection;
+		return this._selectionKeeper.getSelectionState();
 	}
 
-	_syncOptions() {
-		this.options?.forEach( ( option ) => {
-			option.setAttribute(
-				'role',
-				[ 'single' ].includes( this.type ) ? 'radio' : 'checkbox'
-			);
+	get trigger() {
+		this._trigger =
+			this._trigger ?? this.shadowRoot.querySelector( 'xb-select-trigger' );
 
+		return this._trigger;
+	}
+
+	render() {
+		return html`
+			<xb-selection-keeper
+				type=${ this.multiple ? 'multiple' : 'single' }
+				listen="xb-option-click"
+				emit="xb-selection-change"
+				.value=${ this._contextValue }
+			>
+				<xb-dropdown placement="${ ifDefined( this.placement ) }">
+					<xb-select-trigger slot="trigger"></xb-select-trigger>
+
+					<xb-select-menu slot="menu" ?loading=${ this.loading }>
+						<slot @slotchange=${ this._handleSlotChanged }>
+							<xb-text class="empty" variant="body-2">
+								No options available.
+							</xb-text>
+						</slot>
+					</xb-select-menu>
+				</xb-dropdown>
+			</xb-selection-keeper>
+		`;
+	}
+
+	_attachEventListeners() {
+		this.addEventListener( 'xb-clear', this._handleClear );
+		this.addEventListener(
+			'xb-dropdown-collapse',
+			this._handleDropdownCollapse
+		);
+		this.addEventListener( 'xb-select-search', this._handleSearch );
+		this.addEventListener( 'xb-selection-change', this._handleSelectionChange );
+	}
+
+	_detachEventListeners() {
+		this.removeEventListener( 'xb-clear', this._handleClear );
+		this.removeEventListener(
+			'xb-dropdown-collapse',
+			this._handleDropdownCollapse
+		);
+		this.removeEventListener( 'xb-select-search', this._handleSearch );
+		this.removeEventListener(
+			'xb-selection-change',
+			this._handleSelectionChange
+		);
+	}
+
+	/**
+	 * @param {SelectOption[]} [options]
+	 */
+	_syncOptions( options ) {
+		( options ?? this.options ).forEach( ( option ) => {
+			option.setAttribute( 'role', this.multiple ? 'checkbox' : 'radio' );
 			option.disabled = this.disabled || option.disabled;
 			option.checked = this.selection.has( option.value );
 		} );
@@ -296,7 +326,9 @@ export class Select extends SelectionMixin( XBElement, {
 		const selection = this.selection;
 		const trigger = this.trigger;
 
-		if ( this.type == 'multiple' ) {
+		console.log( '_updateTrigger', this._selectionKeeper.getSelectionValue() );
+
+		if ( this.multiple ) {
 			trigger.placeholder =
 				selection.size > 0 ? `${ selection.size } selected` : this.placeholder;
 		} else {
@@ -312,9 +344,34 @@ export class Select extends SelectionMixin( XBElement, {
 		}
 	}
 
+	_removeDataOptions() {
+		this.options.forEach( ( option ) => {
+			option.remove();
+		} );
+
+		this._options = [];
+	}
+
 	_renderDataOptions() {
-		this._dataController.data.forEach( ( option ) => {
-			const { value, label } = this._dataController.resolve( option );
+		let keys = new Set();
+
+		if ( this._data.mode == 'default' ) {
+			keys = new Set( [
+				...this._data.getGroup( 'static' ).keys(),
+				...this.selection.keys(),
+			] );
+		} else {
+			keys = new Set( [ ...this._data.getGroup( 'queried' ).keys() ] );
+		}
+
+		Array.from( keys.keys() ).forEach( ( key ) => {
+			const item = this._data.get( key );
+
+			if ( ! item ) {
+				return;
+			}
+
+			const { value, label, _type } = this._data.toOption( item );
 
 			// avoid re-rendering an option previously rendered
 			if ( this.querySelector( `xb-option[value="${ value }"]` ) ) {
@@ -323,39 +380,35 @@ export class Select extends SelectionMixin( XBElement, {
 
 			this.appendChild(
 				createOption( {
-					type: option._type,
+					type: _type,
 					value,
 					label,
+					role: this.multiple ? 'checkbox' : 'radio',
+					// TODO: how to keep the previous disabled state?
+					disabled: this.disabled,
+					checked: this.selection.has( value ),
 				} )
 			);
 		} );
-	}
 
-	_removeDataOptions() {
-		this._dataController.data.forEach( ( option ) => {
-			const { value } = this._dataController.resolve( option );
-
-			if ( this.selection.has( value ) ) {
-				// we dont want to remove the option if it is currently selected.
-				return;
-			}
-
-			this.removeChild( this.querySelector( `xb-option[value="${ value }"]` ) );
-			this._dataController.delete( value );
-		} );
+		this._syncOptions();
 	}
 
 	/**
-	 *
+	 * Trigger search operation for the select.
 	 * @param {CustomEvent<SearchEventDetail>} e
 	 */
 	async _handleSearch( e ) {
 		const { query } = e.detail;
 
 		if ( query === '' ) {
+			this._data.setMode( 'default' );
+			this._renderDataOptions();
+
 			return;
 		}
 
+		this._data.setMode( 'search' );
 		this._removeDataOptions();
 
 		const menu = this.menu;
@@ -365,9 +418,19 @@ export class Select extends SelectionMixin( XBElement, {
 
 		menu.loading = true;
 
-		await this._dataController.query( query );
+		await this._data.query( query );
 
 		menu.loading = false;
+	}
+
+	_handleClear() {
+		this._removeDataOptions();
+		this._data.setMode( 'default' );
+		this._data.query( '' );
+	}
+
+	_handleSlotChanged() {
+		this._syncOptions();
 	}
 
 	/**
@@ -377,48 +440,74 @@ export class Select extends SelectionMixin( XBElement, {
 	_handleSelectionChange( event ) {
 		event.stopPropagation();
 
-		const values = Array.from( this.selection ).map( ( key ) => {
-			return this._dataController.get( key ) ?? key;
-		} );
+		const {
+			detail: { value, changed },
+		} = event;
 
-		if ( ! this.multiple ) {
+		let optionsToSync = [];
+		Array.from( new Set( [ ...changed, ...( value || [] ) ] ) ).forEach(
+			( value ) => {
+				const node = this.querySelector( `xb-option[value="${ value }"]` );
+
+				if ( node ) {
+					optionsToSync.push( node );
+				}
+			}
+		);
+
+		this._syncOptions( optionsToSync );
+		this._updateTrigger();
+
+		if ( ! this.multiple && value != null ) {
 			this.dropdown.collapse();
 		}
 
+		const getConsolidatedValue = () => {
+			if ( value == null ) {
+				return null;
+			}
+
+			const values = toArray( value ).map( ( key ) => {
+				return this._data.get( key ) ?? key;
+			} );
+
+			return this.multiple ? values : values[ 0 ];
+		};
+
 		this.emit( 'xb-change', {
-			detail: { value: this.multiple ? values : values[ 0 ] ?? null },
+			detail: { value: getConsolidatedValue() },
 		} );
 	}
 
 	_handleDropdownCollapse() {
 		this.trigger.clear();
 	}
-
-	_handleSlotChanged() {
-		// we set to null so the getter will re-run the query
-		this._options = null;
-
-		this._syncOptions();
-	}
 }
 
 window.customElements.define( 'xb-select', Select );
 
 /**
- * @typedef {import('../popover/popover').PopoverPlacement} SelectPlacement
- * @typedef {import('../../controllers/selection/selection.controller').default} SelectionController
+ * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionType} SelectionType
+ * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionState} SelectionState
+ * @typedef {import('../../common/xb-element').default} XBElement
+ */
+
+/**
  * @typedef {import('../dropdown/dropdown').Dropdown} Dropdown
- * @typedef {import('lit/directives/ref.js').Ref} Ref
- * @typedef {import('./select-trigger').SelectTrigger} SelectTrigger
+ * @typedef {import('../popover/popover').PopoverPlacement} SelectPlacement
+ * @typedef {import('../selection-keeper').SelectionEventDetail} SelectionEventDetail
+ * @typedef {import('../selection-keeper).SelectionKeeper} SelectionKeeper
+ * @typedef {import('../selection-keeper).SelectionOption} SelectionOption
+ * @typedef {import('../selection-keeper).SelectionContext} SelectionContext
+ * @typedef {import('./data.controller').Datasource} SelectDatasource
+ * @typedef {import('./data.controller').DatasourceAdapter} SelectDatasourceAdapter
+ * @typedef {import('./data.controller').DatasourcesHelper} DatasourcesHelper
+ * @typedef {import('./data.controller').DynamicDatasource} SelectDynamicDatasource
+ * @typedef {import('./data.controller').StaticDatasource} SelectStaticDatasource
  * @typedef {import('./select-menu').SelectMenu} SelectMenu
  * @typedef {import('./select-option').SelectOption} SelectOption
  * @typedef {import('./select-trigger').SearchEventDetail} SearchEventDetail
- * @typedef {import('../../controllers/selection/selection.controller').SelectionEventDetail} SelectionEventDetail
- * @typedef {import('./data.controller').DatasourceAdapter} SelectDatasourceAdapter
- * @typedef {import('./data.controller').StaticDatasource} SelectStaticDatasource
- * @typedef {import('./data.controller').DynamicDatasource} SelectDynamicDatasource
- * @typedef {import('./data.controller').Datasource} SelectDatasource
- * @typedef {import('./data.controller').DatasourcesHelper} DatasourcesHelper
+ * @typedef {import('./select-trigger').SelectTrigger} SelectTrigger
  */
 
 /**
@@ -428,7 +517,15 @@ window.customElements.define( 'xb-select', Select );
  * @property {boolean} [disabled] - Should the dropdown be disabled.
  * @property {boolean} [loading] - Is the select options being loaded.
  * @property {boolean} [multiple] - Is this a multiple selection?
- * @property {'group' | 'radiogroup'} role - Aria role
- * @property {string} placeholder - Select placeholder
- * @property {SelectDatasource | SelectDatasource[]} datasources
+ * @property {string} [placeholder] - Select placeholder
+ * @property {SelectDatasource | SelectDatasource[]} [datasources]
+ * @property {string | string[] | SelectionOption | SelectionOption[]} [value]
+ */
+
+/**
+ * @typedef {Object} SelectContext
+ * @property {boolean} multiple
+ * @property {boolean} disabled
+ * @property {boolean} loading
+ * @property {null | string | string[] | SelectionOption | SelectionOption[]} value
  */

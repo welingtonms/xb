@@ -3957,6 +3957,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lit-labs/context@npm:0.2.0":
+  version: 0.2.0
+  resolution: "@lit-labs/context@npm:0.2.0"
+  dependencies:
+    "@lit/reactive-element": ^1.5.0
+    lit: ^2.5.0
+  checksum: 0b3d803ba81683d9650ba384e5f138656ecd52d6a54448535e867e0a0ba0cb23e4526ec52e82ed657e9c3598a103c0e8b164bfe927222467e349fb070c770af3
+  languageName: node
+  linkType: hard
+
 "@lit-labs/react@npm:1.1.0":
   version: 1.1.0
   resolution: "@lit-labs/react@npm:1.1.0"
@@ -3964,10 +3974,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lit-labs/ssr-dom-shim@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@lit-labs/ssr-dom-shim@npm:1.0.0"
+  checksum: ccba6675ad631c6f7360af4e12e328e88d877a52ec992ae9254a1be9902ef699b7916d851b073803dd91244d0f709de2c0539a7db643889cfe341ff6e1a74eb5
+  languageName: node
+  linkType: hard
+
 "@lit/reactive-element@npm:^1.3.0, @lit/reactive-element@npm:^1.4.0":
   version: 1.4.1
   resolution: "@lit/reactive-element@npm:1.4.1"
   checksum: 27cf706217e9148e140b467185fb813165b2e2aad732fc578c26e566115fa6de73b85bdcd34137d839e004b76d7ae508940abcbd661059b69bc07d7fb6dcb754
+  languageName: node
+  linkType: hard
+
+"@lit/reactive-element@npm:^1.5.0, @lit/reactive-element@npm:^1.6.0":
+  version: 1.6.1
+  resolution: "@lit/reactive-element@npm:1.6.1"
+  dependencies:
+    "@lit-labs/ssr-dom-shim": ^1.0.0
+  checksum: fab0bcfdade9c26af2ad5115fb564bcf8ba0732a3a8be86c157851c2771e3fdc65ab38f2cd60fa121946058bf6e487461fd217f87b01f96e88ee7a95d5d866ba
   languageName: node
   linkType: hard
 
@@ -7186,6 +7212,7 @@ __metadata:
   resolution: "@welingtonms/xb-toolset@workspace:packages/xb-toolset"
   dependencies:
     jest: 29.3.1
+    lodash.debounce: 4.0.8
   languageName: unknown
   linkType: soft
 
@@ -7195,6 +7222,7 @@ __metadata:
   dependencies:
     "@cypress/mount-utils": 3.0.0
     "@floating-ui/dom": 1.0.6
+    "@lit-labs/context": 0.2.0
     "@rollup/plugin-replace": 4.0.0
     "@storybook/addon-actions": 6.5.13
     "@storybook/addon-essentials": 6.5.13
@@ -16650,6 +16678,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lit-html@npm:^2.6.0":
+  version: 2.6.1
+  resolution: "lit-html@npm:2.6.1"
+  dependencies:
+    "@types/trusted-types": ^2.0.2
+  checksum: 32291eb5bcaa7fcc1d433522a9a62c3c3d240e49bb8c57ccea5c10014823d94f62f17e2d5361781cb6ee0b3c9078ef839de6164d5374371d650471904515e48e
+  languageName: node
+  linkType: hard
+
 "lit@npm:2.4.1":
   version: 2.4.1
   resolution: "lit@npm:2.4.1"
@@ -16658,6 +16695,17 @@ __metadata:
     lit-element: ^3.2.0
     lit-html: ^2.4.0
   checksum: 0f0673bd8f7c31d3f00cef0be26683f46e34048466c54b8663e8f13a7dbb6038f06aafa9abf3f0a6635c2d702fde7319d4f88b2bd9e2bd512f81c95fb691ca87
+  languageName: node
+  linkType: hard
+
+"lit@npm:^2.5.0":
+  version: 2.6.1
+  resolution: "lit@npm:2.6.1"
+  dependencies:
+    "@lit/reactive-element": ^1.6.0
+    lit-element: ^3.2.0
+    lit-html: ^2.6.0
+  checksum: 74f2813152a48f195784f01b6b4ff7e4e7d8fa90ac272b725d1953fa3e1d6c9dca60b77da435f34144fcdd38705480889a8ea986835676932a8559c897cea517
   languageName: node
   linkType: hard
 
@@ -16779,7 +16827,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.debounce@npm:^4.0.8":
+"lodash.debounce@npm:4.0.8, lodash.debounce@npm:^4.0.8":
   version: 4.0.8
   resolution: "lodash.debounce@npm:4.0.8"
   checksum: a3f527d22c548f43ae31c861ada88b2637eb48ac6aa3eb56e82d44917971b8aa96fbb37aa60efea674dc4ee8c42074f90f7b1f772e9db375435f6c83a19b3bc6

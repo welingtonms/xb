@@ -1,5 +1,4 @@
 import { html, nothing } from 'lit';
-import { createRef, ref } from 'lit/directives/ref.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import withClassy from '@welingtonms/classy';
 
@@ -11,12 +10,13 @@ import '../form/checkbox';
 import '../icon';
 
 export class MenuItem extends XBElement {
-	button = createRef();
-
-	static styles = [ styles() ];
-
 	/** @type {HTMLSlotElement} */
 	_defaultSlot;
+
+	/** @type {import('../button/button').Button} */
+	_button;
+
+	static styles = [ styles() ];
 
 	static get properties() {
 		return {
@@ -71,19 +71,29 @@ export class MenuItem extends XBElement {
 		this.value = '';
 	}
 
+	get button() {
+		this._button = this._button ?? this.shadowRoot.querySelector( 'button' );
+
+		return this._button;
+	}
+
 	/** Returns a text label based on the contents of the menu item's default slot. */
 	text() {
 		this._defaultSlot =
 			this._defaultSlot ?? this.shadowRoot.querySelector( 'slot:not([name])' );
 
-		return getTextContent( this._defaultSlot );
+		/**
+		 * FIXME: the fallback is needed for when this._defaultSlot is still null,
+		 * but this might not be enough for all cases.
+		 */
+		return (
+			getTextContent( this._defaultSlot ) ||
+			String( this.textContent ?? '' ).trim()
+		);
 	}
 
 	focus() {
-		/** @type {HTMLButtonElement} */
-		const button = this.button.value;
-
-		button.focus();
+		this.button.focus();
 	}
 
 	render() {
@@ -94,7 +104,6 @@ export class MenuItem extends XBElement {
 
 		return html`
 			<button
-				${ ref( this.button ) }
 				type="button"
 				class="${ classy( 'menu-item', {
 					'-extra-small': when( { size: 'extra-small' } ),

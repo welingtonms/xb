@@ -6,14 +6,10 @@ import toArray from '@welingtonms/xb-toolset/dist/to-array';
 import styles from './selection-keeper.styles';
 
 const root = new ContextRoot();
-/** @type {{ __context__: Selection; }} */
 const selectionContext = createContext( 'selection' );
 
 export class SelectionKeeper extends LitElement {
 	static styles = [ styles() ];
-
-	/** @type {HTMLSlotElement} */
-	_host;
 
 	/** @type {SelectionStrategy} */
 	_strategy = null;
@@ -75,7 +71,7 @@ export class SelectionKeeper extends LitElement {
 		/** @type {SelectionState} */
 		this._state = new Set();
 
-		// create a provider controller and a default logger
+		/** @type {ContextProvider<Selection>} */
 		this._provider = new ContextProvider( this, selectionContext, {
 			state: this._state,
 		} );
@@ -113,7 +109,7 @@ export class SelectionKeeper extends LitElement {
 		}
 
 		/**
-		 * If `value` changed, we need to reset the selection controller.
+		 * If `value` changed, we need to reset the strategy.
 		 */
 		if ( changedProperties.has( 'value' ) ) {
 			this._state = this._strategy.init( toArray( this.value ) );
@@ -124,14 +120,12 @@ export class SelectionKeeper extends LitElement {
 		super.update( changedProperties );
 	}
 
-	get host() {
-		this._host = this._host ?? this.shadowRoot.querySelector( 'slot' );
-
-		return this._host.assignedElements( { flatten: true } )[ 0 ];
+	getSelectionState() {
+		return this._state;
 	}
 
-	get selection() {
-		return this._state;
+	getSelectionValue() {
+		return this._strategy?.value( this._state ) ?? null;
 	}
 
 	render() {
@@ -154,9 +148,7 @@ export class SelectionKeeper extends LitElement {
 		} = event;
 
 		if ( this.type == null ) {
-			console.warn(
-				'[SelectionController] you forgot to set the selection type.'
-			);
+			console.warn( '[SelectionKeeper] you forgot to set the selection type.' );
 			return;
 		}
 
@@ -189,7 +181,8 @@ export class SelectionKeeper extends LitElement {
 				cancelable: true,
 				composed: true,
 				detail: {
-					value: this._state,
+					state: this._state,
+					value: this._strategy.value( this._state ),
 					changed,
 				},
 			} )
@@ -203,11 +196,18 @@ window.customElements.define( 'xb-selection-keeper', SelectionKeeper );
  * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionType} SelectionType
  * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionState} SelectionState
  * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionStrategy} SelectionStrategy
- * @typedef {import('../../common/xb-element').default} XBElement
+ * @typedef {'select' | 'unselect' | 'toggle'} SelectionOperation
  */
 
 /**
- * @typedef {Object} Selection
+ * @typedef {Object} SelectionEventDetail
+ * @property {SelectionOperation} type - type of selection being performed
+ * @property {SelectionState} value - currently selected value
+ * @property {string[]} changed - values that changed from the previously selected va\
+ */
+
+/**
+ * @typedef {Object} SelectionContext
  * @property {SelectionState} state
  */
 

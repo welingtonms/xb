@@ -1,6 +1,8 @@
 import { html } from 'lit';
-import { createRef, ref } from 'lit/directives/ref.js';
+// import { ContextConsumer } from '@lit-labs/context';
 import withClassy from '@welingtonms/classy';
+
+// import selectionContext from '../../contexts/selection';
 
 import XBElement from '../../common/xb-element';
 import styles from './select-trigger.styles';
@@ -8,10 +10,14 @@ import styles from './select-trigger.styles';
 import '../form/text-input';
 
 export class SelectTrigger extends XBElement {
-	search = createRef();
+	/** @type {import('../form/text-input/text-input').TextInput} */
+	_input;
 
 	/** @type {number} */
-	timeout;
+	_timeout;
+
+	// /** @type {ContextConsumer<Selection, SelectTrigger>} */
+	// _selection;
 
 	static styles = [ styles() ];
 
@@ -19,20 +25,12 @@ export class SelectTrigger extends XBElement {
 		return {
 			/**
 			 * Is the dropdown menu open.
+			 * This is updated by the dropdown.
 			 * @type {SelectTriggerAttributes['open']}
 			 */
 			open: {
 				type: Boolean,
-				reflect: true,
-			},
-
-			/**
-			 * Is the dropdown menu open.
-			 * @type {SelectTriggerAttributes['value']}
-			 */
-			value: {
-				type: String,
-				reflect: true,
+				attribute: false,
 			},
 
 			/**
@@ -57,28 +55,58 @@ export class SelectTrigger extends XBElement {
 
 		/** @type {SelectTriggerAttributes['placeholder']} */
 		this.placeholder = 'Search & Select';
+
+		/** @type {ContextConsumer<Selection, SelectTrigger>} */
+		// this._selection = new ContextConsumer(
+		// 	this,
+		// 	selectionContext,
+		// 	undefined,
+		// 	true // subscribe to updates when selection changes
+		// );
 	}
 
-	focus() {
-		this._getSearch()?.focus();
+	get input() {
+		this._input =
+			this._input ?? this.shadowRoot.querySelector( 'xb-text-input' );
+
+		return this._input;
 	}
 
-	clear() {
-		this._getSearch()?.clear();
-	}
+	// 	_updateTrigger() {
+	// 	const options = this.options;
+	// 	const selection = this.selection;
+	// 	const trigger = this.trigger;
+
+	// 	if ( this.type == 'multiple' ) {
+	// 		trigger.placeholder =
+	// 			selection.size > 0 ? `${ selection.size } selected` : this.placeholder;
+	// 	} else {
+	// 		/**
+	// 		 * TODO: create a datasource with the static options so we can use the
+	// 		 * _datasourceHelpers `resolve` function here.
+	// 		 */
+	// 		const selectedOption = options.find( ( option ) =>
+	// 			selection.has( option.value )
+	// 		);
+
+	// 		trigger.placeholder = selectedOption?.text() ?? this.placeholder;
+	// 	}
+	// }
 
 	render() {
 		const { classy, when } = withClassy( { open: this.open } );
 
+		// console.log( 'select-trigger context', this._selection.value );
+
 		return html`
 			<xb-text-input
-				${ ref( this.search ) }
 				clearable
 				class="${ classy( 'select-trigger', {
 					'is-open': when( { open: true } ),
 				} ) }"
 				placeholder="${ this.placeholder }"
 				@click=${ this._handleTriggerClick }
+				@xb-change=${ this._handleTriggerChange }
 				@xb-input=${ this._handleTriggerInput }
 			>
 				<xb-button
@@ -100,11 +128,12 @@ export class SelectTrigger extends XBElement {
 		`;
 	}
 
-	/**
-	 * @returns {HTMLInputElement}
-	 */
-	_getSearch() {
-		return this.search.value;
+	focus() {
+		this.input?.focus();
+	}
+
+	clear() {
+		this.input?.clear();
 	}
 
 	_handleTriggerClick() {
@@ -116,13 +145,17 @@ export class SelectTrigger extends XBElement {
 		this.emit( 'xb-dropdown', options );
 	}
 
+	_handleTriggerChange( e ) {
+		e.stopPropagation();
+	}
+
 	_handleTriggerInput( e ) {
 		e.stopPropagation();
 
 		const query = String( e.target.value ).trim();
-		clearTimeout( this.timeout );
+		clearTimeout( this._timeout );
 
-		this.timeout = setTimeout( () => {
+		this._timeout = setTimeout( () => {
 			this.emit( 'xb-select-search', {
 				detail: { query },
 			} );
@@ -144,6 +177,11 @@ export class SelectTrigger extends XBElement {
 window.customElements.define( 'xb-select-trigger', SelectTrigger );
 
 /**
+ * @typedef {import('@lit-labs/context').ContextConsumer} ContextConsumer
+ * @typedef {import('../../contexts/selection').Selection} Selection
+ */
+
+/**
  * @typedef {Object} SearchEventDetail
  * @property {String} query - Search term
  */
@@ -151,6 +189,5 @@ window.customElements.define( 'xb-select-trigger', SelectTrigger );
 /**
  * @typedef {Object} SelectTriggerAttributes
  * @property {boolean} [open] - Is the dropdown menu open.
- * @property {string} value - Representation of the currently selected value.
  * @property {string} placeholder
  */

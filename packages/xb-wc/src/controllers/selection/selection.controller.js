@@ -181,6 +181,7 @@ export default SelectionController;
  * @typedef {Object} SelectionEventDetail
  * @property {SelectionOperation} type - type of selection being performed
  * @property {SelectionState} value - currently selected value
+ * @property {string[]} changed - values that changed from the previously selected va\
  */
 
 /**

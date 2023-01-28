@@ -3,8 +3,8 @@ import to from '@welingtonms/xb-toolset/dist/await-to';
 import toArray from '@welingtonms/xb-toolset/dist/to-array';
 
 /** @type {DatasourceAdapter} */
-const GenericAdapter = {
-	getID( item ) {
+export const GenericAdapter = {
+	getValue( item ) {
 		return String( item.value );
 	},
 	getLabel( item ) {
@@ -13,97 +13,163 @@ const GenericAdapter = {
 };
 
 /**
- * Init internal datasources structure for future query (search) operations.
- * @param {null | Datasource | Datasource[]} [datasources]
+ * Return the static datasource.
+ * @param {Datasource} datasource
+ * @returns {StaticDatasource}
  */
-function initDatasources( datasources ) {
-	/** @type {Map<string, StaticDatasource>} */
-	const staticDatasources = new Map();
-
-	toArray( datasources ).forEach( ( datasource ) => {
-		/** @type {StaticDatasource} */
-		const staticDatasource = isObject( datasource ) ? datasource : datasource();
-
-		staticDatasources.set(
-			staticDatasource.name,
-			Object.assign(
-				{
-					adapter: GenericAdapter,
-				},
-				staticDatasource
-			)
-		);
-	} );
-
-	return staticDatasources;
+function getStaticDatasource( datasource ) {
+	return isObject( datasource ) ? datasource : datasource();
 }
 
 /**
  * @implements {ReactiveController}
  */
 class DataController {
-	/** @type {ReactiveControllerHost} */
-	_host;
+	/** @type {Map<string, Object>} */
+	items;
+
+	/**
+	 * Here we keep the identifiers from `items`
+	 * categorized into:
+	 * - **static**: items that as static options
+	 * - **queried**: items that are options from the latest search
+	 * @type {Map<'static' | 'queried', Set<string>}
+	 */
+	groups;
 
 	/** @type {Map<string, StaticDatasource>} */
-	_datasources;
+	datasources;
 
-	/** @type {Map<string, Object>} */
-	_data;
+	/** @type {ReactiveControllerHost} */
+	host;
+
+	/**
+	 * States the mode the select component is operating in.
+	 * - **default**: lists the available options
+	 * - **search**: lists the options, static or queried from datasources, for the
+	 * given search term.
+	 * @type {'default' | 'search'}
+	 */
+	mode;
+
+	/** @type {import('../selection-keeper/selection-keeper').SelectionState} */
+	selection;
+
+	_initialized = false;
 
 	/**
 	 * @param {ReactiveControllerHost} host
+	 * @param {null | Datasource | Datasource[]} [datasources]
 	 */
-	constructor( host ) {
-		this._data = new Map();
-		this._datasources = new Map();
+	constructor( host, datasources ) {
+		this.items = new Map();
+		this.mode = 'default';
 
-		( this._host = host ).addController( this );
+		this._initGroups();
+		this.setDatasources( datasources );
+
+		( this.host = host ).addController( this );
 	}
 
 	hostConnected() {
-		toArray( this._host.value ).forEach( ( option ) => {
-			const { value } = this.resolve( option );
+		toArray( this.host.value ).forEach( ( item ) => {
+			const { value } = this.toOption( item );
 
-			this._data.set( value, option );
+			this.items.set( value, item );
 		} );
+
+		this._handleSelectionChange = this._handleSelectionChange.bind( this );
+		this._handleDropdownCollapse = this._handleDropdownCollapse.bind( this );
+
+		this.host.addEventListener(
+			'xb-selection-change',
+			this._handleSelectionChange
+		);
+
+		this.host.addEventListener(
+			'xb-dropdown-collapse',
+			this._handleDropdownCollapse
+		);
 	}
 
-	hostDisconnected() {}
+	hostDisconnected() {
+		this.host.removeEventListener(
+			'xb-selection-change',
+			this._handleSelectionChange
+		);
 
-	get data() {
-		return Array.from( this._data.values() );
+		this.host.removeEventListener(
+			'xb-dropdown-collapse',
+			this._handleDropdownCollapse
+		);
 	}
 
-	get datasources() {
-		return Array.from( this._datasources.values() );
+	hostUpdated() {
+		if ( ! this._initialized ) {
+			this.getGroup( 'static' ).clear();
+
+			/**
+			 * Here we are grabbing the static options (xb-option) rendered inside the select
+			 * and wrapping them in datasource so we can search them.
+			 */
+			const staticOptions = this.host.options.map( ( option ) => {
+				this.getGroup( 'static' ).add( option.value );
+
+				return {
+					value: option.value,
+					label: option.text(),
+				};
+			} );
+
+			this.datasources.set( 'generic', {
+				name: 'generic',
+				adapter: GenericAdapter,
+				fetch( { query, regex } ) {
+					if ( query.length < 3 ) {
+						return staticOptions;
+					}
+
+					return staticOptions.filter( ( { value } ) => regex.test( value ) );
+				},
+			} );
+		}
+
+		this._initialized = true;
 	}
 
-	/**
-	 * Init internal data and datasources structure for future query (search) operations.
-	 * @param {null | Datasource | Datasource[]} [datasources]
-	 */
-	init( datasources ) {
-		this._data = new Map();
-		this._datasources = initDatasources( datasources );
-	}
+	_handleDropdownCollapse() {
+		if ( this.mode == 'search' ) {
+			this.host._removeDataOptions();
+			this.query( '' );
+		}
 
-	/**
-	 * Init internal datasources structure for future query (search) operations.
-	 * @param {null | Datasource | Datasource[]} [datasources]
-	 */
-	reset( datasources ) {
-		this._datasources = initDatasources( datasources );
+		this.setMode( 'default' );
 	}
 
 	/**
 	 *
-	 * @param {string} searchTerm
+	 * @param {CustomEvent<SelectionEventDetail>} event
 	 */
-	async query( searchTerm ) {
+	_handleSelectionChange( event ) {
+		this.selection = event.detail.state;
+	}
+
+	_initGroups() {
+		this.groups = new Map();
+		this.groups.set( 'static', new Set() );
+		this.groups.set( 'queried', new Set() );
+	}
+
+	/**
+	 * Trigger the `fetch` function of all datasources with the provided `searchTerm`.
+	 * If `group` is provided, the resulting items will be added to that `group`.
+	 * @param {string} searchTerm
+	 * @param {'static' | 'queried'} group
+	 */
+	async query( searchTerm, group ) {
 		const regex = new RegExp( searchTerm, 'i' );
 
-		for ( const datasource of this.datasources ) {
+		for ( const datasource of this.datasources.values() ) {
 			const [ error, data ] = await to(
 				Promise.resolve( datasource.fetch( { query: searchTerm, regex } ) )
 			);
@@ -113,66 +179,117 @@ class DataController {
 				continue;
 			}
 
-			for ( const item of toArray( data ) ) {
-				/**
-				 * we need to provide `datasource.name` here because, at this point,
-				 * we haven't set the item's `_type` yet (which happens in line below).
-				 */
-				const { value } = this.resolve( item, datasource.name );
+			for ( let item of toArray( data ) ) {
+				item = { ...item, _type: datasource.name };
 
-				this._data.set( value, {
+				const { value } = this.toOption( item );
+
+				this.items.set( value, {
+					...( this.items.get( value ) ?? {} ),
 					...item,
-					_type: datasource.name,
 				} );
+
+				this.getGroup( group ?? 'queried' ).add( value );
 			}
-
-			this._host.requestUpdate();
-		}
-	}
-
-	/**
-	 * Use obj's `_item` property to find its datasource, get the datasource's adapter
-	 * and apply to `obj` to get its unique identifier and label.
-	 * If datasource is not found, uses the `GenericAdapter` to retrieve `obj`'s id and label.
-	 * If `obj` is not an object, return `{ value: obj }`
-	 * @param {string | {_type: string}} obj
-	 * @param {string} [type] - optional
-	 * @returns {{value: string, label: string}}
-	 */
-	resolve( obj, type ) {
-		if ( ! isObject( obj ) ) {
-			return { value: obj };
 		}
 
-		const { adapter } = this._datasources.get( type ?? obj?._type ) ?? {
-			adapter: GenericAdapter,
-		};
-
-		return {
-			value: adapter.getID( obj ),
-			label: adapter.getLabel( obj ),
-		};
+		this.host.requestUpdate();
 	}
 
 	/**
-	 * @param {string} value
+	 * Init datasources structure for future query (search) operations.
+	 * @param {null | Datasource | Datasource[]} [datasources]
 	 */
-	delete( value ) {
-		return this._data.delete( value );
+	setDatasources( datasources ) {
+		/** @type {Map<string, StaticDatasource>} */
+		const staticDatasources = new Map();
+
+		toArray( datasources ).forEach( ( datasource ) => {
+			const staticDatasource = getStaticDatasource( datasource );
+
+			staticDatasources.set(
+				staticDatasource.name,
+				Object.assign(
+					{
+						adapter: GenericAdapter,
+					},
+					staticDatasource
+				)
+			);
+		} );
+
+		this.datasources = staticDatasources;
 	}
 
 	/**
-	 * @param {string} value
+	 * Updates the internal structures based on the provided `mode`.
+	 * @param {DataController['mode']} mode
 	 */
-	has( value ) {
-		return this._data.has( value );
+	setMode( mode ) {
+		if ( mode == 'default' ) {
+			for ( const key of this.getGroup( 'queried' ) ) {
+				if ( this.selection.has( key ) ) {
+					return;
+				}
+
+				this.items.delete( key );
+			}
+		}
+
+		this.getGroup( 'queried' ).clear();
+
+		this.mode = mode;
 	}
 
 	/**
 	 * @param {string} value
 	 */
 	get( value ) {
-		return this._data.get( value );
+		return this.items.get( value );
+	}
+
+	/**
+	 * @param {'static' | 'queried'} type
+	 */
+	getGroup( type ) {
+		return this.groups.get( type );
+	}
+
+	/**
+	 * Use obj's `_type` property to find its datasource, get the datasource's adapter
+	 * and apply to `obj` to get its unique identifier and label.
+	 * If datasource is not found, uses the `GenericAdapter` to retrieve `obj`'s id and label.
+	 * If `obj` is not an object, returns `{ value: obj }`
+	 * @param {string | {_type: string}} obj
+	 * @returns {{value: string, label: string}}
+	 */
+	toOption( obj ) {
+		if ( ! isObject( obj ) ) {
+			return { value: obj };
+		}
+
+		const { adapter, name } = this.datasources.get( obj?._type ) ?? {
+			adapter: GenericAdapter,
+		};
+
+		return {
+			_type: name,
+			value: adapter.getValue( obj ),
+			label: adapter.getLabel( obj ),
+		};
+	}
+
+	/**
+	 * Given the provided `value` (options or options's values), we return the currently selected value
+	 * by resolving each option based on the proper datasource.
+	 * @param {sstring | string[] | SelectionOption | SelectionOption[]} obj
+	 * @returns {string[]}
+	 */
+	toValue( value ) {
+		return toArray( value ).map( ( option ) => {
+			const { value } = this.toOption( option );
+			return value;
+		} );
 	}
 }
 
@@ -182,11 +299,13 @@ export default DataController;
  * @typedef {ReturnType<DatasourcesHelpers>} DatasourcesHelper
  * @typedef {import('lit').ReactiveController} ReactiveController
  * @typedef {import('lit').ReactiveControllerHost} ReactiveControllerHost
+ * @typedef {import('../selection-keeper').SelectionEventDetail} SelectionEventDetail
+ * @typedef {import('./select-option').SelectOption} SelectOption
  */
 
 /**
  * @typedef {Object} DatasourceAdapter
- * @property {(obj: unknown) => string} getID - get unique identifier for the given object
+ * @property {(obj: unknown) => string} getValue - get unique identifier for the given object
  * @property {(obj: unknown) => string} getLabel - get unique label for the given object
  */
 

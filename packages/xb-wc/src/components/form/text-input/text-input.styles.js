@@ -151,6 +151,14 @@ function styles() {
 			.-large input {
 				${ typography( 'body-1' ) };
 			}
+
+			.clear {
+				visibility: hidden;
+			}
+
+			.clear.is-visible {
+				visibility: visible;
+			}
 		`,
 		sizeStyles( { property: '--xb-text-input-height' } ),
 	];

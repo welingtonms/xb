@@ -151,9 +151,17 @@ export class TextInput extends XBElement {
 					@input=${ this._handleInput }
 				/>
 
-				${ this.clearable && this.value
+				${ this.clearable
 					? html`
 							<xb-button
+								class=${ classy( 'clear', {
+									/**
+									 * we use this approach to avoid the layout shift
+									 * when showing/hiding the clear button as the users
+									 * changes the input value.
+									 */
+									'is-visible': this.value,
+								} ) }
 								paddingless
 								emphasis="text"
 								size="extra-small"
@@ -194,6 +202,8 @@ export class TextInput extends XBElement {
 		this.clear();
 
 		this.emit( 'xb-clear' );
+
+		this.focus();
 	}
 }
 

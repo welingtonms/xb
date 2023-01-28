@@ -556,7 +556,7 @@ export function useSyncUsers() {
 	return {
 		name: 'user',
 		adapter: {
-			getID( user ) {
+			getValue( user ) {
 				return String( user.guid );
 			},
 			getLabel( user ) {
@@ -577,7 +577,7 @@ export function useAsyncUsers() {
 	return {
 		name: 'user',
 		adapter: {
-			getID( user ) {
+			getValue( user ) {
 				return String( user.guid );
 			},
 			getLabel( user ) {
