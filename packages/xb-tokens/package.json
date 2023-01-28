@@ -21,8 +21,8 @@
 		"@welingtonms/xb-toolset": "workspace:*"
 	},
 	"devDependencies": {
-		"jest": "29.3.1",
-		"style-dictionary": "3.7.1"
+		"jest": "29.4.1",
+		"style-dictionary": "3.7.2"
 	},
 	"publishConfig": {
 		"access": "public"

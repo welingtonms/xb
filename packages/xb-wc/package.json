@@ -21,26 +21,26 @@
 		"lit"
 	],
 	"dependencies": {
-		"@floating-ui/dom": "1.0.6",
+		"@floating-ui/dom": "1.1.1",
 		"@lit-labs/context": "0.2.0",
 		"@welingtonms/classy": "1.2.0",
 		"@welingtonms/xb-icons": "workspace:*",
 		"@welingtonms/xb-tokens": "workspace:*",
 		"@welingtonms/xb-toolset": "workspace:*",
-		"lit": "2.4.1"
+		"lit": "2.6.1"
 	},
 	"devDependencies": {
 		"@cypress/mount-utils": "3.0.0",
-		"@rollup/plugin-replace": "4.0.0",
-		"@storybook/addon-actions": "6.5.13",
-		"@storybook/addon-essentials": "6.5.13",
-		"@storybook/addon-links": "6.5.13",
-		"@storybook/builder-webpack5": "6.5.13",
-		"@storybook/manager-webpack5": "6.5.13",
-		"@storybook/web-components": "6.5.13",
-		"babel-loader": "9.1.0",
+		"@rollup/plugin-replace": "5.0.2",
+		"@storybook/addon-actions": "6.5.16",
+		"@storybook/addon-essentials": "6.5.16",
+		"@storybook/addon-links": "6.5.16",
+		"@storybook/builder-webpack5": "6.5.16",
+		"@storybook/manager-webpack5": "6.5.16",
+		"@storybook/web-components": "6.5.16",
+		"babel-loader": "9.1.2",
 		"cypress": "11.1.0",
-		"lit-html": "2.4.0"
+		"lit-html": "2.6.1"
 	},
 	"publishConfig": {
 		"access": "public"
