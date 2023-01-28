@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["global-externals:@storybook/addons", "../../../packages/xb-wc/.storybook/manager.js"],
+  "sourcesContent": ["export default __STORYBOOKADDONS__;\nconst { addons, types, mockChannel } = __STORYBOOKADDONS__;\nexport { addons, types, mockChannel };", "import { addons } from '@storybook/addons';\n\naddons.setConfig( {\n\t//   isFullscreen: false,\n\t//   showNav: true,\n\t//   showPanel: true,\n\t//   panelPosition: 'bottom',\n\tenableShortcuts: false,\n\t//   showToolbar: true,\n\t//   theme: undefined,\n\t//   selectedPanel: undefined,\n\t//   initialActive: 'sidebar',\n\t//   sidebar: {\n\t//     showRoots: false,\n\t//     collapsedRoots: ['other'],\n\t//   },\n\t//   toolbar: {\n\t//     title: { hidden: false },\n\t//     zoom: { hidden: false },\n\t//     eject: { hidden: false },\n\t//     copy: { hidden: false },\n\t//     fullscreen: { hidden: false },\n\t//   },\n} );\n"],
+  "mappings": ";AAAA,IAAOA,EAAQ,oBACT,CAAE,OAAAC,EAAQ,MAAAC,EAAO,YAAAC,CAAY,EAAI,oBCCvCC,EAAO,UAAW,CAKjB,gBAAiB,EAgBlB,CAAE",
+  "names": ["addons_default", "addons", "types", "mockChannel", "addons"]
+}
