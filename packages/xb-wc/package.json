@@ -10,8 +10,8 @@
 	"scripts": {
 		"prebuild": "rm -rf dist",
 		"build": "yarn prebuild && rollup -c --environment BUILD:prod",
-		"dev": "start-storybook -p 6006",
-		"build-storybook": "build-storybook -o ../../docs",
+		"dev": "storybook dev -p 6006",
+		"build-docs": "storybook build -o ../../docs",
 		"test": "cypress run --component --browser chrome",
 		"cypress": "cypress open --component --browser chrome"
 	},
@@ -30,17 +30,19 @@
 		"lit": "2.6.1"
 	},
 	"devDependencies": {
+		"@babel/preset-env": "7.20.2",
 		"@cypress/mount-utils": "3.0.0",
 		"@rollup/plugin-replace": "5.0.2",
-		"@storybook/addon-actions": "6.5.16",
-		"@storybook/addon-essentials": "6.5.16",
-		"@storybook/addon-links": "6.5.16",
-		"@storybook/builder-webpack5": "6.5.16",
-		"@storybook/manager-webpack5": "6.5.16",
-		"@storybook/web-components": "6.5.16",
+		"@storybook/addon-actions": "7.0.0-beta.36",
+		"@storybook/addon-essentials": "7.0.0-beta.36",
+		"@storybook/addon-links": "7.0.0-beta.36",
+		"@storybook/web-components-webpack5": "7.0.0-beta.36",
 		"babel-loader": "9.1.2",
 		"cypress": "11.1.0",
-		"lit-html": "2.6.1"
+		"lit-html": "2.6.1",
+		"react": "18.2.0",
+		"react-dom": "18.2.0",
+		"storybook": "7.0.0-beta.36"
 	},
 	"publishConfig": {
 		"access": "public"
