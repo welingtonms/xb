@@ -1,4 +1,4 @@
-import { ContextProvider, ContextRoot, createContext } from '@lit-labs/context';
+// import { ContextProvider, ContextRoot, createContext } from '@lit-labs/context';
 import { html } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import toArray from '@welingtonms/xb-toolset/dist/to-array';
@@ -34,15 +34,6 @@ function createOption( { value, label, type, role, disabled, checked } ) {
 }
 
 export class Select extends XBElement {
-	/** @type {import('../selection-keeper').SelectionKeeper} */
-	_selectionKeeper;
-
-	/** @type {null | string[]} */
-	_selectionContextValue;
-
-	/** @type {ContextProvider<Selection>} */
-	_provider;
-
 	/** @type {DataController} */
 	_data;
 
@@ -119,6 +110,23 @@ export class Select extends XBElement {
 			 * @type {SelectAttributes['value']}
 			 */
 			value: {},
+
+			/**
+			 * Selection value for the internal selection-keeper. It is the received
+			 * `value` attribute after applying `DataController`'s `toValue` method.
+			 * @type {string[]}
+			 */
+			_value: {
+				state: true,
+			},
+
+			/**
+			 * `Set` that represents the current selection value.
+			 * @type {SelectionState}
+			 */
+			_selection: {
+				state: true,
+			},
 		};
 	}
 
@@ -152,6 +160,12 @@ export class Select extends XBElement {
 
 		/** @type {SelectAttributes['value']} */
 		this.value = null;
+
+		/** @type {string[]} */
+		this._value = [];
+
+		/** @type {SelectionState} */
+		this._selection = new Set();
 	}
 
 	connectedCallback() {
@@ -160,17 +174,22 @@ export class Select extends XBElement {
 		this._data = new DataController( this, this.datasources );
 
 		this._handleClear = this._handleClear.bind( this );
-		this._handleDropdownCollapse = this._handleDropdownCollapse.bind( this );
+		this._handleCollapse = this._handleCollapse.bind( this );
 		this._handleSearch = this._handleSearch.bind( this );
+		this._handleSelectionChange = this._handleSelectionChange.bind( this );
 		this._syncOptions = this._syncOptions.bind( this );
 
-		this._attachEventListeners();
+		this.addEventListener( 'xb-clear', this._handleClear );
+		this.addEventListener( 'xb-dropdown-collapse', this._handleCollapse );
+		this.addEventListener( 'xb-select-search', this._handleSearch );
 	}
 
 	disconnectedCallback() {
 		super.disconnectedCallback();
 
-		this._detachEventListeners();
+		this.removeEventListener( 'xb-clear', this._handleClear );
+		this.removeEventListener( 'xb-dropdown-collapse', this._handleCollapse );
+		this.removeEventListener( 'xb-select-search', this._handleSearch );
 	}
 
 	firstUpdated() {
@@ -205,62 +224,47 @@ export class Select extends XBElement {
 		}
 
 		if ( changedProperties.has( 'value' ) ) {
-			this._contextValue = this._data.toValue( this.value );
+			this._value = this._data.toValue( this.value );
 		}
 
 		super.update( changedProperties );
 	}
 
 	/**
-	 * @param {import('lit').PropertyValues<OptionGroup>} changedProperties
+	 * @param {import('lit').PropertyValues<Select>} changedProperties
 	 */
 	updated( changedProperties ) {
 		super.updated( changedProperties );
 
 		this._renderDataOptions();
-		this._updateTrigger();
+
+		if ( changedProperties.has( '_value' ) ) {
+			this._updateTrigger();
+		}
 	}
 
 	get dropdown() {
-		this._dropdown =
-			this._dropdown ?? this.shadowRoot.querySelector( 'xb-dropdown' );
+		this._dropdown = this._dropdown ?? this.shadowRoot.querySelector( 'xb-dropdown' );
 
 		return this._dropdown;
 	}
 
 	get menu() {
-		this._menu =
-			this._menu ?? this.shadowRoot.querySelector( 'xb-select-menu' );
+		this._menu = this._menu ?? this.shadowRoot.querySelector( 'xb-select-menu' );
 
 		return this._menu;
 	}
 
 	get options() {
-		if ( this._options == null || this._options.length == 0 ) {
-			const defaultSlot = this.shadowRoot.querySelector( 'slot' );
+		const defaultSlot = this.shadowRoot.querySelector( 'slot' );
 
-			this._options = ( defaultSlot?.assignedElements() || [] ).filter(
-				( item ) => item.matches( 'xb-option' )
-			);
-		}
-
-		return this._options;
-	}
-
-	/**
-	 * @returns {SelectionState}
-	 */
-	get selection() {
-		this._selectionKeeper =
-			this._selectionKeeper ??
-			this.shadowRoot.querySelector( 'xb-selection-keeper' );
-
-		return this._selectionKeeper.getSelectionState();
+		return ( defaultSlot?.assignedElements() || [] ).filter( ( item ) =>
+			item.matches( 'xb-option' )
+		);
 	}
 
 	get trigger() {
-		this._trigger =
-			this._trigger ?? this.shadowRoot.querySelector( 'xb-select-trigger' );
+		this._trigger = this._trigger ?? this.shadowRoot.querySelector( 'xb-select-trigger' );
 
 		return this._trigger;
 	}
@@ -268,19 +272,17 @@ export class Select extends XBElement {
 	render() {
 		return html`
 			<xb-selection-keeper
-				type=${ this.multiple ? 'multiple' : 'single' }
+				.value=${ this._value }
+				@xb-selection-change=${ this._handleSelectionChange }
 				listen="xb-option-click"
-				emit="xb-selection-change"
-				.value=${ this._contextValue }
+				type=${ this.multiple ? 'multiple' : 'single' }
 			>
 				<xb-dropdown placement="${ ifDefined( this.placement ) }">
 					<xb-select-trigger slot="trigger"></xb-select-trigger>
 
 					<xb-select-menu slot="menu" ?loading=${ this.loading }>
 						<slot @slotchange=${ this._handleSlotChanged }>
-							<xb-text class="empty" variant="body-2">
-								No options available.
-							</xb-text>
+							<xb-text class="empty" variant="body-2">No options available.</xb-text>
 						</slot>
 					</xb-select-menu>
 				</xb-dropdown>
@@ -288,58 +290,36 @@ export class Select extends XBElement {
 		`;
 	}
 
-	_attachEventListeners() {
-		this.addEventListener( 'xb-clear', this._handleClear );
-		this.addEventListener(
-			'xb-dropdown-collapse',
-			this._handleDropdownCollapse
-		);
-		this.addEventListener( 'xb-select-search', this._handleSearch );
-		this.addEventListener( 'xb-selection-change', this._handleSelectionChange );
-	}
-
-	_detachEventListeners() {
-		this.removeEventListener( 'xb-clear', this._handleClear );
-		this.removeEventListener(
-			'xb-dropdown-collapse',
-			this._handleDropdownCollapse
-		);
-		this.removeEventListener( 'xb-select-search', this._handleSearch );
-		this.removeEventListener(
-			'xb-selection-change',
-			this._handleSelectionChange
-		);
-	}
-
 	/**
+	 * Sync the `role`, `disabled`, and `checked` attributes for the provided
+	 * `options`, or all the rendered options, if no `options` is provided.
 	 * @param {SelectOption[]} [options]
 	 */
 	_syncOptions( options ) {
 		( options ?? this.options ).forEach( ( option ) => {
 			option.setAttribute( 'role', this.multiple ? 'checkbox' : 'radio' );
 			option.disabled = this.disabled || option.disabled;
-			option.checked = this.selection.has( option.value );
+			option.checked = this._selection.has( option.value );
 		} );
 	}
 
 	_updateTrigger() {
-		const options = this.options;
-		const selection = this.selection;
+		const selection = this._selection;
 		const trigger = this.trigger;
 
-		if ( this.multiple ) {
-			trigger.placeholder =
-				selection.size > 0 ? `${ selection.size } selected` : this.placeholder;
-		} else {
-			/**
-			 * TODO: create a datasource with the static options so we can use the
-			 * _datasourceHelpers `resolve` function here.
-			 */
-			const selectedOption = options.find( ( option ) =>
-				selection.has( option.value )
-			);
+		if ( selection.size === 0 ) {
+			trigger.placeholder = this.placeholder;
+			return;
+		}
 
-			trigger.placeholder = selectedOption?.text() ?? this.placeholder;
+		if ( this.multiple ) {
+			trigger.placeholder = `${ selection.size } selected`;
+		} else {
+			const [ value ] = Array.from( selection.keys() );
+			const item = this._data.getRaw( value );
+			const { label } = this._data.toOption( item );
+
+			trigger.placeholder = label;
 		}
 	}
 
@@ -357,14 +337,14 @@ export class Select extends XBElement {
 		if ( this._data.mode == 'default' ) {
 			keys = new Set( [
 				...this._data.getGroup( 'static' ).keys(),
-				...this.selection.keys(),
+				...this._selection.keys(),
 			] );
 		} else {
 			keys = new Set( [ ...this._data.getGroup( 'queried' ).keys() ] );
 		}
 
 		Array.from( keys.keys() ).forEach( ( key ) => {
-			const item = this._data.get( key );
+			const item = this._data.getRaw( key );
 
 			if ( ! item ) {
 				return;
@@ -385,7 +365,7 @@ export class Select extends XBElement {
 					role: this.multiple ? 'checkbox' : 'radio',
 					// TODO: how to keep the previous disabled state?
 					disabled: this.disabled,
-					checked: this.selection.has( value ),
+					checked: this._selection.has( value ),
 				} )
 			);
 		} );
@@ -400,8 +380,9 @@ export class Select extends XBElement {
 	async _handleSearch( e ) {
 		const { query } = e.detail;
 
+		this._removeDataOptions();
+
 		if ( query === '' ) {
-			this._removeDataOptions();
 			this._data.setMode( 'default' );
 			this._renderDataOptions();
 
@@ -409,7 +390,6 @@ export class Select extends XBElement {
 		}
 
 		this._data.setMode( 'search' );
-		this._removeDataOptions();
 
 		const menu = this.menu;
 		const dropdown = this.dropdown;
@@ -445,16 +425,16 @@ export class Select extends XBElement {
 			detail: { value, state, changed },
 		} = event;
 
-		let optionsToSync = [];
-		Array.from( new Set( [ ...changed, ...state.keys() ] ) ).forEach(
-			( value ) => {
-				const node = this.querySelector( `xb-option[value="${ value }"]` );
+		this._selection = state;
 
-				if ( node ) {
-					optionsToSync.push( node );
-				}
+		let optionsToSync = [];
+		Array.from( new Set( [ ...changed, ...state.keys() ] ) ).forEach( ( value ) => {
+			const node = this.querySelector( `xb-option[value="${ value }"]` );
+
+			if ( node ) {
+				optionsToSync.push( node );
 			}
-		);
+		} );
 
 		this._syncOptions( optionsToSync );
 		this._updateTrigger();
@@ -469,7 +449,7 @@ export class Select extends XBElement {
 			}
 
 			const values = toArray( value ).map( ( key ) => {
-				return this._data.get( key ) ?? key;
+				return this._data.getRaw( key ) ?? key;
 			} );
 
 			return this.multiple ? values : values[ 0 ];
@@ -480,8 +460,15 @@ export class Select extends XBElement {
 		} );
 	}
 
-	_handleDropdownCollapse() {
+	_handleCollapse() {
 		this.trigger.clear();
+
+		if ( this._data.mode == 'search' ) {
+			this._removeDataOptions();
+			this._data.query( '' );
+		}
+
+		this._data.setMode( 'default' );
 	}
 }
 
@@ -520,7 +507,7 @@ window.customElements.define( 'xb-select', Select );
  * @property {boolean} [multiple] - Is this a multiple selection?
  * @property {string} [placeholder] - Select placeholder
  * @property {SelectDatasource | SelectDatasource[]} [datasources]
- * @property {string | string[] | SelectionOption | SelectionOption[]} [value]
+ * @property {null | SelectionOption | SelectionOption[]} [value]
  */
 
 /**
@@ -528,5 +515,5 @@ window.customElements.define( 'xb-select', Select );
  * @property {boolean} multiple
  * @property {boolean} disabled
  * @property {boolean} loading
- * @property {null | string | string[] | SelectionOption | SelectionOption[]} value
+ * @property {null | SelectionOption | SelectionOption[]} value
  */

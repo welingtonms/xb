@@ -63,7 +63,7 @@ class DataController {
 	 */
 	constructor( host, datasources ) {
 		this.items = new Map();
-		this.selection = new Set();
+
 		this.mode = 'default';
 
 		this._initGroups();
@@ -76,33 +76,8 @@ class DataController {
 		toArray( this.host.value ).forEach( ( item ) => {
 			const { value } = this.toOption( item );
 
-			this.items.set( value, item );
+			this.items.set( value, { _type: 'generic', ...item } );
 		} );
-
-		this._handleSelectionChange = this._handleSelectionChange.bind( this );
-		this._handleDropdownCollapse = this._handleDropdownCollapse.bind( this );
-
-		this.host.addEventListener(
-			'xb-selection-change',
-			this._handleSelectionChange
-		);
-
-		this.host.addEventListener(
-			'xb-dropdown-collapse',
-			this._handleDropdownCollapse
-		);
-	}
-
-	hostDisconnected() {
-		this.host.removeEventListener(
-			'xb-selection-change',
-			this._handleSelectionChange
-		);
-
-		this.host.removeEventListener(
-			'xb-dropdown-collapse',
-			this._handleDropdownCollapse
-		);
 	}
 
 	hostUpdated() {
@@ -138,23 +113,6 @@ class DataController {
 		this._initialized = true;
 	}
 
-	_handleDropdownCollapse() {
-		if ( this.mode == 'search' ) {
-			this.host._removeDataOptions();
-			this.query( '' );
-		}
-
-		this.setMode( 'default' );
-	}
-
-	/**
-	 *
-	 * @param {CustomEvent<SelectionEventDetail>} event
-	 */
-	_handleSelectionChange( event ) {
-		this.selection = event.detail.state;
-	}
-
 	_initGroups() {
 		this.groups = new Map();
 		this.groups.set( 'static', new Set() );
@@ -186,7 +144,7 @@ class DataController {
 				const { value } = this.toOption( item );
 
 				this.items.set( value, {
-					...( this.items.get( value ) ?? {} ),
+					...( isObject( this.getRaw( value ) ) ? this.getRaw( value ) : {} ),
 					...item,
 				} );
 
@@ -229,7 +187,7 @@ class DataController {
 	setMode( mode ) {
 		if ( mode == 'default' ) {
 			for ( const key of this.getGroup( 'queried' ) ) {
-				if ( ! this.selection.has( key ) ) {
+				if ( ! this.host._selection.has( key ) ) {
 					this.items.delete( key );
 				}
 			}
@@ -243,7 +201,7 @@ class DataController {
 	/**
 	 * @param {string} value
 	 */
-	get( value ) {
+	getRaw( value ) {
 		return this.items.get( value );
 	}
 
@@ -268,6 +226,7 @@ class DataController {
 		}
 
 		const { adapter, name } = this.datasources.get( obj?._type ) ?? {
+			name: 'generic',
 			adapter: GenericAdapter,
 		};
 

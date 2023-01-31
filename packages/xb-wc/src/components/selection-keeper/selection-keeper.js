@@ -1,12 +1,9 @@
-import { ContextProvider, ContextRoot, createContext } from '@lit-labs/context';
-import { html, LitElement } from 'lit';
+import { html } from 'lit';
 import createSelectionStrategy from '@welingtonms/xb-toolset/dist/selection';
 import toArray from '@welingtonms/xb-toolset/dist/to-array';
 
+import XBElement from '../../common/xb-element';
 import styles from './selection-keeper.styles';
-
-const root = new ContextRoot();
-const selectionContext = createContext( 'selection' );
 
 /**
  *
@@ -22,25 +19,16 @@ function getChanged( state, value ) {
 	return Array.from( new Set( [ ...state.keys(), ...toArray( value ) ] ) );
 }
 
-export class SelectionKeeper extends LitElement {
+export class SelectionKeeper extends XBElement {
 	static styles = [ styles() ];
 
 	/** @type {SelectionStrategy} */
 	_strategy = null;
 
-	/** @type {ContextProvider<Selection>} */
-	_provider;
-
 	static get properties() {
 		return {
 			/**
-			 * Selection strategy.
-			 * @type {SelectionKeeperAttributes['emit']}
-			 */
-			emit: { type: String },
-
-			/**
-			 * Selection strategy.
+			 * Event triggered when a selection happens. Default = 'xb-selection-select'
 			 * @type {SelectionKeeperAttributes['listen']}
 			 */
 			listen: { type: String },
@@ -52,13 +40,13 @@ export class SelectionKeeper extends LitElement {
 			type: { type: String },
 
 			/**
-			 * Selection value attribute.
+			 * Selection value.
 			 * @type {SelectionKeeperAttributes['value']}
 			 */
 			value: {},
 
 			/**
-			 * Selection value state.
+			 * `Set` that represents the current selection value.
 			 * @type {SelectionState}
 			 */
 			_state: {
@@ -69,9 +57,6 @@ export class SelectionKeeper extends LitElement {
 
 	constructor() {
 		super();
-
-		/** @type {SelectionKeeperAttributes['emit']} */
-		this.emit = 'xb-selection-change';
 
 		/** @type {SelectionKeeperAttributes['listen']} */
 		this.listen = 'xb-selection-select';
@@ -84,36 +69,24 @@ export class SelectionKeeper extends LitElement {
 
 		/** @type {SelectionState} */
 		this._state = new Set();
-
-		/** @type {ContextProvider<Selection>} */
-		this._provider = new ContextProvider( this, selectionContext, {
-			state: this._state,
-		} );
 	}
 
 	connectedCallback() {
 		super.connectedCallback();
 
-		root.detach( document.body );
-		root.attach( document.body );
-
-		this.attachEventListeners();
+		this.addEventListener( this.listen, this._handleSelectionRequest );
 	}
 
 	disconnectedCallback() {
 		super.disconnectedCallback();
 
-		this.detachEventListeners();
+		this.removeEventListener( this.listen, this._handleSelectionRequest );
 	}
 
 	/**
-	 * @param {import('lit').PropertyValues<SelectionHost>} changedProperties
+	 * @param {import('lit').PropertyValues<SelectionKeeper>} changedProperties
 	 */
 	update( changedProperties ) {
-		/**
-		 * We create a strategy either if we haven't created one yet, or if the
-		 * selection type changed.
-		 */
 		if (
 			this._strategy == null ||
 			( this.type != null && changedProperties.has( 'type' ) )
@@ -122,25 +95,24 @@ export class SelectionKeeper extends LitElement {
 			this._state = this._strategy.init( Array.from( this._state ) );
 		}
 
-		/**
-		 * If `value` changed, we need to reset the strategy.
-		 */
 		if ( changedProperties.has( 'value' ) ) {
 			const changed = getChanged( this._state, toArray( this.value ) );
 			this._state = this._strategy.init( toArray( this.value ) );
 
-			// this._publish( changed );
+			/**
+			 * Although lit's doc states that events "_should generally not be dispatched
+			 * in response to state changes made by the owner of the component via its property
+			 * or attribute APIs", in this case, we need to report the selection state (consolidated
+			 * by the strategy) back to whoever is using this component, in case they need it. Since
+			 * this is done via dispatching the `'xb-selection-change'` event, that's why, although
+			 * atypical, this is being done here.
+			 *
+			 * Reference: https://lit.dev/docs/components/events/#when-to-dispatch-an-event
+			 */
+			this._publish( changed );
 		}
 
 		super.update( changedProperties );
-	}
-
-	getSelectionState() {
-		return this._state;
-	}
-
-	getSelectionValue() {
-		return this._strategy?.value( this._state ) ?? null;
 	}
 
 	render() {
@@ -149,25 +121,17 @@ export class SelectionKeeper extends LitElement {
 		`;
 	}
 
-	attachEventListeners() {
-		this.addEventListener( this.listen, this._handleSelectionRequest );
-	}
-
-	detachEventListeners() {
-		this.removeEventListener( this.listen, this._handleSelectionRequest );
-	}
-
 	_handleSelectionRequest( event ) {
 		const {
 			detail: { type = 'toggle', value },
 		} = event;
 
 		if ( this.type == null ) {
-			console.warn( '[SelectionKeeper] you forgot to set the selection type.' );
+			console.warn( '[selection-keeper] you forgot to set the selection type.' );
 			return;
 		}
 
-		const changed = getChanged( this._state, toArray( this.value ) );
+		const changed = getChanged( this._state, toArray( value ) );
 
 		switch ( type ) {
 			case 'select':
@@ -186,24 +150,17 @@ export class SelectionKeeper extends LitElement {
 	}
 
 	/**
-	 *
+	 * Emit the `xb-selection-change` event.
 	 * @param {SelectionState} changed
 	 */
 	_publish( changed ) {
-		this._provider.setValue( { state: this._state } );
-
-		this.dispatchEvent(
-			new CustomEvent( this.emit, {
-				bubbles: true,
-				cancelable: true,
-				composed: true,
-				detail: {
-					state: this._state,
-					value: this._strategy.value( this._state ),
-					changed,
-				},
-			} )
-		);
+		this.emit( 'xb-selection-change', {
+			detail: {
+				state: this._state,
+				value: this._strategy.value( this._state ),
+				changed,
+			},
+		} );
 	}
 }
 
@@ -246,8 +203,7 @@ window.customElements.define( 'xb-selection-keeper', SelectionKeeper );
 
 /**
  * @typedef {Object} SelectionKeeperAttributes
- * @property {SelectionType} type
- * @property {string | string[] | SelectionOption | SelectionOption[]} value
+ * @property {SelectionType} type - Selection strategy.
+ * @property {string | string[] | SelectionOption | SelectionOption[]} value - Selection value.
  * @property {string | string[]} [listen] - Event triggered when a selection happens. Default = 'xb-selection-select'
- * @property {string} [emit] - Event dispatched when the selection changes. Default = 'xb-selection-change'
  */

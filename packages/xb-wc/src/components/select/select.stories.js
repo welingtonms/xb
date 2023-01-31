@@ -91,13 +91,11 @@ export const StaticOptions = {
 			</xb-stack>
 
 			<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
-				<xb-text variant="subtitle-2">
-					Static options with initial value
-				</xb-text>
+				<xb-text variant="subtitle-2">Static options with initial value</xb-text>
 				<xb-select
 					@xb-change=${ args.change }
 					?multiple=${ args.multiple }
-					value="accept"
+					.value=${ { label: 'Accept', value: 'accept' } }
 				>
 					<xb-option value="change">Change</xb-option>
 					<xb-option value="accept">Accept</xb-option>
@@ -134,9 +132,7 @@ export const SyncDatasource = {
 			</xb-stack>
 
 			<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
-				<xb-text variant="subtitle-2">
-					Sync datasource with initial value
-				</xb-text>
+				<xb-text variant="subtitle-2">Sync datasource with initial value</xb-text>
 				<xb-select
 					@xb-change=${ args.change }
 					?multiple=${ args.multiple }
@@ -167,9 +163,7 @@ export const AsyncDatasource = {
 			</xb-stack>
 
 			<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
-				<xb-text variant="subtitle-2">
-					Async datasource with initial value
-				</xb-text>
+				<xb-text variant="subtitle-2">Async datasource with initial value</xb-text>
 				<xb-select
 					?multiple=${ args.multiple }
 					@xb-change=${ args.change }
