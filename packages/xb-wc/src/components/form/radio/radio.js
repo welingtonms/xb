@@ -2,7 +2,6 @@ import { html } from 'lit';
 import { createRef, ref } from 'lit/directives/ref.js';
 import withClassy from '@welingtonms/classy';
 
-import { CHECK_EVENT } from './radio-group.constants';
 import XBElement from '../../../common/xb-element';
 import styles from './radio.styles';
 
@@ -149,7 +148,7 @@ export class RadioInput extends XBElement {
 			detail: { value: this.value, type: 'select' },
 		};
 
-		this.emit( CHECK_EVENT, options );
+		this.emit( 'xb-check', options );
 	}
 }
 

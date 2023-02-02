@@ -1,24 +1,21 @@
 import { html } from 'lit';
 import withClassy from '@welingtonms/classy';
 
-import { CHECK_EVENT } from './radio-group.constants';
-import SelectionMixin from '../../../mixins/selection';
 import styles from './radio-group.styles';
 import XBElement from '../../../common/xb-element';
 
+import '../../selection-keeper';
 import '../../focus-trap';
 import '../../layout/stack';
 
-export class RadioGroup extends SelectionMixin( XBElement, {
-	listen: CHECK_EVENT,
-} ) {
+export class RadioGroup extends XBElement {
 	/** @type {import('../../focus-trap').FocusTrap} */
 	_trap;
 
-	static styles = [ styles() ];
-
 	/** @type {HTMLSlotElement} */
 	_defaultSlot;
+
+	static styles = [ styles() ];
 
 	static get properties() {
 		return {
@@ -33,14 +30,31 @@ export class RadioGroup extends SelectionMixin( XBElement, {
 			 * @type {RadioGroupAttributes['size']}
 			 */
 			size: { type: String },
+
+			/**
+			 * Selection value.
+			 * @type {RadioGroupAttributes['value']}
+			 */
+			value: {},
+
+			/**
+			 * `Set` that represents the current selection value.
+			 * @type {SelectionState}
+			 */
+			_selection: {
+				state: true,
+			},
 		};
 	}
 
 	constructor() {
 		super();
 
-		/** @type {import('@welingtonms/xb-toolset/dist/selection').SelectionType} */
+		/** @type {SelectionType} */
 		this.type = 'single-strict';
+
+		/** @type {SelectionState} */
+		this._selection = new Set();
 	}
 
 	connectedCallback() {
@@ -48,9 +62,10 @@ export class RadioGroup extends SelectionMixin( XBElement, {
 
 		this.setAttribute( 'role', 'radiogroup' );
 
+		this._handleSelectionChange = this._handleSelectionChange.bind( this );
+
 		this.addEventListener( 'focusin', this._handleFocus );
 		this.addEventListener( 'focusout', this._handleBlur );
-		this.addEventListener( 'xb-selection-change', this._handleSelectionChange );
 	}
 
 	disconnectedCallback() {
@@ -58,10 +73,6 @@ export class RadioGroup extends SelectionMixin( XBElement, {
 
 		this.removeEventListener( 'focusin', this._handleFocus );
 		this.removeEventListener( 'focusout', this._handleBlur );
-		this.removeEventListener(
-			'xb-selection-change',
-			this._handleSelectionChange
-		);
 	}
 
 	/**
@@ -81,28 +92,35 @@ export class RadioGroup extends SelectionMixin( XBElement, {
 		} );
 	}
 
+	get trap() {
+		this._trap = this._trap ?? this.shadowRoot.querySelector( 'xb-focus-trap' );
+
+		return this._trap;
+	}
+
 	render() {
 		const { classy, when } = withClassy( { type: this.type } );
 
 		// TODO: add proper accessibility features
 		return html`
-			<xb-focus-trap>
-				<xb-stack
-					as="fieldset"
-					class=${ classy( 'radio-group' ) }
-					paddingless
-					?disabled="${ this.disabled }"
-				>
-					<slot></slot>
-				</xb-stack>
-			</xb-focus-trap>
+			<xb-selection-keeper
+				.value=${ this.value }
+				@xb-selection-change=${ this._handleSelectionChange }
+				listen="xb-check"
+				type=${ this.type }
+			>
+				<xb-focus-trap>
+					<xb-stack
+						as="fieldset"
+						class=${ classy( 'radio-group' ) }
+						paddingless
+						?disabled="${ this.disabled }"
+					>
+						<slot></slot>
+					</xb-stack>
+				</xb-focus-trap>
+			</xb-selection-keeper>
 		`;
-	}
-
-	get trap() {
-		this._trap = this._trap ?? this.shadowRoot.querySelector( 'xb-focus-trap' );
-
-		return this._trap;
 	}
 
 	_handleFocus() {
@@ -113,32 +131,22 @@ export class RadioGroup extends SelectionMixin( XBElement, {
 		this.trap.deactivate();
 	}
 
-	_handleSelectionChange( event ) {
-		event.stopPropagation();
-
-		this.emit( 'xb-change', { detail: event.detail } );
-	}
-
 	/**
 	 * @returns {import('./radio').RadioInput[]}
 	 */
 	_getRadios() {
-		this._defaultSlot =
-			this._defaultSlot ?? this.shadowRoot.querySelector( 'slot' );
+		this._defaultSlot = this._defaultSlot ?? this.shadowRoot.querySelector( 'slot' );
 
-		return [
-			...this._defaultSlot.assignedElements( { flatten: true } ),
-		].filter( ( item ) => item.matches( 'xb-radio' ) );
+		return [ ...this._defaultSlot.assignedElements( { flatten: true } ) ].filter(
+			( item ) => item.matches( 'xb-radio' )
+		);
 	}
 
 	/**
 	 * @param {import('./radio').RadioInput} radio
 	 */
 	_setRadioChecked( radio ) {
-		/** @type {SelectionController} */
-		const controller = this._selectionController;
-
-		radio.checked = controller.selection.has( radio.value );
+		radio.checked = this._selection.has( radio.value );
 	}
 
 	/**
@@ -148,11 +156,16 @@ export class RadioGroup extends SelectionMixin( XBElement, {
 		radio.disabled = this.disabled;
 	}
 
-	/**
-	 * @returns {FocusTrap}
-	 */
-	_getFocusTrap() {
-		return this._trap.value;
+	_handleSelectionChange( event ) {
+		event.stopPropagation();
+
+		const {
+			detail: { value, state },
+		} = event;
+
+		this._selection = state;
+
+		this.emit( 'xb-change', { detail: { value } } );
 	}
 }
 
@@ -160,7 +173,8 @@ window.customElements.define( 'xb-radio-group', RadioGroup );
 
 /**
  * @typedef {import('../../../styles/size.styles').ElementSize} ToggleSize
- * @typedef {import('../../../controllers/selection/selection.controller').default} SelectionController
+ * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionType} SelectionType
+ * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionState} SelectionState
  * @typedef {import('../../focus-trap').FocusTrap} FocusTrap
  */
 

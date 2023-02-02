@@ -1,20 +1,17 @@
 import { html } from 'lit';
 import withClassy from '@welingtonms/classy';
 
-import { TOGGLE_EVENT } from './toggle-group.constants';
-import SelectionMixin from '../../mixins/selection';
 import styles from './toggle-group.styles';
 import XBElement from '../../common/xb-element';
 
+import '../selection-keeper';
 import '../layout/cluster';
 
-export class ToggleGroup extends SelectionMixin( XBElement, {
-	listen: TOGGLE_EVENT,
-} ) {
-	static styles = [ styles() ];
-
+export class ToggleGroup extends XBElement {
 	/** @type {HTMLSlotElement} */
 	_defaultSlot;
+
+	static styles = [ styles() ];
 
 	static get properties() {
 		return {
@@ -25,18 +22,38 @@ export class ToggleGroup extends SelectionMixin( XBElement, {
 			disabled: { type: Boolean, reflect: true },
 
 			/**
-			 * Button size.
-			 * @type {ToggleGroupAttributes['size']}
-			 */
-			size: { type: String },
-
-			/**
 			 * Aria role
 			 * @type {ToggleGroupAttributes['role']}
 			 */
 			role: {
 				type: String,
 				reflect: true,
+			},
+
+			/**
+			 * Button size.
+			 * @type {ToggleGroupAttributes['size']}
+			 */
+			size: { type: String },
+
+			/**
+			 * Selection strategy.
+			 * @type {ToggleGroupAttributes['type']}
+			 */
+			type: { type: String },
+
+			/**
+			 * Selection value.
+			 * @type {ToggleGroupAttributes['value']}
+			 */
+			value: {},
+
+			/**
+			 * `Set` that represents the current selection value.
+			 * @type {SelectionState}
+			 */
+			_selection: {
+				state: true,
 			},
 		};
 	}
@@ -53,21 +70,15 @@ export class ToggleGroup extends SelectionMixin( XBElement, {
 		this.role = [ 'single', 'single-strict' ].includes( this.type )
 			? 'radiogroup'
 			: 'group';
+
+		/** @type {SelectionState} */
+		this._selection = new Set();
 	}
 
 	connectedCallback() {
 		super.connectedCallback();
 
-		this.addEventListener( 'xb-selection-change', this._handleSelectionChange );
-	}
-
-	disconnectedCallback() {
-		super.disconnectedCallback();
-
-		this.removeEventListener(
-			'xb-selection-change',
-			this._handleSelectionChange
-		);
+		this._handleSelectionChange = this._handleSelectionChange.bind( this );
 	}
 
 	/**
@@ -104,17 +115,24 @@ export class ToggleGroup extends SelectionMixin( XBElement, {
 
 		// TODO: add proper accessibility features
 		return html`
-			<xb-cluster
-				class=${ classy( 'toggle-group', {
-					'-single': when( { type: [ 'single', 'single-strict' ] } ),
-					'-multiple': when( { type: 'multiple' } ),
-				} ) }
-				borderless="none"
-				paddingless="none"
-				?disabled="${ this.disabled }"
+			<xb-selection-keeper
+				.value=${ this.value }
+				@xb-selection-change=${ this._handleSelectionChange }
+				listen="xb-toggle-click"
+				type=${ this.type }
 			>
-				<slot></slot>
-			</xb-cluster>
+				<xb-cluster
+					class=${ classy( 'toggle-group', {
+						'-single': when( { type: [ 'single', 'single-strict' ] } ),
+						'-multiple': when( { type: 'multiple' } ),
+					} ) }
+					borderless="none"
+					paddingless="none"
+					?disabled="${ this.disabled }"
+				>
+					<slot></slot>
+				</xb-cluster>
+			</xb-selection-keeper>
 		`;
 	}
 
@@ -122,12 +140,11 @@ export class ToggleGroup extends SelectionMixin( XBElement, {
 	 * @returns {import('./toggle').ToggleButton[]}
 	 */
 	_getToggles() {
-		this._defaultSlot =
-			this._defaultSlot ?? this.shadowRoot.querySelector( 'slot' );
+		this._defaultSlot = this._defaultSlot ?? this.shadowRoot.querySelector( 'slot' );
 
-		return [
-			...this._defaultSlot.assignedElements( { flatten: true } ),
-		].filter( ( item ) => item.matches( 'xb-toggle' ) );
+		return [ ...this._defaultSlot.assignedElements( { flatten: true } ) ].filter(
+			( item ) => item.matches( 'xb-toggle' )
+		);
 	}
 
 	/**
@@ -151,10 +168,7 @@ export class ToggleGroup extends SelectionMixin( XBElement, {
 	 * @param {import('./toggle').ToggleButton} toggle
 	 */
 	_setToggleChecked( toggle ) {
-		/** @type {SelectionController} */
-		const controller = this._selectionController;
-
-		toggle.checked = controller.selection.has( toggle.value );
+		toggle.checked = this._selection.has( toggle.value );
 	}
 
 	/**
@@ -167,18 +181,17 @@ export class ToggleGroup extends SelectionMixin( XBElement, {
 	_handleSelectionChange( event ) {
 		event.stopPropagation();
 
-		this.emit( 'xb-change', { detail: event.detail } );
+		const {
+			detail: { value, state },
+		} = event;
+
+		this._selection = state;
+
+		this.emit( 'xb-change', { detail: { value } } );
 	}
 }
 
 window.customElements.define( 'xb-toggle-group', ToggleGroup );
-
-// @ts-ignore
-// declare global {
-//   interface HTMLElementTagNameMap {
-//     "xb-toggle-group": ToggleGroup;
-//   }
-// }
 
 /**
  * @typedef {('text' | 'ghost' | 'flat')} ButtonEmphasis
@@ -186,7 +199,9 @@ window.customElements.define( 'xb-toggle-group', ToggleGroup );
  */
 
 /**
+ * @typedef {import('./toggle').ToggleButton} ToggleButton
  * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionType} ToggleGroupType
+ * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionState} SelectionState
  * @typedef {import('../../styles/size.styles').ElementSize} ToggleSize
  */
 

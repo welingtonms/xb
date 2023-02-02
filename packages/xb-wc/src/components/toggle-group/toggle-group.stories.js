@@ -21,10 +21,7 @@ export default {
 				type: 'boolean',
 			},
 		},
-		size: {
-			control: 'select',
-			options: [ 'small', 'medium', 'large' ],
-		},
+		size: SizeArg,
 		type: {
 			control: 'inline-radio',
 			options: SELECTION_TYPES,
@@ -40,14 +37,14 @@ export const Playground = {
 				size="${ args.size }"
 				@xb-change=${ args.change }
 			>
-				<xb-toggle ?disabled=${ args.disabled } value="change">
-					<span slot="leading">&hearts;</span>
-					Change
-				</xb-toggle>
-
 				<xb-toggle ?disabled=${ args.disabled } value="accept">
 					<span slot="leading">&diams;</span>
 					Accept
+				</xb-toggle>
+
+				<xb-toggle ?disabled=${ args.disabled } value="change">
+					<span slot="leading">&hearts;</span>
+					Change
 				</xb-toggle>
 
 				<xb-toggle ?disabled=${ args.disabled } value="leave">
@@ -87,15 +84,5 @@ export const Playground = {
 		type: 'multiple',
 		size: 'small',
 		disabled: false,
-	},
-	parameters: {
-		size: SizeArg,
-		backgrounds: {
-			values: [
-				{ name: 'red', value: '#f00' },
-				{ name: 'green', value: '#0f0' },
-				{ name: 'blue', value: '#00f' },
-			],
-		},
 	},
 };

@@ -1,7 +1,6 @@
 import { html } from 'lit';
 import withClassy from '@welingtonms/classy';
 
-import { TOGGLE_EVENT } from './toggle-group.constants';
 import XBElement from '../../common/xb-element';
 import styles from './toggle.styles';
 
@@ -96,7 +95,7 @@ export class ToggleButton extends XBElement {
 			composed: false,
 		};
 
-		this.emit( TOGGLE_EVENT, options );
+		this.emit( 'xb-toggle-click', options );
 	}
 }
 
