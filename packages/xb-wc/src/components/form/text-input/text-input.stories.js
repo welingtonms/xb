@@ -9,10 +9,8 @@ export default {
 
 	argTypes: {
 		type: {
-			control: {
-				type: 'select',
-				options: [ 'text', 'password', 'number' ],
-			},
+			control: 'select',
+			options: [ 'text', 'password', 'number' ],
 		},
 		disabled: {
 			control: {

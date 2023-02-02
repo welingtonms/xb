@@ -54,8 +54,7 @@ export class Popover extends XBElement {
 	}
 
 	firstUpdated() {
-		const [ anchorSlot, floatingSlot ] =
-			this.shadowRoot.querySelectorAll( 'slot' );
+		const [ anchorSlot, floatingSlot ] = this.shadowRoot.querySelectorAll( 'slot' );
 
 		[ this._anchor ] = anchorSlot.assignedElements( { flatten: true } );
 		[ this._floating ] = floatingSlot.assignedElements( { flatten: true } );
@@ -105,13 +104,13 @@ export class Popover extends XBElement {
 				// arrow( { element: this._getArrow() } ),
 			],
 		} ).then( ( { x, y, placement } ) => {
-			console.debug(
-				'[xb-popover]',
-				'requested placement at',
-				this.placement,
-				'; was placed at',
-				placement
-			);
+			// console.debug(
+			// 	'[xb-popover]',
+			// 	'requested placement at',
+			// 	this.placement,
+			// 	'; was placed at',
+			// 	placement
+			// );
 
 			// this.dataset.placedAt = placement;
 

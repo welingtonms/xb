@@ -1,6 +1,7 @@
 import { html } from 'lit-html';
 import { SELECTION_TYPES } from '@welingtonms/xb-toolset/dist/selection';
 
+import { SizeArg } from '../../common/arg-types';
 import '../layout/stack';
 import './toggle-group';
 import './toggle';
@@ -21,19 +22,14 @@ export default {
 			},
 		},
 		size: {
-			control: {
-				type: 'select',
-				options: [ 'small', 'medium', 'large' ],
-			},
+			control: 'select',
+			options: [ 'small', 'medium', 'large' ],
 		},
 		type: {
-			control: {
-				type: 'select',
-				options: SELECTION_TYPES,
-			},
+			control: 'inline-radio',
+			options: SELECTION_TYPES,
 		},
 	},
-	parameters: {},
 };
 
 export const Playground = {
@@ -65,13 +61,9 @@ export const Playground = {
 				size="${ args.size }"
 				@xb-change=${ args.change }
 			>
-				<xb-toggle ?disabled=${ args.disabled } value="change">
-					Change
-				</xb-toggle>
+				<xb-toggle ?disabled=${ args.disabled } value="change">Change</xb-toggle>
 
-				<xb-toggle ?disabled=${ args.disabled } value="accept">
-					Accept
-				</xb-toggle>
+				<xb-toggle ?disabled=${ args.disabled } value="accept">Accept</xb-toggle>
 
 				<xb-toggle ?disabled=${ args.disabled } value="leave">Leave</xb-toggle>
 			</xb-toggle-group>
@@ -81,17 +73,11 @@ export const Playground = {
 				size="${ args.size }"
 				@xb-change=${ args.change }
 			>
-				<xb-toggle ?disabled=${ args.disabled } value="change">
-					&hearts;
-				</xb-toggle>
+				<xb-toggle ?disabled=${ args.disabled } value="change">&hearts;</xb-toggle>
 
-				<xb-toggle ?disabled=${ args.disabled } value="accept">
-					&diams;
-				</xb-toggle>
+				<xb-toggle ?disabled=${ args.disabled } value="accept">&diams;</xb-toggle>
 
-				<xb-toggle ?disabled=${ args.disabled } value="leave">
-					&clubs;
-				</xb-toggle>
+				<xb-toggle ?disabled=${ args.disabled } value="leave">&clubs;</xb-toggle>
 			</xb-toggle-group>
 		</xb-stack>
 	`,
@@ -101,5 +87,15 @@ export const Playground = {
 		type: 'multiple',
 		size: 'small',
 		disabled: false,
+	},
+	parameters: {
+		size: SizeArg,
+		backgrounds: {
+			values: [
+				{ name: 'red', value: '#f00' },
+				{ name: 'green', value: '#0f0' },
+				{ name: 'blue', value: '#00f' },
+			],
+		},
 	},
 };

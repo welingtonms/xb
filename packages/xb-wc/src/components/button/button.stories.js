@@ -9,10 +9,8 @@ export default {
 
 	argTypes: {
 		emphasis: {
-			control: {
-				type: 'select',
-				options: [ 'text', 'ghost', 'flat' ],
-			},
+			control: 'select',
+			options: [ 'text', 'ghost', 'flat' ],
 		},
 		children: {
 			table: {

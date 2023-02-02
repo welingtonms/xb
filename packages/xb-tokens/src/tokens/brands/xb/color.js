@@ -23,7 +23,7 @@ module.exports = {
 				800: { value: '225, 20, 68', comment: 'rgb(225, 20, 68)' },
 				900: { value: '206, 18, 62', comment: 'rgb(206, 18, 62)' },
 			},
-			terciary: {
+			tertiary: {
 				100: { value: '255, 237, 194', comment: 'rgb(255, 237, 194)' },
 				200: { value: '255, 231, 173', comment: 'rgb(255, 231, 173)' },
 				300: { value: '255, 224, 153', comment: 'rgb(255, 224, 153)' },

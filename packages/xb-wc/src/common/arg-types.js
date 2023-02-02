@@ -1,58 +1,34 @@
 // keep here arg types for storybook stories
 
 export const PlacementArg = Object.freeze( {
-	control: {
-		type: 'select',
-		options: [
-			'top',
-			'left',
-			'right',
-			'bottom',
-			'top-start',
-			'top-end',
-			'right-start',
-			'right-end',
-			'bottom-start',
-			'bottom-end',
-			'left-start',
-			'left-end',
-		],
-	},
+	control: 'select',
+	options: [
+		'top',
+		'left',
+		'right',
+		'bottom',
+		'top-start',
+		'top-end',
+		'right-start',
+		'right-end',
+		'bottom-start',
+		'bottom-end',
+		'left-start',
+		'left-end',
+	],
 } );
 
 export const SizeArg = Object.freeze( {
-	control: {
-		type: 'select',
-		options: [ 'extra-small', 'small', 'medium', 'large' ],
-	},
+	control: 'select',
+	options: [ 'extra-small', 'small', 'medium', 'large' ],
 } );
 
 export const PaddinglessArg = Object.freeze( {
-	control: {
-		type: 'select',
-		options: [
-			'none',
-			'horizontal',
-			'vertical',
-			'top',
-			'right',
-			'bottom',
-			'left',
-		],
-	},
+	control: 'select',
+	options: [ 'none', 'horizontal', 'vertical', 'top', 'right', 'bottom', 'left' ],
 } );
 
 export const BorderlessArg = Object.freeze( {
-	control: {
-		type: 'select',
-		options: [
-			'none',
-			'horizontal',
-			'vertical',
-			'top',
-			'right',
-			'bottom',
-			'left',
-		],
-	},
+	control: 'select',
+	options: [ 'none', 'horizontal', 'vertical', 'top', 'right', 'bottom', 'left' ],
 } );

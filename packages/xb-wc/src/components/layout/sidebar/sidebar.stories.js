@@ -1,5 +1,6 @@
 import { html } from 'lit-html';
 
+import { BorderlessArg, PaddinglessArg } from '../../../common/arg-types';
 import '../box';
 import './sidebar';
 
@@ -7,45 +8,15 @@ export default {
 	title: 'Foundation/Layouts/sidebar',
 	component: 'sidebar',
 	argTypes: {
-		paddingless: {
-			control: {
-				type: 'select',
-				options: [
-					'none',
-					'horizontal',
-					'vertical',
-					'top',
-					'right',
-					'bottom',
-					'left',
-				],
-			},
-		},
-		borderless: {
-			control: {
-				type: 'select',
-				options: [
-					'none',
-					'horizontal',
-					'vertical',
-					'top',
-					'right',
-					'bottom',
-					'left',
-				],
-			},
-		},
+		paddingless: PaddinglessArg,
+		borderless: BorderlessArg,
 		sidePosition: {
-			control: {
-				type: 'select',
-				options: [ 'left', 'right' ],
-			},
+			control: 'select',
+			options: [ 'left', 'right' ],
 		},
 		minContentWidth: {
-			control: {
-				type: 'select',
-				options: [ '25%', '50%', '75%' ],
-			},
+			control: 'select',
+			options: [ '25%', '50%', '75%' ],
 		},
 		children: {
 			table: {

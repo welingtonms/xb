@@ -9,10 +9,8 @@ export default {
 	argTypes: {
 		// backgroundColor: { control: 'color' },
 		variant: {
-			control: {
-				type: 'select',
-				options: [ 'neutral', 'primary', 'secondary', 'terciary' ],
-			},
+			control: 'select',
+			options: [ 'neutral', 'primary', 'secondary', 'tertiary' ],
 		},
 	},
 	parameters: {

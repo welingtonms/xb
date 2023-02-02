@@ -32,7 +32,7 @@ export class Badge extends XBElement {
 				class=${ classy( 'badge', {
 					'-primary': when( { variant: 'primary' } ),
 					'-secondary': when( { variant: 'secondary' } ),
-					'-terciary': when( { variant: 'terciary' } ),
+					'-tertiary': when( { variant: 'tertiary' } ),
 				} ) }
 			>
 				<slot></slot>
@@ -44,7 +44,7 @@ export class Badge extends XBElement {
 window.customElements.define( 'xb-badge', Badge );
 
 /**
- * @typedef {('neutral' | 'primary' | 'secondary' | 'terciary')} BadgeVariant
+ * @typedef {('neutral' | 'primary' | 'secondary' | 'tertiary')} BadgeVariant
  */
 
 /**

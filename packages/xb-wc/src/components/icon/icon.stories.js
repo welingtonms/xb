@@ -10,10 +10,8 @@ export default {
 
 	argTypes: {
 		name: {
-			control: {
-				type: 'select',
-				options: Object.keys( Icons ),
-			},
+			control: 'select',
+			options: Object.keys( Icons ),
 		},
 		size: {
 			control: {

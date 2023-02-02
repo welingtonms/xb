@@ -14,10 +14,7 @@ function styles() {
 			}
 
 			.badge {
-				${ transition( [
-					{ property: 'background-color' },
-					{ property: 'color' },
-				] ) };
+				${ transition( [ { property: 'background-color' }, { property: 'color' } ] ) };
 
 				${ typography( 'caption' ) };
 				${ px( token( 'spacing-4' ) ) };
@@ -43,8 +40,8 @@ function styles() {
 				--xb-badge-background-color: ${ token( 'color-secondary-500' ) };
 			}
 
-			.-terciary {
-				--xb-badge-background-color: ${ token( 'color-terciary-500' ) };
+			.-tertiary {
+				--xb-badge-background-color: ${ token( 'color-tertiary-500' ) };
 				--xb-badge-color: ${ token( 'color-black' ) };
 			}
 		`,

@@ -8,10 +8,8 @@ export default {
 
 	argTypes: {
 		type: {
-			control: {
-				type: 'select',
-				options: [ 'text', 'password', 'number' ],
-			},
+			control: 'select',
+			options: [ 'text', 'password', 'number' ],
 		},
 		disabled: {
 			control: {
@@ -25,10 +23,8 @@ export default {
 			},
 		},
 		size: {
-			control: {
-				type: 'select',
-				options: [ 'small', 'medium', 'large' ],
-			},
+			control: 'select',
+			options: [ 'small', 'medium', 'large' ],
 		},
 		change: {
 			action: 'changed',

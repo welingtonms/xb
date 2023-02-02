@@ -11,10 +11,8 @@ export default {
 	argTypes: {
 		placement: PlacementArg,
 		variant: {
-			control: {
-				type: 'select',
-				options: [ 'neutral', 'primary', 'secondary', 'terciary' ],
-			},
+			control: 'select',
+			options: [ 'neutral', 'primary', 'secondary', 'tertiary' ],
 		},
 	},
 	parameters: {},
@@ -29,9 +27,7 @@ export const Playground = {
 				style="--xb-icon-color: rgb(var(--xb-color-secondary-500));"
 			></xb-icon>
 			<span slot="floating">
-				<xb-box borderless>
-					Proin facilisis mauris ut tortor vulputate placerat.
-				</xb-box>
+				<xb-box borderless>Proin facilisis mauris ut tortor vulputate placerat.</xb-box>
 			</span>
 		</xb-popover>
 	`,

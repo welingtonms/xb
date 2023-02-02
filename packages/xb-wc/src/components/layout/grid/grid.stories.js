@@ -1,5 +1,6 @@
 import { html } from 'lit-html';
 
+import { BorderlessArg, PaddinglessArg } from '../../../common/arg-types';
 import '../box';
 import './grid';
 
@@ -7,34 +8,8 @@ export default {
 	title: 'Foundation/Layouts/grid',
 	component: 'xb-grid',
 	argTypes: {
-		paddingless: {
-			control: {
-				type: 'select',
-				options: [
-					'none',
-					'horizontal',
-					'vertical',
-					'top',
-					'right',
-					'bottom',
-					'left',
-				],
-			},
-		},
-		borderless: {
-			control: {
-				type: 'select',
-				options: [
-					'none',
-					'horizontal',
-					'vertical',
-					'top',
-					'right',
-					'bottom',
-					'left',
-				],
-			},
-		},
+		paddingless: PaddinglessArg,
+		borderless: BorderlessArg,
 		children: {
 			table: {
 				disable: true,
