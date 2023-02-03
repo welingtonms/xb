@@ -19,13 +19,13 @@ import './select-trigger';
 // const root = new ContextRoot();
 // const selectContext = createContext( 'select' );
 
-function createOption( { value, label, type, role, disabled, checked } ) {
+function createOption( { value, label, type, disabled, selected } ) {
 	const option = Object.assign( document.createElement( 'xb-option' ), {
 		value,
 		innerHTML: label,
-		role,
+
 		disabled,
-		checked,
+		selected,
 	} );
 
 	option.dataset.type = type;
@@ -97,15 +97,6 @@ export class Select extends XBElement {
 			placement: { type: String },
 
 			/**
-			 * Aria role
-			 * @type {SelectAttributes['role']}
-			 */
-			role: {
-				type: String,
-				reflect: true,
-			},
-
-			/**
 			 * Selection value.
 			 * @type {SelectAttributes['value']}
 			 */
@@ -153,10 +144,6 @@ export class Select extends XBElement {
 
 		/** @type {SelectAttributes['placement']} */
 		this.placement = 'bottom-start';
-
-		// TODO: fix the mess in the roles for select and dropdown components
-		/** @type {SelectAttributes['role']} */
-		this.role = 'radiogroup';
 
 		/** @type {SelectAttributes['value']} */
 		this.value = null;
@@ -214,11 +201,6 @@ export class Select extends XBElement {
 	 * @param {import('lit').PropertyValues<Select>} changedProperties
 	 */
 	update( changedProperties ) {
-		if ( changedProperties.has( 'multiple' ) ) {
-			// TODO: fix this a11y role mess
-			this.role = this.multiple ? 'group' : 'radiogroup';
-		}
-
 		if ( changedProperties.has( 'datasources' ) ) {
 			this._data.setDatasources( this.datasources );
 		}
@@ -280,7 +262,14 @@ export class Select extends XBElement {
 				<xb-dropdown placement="${ ifDefined( this.placement ) }">
 					<xb-select-trigger slot="trigger"></xb-select-trigger>
 
-					<xb-select-menu slot="menu" ?loading=${ this.loading }>
+					<xb-select-menu
+						slot="menu"
+						id="menu"
+						role="listbox"
+						aria-multiselectable=${ this.multiple ? 'true' : 'false' }
+						aria-label="Options"
+						?loading=${ this.loading }
+					>
 						<slot @slotchange=${ this._handleSlotChanged }>
 							<xb-text class="empty" variant="body-2">No options available.</xb-text>
 						</slot>
@@ -291,15 +280,15 @@ export class Select extends XBElement {
 	}
 
 	/**
-	 * Sync the `role`, `disabled`, and `checked` attributes for the provided
+	 * Sync the `disabled`, and `selected` attributes for the provided
 	 * `options`, or all the rendered options, if no `options` is provided.
 	 * @param {SelectOption[]} [options]
 	 */
 	_syncOptions( options ) {
 		( options ?? this.options ).forEach( ( option ) => {
-			option.setAttribute( 'role', this.multiple ? 'checkbox' : 'radio' );
 			option.disabled = this.disabled || option.disabled;
-			option.checked = this._selection.has( option.value );
+			option.selected = this._selection.has( option.value );
+			option.type = this.multiple ? 'multiple' : 'single';
 		} );
 	}
 
@@ -362,10 +351,10 @@ export class Select extends XBElement {
 					type: _type,
 					value,
 					label,
-					role: this.multiple ? 'checkbox' : 'radio',
+
 					// TODO: how to keep the previous disabled state?
 					disabled: this.disabled,
-					checked: this._selection.has( value ),
+					selected: this._selection.has( value ),
 				} )
 			);
 		} );

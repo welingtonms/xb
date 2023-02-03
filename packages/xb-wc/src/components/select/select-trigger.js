@@ -66,8 +66,7 @@ export class SelectTrigger extends XBElement {
 	}
 
 	get input() {
-		this._input =
-			this._input ?? this.shadowRoot.querySelector( 'xb-text-input' );
+		this._input = this._input ?? this.shadowRoot.querySelector( 'xb-text-input' );
 
 		return this._input;
 	}
@@ -100,6 +99,10 @@ export class SelectTrigger extends XBElement {
 
 		return html`
 			<xb-text-input
+				role="combobox"
+				aria-autocomplete="list"
+				aria-expanded=${ this.open ? 'true' : 'false' }
+				aria-controls="menu"
 				clearable
 				class="${ classy( 'select-trigger', {
 					'is-open': when( { open: true } ),
@@ -110,6 +113,10 @@ export class SelectTrigger extends XBElement {
 				@xb-input=${ this._handleTriggerInput }
 			>
 				<xb-button
+					tabindex="-1"
+					aria-label="Options"
+					aria-expanded=${ this.open ? 'true' : 'false' }
+					aria-controls="menu"
 					slot="trailing"
 					paddingless
 					emphasis="text"
@@ -117,6 +124,7 @@ export class SelectTrigger extends XBElement {
 					@click=${ this._handleTrailingClick }
 				>
 					<xb-icon
+						aria-hidden="true"
 						class=${ classy( 'indicator', {
 							'is-open': when( { open: true } ),
 						} ) }

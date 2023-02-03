@@ -33,19 +33,16 @@ export class MenuItem extends XBElement {
 			size: { type: String },
 
 			/**
-			 * Is this a checked option.
-			 * @type {MenuItemAttributes['checked']}
+			 * Is this a selected option.
+			 * @type {MenuItemAttributes['selected']}
 			 */
-			checked: { type: Boolean },
+			selected: { type: Boolean },
 
 			/**
-			 * Aria role
-			 * @type {MenuItemAttributes['role']}
+			 * Selection strategy.
+			 * @type {MenuItemAttributes['type']}
 			 */
-			role: {
-				type: String,
-				reflect: true,
-			},
+			type: { type: String },
 
 			/**
 			 * Value that this option represents.
@@ -61,14 +58,17 @@ export class MenuItem extends XBElement {
 		/** @type {MenuItemAttributes['size']} */
 		this.size = 'small';
 
-		/** @type {MenuItemAttributes['checked']} */
-		this.checked = false;
+		/** @type {MenuItemAttributes['selected']} */
+		this.selected = false;
 
 		/** @type {MenuItemAttributes['disabled']} */
 		this.disabled = false;
 
 		/** @type {MenuItemAttributes['value']} */
 		this.value = '';
+
+		/** @type {MenuItemAttributes['type']} */
+		this.type = 'single';
 	}
 
 	get button() {
@@ -86,10 +86,7 @@ export class MenuItem extends XBElement {
 		 * FIXME: the fallback is needed for when this._defaultSlot is still null,
 		 * but this might not be enough for all cases.
 		 */
-		return (
-			getTextContent( this._defaultSlot ) ||
-			String( this.textContent ?? '' ).trim()
-		);
+		return getTextContent( this._defaultSlot ) || String( this.textContent ?? '' ).trim();
 	}
 
 	focus() {
@@ -98,7 +95,7 @@ export class MenuItem extends XBElement {
 
 	render() {
 		const { classy, when } = withClassy( {
-			checked: this.checked,
+			selected: this.selected,
 			size: this.size,
 		} );
 
@@ -111,24 +108,21 @@ export class MenuItem extends XBElement {
 					'-medium': when( { size: 'medium' } ),
 					'-large': when( { size: 'large' } ),
 				} ) }"
-				role="${ ifDefined( this.role ) }"
-				aria-checked="${ this.checked ? 'true' : 'false' }"
+				role="option"
+				aria-selected="${ this.selected ? 'true' : 'false' }"
 				?disabled="${ this.disabled }"
 				@click=${ this._handleClick }
 			>
-				${ this.role == 'checkbox'
+				${ this.type == 'multiple'
 					? html`
-							<xb-checkbox
-								tabindex="-1"
-								?checked=${ this.checked }
-							></xb-checkbox>
+							<xb-checkbox tabindex="-1" ?checked=${ this.selected }></xb-checkbox>
 					  `
 					: nothing }
 
 				<slot name="leading"></slot>
 				<slot></slot>
 
-				${ this.role == 'radio'
+				${ this.type != 'multiple'
 					? html`
 							<xb-icon name="check" class="check"></xb-icon>
 					  `
@@ -154,6 +148,7 @@ window.customElements.define( 'xb-menu-item', MenuItem );
 
 /**
  * @typedef {import('../../styles/size.styles').ElementSize} SelectionOptionSize
+ * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionType} SelectionType
  */
 
 /**
@@ -161,7 +156,7 @@ window.customElements.define( 'xb-menu-item', MenuItem );
  * @property {boolean} [open] - Is the dropdown menu open.
  * @property {boolean} disabled Should the button be disabled.
  * @property {SelectionOptionSize} size
- * @property {boolean} [checked] - Is this a checked option
- * @property {'checkbox' | 'radio'} role Aria role
+ * @property {SelectionType} type
+ * @property {boolean} [selected] - Is this a selected option
  * @property {string} value Value that this option represents.
  */

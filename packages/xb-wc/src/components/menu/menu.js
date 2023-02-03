@@ -73,6 +73,7 @@ export class Menu extends XBElement {
 
 			<xb-focus-trap>
 				<xb-stack
+					role="listbox"
 					class="${ classy( 'menu', {
 						'-hoverable': when( { hoverable: true } ),
 						'-striped': when( { striped: true } ),

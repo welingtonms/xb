@@ -1,20 +1,12 @@
 import { css } from 'lit';
 
-import {
-	active,
-	disabled,
-	focused,
-	hovered,
-	enabled,
-} from '../../styles/state.styles';
+import { active, disabled, focused, hovered } from '../../styles/state.styles';
 import m from '../../styles/margin.styles';
-import outline from '../../styles/outline.styles';
 import p, { px, py } from '../../styles/padding.styles';
 import token from '../../utils/get-token';
 import transition from '../../styles/transition.styles';
 import typography from '../../styles/typography.styles';
 
-import layoutStyles from '../../styles/layout.styles';
 import sizeStyles from '../../styles/size.styles';
 
 function styles() {
@@ -76,7 +68,7 @@ function styles() {
 				width: 100%;
 			}
 
-			.menu-item[aria-checked='true'] {
+			.menu-item[aria-selected='true'] {
 				--xb-menu-item-background-color: ${ token( 'color-primary-100', 0.2 ) };
 
 				--xb-menu-item-color: ${ token( 'color-primary-600' ) };
@@ -125,7 +117,7 @@ function styles() {
 				margin-left: auto;
 			}
 
-			.menu-item[aria-checked='true'] .check {
+			.menu-item[aria-selected='true'] .check {
 				visibility: visible;
 			}
 		`,
