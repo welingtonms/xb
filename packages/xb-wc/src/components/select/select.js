@@ -1,4 +1,4 @@
-// import { ContextProvider, ContextRoot, createContext } from '@lit-labs/context';
+import { ContextProvider, ContextRoot, createContext } from '@lit-labs/context';
 import { html } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import toArray from '@welingtonms/xb-toolset/dist/to-array';
@@ -6,7 +6,7 @@ import toArray from '@welingtonms/xb-toolset/dist/to-array';
 import DataController from './data.controller';
 import styles from './select.styles';
 import XBElement from '../../common/xb-element';
-
+import { selectContext } from './select-context';
 import '../dropdown';
 import '../layout/box';
 import '../menu';
@@ -15,9 +15,6 @@ import '../text';
 import './select-menu';
 import './select-option';
 import './select-trigger';
-
-// const root = new ContextRoot();
-// const selectContext = createContext( 'select' );
 
 function createOption( { value, label, type, disabled, selected } ) {
 	const option = Object.assign( document.createElement( 'xb-option' ), {
@@ -35,10 +32,13 @@ function createOption( { value, label, type, disabled, selected } ) {
 
 export class Select extends XBElement {
 	/** @type {DataController} */
-	_data;
+	_controller;
 
 	/** @type {SelectOption[]} */
 	_options;
+
+	/** @type {ContextProvider<SelectContext>} */
+	_provider;
 
 	/** @type {SelectTrigger} */
 	_trigger;
@@ -153,12 +153,14 @@ export class Select extends XBElement {
 
 		/** @type {SelectionState} */
 		this._selection = new Set();
+
+		this._provider = new ContextProvider( this, selectContext );
 	}
 
 	connectedCallback() {
 		super.connectedCallback();
 
-		this._data = new DataController( this, this.datasources );
+		this._controller = new DataController( this, this.datasources );
 
 		this._handleClear = this._handleClear.bind( this );
 		this._handleCollapse = this._handleCollapse.bind( this );
@@ -194,7 +196,7 @@ export class Select extends XBElement {
 			}
 		} );
 
-		this._data.query( '', 'static' );
+		this._controller.query( '', 'static' );
 	}
 
 	/**
@@ -202,11 +204,27 @@ export class Select extends XBElement {
 	 */
 	update( changedProperties ) {
 		if ( changedProperties.has( 'datasources' ) ) {
-			this._data.setDatasources( this.datasources );
+			this._controller.setDatasources( this.datasources );
 		}
 
 		if ( changedProperties.has( 'value' ) ) {
-			this._value = this._data.toValue( this.value );
+			this._value = this._controller.toValue( this.value );
+		}
+
+		if (
+			changedProperties.has( 'multiple' ) ||
+			changedProperties.has( 'disabled' ) ||
+			changedProperties.has( 'loading' ) ||
+			changedProperties.has( '_selection' )
+		) {
+			this._provider.setValue( {
+				placeholder: this.placeholder,
+				multiple: this.multiple,
+				disabled: this.disabled,
+				loading: this.loading,
+				selection: this._selection,
+				controller: this._controller,
+			} );
 		}
 
 		super.update( changedProperties );
@@ -219,10 +237,6 @@ export class Select extends XBElement {
 		super.updated( changedProperties );
 
 		this._renderDataOptions();
-
-		if ( changedProperties.has( '_value' ) ) {
-			this._updateTrigger();
-		}
 	}
 
 	get dropdown() {
@@ -292,26 +306,6 @@ export class Select extends XBElement {
 		} );
 	}
 
-	_updateTrigger() {
-		const selection = this._selection;
-		const trigger = this.trigger;
-
-		if ( selection.size === 0 ) {
-			trigger.placeholder = this.placeholder;
-			return;
-		}
-
-		if ( this.multiple ) {
-			trigger.placeholder = `${ selection.size } selected`;
-		} else {
-			const [ value ] = Array.from( selection.keys() );
-			const item = this._data.getRaw( value );
-			const { label } = this._data.toOption( item );
-
-			trigger.placeholder = label;
-		}
-	}
-
 	_removeDataOptions() {
 		this.options.forEach( ( option ) => {
 			option.remove();
@@ -323,23 +317,23 @@ export class Select extends XBElement {
 	_renderDataOptions() {
 		let keys = new Set();
 
-		if ( this._data.mode == 'default' ) {
+		if ( this._controller.mode == 'default' ) {
 			keys = new Set( [
-				...this._data.getGroup( 'static' ).keys(),
+				...this._controller.getGroup( 'static' ).keys(),
 				...this._selection.keys(),
 			] );
 		} else {
-			keys = new Set( [ ...this._data.getGroup( 'queried' ).keys() ] );
+			keys = new Set( [ ...this._controller.getGroup( 'queried' ).keys() ] );
 		}
 
 		Array.from( keys.keys() ).forEach( ( key ) => {
-			const item = this._data.getRaw( key );
+			const item = this._controller.getRaw( key );
 
 			if ( ! item ) {
 				return;
 			}
 
-			const { value, label, _type } = this._data.toOption( item );
+			const { value, label, _type } = this._controller.toOption( item );
 
 			// avoid re-rendering an option previously rendered
 			if ( this.querySelector( `xb-option[value="${ value }"]` ) ) {
@@ -372,13 +366,13 @@ export class Select extends XBElement {
 		this._removeDataOptions();
 
 		if ( query === '' ) {
-			this._data.setMode( 'default' );
+			this._controller.setMode( 'default' );
 			this._renderDataOptions();
 
 			return;
 		}
 
-		this._data.setMode( 'search' );
+		this._controller.setMode( 'search' );
 
 		const menu = this.menu;
 		const dropdown = this.dropdown;
@@ -387,7 +381,7 @@ export class Select extends XBElement {
 
 		menu.loading = true;
 
-		await this._data.query( query );
+		await this._controller.query( query );
 
 		menu.loading = false;
 	}
@@ -395,8 +389,8 @@ export class Select extends XBElement {
 	_handleClear() {
 		this._removeDataOptions();
 
-		this._data.setMode( 'default' );
-		this._data.query( '' );
+		this._controller.setMode( 'default' );
+		this._controller.query( '' );
 	}
 
 	_handleSlotChanged() {
@@ -426,7 +420,6 @@ export class Select extends XBElement {
 		} );
 
 		this._syncOptions( optionsToSync );
-		this._updateTrigger();
 
 		if ( ! this.multiple && value != null ) {
 			this.dropdown.collapse();
@@ -438,7 +431,7 @@ export class Select extends XBElement {
 			}
 
 			const values = toArray( value ).map( ( key ) => {
-				return this._data.getRaw( key ) ?? key;
+				return this._controller.getRaw( key ) ?? key;
 			} );
 
 			return this.multiple ? values : values[ 0 ];
@@ -452,12 +445,12 @@ export class Select extends XBElement {
 	_handleCollapse() {
 		this.trigger.clear();
 
-		if ( this._data.mode == 'search' ) {
+		if ( this._controller.mode == 'search' ) {
 			this._removeDataOptions();
-			this._data.query( '' );
+			this._controller.query( '' );
 		}
 
-		this._data.setMode( 'default' );
+		this._controller.setMode( 'default' );
 	}
 }
 
@@ -466,6 +459,7 @@ window.customElements.define( 'xb-select', Select );
 /**
  * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionType} SelectionType
  * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionState} SelectionState
+ * @typedef {import('./select-context').SelectContext} SelectContext
  * @typedef {import('../../common/xb-element').default} XBElement
  */
 

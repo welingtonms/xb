@@ -1,8 +1,8 @@
 import { html } from 'lit';
-// import { ContextConsumer } from '@lit-labs/context';
+import { ContextConsumer } from '@lit-labs/context';
 import withClassy from '@welingtonms/classy';
 
-// import selectionContext from '../../contexts/selection';
+import { selectContext } from './select-context';
 
 import XBElement from '../../common/xb-element';
 import styles from './select-trigger.styles';
@@ -57,12 +57,12 @@ export class SelectTrigger extends XBElement {
 		this.placeholder = 'Search & Select';
 
 		/** @type {ContextConsumer<Selection, SelectTrigger>} */
-		// this._selection = new ContextConsumer(
-		// 	this,
-		// 	selectionContext,
-		// 	undefined,
-		// 	true // subscribe to updates when selection changes
-		// );
+		this._select = new ContextConsumer(
+			this,
+			selectContext,
+			undefined,
+			true // subscribe to updates when selection changes
+		);
 	}
 
 	get input() {
@@ -71,31 +71,8 @@ export class SelectTrigger extends XBElement {
 		return this._input;
 	}
 
-	// 	_updateTrigger() {
-	// 	const options = this.options;
-	// 	const selection = this.selection;
-	// 	const trigger = this.trigger;
-
-	// 	if ( this.type == 'multiple' ) {
-	// 		trigger.placeholder =
-	// 			selection.size > 0 ? `${ selection.size } selected` : this.placeholder;
-	// 	} else {
-	// 		/**
-	// 		 * TODO: create a datasource with the static options so we can use the
-	// 		 * _datasourceHelpers `resolve` function here.
-	// 		 */
-	// 		const selectedOption = options.find( ( option ) =>
-	// 			selection.has( option.value )
-	// 		);
-
-	// 		trigger.placeholder = selectedOption?.text() ?? this.placeholder;
-	// 	}
-	// }
-
 	render() {
 		const { classy, when } = withClassy( { open: this.open } );
-
-		// console.log( 'select-trigger context', this._selection.value );
 
 		return html`
 			<xb-text-input
@@ -107,7 +84,8 @@ export class SelectTrigger extends XBElement {
 				class="${ classy( 'select-trigger', {
 					'is-open': when( { open: true } ),
 				} ) }"
-				placeholder="${ this.placeholder }"
+				placeholder="${ this._getPlaceholderText() }"
+				?disabled=${ this._isDisabled() }
 				@click=${ this._handleTriggerClick }
 				@xb-change=${ this._handleTriggerChange }
 				@xb-input=${ this._handleTriggerInput }
@@ -142,6 +120,30 @@ export class SelectTrigger extends XBElement {
 
 	clear() {
 		this.input?.clear();
+	}
+
+	_getPlaceholderText() {
+		const { multiple, selection, placeholder, controller } = this._select.value;
+
+		if ( selection.size === 0 ) {
+			return placeholder;
+		}
+
+		if ( multiple ) {
+			return `${ selection.size } selected`;
+		}
+
+		const [ value ] = Array.from( selection.keys() );
+		const item = controller.getRaw( value );
+		const { label } = controller.toOption( item );
+
+		return label;
+	}
+
+	_isDisabled() {
+		const { disabled } = this._select.value;
+
+		return Boolean( this.disabled || disabled );
 	}
 
 	_handleTriggerClick() {
