@@ -35,7 +35,7 @@ function createOption( { value, label, type, disabled, selected } ) {
 
 export class Select extends XBElement {
 	/** @type {DataController} */
-	_data;
+	_controller;
 
 	/** @type {SelectOption[]} */
 	_options;
@@ -158,7 +158,7 @@ export class Select extends XBElement {
 	connectedCallback() {
 		super.connectedCallback();
 
-		this._data = new DataController( this, this.datasources );
+		this._controller = new DataController( this, this.datasources );
 
 		this._handleClear = this._handleClear.bind( this );
 		this._handleCollapse = this._handleCollapse.bind( this );
@@ -194,7 +194,7 @@ export class Select extends XBElement {
 			}
 		} );
 
-		this._data.query( '', 'static' );
+		this._controller.query( '', 'static' );
 	}
 
 	/**
@@ -202,11 +202,11 @@ export class Select extends XBElement {
 	 */
 	update( changedProperties ) {
 		if ( changedProperties.has( 'datasources' ) ) {
-			this._data.setDatasources( this.datasources );
+			this._controller.setDatasources( this.datasources );
 		}
 
 		if ( changedProperties.has( 'value' ) ) {
-			this._value = this._data.toValue( this.value );
+			this._value = this._controller.toValue( this.value );
 		}
 
 		super.update( changedProperties );
@@ -305,8 +305,8 @@ export class Select extends XBElement {
 			trigger.placeholder = `${ selection.size } selected`;
 		} else {
 			const [ value ] = Array.from( selection.keys() );
-			const item = this._data.getRaw( value );
-			const { label } = this._data.toOption( item );
+			const item = this._controller.getRaw( value );
+			const { label } = this._controller.toOption( item );
 
 			trigger.placeholder = label;
 		}
@@ -323,23 +323,23 @@ export class Select extends XBElement {
 	_renderDataOptions() {
 		let keys = new Set();
 
-		if ( this._data.mode == 'default' ) {
+		if ( this._controller.mode == 'default' ) {
 			keys = new Set( [
-				...this._data.getGroup( 'static' ).keys(),
+				...this._controller.getGroup( 'static' ).keys(),
 				...this._selection.keys(),
 			] );
 		} else {
-			keys = new Set( [ ...this._data.getGroup( 'queried' ).keys() ] );
+			keys = new Set( [ ...this._controller.getGroup( 'queried' ).keys() ] );
 		}
 
 		Array.from( keys.keys() ).forEach( ( key ) => {
-			const item = this._data.getRaw( key );
+			const item = this._controller.getRaw( key );
 
 			if ( ! item ) {
 				return;
 			}
 
-			const { value, label, _type } = this._data.toOption( item );
+			const { value, label, _type } = this._controller.toOption( item );
 
 			// avoid re-rendering an option previously rendered
 			if ( this.querySelector( `xb-option[value="${ value }"]` ) ) {
@@ -372,13 +372,13 @@ export class Select extends XBElement {
 		this._removeDataOptions();
 
 		if ( query === '' ) {
-			this._data.setMode( 'default' );
+			this._controller.setMode( 'default' );
 			this._renderDataOptions();
 
 			return;
 		}
 
-		this._data.setMode( 'search' );
+		this._controller.setMode( 'search' );
 
 		const menu = this.menu;
 		const dropdown = this.dropdown;
@@ -387,7 +387,7 @@ export class Select extends XBElement {
 
 		menu.loading = true;
 
-		await this._data.query( query );
+		await this._controller.query( query );
 
 		menu.loading = false;
 	}
@@ -395,8 +395,8 @@ export class Select extends XBElement {
 	_handleClear() {
 		this._removeDataOptions();
 
-		this._data.setMode( 'default' );
-		this._data.query( '' );
+		this._controller.setMode( 'default' );
+		this._controller.query( '' );
 	}
 
 	_handleSlotChanged() {
@@ -438,7 +438,7 @@ export class Select extends XBElement {
 			}
 
 			const values = toArray( value ).map( ( key ) => {
-				return this._data.getRaw( key ) ?? key;
+				return this._controller.getRaw( key ) ?? key;
 			} );
 
 			return this.multiple ? values : values[ 0 ];
@@ -452,12 +452,12 @@ export class Select extends XBElement {
 	_handleCollapse() {
 		this.trigger.clear();
 
-		if ( this._data.mode == 'search' ) {
+		if ( this._controller.mode == 'search' ) {
 			this._removeDataOptions();
-			this._data.query( '' );
+			this._controller.query( '' );
 		}
 
-		this._data.setMode( 'default' );
+		this._controller.setMode( 'default' );
 	}
 }
 
