@@ -1,4 +1,5 @@
 import { html } from 'lit/static-html.js';
+import { customElement, property } from 'lit/decorators.js';
 import withClassy from '@welingtonms/classy';
 
 import { sided } from '../../../common/prop-toolset';
@@ -11,20 +12,15 @@ import styles from './switcher.styles';
  * @class
  * @mixes PolymorphicElementMixin
  */
+@customElement( 'xb-switcher' )
 export class SwitcherLayout extends BaseLayout {
 	static styles = [ styles() ];
 
-	static get properties() {
-		return {
-			/**
-			 * Determine borders to be supressed.
-			 * @type {SwitcherAttributes['limit']}
-			 */
-			limit: {
-				type: Number,
-			},
-		};
-	}
+	/**
+	 * Determine borders to be supressed.
+	 * @type {SwitcherAttributes['limit']}
+	 */
+	@property( { type: Number } ) limit;
 
 	constructor() {
 		super();
@@ -61,8 +57,6 @@ export class SwitcherLayout extends BaseLayout {
 		`;
 	}
 }
-
-window.customElements.define( 'xb-switcher', SwitcherLayout );
 
 /**
  * @typedef {import('../../../common/prop-types').BorderlessProp} BorderlessProp

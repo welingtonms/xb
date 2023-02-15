@@ -2,7 +2,8 @@ import { html } from 'lit-html';
 
 import './resize-observer';
 
-export default {
+/** @type {import('../../common/arg-types').Meta} */
+const meta = {
 	title: 'Metacomponents/resize-observer',
 	component: 'xb-resize-observer',
 
@@ -31,6 +32,9 @@ export default {
 	parameters: {},
 };
 
+export default meta;
+
+/** @type {import('../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) =>
 		html`

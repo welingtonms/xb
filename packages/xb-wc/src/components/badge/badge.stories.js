@@ -2,7 +2,8 @@ import { html } from 'lit-html';
 
 import './badge';
 
-export default {
+/** @type {import('../../common/arg-types').Meta} */
+const meta = {
 	title: 'Components/badge',
 	component: 'xb-badge',
 
@@ -20,6 +21,9 @@ export default {
 	},
 };
 
+export default meta;
+
+/** @type {import('../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-badge variant=${ args.variant }>Potatoes</xb-badge>

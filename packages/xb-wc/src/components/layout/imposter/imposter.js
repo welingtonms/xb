@@ -1,4 +1,5 @@
 import { html } from 'lit/static-html.js';
+import { customElement } from 'lit/decorators.js';
 import withClassy from '@welingtonms/classy';
 
 import { sided } from '../../../common/prop-toolset';
@@ -11,7 +12,8 @@ import styles from './imposter.styles';
  * @class
  * @mixes PolymorphicElementMixin
  */
-export class ClusterLayout extends BaseLayout {
+@customElement( 'xb-imposter' )
+export class ImposterLayout extends BaseLayout {
 	static styles = [ styles() ];
 
 	static get properties() {
@@ -65,8 +67,6 @@ export class ClusterLayout extends BaseLayout {
 		`;
 	}
 }
-
-window.customElements.define( 'xb-imposter', ClusterLayout );
 
 /**
  * @typedef {import('../../../common/prop-types').BorderlessProp} BorderlessProp

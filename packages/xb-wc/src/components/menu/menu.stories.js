@@ -3,7 +3,8 @@ import { html } from 'lit-html';
 import '../text';
 import './menu';
 
-export default {
+/** @type {import('../../common/arg-types').Meta} */
+const meta = {
 	title: 'Components/menu',
 	component: 'xb-menu',
 	argTypes: {
@@ -27,6 +28,9 @@ export default {
 	parameters: {},
 };
 
+export default meta;
+
+/** @type {import('../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-menu

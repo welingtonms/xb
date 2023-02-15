@@ -5,7 +5,8 @@ import '../button';
 import '../layout/cluster';
 import './selection-keeper';
 
-export default {
+/** @type {import('../../common/arg-types').Meta} */
+const meta = {
 	title: 'Metacomponents/selection-keeper',
 	component: 'xb-selection-keeper',
 
@@ -24,6 +25,9 @@ export default {
 	parameters: {},
 };
 
+export default meta;
+
+/** @type {import('../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) =>
 		html`

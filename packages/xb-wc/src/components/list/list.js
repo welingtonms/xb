@@ -1,4 +1,5 @@
 import { html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import withClassy from '@welingtonms/classy';
 
 import XBElement from '../../common/xb-element';
@@ -7,43 +8,35 @@ import styles from './list.styles';
 
 import './list-item';
 
+@customElement( 'xb-list' )
 export class List extends XBElement {
 	static styles = [ styles() ];
 
-	static get properties() {
-		return {
-			/**
-			 * Determine borders to be supressed.
-			 * @type {ListAttributes['borderless']}
-			 */
-			borderless: {},
+	/**
+	 * Determine borders to be supressed.
+	 * @type {ListAttributes['borderless']}
+	 */
+	@property( {} ) borderless;
 
-			/**
-			 * Determine paddings to be supressed.
-			 * @type {ListAttributes['hoverable']} paddingless
-			 */
-			hoverable: {
-				type: Boolean,
-			},
+	/**
+	 * Determine paddings to be supressed.
+	 * @type {ListAttributes['hoverable']} paddingless
+	 */
+	@property( { type: Boolean } ) hoverable;
 
-			/**
-			 * Determine paddings to be supressed.
-			 * @type {ListAttributes['striped']} paddingless
-			 */
-			striped: {
-				type: Boolean,
-			},
-		};
-	}
+	/**
+	 * Determine paddings to be supressed.
+	 * @type {ListAttributes['striped']} paddingless
+	 */
+	@property( { type: Boolean } ) striped;
 
 	constructor() {
 		super();
 
-		/**
-		 * @type {ListAttributes['borderless']}
-		 */
 		this.borderless = [ 'horizontal', 'top' ];
+
 		this.hoverable = false;
+
 		this.striped = false;
 	}
 
@@ -91,14 +84,11 @@ export class List extends XBElement {
 	 * @returns {import('./list-item').ListItem[]}
 	 */
 	_getItems() {
-		this._defaultSlot =
-			this._defaultSlot ?? this.shadowRoot.querySelector( 'slot' );
+		this._defaultSlot = this._defaultSlot ?? this.shadowRoot.querySelector( 'slot' );
 
 		return [ ...this._defaultSlot.assignedElements() ];
 	}
 }
-
-window.customElements.define( 'xb-list', List );
 
 /**
  * @typedef {import('../../common/prop-types').BorderlessProp} BorderlessProp

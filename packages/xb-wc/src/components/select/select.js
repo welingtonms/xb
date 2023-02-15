@@ -1,5 +1,6 @@
 // import { ContextProvider, ContextRoot, createContext } from '@lit-labs/context';
 import { html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import toArray from '@welingtonms/xb-toolset/dist/to-array';
 
@@ -33,7 +34,67 @@ function createOption( { value, label, type, disabled, selected } ) {
 	return option;
 }
 
+@customElement( 'xb-select' )
 export class Select extends XBElement {
+	static styles = [ styles() ];
+
+	@property( {} ) datasources;
+
+	/**
+	 * Should the dropdown be disabled.
+	 * @type {SelectAttributes['disabled']}
+	 */
+	@property( { type: Boolean, reflect: true } ) disabled;
+
+	/**
+	 * Select is loading options.
+	 * @type {SelectAttributes['loading']}
+	 */
+	@property( { type: Boolean, reflect: true } ) loading;
+
+	/**
+	 * Is this a multiple selection?
+	 * @type {SelectAttributes['multiple']}
+	 */
+	@property( { type: Boolean } ) multiple;
+
+	/**
+	 * Should the dropdown menu be open.
+	 * @type {SelectAttributes['open']}
+	 */
+	@property( { type: Boolean, reflect: true } ) open;
+
+	/**
+	 * Select placeholder.
+	 * @type {SelectAttributes['placeholder']}
+	 */
+	@property( { type: String } ) placeholder;
+
+	/**
+	 * Select variant.
+	 * @type {SelectAttributes['placement']}
+	 */
+	@property( { type: String } ) placement;
+
+	/**
+	 * Selection value.
+	 * @type {SelectAttributes['value']}
+	 */
+	@property( {} ) value;
+
+	/**
+	 * Selection value for the internal selection-keeper. It is the received
+	 * `value` attribute after applying `DataController`'s `toValue` method.
+	 * @type {string[]}
+	 */
+	@property( { state: true } ) _value;
+
+	/**
+	 * `Set` that represents the current selection value.
+	 * @type {SelectionState}
+	 */
+	@property( { state: true } ) _selection;
+
 	/** @type {DataController} */
 	_controller;
 
@@ -43,109 +104,23 @@ export class Select extends XBElement {
 	/** @type {SelectTrigger} */
 	_trigger;
 
-	static styles = [ styles() ];
-
-	static get properties() {
-		return {
-			datasources: {},
-
-			/**
-			 * Should the dropdown be disabled.
-			 * @type {SelectAttributes['disabled']}
-			 */
-			disabled: {
-				type: Boolean,
-				reflect: true,
-			},
-
-			/**
-			 * Select is loading options.
-			 * @type {SelectAttributes['loading']}
-			 */
-			loading: {
-				type: Boolean,
-				reflect: true,
-			},
-
-			/**
-			 * Is this a multiple selection?
-			 * @type {SelectAttributes['multiple']}
-			 */
-			multiple: {
-				type: Boolean,
-			},
-
-			/**
-			 * Should the dropdown menu be open.
-			 * @type {SelectAttributes['open']}
-			 */
-			open: {
-				type: Boolean,
-				reflect: true,
-			},
-
-			/**
-			 * Select placeholder.
-			 * @type {SelectAttributes['placeholder']}
-			 */
-			placeholder: { type: String },
-
-			/**
-			 * Select variant.
-			 * @type {SelectAttributes['placement']}
-			 */
-			placement: { type: String },
-
-			/**
-			 * Selection value.
-			 * @type {SelectAttributes['value']}
-			 */
-			value: {},
-
-			/**
-			 * Selection value for the internal selection-keeper. It is the received
-			 * `value` attribute after applying `DataController`'s `toValue` method.
-			 * @type {string[]}
-			 */
-			_value: {
-				state: true,
-			},
-
-			/**
-			 * `Set` that represents the current selection value.
-			 * @type {SelectionState}
-			 */
-			_selection: {
-				state: true,
-			},
-		};
-	}
-
 	constructor() {
 		super();
 
-		/** @type {SelectAttributes['datasources']} */
 		this.datasources = [];
 
-		/** @type {SelectAttributes['disabled']} */
 		this.disabled = false;
 
-		/** @type {SelectAttributes['loading']} */
 		this.loading = false;
 
-		/** @type {SelectAttributes['multiple']} */
 		this.multiple = false;
 
-		/** @type {SelectAttributes['open']} */
 		this.open = false;
 
-		/** @type {SelectAttributes['placeholder']} */
 		this.placeholder = 'Search & Select';
 
-		/** @type {SelectAttributes['placement']} */
 		this.placement = 'bottom-start';
 
-		/** @type {SelectAttributes['value']} */
 		this.value = null;
 
 		/** @type {string[]} */
@@ -460,8 +435,6 @@ export class Select extends XBElement {
 		this._controller.setMode( 'default' );
 	}
 }
-
-window.customElements.define( 'xb-select', Select );
 
 /**
  * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionType} SelectionType

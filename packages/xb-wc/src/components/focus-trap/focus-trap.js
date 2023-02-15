@@ -1,12 +1,25 @@
 import { html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
 import { getIncrementByKey } from './focus-trap.helpers';
 import XBElement from '../../common/xb-element';
 import styles from './focus-trap.styles';
 import Keyboard from '../../common/keyboard';
 
+@customElement( 'xb-focus-trap' )
 export class FocusTrap extends XBElement {
 	static styles = [ styles() ];
+
+	/**
+	 * Should the focus trap be active.
+	 * @type {FocusTrapAttributes['active']}
+	 */
+	@property( { type: Boolean, reflect: true } ) active;
+	/**
+	 * Should the focus trap be active.
+	 * @type {FocusTrapAttributes['keys']}
+	 */
+	@property() keys;
 
 	/** @type {HTMLElement[]} */
 	_focusableDescendants = [];
@@ -17,31 +30,11 @@ export class FocusTrap extends XBElement {
 	 * */
 	_currentFocused = -1;
 
-	static get properties() {
-		return {
-			/**
-			 * Should the focus trap be active.
-			 * @type {FocusTrapAttributes['active']}
-			 */
-			active: { type: Boolean, reflect: true },
-			/**
-			 * Should the focus trap be active.
-			 * @type {FocusTrapAttributes['keys']}
-			 */
-			keys: {},
-		};
-	}
-
 	constructor() {
 		super();
 
-		/** @type {FocusTrapAttributes['keys']} */
-		this.keys = [
-			Keyboard.getKey( 'ArrowUp' ),
-			Keyboard.getKey( 'ArrowDown' ),
-		];
+		this.keys = [ Keyboard.getKey( 'ArrowUp' ), Keyboard.getKey( 'ArrowDown' ) ];
 
-		/** @type {FocusTrapAttributes['active']} */
 		this.active = false;
 	}
 
@@ -137,8 +130,7 @@ export class FocusTrap extends XBElement {
 
 		const descendants = [ ...slots ]
 			.reduce(
-				( array, slot ) =>
-					array.concat( slot.assignedElements( { flatten: true } ) ),
+				( array, slot ) => array.concat( slot.assignedElements( { flatten: true } ) ),
 				[]
 			)
 			.reduce( ( array, node ) => {
@@ -172,8 +164,7 @@ export class FocusTrap extends XBElement {
 		 */
 		if (
 			this._currentFocused === -1 ||
-			this._focusableDescendants[ this._currentFocused ] !==
-				document.activeElement
+			this._focusableDescendants[ this._currentFocused ] !== document.activeElement
 		) {
 			this._currentFocused = this._focusableDescendants.findIndex(
 				( descendant ) => descendant === document.activeElement
@@ -203,13 +194,9 @@ export class FocusTrap extends XBElement {
 			return ( increment + focusableCounter ) % focusableCounter;
 		}
 
-		return (
-			( this._currentFocused + increment + focusableCounter ) % focusableCounter
-		);
+		return ( this._currentFocused + increment + focusableCounter ) % focusableCounter;
 	};
 }
-
-window.customElements.define( 'xb-focus-trap', FocusTrap );
 
 /**
  * @typedef {ReactiveControllerHost & XBElement & { _selection: SelectionState, type: SelectionType }} SelectionHost

@@ -5,7 +5,8 @@ import './tooltip';
 import '../button';
 import '../icon';
 
-export default {
+/** @type {import('../../common/arg-types').Meta} */
+const meta = {
 	title: 'Components/tooltip',
 	component: 'xb-tooltip',
 
@@ -21,12 +22,15 @@ export default {
 	parameters: {},
 };
 
+export default meta;
+
+/** @type {import('../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-tooltip placement=${ args.placement } trigger=${ args.trigger }>
 			<xb-box borderless slot="floating">
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc lectus
-				erat, bibendum non mollis eu, pharetra et est.
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc lectus erat,
+				bibendum non mollis eu, pharetra et est.
 			</xb-box>
 
 			<xb-button emphasis="ghost">

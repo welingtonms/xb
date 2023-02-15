@@ -4,7 +4,8 @@ import { PlacementArg } from '../../common/arg-types';
 import './popover';
 import '../icon';
 
-export default {
+/** @type {import('../../common/arg-types').Meta} */
+const meta = {
 	title: 'Components/popover',
 	component: 'xb-popover',
 
@@ -18,6 +19,9 @@ export default {
 	parameters: {},
 };
 
+export default meta;
+
+/** @type {import('../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-popover placement="${ args.placement }">

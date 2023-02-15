@@ -4,7 +4,8 @@ import Icons from '@welingtonms/xb-icons';
 import Docs from './icon.api.mdx';
 import './icon';
 
-export default {
+/** @type {import('../../common/arg-types').Meta} */
+const meta = {
 	title: 'Components/icon',
 	component: 'xb-icon',
 
@@ -21,6 +22,9 @@ export default {
 	},
 };
 
+export default meta;
+
+/** @type {import('../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) =>
 		html`

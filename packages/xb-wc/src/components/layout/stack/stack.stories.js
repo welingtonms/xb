@@ -4,7 +4,8 @@ import { BorderlessArg, PaddinglessArg } from '../../../common/arg-types';
 import '../box';
 import './stack';
 
-export default {
+/** @type {import('../../../common/arg-types').Meta} */
+const meta = {
 	title: 'Foundation/Layouts/stack',
 	component: 'xb-stack',
 	argTypes: {
@@ -22,6 +23,9 @@ export default {
 const style =
 	'--xb-stack-background-color: rgb(var(--xb-color-background)); width: 100%;';
 
+export default meta;
+
+/** @type {import('../../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-stack

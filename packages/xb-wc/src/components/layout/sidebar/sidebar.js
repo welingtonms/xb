@@ -1,4 +1,5 @@
 import { html } from 'lit/static-html.js';
+import { customElement, property } from 'lit/decorators.js';
 import withClassy from '@welingtonms/classy';
 
 import { sided } from '../../../common/prop-toolset';
@@ -11,20 +12,15 @@ import styles from './sidebar.styles';
  * @class
  * @mixes PolymorphicElementMixin
  */
+@customElement( 'xb-sidebar' )
 export class SidebarLayout extends BaseLayout {
 	static styles = [ styles() ];
 
-	static get properties() {
-		return {
-			/**
-			 * Where the side content should be positioned.
-			 * @type {SidebarAttributes['sidePosition']}
-			 */
-			sidePosition: {
-				attribute: 'side-position',
-			},
-		};
-	}
+	/**
+	 * Where the side content should be positioned.
+	 * @type {SidebarAttributes['sidePosition']}
+	 */
+	@property( { attribute: 'side-position' } ) sidePosition;
 
 	constructor() {
 		super();
@@ -54,8 +50,6 @@ export class SidebarLayout extends BaseLayout {
 		`;
 	}
 }
-
-window.customElements.define( 'xb-sidebar', SidebarLayout );
 
 /**
  * @typedef {'left' | 'right'} SidePosition

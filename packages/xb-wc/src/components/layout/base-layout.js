@@ -1,3 +1,5 @@
+import { property } from 'lit/decorators.js';
+
 import { convertDirectionFromAttribute } from './layout.helpers';
 import PolymorphicElementMixin from '../../mixins/polymorphic';
 import XBElement from '../../common/xb-element';
@@ -7,29 +9,18 @@ import XBElement from '../../common/xb-element';
  * @mixes PolymorphicElementMixin
  */
 export default class BaseLayout extends PolymorphicElementMixin( XBElement ) {
-	static get properties() {
-		return {
-			/**
-			 * Determine borders to be supressed.
-			 * @type {BaseLayoutAttributes['borderless']}
-			 */
-			borderless: {
-				converter: {
-					fromAttribute: convertDirectionFromAttribute,
-				},
-			},
+	/**
+	 * Determine borders to be supressed.
+	 * @type {BaseLayoutAttributes['borderless']}
+	 */
+	@property( { converter: { fromAttribute: convertDirectionFromAttribute } } ) borderless;
 
-			/**
-			 * Determine paddings to be supressed.
-			 * @type {BaseLayoutAttributes['paddingless']}
-			 */
-			paddingless: {
-				converter: {
-					fromAttribute: convertDirectionFromAttribute,
-				},
-			},
-		};
-	}
+	/**
+	 * Determine paddings to be supressed.
+	 * @type {BaseLayoutAttributes['paddingless']}
+	 */
+	@property( { converter: { fromAttribute: convertDirectionFromAttribute } } )
+	paddingless;
 
 	constructor() {
 		super();
@@ -37,18 +28,16 @@ export default class BaseLayout extends PolymorphicElementMixin( XBElement ) {
 		/** @type {BaseLayoutAttributes['as']} */
 		this.as = 'div';
 
-		/** @type {BaseLayoutAttributes['borderless']} */
 		this.borderless = 'none';
 
-		/** @type {BaseLayoutAttributes['paddingless']} */
 		this.paddingless = 'none';
 	}
 }
 
 /**
- * @typedef {import('../../../common/prop-types').BorderlessProp} BorderlessProp
- * @typedef {import('../../../common/prop-types').PaddinglessProp} PaddinglessProp
- * @typedef {import('../../../common/prop-types').HTMLTag} HTMLTag
+ * @typedef {import('../../common/prop-types').BorderlessProp} BorderlessProp
+ * @typedef {import('../../common/prop-types').PaddinglessProp} PaddinglessProp
+ * @typedef {import('../../common/prop-types').HTMLTag} HTMLTag
  */
 
 /**

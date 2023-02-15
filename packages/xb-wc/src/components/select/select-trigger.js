@@ -1,4 +1,5 @@
 import { html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 // import { ContextConsumer } from '@lit-labs/context';
 import withClassy from '@welingtonms/classy';
 
@@ -9,48 +10,37 @@ import styles from './select-trigger.styles';
 
 import '../form/text-input';
 
+@customElement( 'xb-select-trigger' )
 export class SelectTrigger extends XBElement {
+	// /** @type {ContextConsumer<Selection, SelectTrigger>} */
+	// _selection;
+
+	static styles = [ styles() ];
+
+	/**
+	 * Is the dropdown menu open.
+	 * This is updated by the dropdown.
+	 * @type {SelectTriggerAttributes['open']}
+	 */
+	@property( { type: Boolean, attribute: false } ) open;
+
+	/**
+	 * Placeholder value.
+	 * @type {TextInputAttributes['placeholder']}
+	 */
+	@property( { type: String, reflect: true } ) placeholder;
+
 	/** @type {import('../form/text-input/text-input').TextInput} */
 	_input;
 
 	/** @type {number} */
 	_timeout;
 
-	// /** @type {ContextConsumer<Selection, SelectTrigger>} */
-	// _selection;
-
-	static styles = [ styles() ];
-
-	static get properties() {
-		return {
-			/**
-			 * Is the dropdown menu open.
-			 * This is updated by the dropdown.
-			 * @type {SelectTriggerAttributes['open']}
-			 */
-			open: {
-				type: Boolean,
-				attribute: false,
-			},
-
-			/**
-			 * Placeholder value.
-			 * @type {TextInputAttributes['placeholder']}
-			 */
-			placeholder: {
-				type: String,
-				reflect: true,
-			},
-		};
-	}
-
 	constructor() {
 		super();
 
-		/** @type {SelectTriggerAttributes['open']} */
 		this.open = false;
 
-		/** @type {SelectTriggerAttributes['value']} */
 		this.value;
 
 		/** @type {SelectTriggerAttributes['placeholder']} */
@@ -181,8 +171,6 @@ export class SelectTrigger extends XBElement {
 		this.emit( 'xb-dropdown', options );
 	}
 }
-
-window.customElements.define( 'xb-select-trigger', SelectTrigger );
 
 /**
  * @typedef {import('@lit-labs/context').ContextConsumer} ContextConsumer

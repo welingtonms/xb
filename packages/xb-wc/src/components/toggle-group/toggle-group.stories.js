@@ -6,7 +6,8 @@ import '../layout/stack';
 import './toggle-group';
 import './toggle';
 
-export default {
+/** @type {import('../../common/arg-types').Meta} */
+const meta = {
 	title: 'Components/toggle-group',
 	component: 'toggle-group',
 	argTypes: {
@@ -29,6 +30,9 @@ export default {
 	},
 };
 
+export default meta;
+
+/** @type {import('../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-stack>

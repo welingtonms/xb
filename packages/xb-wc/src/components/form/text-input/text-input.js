@@ -1,5 +1,5 @@
 import { html, nothing } from 'lit';
-import { createRef, ref } from 'lit/directives/ref.js';
+import { customElement, property } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import withClassy from '@welingtonms/classy';
 
@@ -8,113 +8,85 @@ import { sided } from '../../../common/prop-toolset';
 import XBElement from '../../../common/xb-element';
 import styles from './text-input.styles';
 
+@customElement( 'xb-text-input' )
 export class TextInput extends XBElement {
-	input = createRef();
-
 	static styles = [ styles() ];
 
-	static get properties() {
-		return {
-			/**
-			 * Input type.
-			 * @type {TextInputAttributes['type']}
-			 */
-			type: {
-				type: String,
-			},
+	/**
+	 * Input type.
+	 * @type {TextInputAttributes['type']}
+	 */
+	@property( { type: String } ) type;
 
-			/**
-			 * Should the button be disabled.
-			 * @type {TextInputAttributes['disabled']}
-			 */
-			disabled: { type: Boolean, reflect: true },
+	/**
+	 * Should the button be disabled.
+	 * @type {TextInputAttributes['disabled']}
+	 */
+	@property( { type: Boolean, reflect: true } ) disabled;
 
-			/**
-			 * Should the button be clearable.
-			 * @type {TextInputAttributes['clearable']}
-			 */
-			clearable: { type: Boolean, reflect: true },
+	/**
+	 * Should the button be clearable.
+	 * @type {TextInputAttributes['clearable']}
+	 */
+	@property( { type: Boolean, reflect: true } ) clearable;
 
-			/**
-			 * Button size.
-			 * @type {TextInputAttributes['size']}
-			 */
-			size: { type: String },
+	/**
+	 * Button size.
+	 * @type {TextInputAttributes['size']}
+	 */
+	@property( { type: String } ) size;
 
-			/**
-			 * Input value.
-			 * @type {TextInputAttributes['value']}
-			 */
-			value: {
-				type: String,
-				reflect: true,
-			},
+	/**
+	 * Input value.
+	 * @type {TextInputAttributes['value']}
+	 */
+	@property( { type: String, reflect: true } ) value;
 
-			/**
-			 * Placeholder value.
-			 * @type {TextInputAttributes['placeholder']}
-			 */
-			placeholder: {
-				type: String,
-				reflect: true,
-			},
+	/**
+	 * Placeholder value.
+	 * @type {TextInputAttributes['placeholder']}
+	 */
+	@property( { type: String, reflect: true } ) placeholder;
 
-			/**
-			 * Determine borders to be supressed.
-			 * @type {TextInputAttributes['borderless']}
-			 */
-			borderless: {
-				converter: {
-					fromAttribute: convertDirectionFromAttribute,
-				},
-			},
+	/**
+	 * Determine borders to be supressed.
+	 * @type {TextInputAttributes['borderless']}
+	 */
+	@property( { converter: { fromAttribute: convertDirectionFromAttribute } } ) borderless;
 
-			/**
-			 * Determine paddings to be supressed.
-			 * @type {TextInputAttributes['paddingless']}
-			 */
-			paddingless: {
-				converter: {
-					fromAttribute: convertDirectionFromAttribute,
-				},
-			},
-		};
-	}
+	/**
+	 * Determine paddings to be supressed.
+	 * @type {TextInputAttributes['paddingless']}
+	 */
+	@property( { converter: { fromAttribute: convertDirectionFromAttribute } } )
+	paddingless;
 
 	constructor() {
 		super();
 
-		/** @type {TextInputAttributes['type']} */
 		this.type = 'text';
 
-		/** @type {TextInputAttributes['clearable']} */
 		this.clearable = false;
 
-		/** @type {TextInputAttributes['disabled']} */
 		this.disabled = false;
 
-		/** @type {TextInputAttributes['size']} */
 		this.size = 'small';
 
-		/** @type {TextInputAttributes['value']} */
 		this.value;
 
-		/** @type {TextInputAttributes['placeholder']} */
 		this.placeholder = '';
 
-		/** @type {TextInputAttributes['borderless']} */
 		this.borderless = 'none';
 
-		/** @type {TextInputAttributes['paddingless']} */
 		this.paddingless = 'none';
 	}
 
 	focus() {
-		this._getInput()?.focus();
+		this.input?.focus();
 	}
 
 	clear() {
-		const input = this._getInput();
+		const input = this.input;
 
 		this.value = '';
 		input.value = '';
@@ -142,7 +114,6 @@ export class TextInput extends XBElement {
 			>
 				<slot name="leading"></slot>
 				<input
-					${ ref( this.input ) }
 					type="${ this.type }"
 					?disabled="${ this.disabled }"
 					value="${ ifDefined( this.value ) }"
@@ -180,8 +151,8 @@ export class TextInput extends XBElement {
 	/**
 	 * @returns {HTMLInputElement}
 	 */
-	_getInput() {
-		return this.input.value;
+	get input() {
+		return this.shadowRoot.querySelector( 'input' );
 	}
 
 	_handleChange( e ) {
@@ -206,8 +177,6 @@ export class TextInput extends XBElement {
 		this.focus();
 	}
 }
-
-window.customElements.define( 'xb-text-input', TextInput );
 
 /**
  * @typedef {('text' | 'password' | 'number' )} TextInputType

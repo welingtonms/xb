@@ -4,7 +4,8 @@ import { BorderlessArg } from '../../common/arg-types';
 import '../text';
 import './list';
 
-export default {
+/** @type {import('../../common/arg-types').Meta} */
+const meta = {
 	title: 'Components/list',
 	component: 'xb-list',
 	argTypes: {
@@ -23,6 +24,9 @@ export default {
 	parameters: {},
 };
 
+export default meta;
+
+/** @type {import('../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-list
@@ -39,9 +43,7 @@ export const Playground = {
 				<xb-text variant="body-2">In bibendum egestas condimentum.</xb-text>
 			</xb-list-item>
 			<xb-list-item>
-				<xb-text variant="body-2">
-					Etiam nec lacinia purus, eget pulvinar odio.
-				</xb-text>
+				<xb-text variant="body-2">Etiam nec lacinia purus, eget pulvinar odio.</xb-text>
 			</xb-list-item>
 			<xb-list-item>
 				<xb-text variant="body-2">
@@ -52,14 +54,11 @@ export const Playground = {
 				<xb-text variant="body-2">Quisque sed exjusto.</xb-text>
 			</xb-list-item>
 			<xb-list-item>
-				<xb-text variant="body-2">
-					In sed mollis purus, quis tristique sapien.
-				</xb-text>
+				<xb-text variant="body-2">In sed mollis purus, quis tristique sapien.</xb-text>
 			</xb-list-item>
 			<xb-list-item>
 				<xb-text variant="body-2">
-					Maecenas luctus nisi quis purus rutrum, non cursus libero
-					sollicitudin.
+					Maecenas luctus nisi quis purus rutrum, non cursus libero sollicitudin.
 				</xb-text>
 			</xb-list-item>
 			<xb-list-item>

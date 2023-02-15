@@ -1,21 +1,19 @@
 import { html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import withClassy from '@welingtonms/classy';
 
 import XBElement from '../../common/xb-element';
 import styles from './badge.styles';
 
+@customElement( 'xb-badge' )
 export class Badge extends XBElement {
 	static styles = [ styles() ];
 
-	static get properties() {
-		return {
-			/**
-			 * Badge variant.
-			 * @type {BadgeAttributes['variant']}
-			 */
-			variant: { type: String },
-		};
-	}
+	/**
+	 * Badge variant.
+	 * @type {BadgeAttributes['variant']}
+	 */
+	@property( { type: String } ) variant;
 
 	constructor() {
 		super();
@@ -40,8 +38,6 @@ export class Badge extends XBElement {
 		`;
 	}
 }
-
-window.customElements.define( 'xb-badge', Badge );
 
 /**
  * @typedef {('neutral' | 'primary' | 'secondary' | 'tertiary')} BadgeVariant

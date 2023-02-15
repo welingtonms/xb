@@ -3,7 +3,8 @@ import { html } from 'lit-html';
 import './radio-group';
 import './radio';
 
-export default {
+/** @type {import('../../../common/arg-types').Meta} */
+const meta = {
 	title: 'Components/form/radio',
 	component: 'xb-radio',
 
@@ -37,6 +38,9 @@ export default {
 	parameters: {},
 };
 
+export default meta;
+
+/** @type {import('../../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-radio-group

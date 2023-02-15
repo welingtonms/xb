@@ -1,1 +1,5 @@
-export { Tooltip } from './field';
+export { Field } from './field';
+
+/**
+ * @typedef {import('./field').FieldAttributes} FieldAttributes
+ */

@@ -2,13 +2,17 @@ import { html } from 'lit-html';
 
 import './spinner';
 
-export default {
+/** @type {import('../../common/arg-types').Meta} */
+const meta = {
 	title: 'Components/spinner',
 	component: 'xb-spinner',
 	argTypes: {},
 	parameters: {},
 };
 
+export default meta;
+
+/** @type {import('../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) =>
 		html`

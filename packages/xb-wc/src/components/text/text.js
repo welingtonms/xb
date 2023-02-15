@@ -1,4 +1,5 @@
 import { html } from 'lit/static-html.js';
+import { customElement, property } from 'lit/decorators.js';
 import withClassy from '@welingtonms/classy';
 
 import PolymorphicElementMixin from '../../mixins/polymorphic';
@@ -9,23 +10,18 @@ import styles from './text.styles';
  * @class
  * @mixes PolymorphicElementMixin
  */
+@customElement( 'xb-text' )
 export class Text extends PolymorphicElementMixin( XBElement ) {
 	static styles = [ styles() ];
 
-	static get properties() {
-		return {
-			/**
-			 * Typography variant.
-			 * @type {TextAttributes['variant']}
-			 */
-			variant: { type: String, reflect: true },
-		};
-	}
-
+	/**
+	 * Typography variant.
+	 * @type {TextAttributes['variant']}
+	 */
+	@property( { type: String, reflect: true } ) variant;
 	constructor() {
 		super();
 
-		/** @type {TextAttributes['variant']} */
 		this.variant = 'body-1';
 
 		/** @type {TextAttributes['as']} */
@@ -58,8 +54,6 @@ export class Text extends PolymorphicElementMixin( XBElement ) {
 		`;
 	}
 }
-
-window.customElements.define( 'xb-text', Text );
 
 /**
  * @typedef {import('../../common/prop-types').HTMLTag} HTMLTag

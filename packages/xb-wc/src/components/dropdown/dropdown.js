@@ -1,4 +1,5 @@
 import { html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
 import XBElement from '../../common/xb-element';
@@ -12,8 +13,27 @@ import './dropdown-item';
 import '../menu';
 import '../focus-trap';
 
+@customElement( 'xb-dropdown' )
 export class Dropdown extends XBElement {
 	static styles = [ styles() ];
+
+	/**
+	 * Dropdown variant.
+	 * @type {DropdownAttributes['placement']}
+	 */
+	@property( { type: String } ) placement;
+
+	/**
+	 * Should the dropdown menu be open.
+	 * @type {DropdownAttributes['open']}
+	 */
+	@property( { type: Boolean, reflect: true } ) open;
+
+	/**
+	 * Should the dropdown be disabled.
+	 * @type {DropdownAttributes['disabled']}
+	 */
+	@property( { type: Boolean, reflect: true } ) disabled;
 
 	/** @type {import('./dropdown-trigger').DropdownTrigger} */
 	_trigger;
@@ -24,47 +44,13 @@ export class Dropdown extends XBElement {
 	/** @type {import('../focus-trap').FocusTrap} */
 	_trap;
 
-	static get properties() {
-		return {
-			/**
-			 * Dropdown variant.
-			 * @type {DropdownAttributes['placement']}
-			 */
-			placement: { type: String },
-
-			/**
-			 * Should the dropdown menu be open.
-			 * @type {DropdownAttributes['open']}
-			 */
-			open: {
-				type: Boolean,
-				reflect: true,
-			},
-
-			/**
-			 * Should the dropdown be disabled.
-			 * @type {DropdownAttributes['disabled']}
-			 */
-			disabled: {
-				type: Boolean,
-				reflect: true,
-			},
-		};
-	}
-
 	constructor() {
 		super();
 
-		/** @type {DropdownAttributes['open']} */
 		this.open = false;
 
-		/** @type {DropdownAttributes['placement']} */
 		this.placement = 'bottom-start';
 
-		/** @type {DropdownAttributes['size']} */
-		this.size = 'medium';
-
-		/** @type {DropdownAttributes['disabled']} */
 		this.disabled = false;
 	}
 
@@ -87,14 +73,13 @@ export class Dropdown extends XBElement {
 		super.updated( changedProperties );
 
 		if ( changedProperties.has( 'open' ) ) {
-			const trigger = this._getTrigger();
-			trigger.open = this.open;
+			this.trigger.open = this.open;
 
 			if ( this.open ) {
-				this._getFocusTrap()?.activate();
+				this.trap?.activate();
 			} else {
-				this._getFocusTrap()?.deactivate();
-				this._getTrigger().focus();
+				this.trap?.deactivate();
+				this.trigger.focus();
 			}
 		}
 	}
@@ -135,18 +120,16 @@ export class Dropdown extends XBElement {
 		}
 	}
 
-	_getTrigger() {
+	get trigger() {
 		if ( this._trigger == null ) {
-			const triggerSlot = this.shadowRoot.querySelector(
-				'slot[name="trigger"]'
-			);
+			const triggerSlot = this.shadowRoot.querySelector( 'slot[name="trigger"]' );
 			[ this._trigger ] = triggerSlot.assignedElements( { flatten: true } );
 		}
 
 		return this._trigger;
 	}
 
-	_getMenu() {
+	get menu() {
 		if ( this._menu == null ) {
 			const menuSlot = this.shadowRoot.querySelector( 'slot[name="menu"]' );
 			[ this._menu ] = menuSlot.assignedElements( { flatten: true } );
@@ -155,9 +138,9 @@ export class Dropdown extends XBElement {
 		return this._menu;
 	}
 
-	_getFocusTrap() {
+	get trap() {
 		if ( this._trap == null ) {
-			this._trap = this._getMenu().shadowRoot.querySelector( 'xb-focus-trap' );
+			this._trap = this.menu.shadowRoot.querySelector( 'xb-focus-trap' );
 		}
 
 		return this._trap;
@@ -195,8 +178,6 @@ export class Dropdown extends XBElement {
 		this.collapse();
 	}
 }
-
-window.customElements.define( 'xb-dropdown', Dropdown );
 
 /**
  * @typedef {import('../popover/popover').PopoverPlacement} DropdownPlacement

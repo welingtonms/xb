@@ -1,5 +1,5 @@
 import { html } from 'lit';
-import { createRef, ref } from 'lit/directives/ref.js';
+import { customElement, property } from 'lit/decorators.js';
 import withClassy from '@welingtonms/classy';
 
 import XBElement from '../../common/xb-element';
@@ -7,27 +7,15 @@ import styles from './dropdown-trigger.styles';
 
 import '../button';
 
+@customElement( 'xb-dropdown-trigger' )
 export class DropdownTrigger extends XBElement {
-	button = createRef();
-
 	static styles = [ styles() ];
 
-	static get properties() {
-		return {
-			/**
-			 * Is the dropdown menu open.
-			 * @type {DropdownTriggerAttributes['open']}
-			 */
-			open: {
-				type: Boolean,
-				reflect: true,
-			},
-		};
-	}
-
-	constructor() {
-		super();
-	}
+	/**
+	 * Is the dropdown menu open.
+	 * @type {DropdownTriggerAttributes['open']}
+	 */
+	@property( { type: Boolean, reflect: true } ) open;
 
 	connectedCallback() {
 		super.connectedCallback();
@@ -36,7 +24,9 @@ export class DropdownTrigger extends XBElement {
 	}
 
 	focus() {
-		this._getButton()?.focus();
+		const button = this.shadowRoot.querySelector( 'xb-button' );
+
+		button?.focus();
 	}
 
 	render() {
@@ -44,7 +34,6 @@ export class DropdownTrigger extends XBElement {
 
 		return html`
 			<xb-button
-				${ ref( this.button ) }
 				class="${ classy( 'dropdown-trigger', {
 					'is-open': when( { open: true } ),
 				} ) }"
@@ -64,13 +53,6 @@ export class DropdownTrigger extends XBElement {
 		`;
 	}
 
-	/**
-	 * @returns {HTMLButtonElement}
-	 */
-	_getButton() {
-		return this.button.value;
-	}
-
 	_handleClick() {
 		const options = {
 			composed: true,
@@ -80,8 +62,6 @@ export class DropdownTrigger extends XBElement {
 		this.emit( 'xb-dropdown', options );
 	}
 }
-
-window.customElements.define( 'xb-dropdown-trigger', DropdownTrigger );
 
 /**
  * @typedef {Object} DropdownTriggerAttributes

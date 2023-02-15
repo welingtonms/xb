@@ -1,4 +1,4 @@
-import { createRef, ref } from 'lit/directives/ref.js';
+import { customElement, property } from 'lit/decorators.js';
 import { html } from 'lit/static-html.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import withClassy from '@welingtonms/classy';
@@ -13,105 +13,88 @@ import XBElement from '../../common/xb-element';
  * @class
  * @mixes PolymorphicElementMixin
  */
+@customElement( 'xb-button' )
 export class Button extends PolymorphicElementMixin( XBElement ) {
-	button = createRef();
-
 	static styles = [ styles() ];
 
-	static get properties() {
-		return {
-			/**
-			 * Determine borders to be supressed.
-			 * @type {ButtonAttributes['borderless']}
-			 */
-			borderless: {
-				converter: {
-					fromAttribute: convertDirectionFromAttribute,
-				},
-			},
+	/**
+	 * Determine borders to be supressed.
+	 * @type {ButtonAttributes['borderless']}
+	 */
+	@property( {
+		converter: {
+			fromAttribute: convertDirectionFromAttribute,
+		},
+	} )
+	borderless;
 
-			/**
-			 * Determine paddings to be supressed.
-			 * @type {ButtonAttributes['paddingless']}
-			 */
-			paddingless: {
-				converter: {
-					fromAttribute: convertDirectionFromAttribute,
-				},
-			},
+	/**
+	 * Should the button be disabled.
+	 * @type {ButtonAttributes['disabled']}
+	 */
+	@property( { type: Boolean, reflect: true } ) disabled;
 
-			/**
-			 * Should the button be disabled.
-			 * @type {ButtonAttributes['disabled']}
-			 */
-			disabled: { type: Boolean, reflect: true },
+	/**
+	 * Button emphasis variant.
+	 * @type {ButtonAttributes['emphasis']}
+	 */
+	@property( { type: String } ) emphasis;
 
-			/**
-			 * Button emphasis variant.
-			 * @type {ButtonAttributes['emphasis']}
-			 */
-			emphasis: { type: String },
+	/**
+	 * Determine paddings to be supressed.
+	 * @type {ButtonAttributes['paddingless']}
+	 */
+	@property( {
+		converter: {
+			fromAttribute: convertDirectionFromAttribute,
+		},
+	} )
+	paddingless;
 
-			/**
-			 * Button size.
-			 * @type {ButtonAttributes['size']}
-			 */
-			size: { type: String },
+	/**
+	 * Button size.
+	 * @type {ButtonAttributes['size']}
+	 */
+	@property( { type: String } ) size;
 
-			/**
-			 * The type of button. When the type is `submit`, the button will submit the surrounding form. Note that the default
-			 * value is `button` instead of `submit`, which is opposite of how native `<button>` elements behave.
-			 * @type {ButtonAttributes['type']}
-			 */
-			type: {
-				type: String,
-			},
+	/**
+	 * The type of button. When the type is `submit`, the button will submit the surrounding form. Note that the default
+	 * value is `button` instead of `submit`, which is opposite of how native `<button>` elements behave.
+	 * @type {ButtonAttributes['type']}
+	 */
+	@property( { type: String } ) type;
 
-			/**
-			 * When set, the underlying button will be rendered as an `<a>` with this `href` instead of a `<button>`.
-			 * @type {ButtonAttributes['href']
-			 */
-			href: {
-				type: String,
-			},
+	/**
+	 * When set, the underlying button will be rendered as an `<a>` with this `href` instead of a `<button>`.
+	 * @type {ButtonAttributes['href']
+	 */
+	@property( { type: String } ) href;
 
-			/**
-			 * Tells the browser where to open the link. Only used when `href` is set.
-			 * @type {ButtonAttributes['target']}
-			 * */
-			target: {
-				type: String,
-			},
-		};
-	}
+	/**
+	 * Tells the browser where to open the link. Only used when `href` is set.
+	 * @type {ButtonAttributes['target']}
+	 * */
+	@property( { type: String } ) target;
 
 	constructor() {
 		super();
 
 		this.role = 'button';
 
-		/** @type {ButtonAttributes['emphasis']} */
 		this.emphasis = 'ghost';
 
-		/** @type {ButtonAttributes['size']} */
 		this.size = 'small';
 
-		/** @type {ButtonAttributes['borderless']} */
 		this.borderless = 'none';
 
-		/** @type {ButtonAttributes['paddingless']} */
 		this.paddingless = 'none';
 
-		/** @type {ButtonAttributes['disabled']} */
 		this.disabled = false;
 
-		/** @type {ButtonAttributes['as']} */
 		this.as = 'button';
 
-		/** @type {ButtonAttributes['type']} */
 		this.type = 'button';
 
-		/** @type {ButtonAttributes['target']} */
 		this.target = '_blank';
 	}
 
@@ -122,7 +105,7 @@ export class Button extends PolymorphicElementMixin( XBElement ) {
 	}
 
 	focus() {
-		const button = this._getButton();
+		const button = this.shadowRoot.querySelector( this.as );
 
 		button.focus();
 	}
@@ -137,7 +120,6 @@ export class Button extends PolymorphicElementMixin( XBElement ) {
 
 		return html`
 			<${ this.tag }
-				${ ref( this.button ) }
 				class=${ classy(
 					'button',
 					{
@@ -173,26 +155,10 @@ export class Button extends PolymorphicElementMixin( XBElement ) {
 		`;
 	}
 
-	/**
-	 * @returns {HTMLInputElement}
-	 */
-	_getButton() {
-		return this.button.value;
-	}
-
 	_isLink() {
 		return this.href ? true : false;
 	}
 }
-
-window.customElements.define( 'xb-button', Button );
-
-// @ts-ignore
-// declare global {
-//   interface HTMLElementTagNameMap {
-//     "xb-button": Button;
-//   }
-// }
 
 /**
  * @typedef {('text' | 'ghost' | 'flat')} ButtonEmphasis

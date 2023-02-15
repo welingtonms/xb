@@ -1,4 +1,5 @@
 import { html } from 'lit/static-html.js';
+import { customElement } from 'lit/decorators.js';
 import withClassy from '@welingtonms/classy';
 
 import { sided } from '../../../common/prop-toolset';
@@ -11,16 +12,9 @@ import styles from './cover.styles';
  * @class
  * @mixes PolymorphicElementMixin
  */
+@customElement( 'xb-cover' )
 export class CoverLayout extends BaseLayout {
 	static styles = [ styles() ];
-
-	static get properties() {
-		return {};
-	}
-
-	constructor() {
-		super();
-	}
 
 	render() {
 		const { classy } = withClassy( {} );
@@ -39,8 +33,6 @@ export class CoverLayout extends BaseLayout {
 		`;
 	}
 }
-
-window.customElements.define( 'xb-cover', CoverLayout );
 
 /**
  * @typedef {import('../../../common/prop-types').BorderlessProp} BorderlessProp

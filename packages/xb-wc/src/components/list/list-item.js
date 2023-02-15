@@ -1,4 +1,5 @@
-import { html, LitElement } from 'lit';
+import { html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import withClassy from '@welingtonms/classy';
 
 import XBElement from '../../common/xb-element';
@@ -6,55 +7,44 @@ import XBElement from '../../common/xb-element';
 import styles from './list-item.styles';
 import '../layout/box';
 
-export class ListItem extends LitElement {
+@customElement( 'xb-list-item' )
+export class ListItem extends XBElement {
 	static styles = [ styles() ];
 
-	static get properties() {
-		return {
-			/**
-			 * Which HTML tag should be used to render this element..
-			 * @type {HTMLTag}
-			 * @public
-			 */
-			as: { type: String },
+	/**
+	 * Which HTML tag should be used to render this element..
+	 * @type {HTMLTag}
+	 * @public
+	 */
+	@property( { type: String } ) as;
 
-			/**
-			 * Determine borders to be supressed.
-			 * @type {ListItemAttributes['borderless']}
-			 */
-			borderless: {},
+	/**
+	 * Determine borders to be supressed.
+	 * @type {ListItemAttributes['borderless']}
+	 */
+	@property( {} ) borderless;
 
-			/**
-			 * Determine paddings to be supressed.
-			 * @type {ListItemAttributes['hoverable']} paddingless
-			 */
-			hoverable: {
-				type: Boolean,
-			},
+	/**
+	 * Determine paddings to be supressed.
+	 * @type {ListItemAttributes['hoverable']} paddingless
+	 */
+	@property( { type: Boolean } ) hoverable;
 
-			/**
-			 * Determine paddings to be supressed.
-			 * @type {ListItemAttributes['striped']} paddingless
-			 */
-			striped: {
-				type: Boolean,
-			},
-		};
-	}
+	/**
+	 * Determine paddings to be supressed.
+	 * @type {ListItemAttributes['striped']} paddingless
+	 */
+	@property( { type: Boolean } ) striped;
 
 	constructor() {
 		super();
 
-		/** @type {ListItemAttributes['as']} */
 		this.as = 'div';
 
-		/** @type {ListItemAttributes['borderless']} */
 		this.borderless = 'none';
 
-		/** @type {ListItemAttributes['hoverable']} */
 		this.hoverable = false;
 
-		/** @type {ListItemAttributes['striped']} */
 		this.striped = false;
 	}
 
@@ -75,8 +65,6 @@ export class ListItem extends LitElement {
 		`;
 	}
 }
-
-window.customElements.define( 'xb-list-item', ListItem );
 
 /**
  * @typedef {import('../../common/prop-types').BorderlessProp} BorderlessProp

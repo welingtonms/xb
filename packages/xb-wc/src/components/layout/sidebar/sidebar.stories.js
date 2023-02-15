@@ -4,7 +4,8 @@ import { BorderlessArg, PaddinglessArg } from '../../../common/arg-types';
 import '../box';
 import './sidebar';
 
-export default {
+/** @type {import('../../../common/arg-types').Meta} */
+const meta = {
 	title: 'Foundation/Layouts/sidebar',
 	component: 'sidebar',
 	argTypes: {
@@ -27,6 +28,9 @@ export default {
 	parameters: {},
 };
 
+export default meta;
+
+/** @type {import('../../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-sidebar

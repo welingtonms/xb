@@ -3,7 +3,8 @@ import { html } from 'lit-html';
 import { BorderlessArg, PaddinglessArg } from '../../../common/arg-types';
 import './center';
 
-export default {
+/** @type {import('../../../common/arg-types').Meta} */
+const meta = {
 	title: 'Foundation/Layouts/center',
 	component: 'xb-center',
 	argTypes: {
@@ -21,6 +22,9 @@ export default {
 const style =
 	'--xb-center-background-color: rgb(var(--xb-color-background)); --xb-center-border-style: solid;';
 
+export default meta;
+
+/** @type {import('../../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) =>
 		html`

@@ -1,30 +1,22 @@
 import { html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import { createRef, ref } from 'lit/directives/ref.js';
 import withClassy from '@welingtonms/classy';
 
 import XBElement from '../../common/xb-element';
 import styles from './spinner.styles';
 
+@customElement( 'xb-spinner' )
 export class Spinner extends XBElement {
-	element = createRef();
-
 	static styles = [ styles() ];
 
-	static get properties() {
-		return {
-			/**
-			 * Loading message.
-			 * @type {SpinnerAttributes['message']}
-			 */
-			message: {
-				type: String,
-			},
-		};
-	}
+	/**
+	 * Loading message.
+	 * @type {SpinnerAttributes['message']}
+	 */
+	@property( { type: String } ) message;
 
-	constructor() {
-		super();
-	}
+	element = createRef();
 
 	render() {
 		const { when, classy } = withClassy( {} );
@@ -41,8 +33,6 @@ export class Spinner extends XBElement {
 		return this.element.value?.innerHTML === '';
 	}
 }
-
-window.customElements.define( 'xb-spinner', Spinner );
 
 /**
  * @typedef {Object} SpinnerAttributes

@@ -1,4 +1,5 @@
 import { html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import withClassy from '@welingtonms/classy';
 
 import styles from './radio-group.styles';
@@ -8,52 +9,40 @@ import '../../selection-keeper';
 import '../../focus-trap';
 import '../../layout/stack';
 
+@customElement( 'xb-radio-group' )
 export class RadioGroup extends XBElement {
-	/** @type {import('../../focus-trap').FocusTrap} */
-	_trap;
-
-	/** @type {HTMLSlotElement} */
-	_defaultSlot;
-
 	static styles = [ styles() ];
 
-	static get properties() {
-		return {
-			/**
-			 * Should the button be disabled.
-			 * @type {RadioGroupAttributes['disabled']}
-			 */
-			disabled: { type: Boolean, reflect: true },
+	/**
+	 * Should the button be disabled.
+	 * @type {RadioGroupAttributes['disabled']}
+	 */
+	@property( { type: Boolean, reflect: true } ) disabled;
 
-			/**
-			 * Button size.
-			 * @type {RadioGroupAttributes['size']}
-			 */
-			size: { type: String },
+	/**
+	 * Button size.
+	 * @type {RadioGroupAttributes['size']}
+	 */
+	@property( { type: String } ) size;
 
-			/**
-			 * Selection value.
-			 * @type {RadioGroupAttributes['value']}
-			 */
-			value: {},
+	/**
+	 * Selection value.
+	 * @type {RadioGroupAttributes['value']}
+	 */
+	@property( {} ) value;
 
-			/**
-			 * `Set` that represents the current selection value.
-			 * @type {SelectionState}
-			 */
-			_selection: {
-				state: true,
-			},
-		};
-	}
+	/**
+	 * `Set` that represents the current selection value.
+	 * @type {SelectionState}
+	 */
+	@property( { state: true } ) _selection;
+
+	/** @type {import('../../focus-trap').FocusTrap} */
+	_trap;
 
 	constructor() {
 		super();
 
-		/** @type {SelectionType} */
-		this.type = 'single-strict';
-
-		/** @type {SelectionState} */
 		this._selection = new Set();
 	}
 
@@ -92,14 +81,8 @@ export class RadioGroup extends XBElement {
 		} );
 	}
 
-	get trap() {
-		this._trap = this._trap ?? this.shadowRoot.querySelector( 'xb-focus-trap' );
-
-		return this._trap;
-	}
-
 	render() {
-		const { classy, when } = withClassy( { type: this.type } );
+		const { classy, when } = withClassy( {} );
 
 		// TODO: add proper accessibility features
 		return html`
@@ -107,7 +90,7 @@ export class RadioGroup extends XBElement {
 				.value=${ this.value }
 				@xb-selection-change=${ this._handleSelectionChange }
 				listen="xb-check"
-				type=${ this.type }
+				type="single-strict"
 			>
 				<xb-focus-trap>
 					<xb-stack
@@ -123,6 +106,12 @@ export class RadioGroup extends XBElement {
 		`;
 	}
 
+	get trap() {
+		this._trap = this._trap ?? this.shadowRoot.querySelector( 'xb-focus-trap' );
+
+		return this._trap;
+	}
+
 	_handleFocus() {
 		this.trap.activate();
 	}
@@ -135,10 +124,10 @@ export class RadioGroup extends XBElement {
 	 * @returns {import('./radio').RadioInput[]}
 	 */
 	_getRadios() {
-		this._defaultSlot = this._defaultSlot ?? this.shadowRoot.querySelector( 'slot' );
+		const _defaultSlot = this.shadowRoot.querySelector( 'slot' );
 
-		return [ ...this._defaultSlot.assignedElements( { flatten: true } ) ].filter(
-			( item ) => item.matches( 'xb-radio' )
+		return [ ..._defaultSlot.assignedElements( { flatten: true } ) ].filter( ( item ) =>
+			item.matches( 'xb-radio' )
 		);
 	}
 
@@ -168,8 +157,6 @@ export class RadioGroup extends XBElement {
 		this.emit( 'xb-change', { detail: { value } } );
 	}
 }
-
-window.customElements.define( 'xb-radio-group', RadioGroup );
 
 /**
  * @typedef {import('../../../styles/size.styles').ElementSize} ToggleSize

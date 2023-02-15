@@ -13,7 +13,8 @@ import '../layout/stack';
 import '../text';
 import './select';
 
-export default {
+/** @type {import('../../common/arg-types').Meta} */
+const meta = {
 	title: 'Components/select',
 	component: 'xb-select',
 
@@ -63,6 +64,9 @@ const fixtures = html`
 	</xb-stack>
 `;
 
+export default meta;
+
+/** @type {import('../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-select

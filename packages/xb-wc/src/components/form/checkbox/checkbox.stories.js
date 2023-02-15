@@ -2,7 +2,8 @@ import { html } from 'lit-html';
 
 import './checkbox';
 
-export default {
+/** @type {import('../../../common/arg-types').Meta} */
+const meta = {
 	title: 'Components/form/checkbox',
 	component: 'xb-checkbox',
 
@@ -36,6 +37,9 @@ export default {
 	parameters: {},
 };
 
+export default meta;
+
+/** @type {import('../../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-stack>

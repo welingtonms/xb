@@ -1,5 +1,7 @@
+import { customElement } from 'lit/decorators.js';
 import { MenuItem } from '../menu';
 
+@customElement( 'xb-option' )
 export class SelectOption extends MenuItem {
 	connectedCallback() {
 		super.connectedCallback();
@@ -20,5 +22,3 @@ export class SelectOption extends MenuItem {
 		this.emit( 'xb-option-click', { detail: event.detail } );
 	}
 }
-
-window.customElements.define( 'xb-option', SelectOption );

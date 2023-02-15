@@ -1,5 +1,5 @@
 import { html, nothing } from 'lit';
-import { ifDefined } from 'lit/directives/if-defined.js';
+import { customElement, property } from 'lit/decorators.js';
 import withClassy from '@welingtonms/classy';
 
 import { getTextContent } from '../../utils/slot';
@@ -9,72 +9,58 @@ import styles from './menu-item.styles';
 import '../form/checkbox';
 import '../icon';
 
+@customElement( 'xb-menu-item' )
 export class MenuItem extends XBElement {
+	static styles = [ styles() ];
+
+	/**
+	 * Should the button be disabled.
+	 * @type {MenuItemAttributes['disabled']}
+	 */
+	@property( { type: Boolean, reflect: true } ) disabled;
+
+	/**
+	 * Select item size.
+	 * @type {MenuItemAttributes['size']}
+	 */
+	@property( { type: String } ) size;
+
+	/**
+	 * Is this a selected option.
+	 * @type {MenuItemAttributes['selected']}
+	 */
+	@property( { type: Boolean } ) selected;
+
+	/**
+	 * Selection strategy.
+	 * @type {MenuItemAttributes['type']}
+	 */
+	@property( { type: String } ) type;
+
+	/**
+	 * Value that this option represents.
+	 * @type {MenuItemAttributes['value']}
+	 */
+	@property( { type: String, reflect: true } ) value;
+
 	/** @type {HTMLSlotElement} */
 	_defaultSlot;
 
 	/** @type {import('../button/button').Button} */
 	_button;
 
-	static styles = [ styles() ];
-
-	static get properties() {
-		return {
-			/**
-			 * Should the button be disabled.
-			 * @type {MenuItemAttributes['disabled']}
-			 */
-			disabled: { type: Boolean, reflect: true },
-
-			/**
-			 * Select item size.
-			 * @type {MenuItemAttributes['size']}
-			 */
-			size: { type: String },
-
-			/**
-			 * Is this a selected option.
-			 * @type {MenuItemAttributes['selected']}
-			 */
-			selected: { type: Boolean },
-
-			/**
-			 * Selection strategy.
-			 * @type {MenuItemAttributes['type']}
-			 */
-			type: { type: String },
-
-			/**
-			 * Value that this option represents.
-			 * @type {MenuItemAttributes['value']}
-			 */
-			value: { type: String, reflect: true },
-		};
-	}
-
 	constructor() {
 		super();
 
-		/** @type {MenuItemAttributes['size']} */
 		this.size = 'small';
 
-		/** @type {MenuItemAttributes['selected']} */
 		this.selected = false;
 
-		/** @type {MenuItemAttributes['disabled']} */
 		this.disabled = false;
 
-		/** @type {MenuItemAttributes['value']} */
 		this.value = '';
 
-		/** @type {MenuItemAttributes['type']} */
 		this.type = 'single';
-	}
-
-	get button() {
-		this._button = this._button ?? this.shadowRoot.querySelector( 'button' );
-
-		return this._button;
 	}
 
 	/** Returns a text label based on the contents of the menu item's default slot. */
@@ -131,6 +117,12 @@ export class MenuItem extends XBElement {
 		`;
 	}
 
+	get button() {
+		this._button = this._button ?? this.shadowRoot.querySelector( 'button' );
+
+		return this._button;
+	}
+
 	/**
 	 *
 	 * @param {MouseEvent} event
@@ -143,8 +135,6 @@ export class MenuItem extends XBElement {
 		} );
 	}
 }
-
-window.customElements.define( 'xb-menu-item', MenuItem );
 
 /**
  * @typedef {import('../../styles/size.styles').ElementSize} SelectionOptionSize

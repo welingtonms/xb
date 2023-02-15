@@ -2,7 +2,8 @@ import { html } from 'lit-html';
 
 import './text';
 
-export default {
+/** @type {import('../../common/arg-types').Meta} */
+const meta = {
 	title: 'Components/text',
 	component: 'xb-text',
 	argTypes: {
@@ -28,6 +29,9 @@ export default {
 	parameters: {},
 };
 
+export default meta;
+
+/** @type {import('../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-text variant=${ args.variant }>

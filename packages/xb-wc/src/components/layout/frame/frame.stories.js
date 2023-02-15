@@ -4,7 +4,8 @@ import { BorderlessArg, PaddinglessArg } from '../../../common/arg-types';
 import '../box';
 import './frame';
 
-export default {
+/** @type {import('../../../common/arg-types').Meta} */
+const meta = {
 	title: 'Foundation/Layouts/frame',
 	component: 'xb-frame',
 	argTypes: {
@@ -21,6 +22,9 @@ export default {
 
 const style = '--xb-frame-background-color: rgb(var(--xb-color-background));';
 
+export default meta;
+
+/** @type {import('../../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-frame

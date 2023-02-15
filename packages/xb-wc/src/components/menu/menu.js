@@ -1,4 +1,5 @@
 import { html, nothing } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import withClassy from '@welingtonms/classy';
 
 import XBElement from '../../common/xb-element';
@@ -6,54 +7,43 @@ import styles from './menu.styles';
 
 import '../focus-trap';
 
+@customElement( 'xb-menu' )
 export class Menu extends XBElement {
 	static styles = [ styles() ];
 
-	static get properties() {
-		return {
-			loading: {
-				type: Boolean,
-			},
+	/**
+	 * Is the menu options being loaded.
+	 * @type {MenuAttributes['loading']}
+	 */
+	@property( { type: Boolean } ) loading;
 
-			/**
-			 * Should menu items be hoverable.
-			 * @type {MenuAttributes['hoverable']}
-			 */
-			hoverable: {
-				type: Boolean,
-			},
+	/**
+	 * Should menu items be hoverable.
+	 * @type {MenuAttributes['hoverable']}
+	 */
+	@property( { type: Boolean } ) hoverable;
 
-			/**
-			 * Should menu items be striped.
-			 * @type {MenuAttributes['striped']}
-			 */
-			striped: {
-				type: Boolean,
-			},
+	/**
+	 * Should menu items be striped.
+	 * @type {MenuAttributes['striped']}
+	 */
+	@property( { type: Boolean } ) striped;
 
-			/**
-			 * Should menu items be [bottom] bordered.
-			 * @type {MenuAttributes['bordered']}
-			 */
-			bordered: {
-				type: Boolean,
-			},
-		};
-	}
+	/**
+	 * Should menu items be [bottom] bordered.
+	 * @type {MenuAttributes['bordered']}
+	 */
+	@property( { type: Boolean } ) bordered;
 
 	constructor() {
 		super();
 
-		/** @type {MenuAttributes['loading']} */
 		this.loading = false;
 
-		/** @type {MenuAttributes['striped']} */
 		this.striped = false;
 
-		/** @type {MenuAttributes['hoverable']} */
 		this.hoverable = false;
 
-		/** @type {MenuAttributes['bordered']} */
 		this.bordered = false;
 	}
 
@@ -86,8 +76,6 @@ export class Menu extends XBElement {
 		`;
 	}
 }
-
-window.customElements.define( 'xb-menu', Menu );
 
 /**
  * @typedef {import('../../common/prop-types').HTMLTag} HTMLTag

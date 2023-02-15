@@ -3,7 +3,8 @@ import { html } from 'lit-html';
 import { BorderlessArg, PaddinglessArg } from '../../../common/arg-types';
 import './box';
 
-export default {
+/** @type {import('../../../common/arg-types').Meta} */
+const meta = {
 	title: 'Foundation/Layouts/box',
 	component: 'xb-box',
 	argTypes: {
@@ -20,6 +21,9 @@ export default {
 
 const style = '--xb-box-background-color: rgb(var(--xb-color-background));';
 
+export default meta;
+
+/** @type {import('../../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-box style=${ style } borderless paddingless>Content</xb-box>

@@ -1,4 +1,5 @@
 import { html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import withClassy from '@welingtonms/classy';
 
@@ -10,42 +11,29 @@ import styles from './tooltip.styles';
 
 import '../popover';
 
+@customElement( 'xb-tooltip' )
 export class Tooltip extends XBElement {
 	static styles = [ styles() ];
 
-	/** @type {HTMLSlotElement} */
-	_defaultSlot;
+	/**
+	 * Tooltip variant.
+	 * @type {TooltipAttributes['placement']}
+	 */
+	@property( { type: String } ) placement;
 
-	static get properties() {
-		return {
-			/**
-			 * Tooltip variant.
-			 * @type {TooltipAttributes['placement']}
-			 */
-			placement: { type: String },
+	/**
+	 * Should the dropdown menu be open.
+	 * @type {TooltipAttributes['open']}
+	 */
+	@property( { type: Boolean, reflect: true } ) open;
 
-			/**
-			 * Should the dropdown menu be open.
-			 * @type {TooltipAttributes['open']}
-			 */
-			open: {
-				type: Boolean,
-				reflect: true,
-			},
-
-			/**
-			 * Controls how the tooltip is activated. Possible options include `click`, `hover`, `focus`, and `manual`. Multiple
-			 * options can be passed by separating them with a space. When manual is used, the tooltip must be activated
-			 * programmatically.
-			 * @type {string}
-			 */
-			trigger: {
-				converter: {
-					fromAttribute: convertTriggerFromAttribute,
-				},
-			},
-		};
-	}
+	/**
+	 * Controls how the tooltip is activated. Possible options include `click`, `hover`, `focus`, and `manual`. Multiple
+	 * options can be passed by separating them with a space. When manual is used, the tooltip must be activated
+	 * programmatically.
+	 * @type {string}
+	 */
+	@property( { converter: { fromAttribute: convertTriggerFromAttribute } } ) trigger;
 
 	constructor() {
 		super();
@@ -96,23 +84,24 @@ export class Tooltip extends XBElement {
 			open: this.open,
 		} );
 
-		return html`<xb-popover
-			class=${ classy( 'tooltip' ) }
-			placement=${ ifDefined( this.placement ) }
-			?hidden=${ ! this.open }
-		>
-			<slot slot="anchor" aria-describedby="content"></slot>
-			<div
-				slot="floating"
-				id="content"
-				class="content"
-				role="tooltip"
-				aria-hidden=${ this.open ? 'false' : 'true' }
+		return html`
+			<xb-popover
+				class=${ classy( 'tooltip' ) }
+				placement=${ ifDefined( this.placement ) }
+				?hidden=${ ! this.open }
 			>
-				<slot name="floating" aria-live=${ this.open ? 'polite' : 'off' }>
-				</slot>
-			</div>
-		</xb-popover>`;
+				<slot slot="anchor" aria-describedby="content"></slot>
+				<div
+					slot="floating"
+					id="content"
+					class="content"
+					role="tooltip"
+					aria-hidden=${ this.open ? 'false' : 'true' }
+				>
+					<slot name="floating" aria-live=${ this.open ? 'polite' : 'off' }></slot>
+				</div>
+			</xb-popover>
+		`;
 	}
 
 	show() {
@@ -183,8 +172,6 @@ export class Tooltip extends XBElement {
 		return this.trigger.includes( triggerType );
 	}
 }
-
-window.customElements.define( 'xb-tooltip', Tooltip );
 
 /**
  * @typedef {import('../popover/popover').PopoverPlacement} TooltipPlacement

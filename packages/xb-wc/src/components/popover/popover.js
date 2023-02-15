@@ -1,4 +1,5 @@
 import { html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import { computePosition, flip, shift, offset, arrow } from '@floating-ui/dom';
 
 import XBElement from '../../common/xb-element';
@@ -6,7 +7,28 @@ import styles from './popover.styles';
 
 import '../resize-observer';
 
+@customElement( 'xb-popover' )
 export class Popover extends XBElement {
+	static styles = [ styles() ];
+
+	/**
+	 * Popover positioning strategy.
+	 * @type {PopoverAttributes['position']}
+	 */
+	@property( { type: String, reflect: true } ) position;
+
+	/**
+	 * Popover placement.
+	 * @type {PopoverAttributes['placement']}
+	 */
+	@property( { type: String } ) placement;
+
+	/**
+	 * Should popover's floating be hidden.
+	 * @type {PopoverAttributes['hidden']}
+	 */
+	@property( { type: Boolean } ) hidden;
+
 	/** @type {HTMLElement | null} */
 	_anchor = null;
 
@@ -15,30 +37,6 @@ export class Popover extends XBElement {
 
 	/** @type {HTMLElement | null} */
 	_arrow = null;
-
-	static styles = [ styles() ];
-
-	static get properties() {
-		return {
-			/**
-			 * Popover positioning strategy.
-			 * @type {PopoverAttributes['position']}
-			 */
-			position: { type: String, reflect: true },
-
-			/**
-			 * Popover placement.
-			 * @type {PopoverAttributes['placement']}
-			 */
-			placement: { type: String },
-
-			/**
-			 * Should popover's floating be hidden.
-			 * @type {PopoverAttributes['hidden']}
-			 */
-			hidden: { type: Boolean },
-		};
-	}
 
 	constructor() {
 		super();
@@ -68,6 +66,9 @@ export class Popover extends XBElement {
 	}
 
 	render() {
+		/**
+		 * FIXME: replace `xb-resize-observer` with `ResizeObserver` from `@lit-labs/observers`.
+		 */
 		return html`
 			<xb-resize-observer type="window" @xb-resize=${ this._handleResize }>
 				<slot name="anchor"></slot>
@@ -78,8 +79,8 @@ export class Popover extends XBElement {
 	}
 
 	reposition() {
-		const anchor = this._getAnchor();
-		const floating = this._getFloating();
+		const anchor = this.anchor;
+		const floating = this.floating;
 
 		if ( floating == null || anchor == null ) {
 			console.warn(
@@ -101,7 +102,7 @@ export class Popover extends XBElement {
 				offset( 4 ),
 				flip(),
 				shift(),
-				// arrow( { element: this._getArrow() } ),
+				// arrow( { element: this.arrow() } ),
 			],
 		} ).then( ( { x, y, placement } ) => {
 			// console.debug(
@@ -144,8 +145,8 @@ export class Popover extends XBElement {
 			// 	left: 'right',
 			// }[ placement.split( '-' )[ 0 ] ];
 
-			// const anchorHeight = this._getAnchor().getBoundingClientRect().height;
-			// const anchorWidth = this._getAnchor().getBoundingClientRect().width;
+			// const anchorHeight = this.anchor.getBoundingClientRect().height;
+			// const anchorWidth = this.anchor.getBoundingClientRect().width;
 			// const batata = {
 			// 	top: anchorHeight,
 			// 	right: anchorWidth,
@@ -174,7 +175,7 @@ export class Popover extends XBElement {
 			// 	cebola[ staticSide ]
 			// );
 
-			// Object.assign( this._getArrow().style, {
+			// Object.assign( this.arrow().style, {
 			// 	left: arrowX != null ? `${ arrowX }px` : '',
 			// 	top: arrowY != null ? `${ arrowY }px` : '',
 			// 	right: '',
@@ -185,15 +186,15 @@ export class Popover extends XBElement {
 		} );
 	}
 
-	_getAnchor() {
+	get anchor() {
 		return this._anchor;
 	}
 
-	_getFloating() {
+	get floating() {
 		return this._floating;
 	}
 
-	_getArrow() {
+	get arrow() {
 		return this._arrow;
 	}
 
@@ -201,8 +202,6 @@ export class Popover extends XBElement {
 		this.reposition();
 	}
 }
-
-window.customElements.define( 'xb-popover', Popover );
 
 /**
  * @typedef {import('@floating-ui/dom').Strategy} PopoverPosition

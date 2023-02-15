@@ -3,7 +3,8 @@ import { html } from 'lit';
 import { PlacementArg, SizeArg } from '../../common/arg-types';
 import './dropdown';
 
-export default {
+/** @type {import('../../common/arg-types').Meta} */
+const meta = {
 	title: 'Components/dropdown',
 	component: 'xb-dropdown',
 
@@ -21,6 +22,9 @@ export default {
 	parameters: {},
 };
 
+export default meta;
+
+/** @type {import('../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-dropdown placement=${ args.placement }>

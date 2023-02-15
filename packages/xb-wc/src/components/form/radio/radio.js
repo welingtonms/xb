@@ -1,53 +1,46 @@
 import { html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import { createRef, ref } from 'lit/directives/ref.js';
 import withClassy from '@welingtonms/classy';
 
 import XBElement from '../../../common/xb-element';
 import styles from './radio.styles';
 
+@customElement( 'xb-radio' )
 export class RadioInput extends XBElement {
-	button = createRef();
-
 	static styles = [ styles() ];
 
-	static get properties() {
-		return {
-			/**
-			 * Should the button be disabled.
-			 * @type {RadioAttributes['disabled']}
-			 */
-			disabled: { type: Boolean, reflect: true },
+	/**
+	 * Should the button be disabled.
+	 * @type {RadioAttributes['disabled']}
+	 */
+	@property( { type: Boolean, reflect: true } ) disabled;
 
-			/**
-			 * Should the button be checked.
-			 * @type {RadioAttributes['checked']}
-			 */
-			checked: { type: Boolean, reflect: true },
+	/**
+	 * Should the button be checked.
+	 * @type {RadioAttributes['checked']}
+	 */
+	@property( { type: Boolean, reflect: true } ) checked;
 
-			/**
-			 * Value this radio button represents.
-			 * @type {RadioAttributes['size']}
-			 */
-			size: { type: String },
+	/**
+	 * Value this radio button represents.
+	 * @type {RadioAttributes['size']}
+	 */
+	@property( { type: String } ) size;
 
-			/**
-			 * Value this radio button represents.
-			 * @type {RadioAttributes['value']}
-			 */
-			value: { type: String },
-		};
-	}
+	/**
+	 * Value this radio button represents.
+	 * @type {RadioAttributes['value']}
+	 */
+	@property( { type: String } ) value;
 
 	constructor() {
 		super();
 
-		/** @type {RadioAttributes['disabled']} */
 		this.disabled = false;
 
-		/** @type {RadioAttributes['size']} */
 		this.size = 'small';
 
-		/** @type {RadioAttributes['checked']} */
 		this.checked = false;
 	}
 
@@ -82,7 +75,7 @@ export class RadioInput extends XBElement {
 	}
 
 	focus() {
-		this._getButton().focus();
+		this.button.focus();
 
 		// to mimic the native behavior
 		this._handleClick();
@@ -93,7 +86,6 @@ export class RadioInput extends XBElement {
 
 		return html`
 			<button
-				${ ref( this.button ) }
 				type="button"
 				class=${ classy( 'radio', {
 					'-small': when( { size: 'small' } ),
@@ -112,25 +104,18 @@ export class RadioInput extends XBElement {
 		`;
 	}
 
-	/**
-	 * @returns {HTMLButtonElement}
-	 */
-	_getButton() {
-		return this.button.value;
+	get button() {
+		return this.shadowRoot.querySelector( 'button' );
 	}
 
 	_setDisabled() {
-		const button = this._getButton();
-
 		this.setAttribute( 'aria-disabled', String( this.disabled ) );
-		button.disabled = this.disabled;
+		this.button.disabled = this.disabled;
 	}
 
 	_setChecked() {
-		const button = this._getButton();
-
 		this.setAttribute( 'aria-checked', String( this.checked ) );
-		button.setAttribute( 'aria-checked', String( this.checked ) );
+		this.button.setAttribute( 'aria-checked', String( this.checked ) );
 	}
 
 	_handleClick( e ) {
@@ -151,8 +136,6 @@ export class RadioInput extends XBElement {
 		this.emit( 'xb-check', options );
 	}
 }
-
-window.customElements.define( 'xb-radio', RadioInput );
 
 /**
  * @typedef {import('../../../styles/size.styles').ElementSize} RadioSize

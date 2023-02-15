@@ -32,3 +32,8 @@ export const BorderlessArg = Object.freeze( {
 	control: 'select',
 	options: [ 'none', 'horizontal', 'vertical', 'top', 'right', 'bottom', 'left' ],
 } );
+
+/**
+ * @typedef {import('@storybook/web-components').Meta} Meta
+ * @typedef {import('@storybook/web-components').StoryObj} StoryObj
+ */

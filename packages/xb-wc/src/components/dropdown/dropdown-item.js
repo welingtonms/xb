@@ -1,8 +1,10 @@
+import { customElement } from 'lit/decorators.js';
 import { MenuItem } from '../menu';
 
 /**
  * Doing this to avoid the "this constructor has already been used with this registry" error
  */
+@customElement( 'xb-dropdown-item' )
 export class DropdownMenuItem extends MenuItem {
 	connectedCallback() {
 		super.connectedCallback();
@@ -26,5 +28,3 @@ export class DropdownMenuItem extends MenuItem {
 		this.emit( 'xb-click', { detail: event.detail } );
 	}
 }
-
-window.customElements.define( 'xb-dropdown-item', DropdownMenuItem );

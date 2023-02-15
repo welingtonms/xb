@@ -1,4 +1,5 @@
 import { html } from 'lit/static-html.js';
+import { customElement } from 'lit/decorators.js';
 import { createRef, ref } from 'lit/directives/ref.js';
 import withClassy from '@welingtonms/classy';
 
@@ -12,18 +13,11 @@ import styles from './reel.styles';
  * @class
  * @mixes PolymorphicElementMixin
  */
+@customElement( 'xb-reel' )
 export class ReelLayout extends BaseLayout {
 	element = createRef();
 
 	static styles = [ styles() ];
-
-	static get properties() {
-		return {};
-	}
-
-	constructor() {
-		super();
-	}
 
 	connectedCallback() {
 		super.connectedCallback();
@@ -59,10 +53,7 @@ export class ReelLayout extends BaseLayout {
 
 	_toggleOverflowClass( elem ) {
 		console.debug( '[xb-reel]', elem.scrollWidth > elem.clientWidth );
-		elem.classList.toggle(
-			'is-overflowing',
-			elem.scrollWidth > elem.clientWidth
-		);
+		elem.classList.toggle( 'is-overflowing', elem.scrollWidth > elem.clientWidth );
 	}
 
 	render() {
@@ -83,8 +74,6 @@ export class ReelLayout extends BaseLayout {
 		`;
 	}
 }
-
-window.customElements.define( 'xb-reel', ReelLayout );
 
 /**
  * @typedef {import('../../../common/prop-types').BorderlessProp} BorderlessProp

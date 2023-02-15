@@ -1,4 +1,5 @@
 import { html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import withClassy from '@welingtonms/classy';
 
 import styles from './toggle-group.styles';
@@ -7,56 +8,48 @@ import XBElement from '../../common/xb-element';
 import '../selection-keeper';
 import '../layout/cluster';
 
+@customElement( 'xb-toggle-group' )
 export class ToggleGroup extends XBElement {
-	/** @type {HTMLSlotElement} */
-	_defaultSlot;
-
 	static styles = [ styles() ];
 
-	static get properties() {
-		return {
-			/**
-			 * Should the button be disabled.
-			 * @type {ToggleGroupAttributes['disabled']}
-			 */
-			disabled: { type: Boolean, reflect: true },
+	/**
+	 * Should the button be disabled.
+	 * @type {ToggleGroupAttributes['disabled']}
+	 */
+	@property( { type: Boolean, reflect: true } ) disabled;
 
-			/**
-			 * Aria role
-			 * @type {ToggleGroupAttributes['role']}
-			 */
-			role: {
-				type: String,
-				reflect: true,
-			},
+	/**
+	 * Aria role
+	 * @type {ToggleGroupAttributes['role']}
+	 */
+	@property( { type: String, reflect: true } ) role;
 
-			/**
-			 * Button size.
-			 * @type {ToggleGroupAttributes['size']}
-			 */
-			size: { type: String },
+	/**
+	 * Button size.
+	 * @type {ToggleGroupAttributes['size']}
+	 */
+	@property( { type: String } ) size;
 
-			/**
-			 * Selection strategy.
-			 * @type {ToggleGroupAttributes['type']}
-			 */
-			type: { type: String },
+	/**
+	 * Selection strategy.
+	 * @type {ToggleGroupAttributes['type']}
+	 */
+	@property( { type: String } ) type;
 
-			/**
-			 * Selection value.
-			 * @type {ToggleGroupAttributes['value']}
-			 */
-			value: {},
+	/**
+	 * Selection value.
+	 * @type {ToggleGroupAttributes['value']}
+	 */
+	@property( {} ) value;
 
-			/**
-			 * `Set` that represents the current selection value.
-			 * @type {SelectionState}
-			 */
-			_selection: {
-				state: true,
-			},
-		};
-	}
+	/**
+	 * `Set` that represents the current selection value.
+	 * @type {SelectionState}
+	 */
+	@property( { state: true } ) _selection;
+
+	/** @type {HTMLSlotElement} */
+	_defaultSlot;
 
 	constructor() {
 		super();
@@ -190,13 +183,6 @@ export class ToggleGroup extends XBElement {
 		this.emit( 'xb-change', { detail: { value } } );
 	}
 }
-
-window.customElements.define( 'xb-toggle-group', ToggleGroup );
-
-/**
- * @typedef {('text' | 'ghost' | 'flat')} ButtonEmphasis
- * @typedef {('small' | 'medium' | 'large')} ButtonSize
- */
 
 /**
  * @typedef {import('./toggle').ToggleButton} ToggleButton

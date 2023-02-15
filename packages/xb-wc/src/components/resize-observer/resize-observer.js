@@ -1,4 +1,5 @@
 import { html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
 import XBElement from '../../common/xb-element';
 import styles from './resize-observer.styles';
@@ -6,48 +7,35 @@ import styles from './resize-observer.styles';
 /**
  * Based on https://github.dev/shoelace-style/shoelace/blob/a0f83c3b2bbee6089bdfb1f56a6474fff027865b/src/components/resize-observer/resize-observer.ts#L17
  */
+@customElement( 'xb-resize-observer' )
 export default class XBResizeObserver extends XBElement {
 	static styles = [ styles() ];
+
+	/** Disables the observer. */
+	@property( { type: Boolean, reflect: true } ) disabled;
+
+	@property( { type: Boolean } ) debounced;
+
+	@property( { type: String } ) type;
 
 	/** @type {ResizeObserver} */
 	_resizeObserver;
 
-	/** @type {HTMLElement[]} */
 	_observedElements;
 
 	/** @type {number} */
 	_timeout;
 
-	static get properties() {
-		return {
-			/** Disables the observer. */
-			disabled: {
-				type: Boolean,
-				reflect: true,
-			},
-
-			debounced: {
-				type: Boolean,
-			},
-
-			type: {
-				type: String,
-			},
-		};
-	}
-
 	constructor() {
 		super();
 
-		/** @type {ResizeObserverAttributes['disabled']} */
 		this.disabled = false;
 
-		/** @type {ResizeObserverAttributes['type']} */
 		this.type = 'content';
 
-		/** @type {ResizeObserverAttributes['debounced']} */
 		this.debounced = true;
 
+		/** @type {HTMLElement[]} */
 		this._observedElements = [];
 	}
 
@@ -105,7 +93,9 @@ export default class XBResizeObserver extends XBElement {
 	}
 
 	render() {
-		return html`<slot @slotchange=${ this._handleSlotChange }></slot>`;
+		return html`
+			<slot @slotchange=${ this._handleSlotChange }></slot>
+		`;
 	}
 
 	_handleSlotChange() {
@@ -149,11 +139,13 @@ export default class XBResizeObserver extends XBElement {
 	}
 }
 
-window.customElements.define( 'xb-resize-observer', XBResizeObserver );
+/**
+ * @typedef {'window' | 'content'} ResizeObserverType
+ */
 
 /**
  * @typedef {Object} ResizeObserverAttributes
  * @property {boolean} disabled
  * @property {boolean} debounced
- * @property {'window' | 'content'} type
+ * @property {ResizeObserverType} type
  */

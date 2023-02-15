@@ -1,4 +1,5 @@
 import { html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import createSelectionStrategy from '@welingtonms/xb-toolset/dist/selection';
 import toArray from '@welingtonms/xb-toolset/dist/to-array';
 
@@ -19,52 +20,44 @@ function getChanged( state, value ) {
 	return Array.from( new Set( [ ...state.keys(), ...toArray( value ) ] ) );
 }
 
+@customElement( 'xb-selection-keeper' )
 export class SelectionKeeper extends XBElement {
 	static styles = [ styles() ];
+
+	/**
+	 * Event triggered when a selection happens. Default = 'xb-selection-select'
+	 * @type {SelectionKeeperAttributes['listen']}
+	 */
+	@property( { type: String } ) listen;
+
+	/**
+	 * Selection strategy.
+	 * @type {SelectionKeeperAttributes['type']}
+	 */
+	@property( { type: String } ) type;
+
+	/**
+	 * Selection value.
+	 * @type {SelectionKeeperAttributes['value']}
+	 */
+	@property( {} ) value;
+
+	/**
+	 * `Set` that represents the current selection value.
+	 * @type {SelectionState}
+	 */
+	@property( { state: true } ) _state;
 
 	/** @type {SelectionStrategy} */
 	_strategy = null;
 
-	static get properties() {
-		return {
-			/**
-			 * Event triggered when a selection happens. Default = 'xb-selection-select'
-			 * @type {SelectionKeeperAttributes['listen']}
-			 */
-			listen: { type: String },
-
-			/**
-			 * Selection strategy.
-			 * @type {SelectionKeeperAttributes['type']}
-			 */
-			type: { type: String },
-
-			/**
-			 * Selection value.
-			 * @type {SelectionKeeperAttributes['value']}
-			 */
-			value: {},
-
-			/**
-			 * `Set` that represents the current selection value.
-			 * @type {SelectionState}
-			 */
-			_state: {
-				state: true,
-			},
-		};
-	}
-
 	constructor() {
 		super();
 
-		/** @type {SelectionKeeperAttributes['listen']} */
 		this.listen = 'xb-selection-select';
 
-		/** @type {SelectionKeeperAttributes['type']} */
 		this.type;
 
-		/** @type {SelectionKeeperAttributes['value']} */
 		this.value;
 
 		/** @type {SelectionState} */
@@ -163,8 +156,6 @@ export class SelectionKeeper extends XBElement {
 		} );
 	}
 }
-
-window.customElements.define( 'xb-selection-keeper', SelectionKeeper );
 
 /**
  * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionType} SelectionType

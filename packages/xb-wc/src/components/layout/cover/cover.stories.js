@@ -6,7 +6,8 @@ import '../box';
 
 import './cover';
 
-export default {
+/** @type {import('../../../common/arg-types').Meta} */
+const meta = {
 	title: 'Foundation/Layouts/cover',
 	component: 'xb-cover',
 	argTypes: {
@@ -23,6 +24,9 @@ export default {
 
 const style = '--xb-cover-background-color: rgb(var(--xb-color-background));';
 
+export default meta;
+
+/** @type {import('../../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-cover

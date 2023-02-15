@@ -1,5 +1,7 @@
+import { customElement } from 'lit/decorators.js';
 import { Menu } from '../menu';
 
+@customElement( 'xb-dropdown-menu' )
 export class DropdownMenu extends Menu {
 	connectedCallback() {
 		super.connectedCallback();
@@ -7,5 +9,3 @@ export class DropdownMenu extends Menu {
 		this.setAttribute( 'slot', 'menu' );
 	}
 }
-
-window.customElements.define( 'xb-dropdown-menu', DropdownMenu );

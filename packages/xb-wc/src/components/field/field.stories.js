@@ -6,7 +6,8 @@ import '../form';
 import '../toggle-group';
 import '../text';
 
-export default {
+/** @type {import('../../common/arg-types').Meta} */
+const meta = {
 	title: 'Components/field',
 	component: 'xb-field',
 
@@ -14,6 +15,9 @@ export default {
 	parameters: {},
 };
 
+export default meta;
+
+/** @type {import('../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-stack style="--xb-stack-gap: var(--xb-spacing-6);">
@@ -30,16 +34,10 @@ export const Playground = {
 					<xb-toggle value="leave">Leave</xb-toggle>
 				</xb-toggle-group>
 
-				<xb-text slot="prompt" variant="caption" as="small">
-					Cebolas fritas
-				</xb-text>
+				<xb-text slot="prompt" variant="caption" as="small">Cebolas fritas</xb-text>
 			</xb-field>
 
-			<xb-field
-				label="Name"
-				tip="Your name."
-				prompt="Lorem consectetur adipiscing elit."
-			>
+			<xb-field label="Name" tip="Your name." prompt="Lorem consectetur adipiscing elit.">
 				<xb-text-input type="text"></xb-text-input>
 			</xb-field>
 

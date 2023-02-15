@@ -3,7 +3,8 @@ import { html } from 'lit-html';
 import { SizeArg } from '../../../common/arg-types';
 import './text-input';
 
-export default {
+/** @type {import('../../../common/arg-types').Meta} */
+const meta = {
 	title: 'Components/form/text input',
 	component: 'xb-text-input',
 
@@ -28,6 +29,9 @@ export default {
 	parameters: {},
 };
 
+export default meta;
+
+/** @type {import('../../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-stack>

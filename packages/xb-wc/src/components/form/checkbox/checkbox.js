@@ -1,55 +1,47 @@
 import { html } from 'lit';
-import { createRef, ref } from 'lit/directives/ref.js';
+import { customElement, property } from 'lit/decorators.js';
 import withClassy from '@welingtonms/classy';
 
 import { CHECK_EVENT } from './checkbox.constants';
 import XBElement from '../../../common/xb-element';
 import styles from './checkbox.styles';
 
+@customElement( 'xb-checkbox' )
 export class CheckboxInput extends XBElement {
-	button = createRef();
-
 	static styles = [ styles() ];
 
-	static get properties() {
-		return {
-			/**
-			 * Should the button be disabled.
-			 * @type {CheckboxAttributes['disabled']}
-			 */
-			disabled: { type: Boolean, reflect: true },
+	/**
+	 * Should the button be disabled.
+	 * @type {CheckboxAttributes['disabled']}
+	 */
+	@property( { type: Boolean, reflect: true } ) disabled;
 
-			/**
-			 * Should the button be checked.
-			 * @type {CheckboxAttributes['checked']}
-			 */
-			checked: { type: Boolean, reflect: true },
+	/**
+	 * Should the button be checked.
+	 * @type {CheckboxAttributes['checked']}
+	 */
+	@property( { type: Boolean, reflect: true } ) checked;
 
-			/**
-			 * Value this radio button represents.
-			 * @type {CheckboxAttributes['size']}
-			 */
-			size: { type: String },
+	/**
+	 * Value this radio button represents.
+	 * @type {CheckboxAttributes['size']}
+	 */
+	@property( { type: String } ) size;
 
-			/**
-			 * Value this radio button represents.
-			 * @type {CheckboxAttributes['value']}
-			 */
-			value: { type: String },
-		};
-	}
+	/**
+	 * Value this radio button represents.
+	 * @type {CheckboxAttributes['value']}
+	 */
+	@property( { type: String } ) value;
 
 	constructor() {
 		super();
 
-		/** @type {CheckboxAttributes['disabled']} */
+		this.checked = false;
+
 		this.disabled = false;
 
-		/** @type {CheckboxAttributes['size']} */
 		this.size = 'small';
-
-		/** @type {CheckboxAttributes['checked']} */
-		this.checked = false;
 	}
 
 	connectedCallback() {
@@ -83,7 +75,7 @@ export class CheckboxInput extends XBElement {
 	}
 
 	focus() {
-		this._getButton().focus();
+		this.button.focus();
 	}
 
 	render() {
@@ -91,7 +83,6 @@ export class CheckboxInput extends XBElement {
 
 		return html`
 			<button
-				${ ref( this.button ) }
 				type="button"
 				class=${ classy( 'checkbox', {
 					'-small': when( { size: 'small' } ),
@@ -110,25 +101,18 @@ export class CheckboxInput extends XBElement {
 		`;
 	}
 
-	/**
-	 * @returns {HTMLButtonElement}
-	 */
-	_getButton() {
-		return this.button.value;
+	get button() {
+		return this.shadowRoot.querySelector( 'button' );
 	}
 
 	_setDisabled() {
-		const button = this._getButton();
-
 		this.setAttribute( 'aria-disabled', String( this.disabled ) );
-		button.disabled = this.disabled;
+		this.button.disabled = this.disabled;
 	}
 
 	_setChecked() {
-		const button = this._getButton();
-
 		this.setAttribute( 'aria-checked', String( this.checked ) );
-		button.setAttribute( 'aria-checked', String( this.checked ) );
+		this.button.setAttribute( 'aria-checked', String( this.checked ) );
 	}
 
 	_handleClick() {
@@ -149,8 +133,6 @@ export class CheckboxInput extends XBElement {
 		this.emit( CHECK_EVENT, options );
 	}
 }
-
-window.customElements.define( 'xb-checkbox', CheckboxInput );
 
 /**
  * @typedef {import('../../../styles/size.styles').ElementSize} CheckboxSize

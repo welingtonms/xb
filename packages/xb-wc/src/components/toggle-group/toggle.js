@@ -1,4 +1,5 @@
 import { html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import withClassy from '@welingtonms/classy';
 
 import XBElement from '../../common/xb-element';
@@ -6,45 +7,39 @@ import styles from './toggle.styles';
 
 import '../button';
 
+@customElement( 'xb-toggle' )
 export class ToggleButton extends XBElement {
 	static styles = [ styles() ];
 
-	static get properties() {
-		return {
-			/**
-			 * Should the button be disabled.
-			 * @type {Boolean}
-			 */
-			disabled: { type: Boolean },
+	/**
+	 * Should the button be disabled.
+	 * @type {Boolean}
+	 */
+	@property( { type: Boolean } ) disabled;
 
-			/**
-			 * Aria role
-			 * @type {'group' | 'radiogroup'}
-			 */
-			role: {
-				type: String,
-				reflect: true,
-			},
+	/**
+	 * Aria role
+	 * @type {'group' | 'radiogroup'}
+	 */
+	@property( { type: String, reflect: true } ) role;
 
-			/**
-			 * Should the button be disabled.
-			 * @type {'true' | 'false'}
-			 */
-			checked: { type: String, reflect: true, attribute: 'aria-checked' },
+	/**
+	 * Should the button be disabled.
+	 * @type {'true' | 'false'}
+	 */
+	@property( { type: String, reflect: true, attribute: 'aria-checked' } ) checked;
 
-			/**
-			 * Button emphasis variant.
-			 * @type {String}
-			 */
-			value: { type: String },
+	/**
+	 * Button emphasis variant.
+	 * @type {String}
+	 */
+	@property( { type: String } ) value;
 
-			/**
-			 * Button size.
-			 * @type {import('../button/button').ButtonSize}
-			 */
-			size: { type: String },
-		};
-	}
+	/**
+	 * Button size.
+	 * @type {import('../button/button').ButtonSize}
+	 */
+	@property( { type: String } ) size;
 
 	constructor() {
 		super();
@@ -98,15 +93,6 @@ export class ToggleButton extends XBElement {
 		this.emit( 'xb-toggle-click', options );
 	}
 }
-
-window.customElements.define( 'xb-toggle', ToggleButton );
-
-// @ts-ignore
-// declare global {
-//   interface HTMLElementTagNameMap {
-//     "xb-toggle": Button;
-//   }
-// }
 
 /**
  * @typedef {('text' | 'ghost' | 'flat')} ButtonEmphasis

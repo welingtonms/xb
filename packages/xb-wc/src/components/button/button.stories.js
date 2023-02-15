@@ -3,7 +3,8 @@ import { html } from 'lit-html';
 import { SizeArg } from '../../common/arg-types';
 import './button';
 
-export default {
+/** @type {import('../../common/arg-types').Meta} */
+const meta = {
 	title: 'Components/button',
 	component: 'xb-button',
 
@@ -33,6 +34,9 @@ export default {
 	parameters: {},
 };
 
+export default meta;
+
+/** @type {import('../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-button
