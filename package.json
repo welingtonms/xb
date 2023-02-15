@@ -12,10 +12,10 @@
 		"build": "lerna run --ignore=demo build",
 		"release": "lerna run release --stream",
 		"test": "lerna run --ignore=demo test",
-		"pkg:wc": "lerna --scope=@welingtonms/xb-wc run",
-		"pkg:tokens": "lerna --scope=@welingtonms/xb-tokens run",
-		"pkg:toolset": "lerna --scope=@welingtonms/xb-toolset run",
-		"pkg:icons": "lerna --scope=@welingtonms/xb-icons run"
+		"wc": "lerna --scope=@welingtonms/xb-wc run",
+		"tokens": "lerna --scope=@welingtonms/xb-tokens run",
+		"toolset": "lerna --scope=@welingtonms/xb-toolset run",
+		"icons": "lerna --scope=@welingtonms/xb-icons run"
 	},
 	"devDependencies": {
 		"@babel/core": "7.20.12",

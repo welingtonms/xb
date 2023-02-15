@@ -1,0 +1,11 @@
+{
+	"extends": "./jsconfig.build.json",
+	"compilerOptions": {
+		"baseUrl": "./packages",
+		"paths": {
+			"@welingtonms/icons": [ "icons/src" ],
+			"@welingtonms/tokens": [ "tokens/src" ],
+			"@welingtonms/toolset": [ "toolset/src" ]
+		}
+	}
+}
