@@ -1,14 +1,12 @@
 {
-	"tasksRunnerOptions": {
-		"default": {
-			"runner": "nx/tasks-runners/default",
-			"options": {
-				"cacheableOperations": [ "build" ]
-			}
-		}
+	"extends": "nx/presets/npm.json",
+	"affected": {
+		"defaultBase": "main"
 	},
 	"namedInputs": {
-		"default": [ "{projectRoot}/**/*" ],
+		"default": [
+			"{projectRoot}/**/*"
+		],
 		"prod": [
 			"!{projectRoot}/**/*.stories.*",
 			"!{projectRoot}/**/*.test.*",
@@ -17,19 +15,45 @@
 	},
 	"targetDefaults": {
 		"build": {
-			"inputs": [ "prod", "^prod" ],
-			"dependsOn": [ "^build" ]
+			"inputs": [
+				"prod",
+				"^prod"
+			],
+			"dependsOn": [
+				"^build"
+			]
 		},
 		"dev": {
-			"dependsOn": [ "^build" ]
+			"dependsOn": [
+				"^build"
+			]
 		},
 		"test": {
-			"inputs": [ "default" ],
-			"dependsOn": [ "^build" ]
+			"inputs": [
+				"default"
+			],
+			"dependsOn": [
+				"^build"
+			]
 		},
 		"release": {
-			"inputs": [ "default", "^prod" ],
-			"dependsOn": [ "^build" ]
+			"inputs": [
+				"default",
+				"^prod"
+			],
+			"dependsOn": [
+				"^build"
+			]
+		}
+	},
+	"tasksRunnerOptions": {
+		"default": {
+			"runner": "nx/tasks-runners/default",
+			"options": {
+				"cacheableOperations": [
+					"build"
+				]
+			}
 		}
 	},
 	"pluginsConfig": {

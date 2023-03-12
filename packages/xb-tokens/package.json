@@ -26,5 +26,21 @@
 	},
 	"publishConfig": {
 		"access": "public"
+	},
+	"nx": {
+		"targets": {
+			"build": {
+				"inputs": [
+					"default",
+					"^prod"
+				],
+				"dependsOn": [
+					"^build"
+				],
+				"outputs": [
+					"{projectRoot}/dist"
+				]
+			}
+		}
 	}
 }

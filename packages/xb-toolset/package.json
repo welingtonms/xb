@@ -24,5 +24,17 @@
 	},
 	"devDependencies": {
 		"jest": "29.4.1"
+	},
+	"nx": {
+		"targets": {
+			"build": {
+				"inputs": [
+					"default"
+				],
+				"outputs": [
+					"{projectRoot}/dist"
+				]
+			}
+		}
 	}
 }

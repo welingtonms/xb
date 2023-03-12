@@ -40,5 +40,17 @@
 		"name": "Welington Silva"
 	},
 	"readme": "https://gitlab.com/welington/xb/-#readme",
-	"homepage": "https://gitlab.com/welington/xb/-#readme"
+	"homepage": "https://gitlab.com/welington/xb/-#readme",
+	"nx": {
+		"targets": {
+			"build": {
+				"inputs": [
+					"default"
+				],
+				"outputs": [
+					"{projectRoot}/dist"
+				]
+			}
+		}
+	}
 }
