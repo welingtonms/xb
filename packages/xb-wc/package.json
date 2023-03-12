@@ -24,6 +24,7 @@
 		"@floating-ui/dom": "1.2.7",
 		"@lit-labs/context": "0.3.1",
 		"@welingtonms/classy": "1.2.0",
+		"@welingtonms/xb-date": "1.0.2",
 		"@welingtonms/xb-icons": "workspace:*",
 		"@welingtonms/xb-tokens": "workspace:*",
 		"@welingtonms/xb-toolset": "workspace:*",

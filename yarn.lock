@@ -5094,6 +5094,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@welingtonms/xb-date@npm:1.0.2":
+  version: 1.0.2
+  resolution: "@welingtonms/xb-date@npm:1.0.2"
+  checksum: 0a586caa4618bba420f0582899e73d236874f14fc4a7f3e39cc575dd2e9a796aa138d68a33a02b5cc27ebc0667d18814be409d49960770f0d8ec65a1e1f5cf5e
+  languageName: node
+  linkType: hard
+
 "@welingtonms/xb-icons@workspace:*, @welingtonms/xb-icons@workspace:packages/xb-icons":
   version: 0.0.0-use.local
   resolution: "@welingtonms/xb-icons@workspace:packages/xb-icons"
@@ -5143,6 +5150,7 @@ __metadata:
     "@storybook/addon-links": 7.0.0-beta.36
     "@storybook/web-components-webpack5": 7.0.0-beta.36
     "@welingtonms/classy": 1.2.0
+    "@welingtonms/xb-date": 1.0.2
     "@welingtonms/xb-icons": "workspace:*"
     "@welingtonms/xb-tokens": "workspace:*"
     "@welingtonms/xb-toolset": "workspace:*"
