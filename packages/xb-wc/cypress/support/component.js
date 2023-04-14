@@ -17,6 +17,9 @@
 import './commands';
 import mount from './mount';
 
+// reference: https://docs.cypress.io/guides/component-testing/styling-components#Rules-for-Setting-Up-Your-Styles
+import '@welingtonms/xb-tokens/dist/tokens/web/xb/variables.css';
+
 // Augment the Cypress namespace to include type definitions for
 // your custom command.
 // Alternatively, can be defined in cypress/support/component.d.ts
