@@ -33,7 +33,7 @@ export const Playground = {
 		html`
 			<xb-selection-keeper
 				.value=${ args.value }
-				@xb-selection-change=${ ( e ) => {
+				@xb-change=${ ( e ) => {
 					document.querySelector( 'small' ).innerHTML = JSON.stringify( e.detail.value );
 					args.change( e );
 				} }

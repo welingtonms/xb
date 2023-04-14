@@ -82,13 +82,13 @@ export class RadioGroup extends XBElement {
 	}
 
 	render() {
-		const { classy, when } = withClassy( {} );
+		const { classy } = withClassy( {} );
 
 		// TODO: add proper accessibility features
 		return html`
 			<xb-selection-keeper
 				.value=${ this.value }
-				@xb-selection-change=${ this._handleSelectionChange }
+				@xb-change=${ this._handleSelectionChange }
 				listen="xb-check"
 				type="single-strict"
 			>

@@ -97,7 +97,7 @@ export class SelectionKeeper extends XBElement {
 			 * in response to state changes made by the owner of the component via its property
 			 * or attribute APIs", in this case, we need to report the selection state (consolidated
 			 * by the strategy) back to whoever is using this component, in case they need it. Since
-			 * this is done via dispatching the `'xb-selection-change'` event, that's why, although
+			 * this is done via dispatching the `'xb-change'` event, that's why, although
 			 * atypical, this is being done here.
 			 *
 			 * Reference: https://lit.dev/docs/components/events/#when-to-dispatch-an-event
@@ -143,11 +143,11 @@ export class SelectionKeeper extends XBElement {
 	}
 
 	/**
-	 * Emit the `xb-selection-change` event.
+	 * Emit the `xb-change` event.
 	 * @param {SelectionState} changed
 	 */
 	_publish( changed ) {
-		this.emit( 'xb-selection-change', {
+		this.emit( 'xb-change', {
 			detail: {
 				state: this._state,
 				value: this._strategy.value( this._state ),
