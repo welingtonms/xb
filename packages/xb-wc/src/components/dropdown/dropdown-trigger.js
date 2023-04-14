@@ -20,7 +20,9 @@ export class DropdownTrigger extends XBElement {
 	connectedCallback() {
 		super.connectedCallback();
 
-		this.setAttribute( 'slot', 'trigger' );
+		this.setAttribute( 'slot', 'reference' );
+
+		this.addEventListener( 'click', this._handleClick );
 	}
 
 	focus() {
@@ -38,7 +40,6 @@ export class DropdownTrigger extends XBElement {
 					'is-open': when( { open: true } ),
 				} ) }"
 				emphasis="flat"
-				@click=${ this._handleClick }
 			>
 				<slot></slot>
 				<xb-icon
@@ -54,12 +55,7 @@ export class DropdownTrigger extends XBElement {
 	}
 
 	_handleClick() {
-		const options = {
-			composed: true,
-			detail: { action: 'toggle' },
-		};
-
-		this.emit( 'xb-dropdown', options );
+		this.emit( 'xb-dropdown-toggle' );
 	}
 }
 

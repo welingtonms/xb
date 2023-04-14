@@ -1,33 +1,21 @@
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { ifDefined } from 'lit/directives/if-defined.js';
 
-import XBElement from '../../common/xb-element';
+import FloatingElement from '../../common/floating-element';
+
 import styles from './dropdown.styles';
 
 import '../boundary';
-import '../popover';
-import './dropdown-trigger';
-import './dropdown-menu';
-import './dropdown-item';
-import '../menu';
 import '../focus-trap';
+import '../menu';
+import '../resize-observer';
+import './dropdown-item';
+import './dropdown-menu';
+import './dropdown-trigger';
 
 @customElement( 'xb-dropdown' )
-export class Dropdown extends XBElement {
+export class Dropdown extends FloatingElement {
 	static styles = [ styles() ];
-
-	/**
-	 * Dropdown variant.
-	 * @type {DropdownAttributes['placement']}
-	 */
-	@property( { type: String } ) placement;
-
-	/**
-	 * Should the dropdown menu be open.
-	 * @type {DropdownAttributes['open']}
-	 */
-	@property( { type: Boolean, reflect: true } ) open;
 
 	/**
 	 * Should the dropdown be disabled.
@@ -47,23 +35,25 @@ export class Dropdown extends XBElement {
 	constructor() {
 		super();
 
-		this.open = false;
-
+		this.position = 'absolute';
 		this.placement = 'bottom-start';
-
 		this.disabled = false;
 	}
 
 	connectedCallback() {
 		super.connectedCallback();
 
-		this.addEventListener( 'xb-dropdown', this._handleDropdownEvent );
+		this.addEventListener( 'xb-dropdown-collapse', this._handleDropdownCollapse );
+		this.addEventListener( 'xb-dropdown-expand', this._handleDropdownExpand );
+		this.addEventListener( 'xb-dropdown-toggle', this._handleDropdownToggle );
 	}
 
 	disconnectedCallback() {
 		super.disconnectedCallback();
 
-		this.removeEventListener( 'xb-dropdown', this._handleDropdownEvent );
+		this.removeEventListener( 'xb-dropdown-collapse', this._handleDropdownCollapse );
+		this.removeEventListener( 'xb-dropdown-expand', this._handleDropdownExpand );
+		this.removeEventListener( 'xb-dropdown-toggle', this._handleDropdownToggle );
 	}
 
 	/**
@@ -86,43 +76,55 @@ export class Dropdown extends XBElement {
 
 	render() {
 		return html`
-			<xb-boundary @xb-interact-out=${ this._handleClickOutside }>
-				<xb-popover
-					position="absolute"
-					placement="${ ifDefined( this.placement ) }"
-					?hidden=${ ! this.open }
-				>
-					<slot name="trigger" slot="anchor"></slot>
+			<xb-resize-observer type="window" @xb-resize=${ this.reposition }>
+				<xb-boundary @xb-interact-out=${ this._handleClickOutside }>
+					<slot name="reference"></slot>
 
-					<slot name="menu" slot="floating"></slot>
-				</xb-popover>
-			</xb-boundary>
+					<slot name="floating"></slot>
+				</xb-boundary>
+			</xb-resize-observer>
 		`;
 	}
 
-	expand() {
-		this.open = true;
+	/**
+	 * Expand dropdown menu.
+	 * @param {boolean} emit - should emit `xb-dropdown-expand` event. Defaults to `true`.
+	 */
+	expand( emit = true ) {
+		this.show();
 
-		this.emit( 'xb-dropdown-expand' );
+		if ( emit ) {
+			this.emit( 'xb-dropdown-expand' );
+		}
 	}
 
-	collapse() {
-		this.open = false;
+	/**
+	 * Collapse dropdown menu.
+	 * @param {boolean} emit - should emit `xb-dropdown-collapse` event. Defaults to `true`.
+	 */
+	collapse( emit = true ) {
+		this.hide();
 
-		this.emit( 'xb-dropdown-collapse' );
+		if ( emit ) {
+			this.emit( 'xb-dropdown-collapse' );
+		}
 	}
 
-	toggle() {
+	/**
+	 * Toggle dropdown menu.
+	 * @param {boolean} emit - should emit `xb-dropdown-expand` or `xb-dropdown-collapse` event. Defaults to `true`.
+	 */
+	toggle( emit = true ) {
 		if ( this.open ) {
-			this.collapse();
+			this.collapse( emit );
 		} else {
-			this.expand();
+			this.expand( emit );
 		}
 	}
 
 	get trigger() {
 		if ( this._trigger == null ) {
-			const triggerSlot = this.shadowRoot.querySelector( 'slot[name="trigger"]' );
+			const triggerSlot = this.shadowRoot.querySelector( 'slot[name="reference"]' );
 			[ this._trigger ] = triggerSlot.assignedElements( { flatten: true } );
 		}
 
@@ -131,7 +133,7 @@ export class Dropdown extends XBElement {
 
 	get menu() {
 		if ( this._menu == null ) {
-			const menuSlot = this.shadowRoot.querySelector( 'slot[name="menu"]' );
+			const menuSlot = this.shadowRoot.querySelector( 'slot[name="floating"]' );
 			[ this._menu ] = menuSlot.assignedElements( { flatten: true } );
 		}
 
@@ -146,32 +148,16 @@ export class Dropdown extends XBElement {
 		return this._trap;
 	}
 
-	_handleClick() {
-		if ( this.disabled ) {
-			return;
-		}
-
-		this.toggle();
+	_handleDropdownExpand() {
+		this.expand( /** emit */ false );
 	}
 
-	_handleDropdownEvent( event ) {
-		const {
-			detail: { action },
-		} = event;
+	_handleDropdownCollapse() {
+		this.collapse( /** emit */ false );
+	}
 
-		switch ( action ) {
-			case 'open':
-			case 'expand':
-				this.expand();
-				break;
-			case 'close':
-			case 'collapse':
-				this.collapse();
-				break;
-			case 'toggle':
-				this.toggle();
-				break;
-		}
+	_handleDropdownToggle() {
+		this.toggle( /** emit */ false );
 	}
 
 	_handleClickOutside() {
@@ -180,7 +166,7 @@ export class Dropdown extends XBElement {
 }
 
 /**
- * @typedef {import('../popover/popover').PopoverPlacement} DropdownPlacement
+ * @typedef {import('../../common/floating-element').FloatingElementPlacement} DropdownPlacement
  * @typedef {import('../../styles/size.styles').ElementSize} DropdownSize
  */
 

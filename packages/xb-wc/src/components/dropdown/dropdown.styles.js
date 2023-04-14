@@ -1,12 +1,7 @@
-import { css } from 'lit';
+import { popoverStyles } from '../../common/floating-element';
 
 function styles() {
-	return [
-		css`
-			:host {
-			}
-		`,
-	];
+	return [ popoverStyles() ];
 }
 
 export default styles;

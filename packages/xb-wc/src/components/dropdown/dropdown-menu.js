@@ -6,6 +6,6 @@ export class DropdownMenu extends Menu {
 	connectedCallback() {
 		super.connectedCallback();
 
-		this.setAttribute( 'slot', 'menu' );
+		this.setAttribute( 'slot', 'floating' );
 	}
 }
