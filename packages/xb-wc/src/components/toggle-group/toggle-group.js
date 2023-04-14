@@ -110,7 +110,7 @@ export class ToggleGroup extends XBElement {
 		return html`
 			<xb-selection-keeper
 				.value=${ this.value }
-				@xb-selection-change=${ this._handleSelectionChange }
+				@xb-change=${ this._handleSelectionChange }
 				listen="xb-toggle-click"
 				type=${ this.type }
 			>
