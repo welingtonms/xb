@@ -1,31 +1,18 @@
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { ifDefined } from 'lit/directives/if-defined.js';
 import withClassy from '@welingtonms/classy';
 
 import { convertTriggerFromAttribute } from './tooltip.helpers';
 import Keyboard from '../../common/keyboard';
-import XBElement from '../../common/xb-element';
+import FloatingElement from '../../common/floating-element';
 
 import styles from './tooltip.styles';
 
-import '../popover';
+import '../resize-observer';
 
 @customElement( 'xb-tooltip' )
-export class Tooltip extends XBElement {
+export class Tooltip extends FloatingElement {
 	static styles = [ styles() ];
-
-	/**
-	 * Tooltip variant.
-	 * @type {TooltipAttributes['placement']}
-	 */
-	@property( { type: String } ) placement;
-
-	/**
-	 * Should the dropdown menu be open.
-	 * @type {TooltipAttributes['open']}
-	 */
-	@property( { type: Boolean, reflect: true } ) open;
 
 	/**
 	 * Controls how the tooltip is activated. Possible options include `click`, `hover`, `focus`, and `manual`. Multiple
@@ -38,14 +25,15 @@ export class Tooltip extends XBElement {
 	constructor() {
 		super();
 
-		/** @type {TooltipAttributes['open']} */
-		this.open = false;
-
-		/** @type {TooltipAttributes['placement']} */
-		this.placement = 'top';
-
 		/** @type {TooltipTrigger[]} */
 		this.trigger = [ 'hover' ];
+
+		this._handleBlur = this._handleBlur.bind( this );
+		this._handleClick = this._handleClick.bind( this );
+		this._handleFocus = this._handleFocus.bind( this );
+		this._handleKeyDown = this._handleKeyDown.bind( this );
+		this._handleMouseOut = this._handleMouseOut.bind( this );
+		this._handleMouseOver = this._handleMouseOver.bind( this );
 	}
 
 	connectedCallback() {
@@ -72,56 +60,22 @@ export class Tooltip extends XBElement {
 		this.removeEventListener( 'mouseout', this.handleMouseOut );
 	}
 
-	/**
-	 * @param {import('lit').PropertyValues<OptionGroup>} changedProperties
-	 */
-	updated( changedProperties ) {
-		super.updated( changedProperties );
-	}
-
 	render() {
-		const { classy, when } = withClassy( {
+		const { classy } = withClassy( {
 			open: this.open,
 		} );
 
 		return html`
-			<xb-popover
-				class=${ classy( 'tooltip' ) }
-				placement=${ ifDefined( this.placement ) }
-				?hidden=${ ! this.open }
-			>
-				<slot slot="anchor" aria-describedby="content"></slot>
-				<div
-					slot="floating"
-					id="content"
-					class="content"
+			<xb-resize-observer type="window" @xb-resize=${ this.reposition }>
+				<slot name="reference" aria-describedby="floating"></slot>
+				<slot
+					name="floating"
+					id="floating"
 					role="tooltip"
-					aria-hidden=${ this.open ? 'false' : 'true' }
-				>
-					<slot name="floating" aria-live=${ this.open ? 'polite' : 'off' }></slot>
-				</div>
-			</xb-popover>
+					aria-live=${ this.open ? 'polite' : 'off' }
+				></slot>
+			</xb-resize-observer>
 		`;
-	}
-
-	show() {
-		if ( this.open ) {
-			return;
-		}
-
-		this.open = true;
-	}
-
-	hide() {
-		if ( ! this.open ) {
-			return;
-		}
-
-		this.open = false;
-	}
-
-	toggle() {
-		this.open = ! this.open;
 	}
 
 	_handleFocus() {
@@ -174,7 +128,7 @@ export class Tooltip extends XBElement {
 }
 
 /**
- * @typedef {import('../popover/popover').PopoverPlacement} TooltipPlacement
+ * @typedef {import('../../common/floating-element').FloatingElementPlacement} DropdownPlacement
  * @typedef {'hover' | 'focus' | 'click'} TooltipTrigger
  */
 

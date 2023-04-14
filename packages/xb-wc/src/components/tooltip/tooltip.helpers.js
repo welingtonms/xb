@@ -7,5 +7,8 @@ export function convertTriggerFromAttribute( value ) {
 		return [ 'hover' ];
 	}
 
-	return String( value ).split( ' ' ).map( trim );
+	return String( value )
+		.split( /[\s,]+/ )
+		.map( trim )
+		.filter( Boolean );
 }

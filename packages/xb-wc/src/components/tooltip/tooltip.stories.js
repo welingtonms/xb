@@ -1,9 +1,11 @@
 import { html } from 'lit';
 
 import { PlacementArg } from '../../common/arg-types';
-import './tooltip';
+
 import '../button';
 import '../icon';
+import '../layout/box';
+import './tooltip';
 
 /** @type {import('../../common/arg-types').Meta} */
 const meta = {
@@ -14,9 +16,8 @@ const meta = {
 		placement: PlacementArg,
 
 		trigger: {
-			control: {
-				type: 'text',
-			},
+			control: 'check',
+			options: [ 'click', 'hover', 'focus' ],
 		},
 	},
 	parameters: {},
@@ -28,14 +29,10 @@ export default meta;
 export const Playground = {
 	render: ( args ) => html`
 		<xb-tooltip placement=${ args.placement } trigger=${ args.trigger }>
-			<xb-box borderless slot="floating">
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc lectus erat,
-				bibendum non mollis eu, pharetra et est.
-			</xb-box>
-
-			<xb-button emphasis="ghost">
+			<xb-button slot="reference" emphasis="ghost">
 				<xb-icon name="favorite" slot="leading"></xb-icon>
 			</xb-button>
+			<xb-box borderless slot="floating">Lorem ipsum dolor sit amet.</xb-box>
 		</xb-tooltip>
 	`,
 
