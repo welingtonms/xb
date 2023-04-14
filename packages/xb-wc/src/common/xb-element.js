@@ -1,5 +1,7 @@
 import { LitElement } from 'lit';
 
+import { redispatchEvent } from '../utils/events';
+
 export default class XBElement extends LitElement {
 	static get properties() {
 		return {
@@ -40,4 +42,23 @@ export default class XBElement extends LitElement {
 
 		return event;
 	}
+
+	/**
+	 * Re-dispatches an event from the provided element.
+	 *
+	 * Based on https://github.com/material-components/material-web/blob/master/controller/events.ts
+	 *
+	 * @example
+	 * class MyInput extends XBElement {
+	 *   render() {
+	 *     return html`<input @change=${this.reemit}>`;
+	 *   }
+	 * }
+	 *
+	 * @param {Event} event The event to re-dispatch.
+	 * @return Whether or not the event was dispatched (if cancelable).
+	 */
+	reemit = ( event ) => {
+		return redispatchEvent( this, event );
+	};
 }
