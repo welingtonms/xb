@@ -23,6 +23,7 @@
 	"dependencies": {
 		"@floating-ui/dom": "1.1.1",
 		"@lit-labs/context": "0.2.0",
+		"@lit-labs/observers": "1.1.0",
 		"@welingtonms/classy": "1.2.0",
 		"@welingtonms/xb-icons": "workspace:*",
 		"@welingtonms/xb-tokens": "workspace:*",
@@ -42,6 +43,7 @@
 		"@storybook/web-components-webpack5": "7.0.0-beta.36",
 		"babel-loader": "9.1.2",
 		"cypress": "12.4.1",
+		"cypress-axe": "1.4.0",
 		"lit-html": "2.6.1",
 		"react": "18.2.0",
 		"react-dom": "18.2.0",

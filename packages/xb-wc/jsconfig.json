@@ -3,6 +3,8 @@
 
 	"compilerOptions": {
 		"target": "ES5",
-		"experimentalDecorators": true
+		"experimentalDecorators": true,
+		"lib": [ "esnext", "dom" ],
+		"types": [ "cypress" ]
 	}
 }
