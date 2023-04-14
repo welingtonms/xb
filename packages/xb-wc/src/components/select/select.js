@@ -229,16 +229,16 @@ export class Select extends XBElement {
 	render() {
 		return html`
 			<xb-selection-keeper
-				.value=${ this._value }
-				@xb-selection-change=${ this._handleSelectionChange }
 				listen="xb-option-click"
 				type=${ this.multiple ? 'multiple' : 'single' }
+				.value=${ this._value }
+				@xb-change=${ this._handleSelectionChange }
 			>
 				<xb-dropdown placement="${ ifDefined( this.placement ) }">
-					<xb-select-trigger slot="trigger"></xb-select-trigger>
+					<xb-select-trigger slot="reference"></xb-select-trigger>
 
 					<xb-select-menu
-						slot="menu"
+						slot="floating"
 						id="menu"
 						role="listbox"
 						aria-multiselectable=${ this.multiple ? 'true' : 'false' }
@@ -280,7 +280,7 @@ export class Select extends XBElement {
 			trigger.placeholder = `${ selection.size } selected`;
 		} else {
 			const [ value ] = Array.from( selection.keys() );
-			const item = this._controller.getRaw( value );
+			const item = this._controller.getItem( value );
 			const { label } = this._controller.toOption( item );
 
 			trigger.placeholder = label;
@@ -304,11 +304,11 @@ export class Select extends XBElement {
 				...this._selection.keys(),
 			] );
 		} else {
-			keys = new Set( [ ...this._controller.getGroup( 'queried' ).keys() ] );
+			keys = new Set( this._controller.getGroup( 'queried' ) );
 		}
 
 		Array.from( keys.keys() ).forEach( ( key ) => {
-			const item = this._controller.getRaw( key );
+			const item = this._controller.getItem( key );
 
 			if ( ! item ) {
 				return;
@@ -355,16 +355,13 @@ export class Select extends XBElement {
 
 		this._controller.setMode( 'search' );
 
-		const menu = this.menu;
-		const dropdown = this.dropdown;
+		this.dropdown.expand();
 
-		dropdown.expand();
-
-		menu.loading = true;
+		this.menu.loading = true;
 
 		await this._controller.query( query );
 
-		menu.loading = false;
+		this.menu.loading = false;
 	}
 
 	_handleClear() {
@@ -413,7 +410,7 @@ export class Select extends XBElement {
 			}
 
 			const values = toArray( value ).map( ( key ) => {
-				return this._controller.getRaw( key ) ?? key;
+				return this._controller.getItem( key ) ?? key;
 			} );
 
 			return this.multiple ? values : values[ 0 ];

@@ -6,16 +6,16 @@ export class SelectOption extends MenuItem {
 	connectedCallback() {
 		super.connectedCallback();
 
-		this.addEventListener( 'xb-menu-item-click', this._handleMenuEvent );
+		this.addEventListener( 'xb-menu-item-click', this._handleMenuClick );
 	}
 
 	disconnectedCallback() {
 		super.disconnectedCallback();
 
-		this.removeEventListener( 'xb-menu-item-click', this._handleMenuEvent );
+		this.removeEventListener( 'xb-menu-item-click', this._handleMenuClick );
 	}
 
-	_handleMenuEvent( event ) {
+	_handleMenuClick( event ) {
 		event.stopPropagation();
 
 		// informs the outside world about which item was clicked

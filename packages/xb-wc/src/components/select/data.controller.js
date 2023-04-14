@@ -86,7 +86,7 @@ class DataController {
 
 			/**
 			 * Here we are grabbing the static options (xb-option) rendered inside the select
-			 * and wrapping them in datasource so we can search them.
+			 * and wrapping them in a datasource so we can search them.
 			 */
 			const staticOptions = this.host.options.map( ( option ) => {
 				this.getGroup( 'static' ).add( option.value );
@@ -129,7 +129,7 @@ class DataController {
 		const regex = new RegExp( searchTerm, 'i' );
 
 		for ( const datasource of this.datasources.values() ) {
-			const [ error, data ] = await to(
+			const [ error, fetchedItems ] = await to(
 				Promise.resolve( datasource.fetch( { query: searchTerm, regex } ) )
 			);
 
@@ -138,15 +138,17 @@ class DataController {
 				continue;
 			}
 
-			for ( let item of toArray( data ) ) {
-				item = { ...item, _type: datasource.name };
+			for ( let fetched of toArray( fetchedItems ) ) {
+				fetched = { ...fetched, _type: datasource.name };
 
-				const { value } = this.toOption( item );
+				const { value } = this.toOption( fetched );
+				// const previouslyFetched = this.getItem( value );
 
-				this.items.set( value, {
-					...( isObject( this.getRaw( value ) ) ? this.getRaw( value ) : {} ),
-					...item,
-				} );
+				// this.items.set( value, {
+				// 	...( isObject( previouslyFetched ) ? previouslyFetched : {} ),
+				// 	...fetched,
+				// } );
+				this.items.set( value, fetched );
 
 				this.getGroup( group ?? 'queried' ).add( value );
 			}
@@ -201,7 +203,7 @@ class DataController {
 	/**
 	 * @param {string} value
 	 */
-	getRaw( value ) {
+	getItem( value ) {
 		return this.items.get( value );
 	}
 

@@ -29,7 +29,7 @@ export class MenuItem extends XBElement {
 	 * Is this a selected option.
 	 * @type {MenuItemAttributes['selected']}
 	 */
-	@property( { type: Boolean } ) selected;
+	@property( { type: Boolean, reflect: true } ) selected;
 
 	/**
 	 * Selection strategy.

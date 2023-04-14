@@ -103,6 +103,7 @@ export class SelectTrigger extends XBElement {
 				@xb-input=${ this._handleTriggerInput }
 			>
 				<xb-button
+					class="handle"
 					tabindex="-1"
 					aria-label="Options"
 					aria-expanded=${ this.open ? 'true' : 'false' }
@@ -135,12 +136,7 @@ export class SelectTrigger extends XBElement {
 	}
 
 	_handleTriggerClick() {
-		const options = {
-			composed: true,
-			detail: { action: 'open' },
-		};
-
-		this.emit( 'xb-dropdown', options );
+		this.emit( 'xb-dropdown-expand' );
 	}
 
 	_handleTriggerChange( e ) {
@@ -163,12 +159,7 @@ export class SelectTrigger extends XBElement {
 	_handleTrailingClick( e ) {
 		e.stopPropagation();
 
-		const options = {
-			composed: true,
-			detail: { action: 'toggle' },
-		};
-
-		this.emit( 'xb-dropdown', options );
+		this.emit( 'xb-dropdown-toggle' );
 	}
 }
 

@@ -43,6 +43,7 @@ const meta = {
 	},
 	parameters: {},
 };
+export default meta;
 
 const fixtures = html`
 	<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
@@ -63,8 +64,6 @@ const fixtures = html`
 		</output>
 	</xb-stack>
 `;
-
-export default meta;
 
 /** @type {import('../../common/arg-types').StoryObj} */
 export const Playground = {
@@ -89,6 +88,9 @@ export const Playground = {
 	},
 };
 
+/**
+ * This is the select filled with statically rendered options.
+ */
 export const StaticOptions = {
 	render: ( args ) => html`
 		<xb-stack>
