@@ -24,12 +24,9 @@ function styles() {
 					rgba( 0, 0, 0, 0.07 ) 0px 8px 8px, rgba( 0, 0, 0, 0.07 ) 0px 16px 16px;
 
 				position: relative;
-
-				display: inline-flex;
-				flex-direction: column;
 			}
 
-			slot[name='anchor']::slotted( * ) {
+			slot[name='reference']::slotted( * ) {
 				display: inline-flex;
 			}
 
@@ -41,7 +38,7 @@ function styles() {
 				${ p( token( 'spacing-0' ) ) };
 				${ m( token( 'spacing-0' ) ) };
 
-				display: inline-block;
+				display: none;
 
 				min-height: 24px;
 				width: max-content;
@@ -54,12 +51,8 @@ function styles() {
 
 				border-top-left-radius: var( --xb-popover-border-top-left-radius );
 				border-top-right-radius: var( --xb-popover-border-top-right-radius );
-				border-bottom-right-radius: var(
-					--xb-popover-border-bottom-right-radius
-				);
-				border-bottom-left-radius: var(
-					--xb-popover-border-bottom-left-radius
-				);
+				border-bottom-right-radius: var( --xb-popover-border-bottom-right-radius );
+				border-bottom-left-radius: var( --xb-popover-border-bottom-left-radius );
 
 				background-color: var( --xb-popover-background-color );
 				color: var( --xb-popover-color );
@@ -76,9 +69,9 @@ function styles() {
 				position: fixed;
 			}
 
-			:host( [hidden] ) slot[name='floating']::slotted( * ),
-			:host( [hidden] ) .arrow {
-				display: none;
+			:host( [open] ) slot[name='floating']::slotted( * ),
+			:host( [open] ) .arrow {
+				display: inline-block;
 			}
 
 			.arrow {
