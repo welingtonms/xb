@@ -6,6 +6,7 @@ import XBElement from '../../common/xb-element';
 import styles from './menu.styles';
 
 import '../focus-trap';
+import '../spinner';
 
 @customElement( 'xb-menu' )
 export class Menu extends XBElement {
