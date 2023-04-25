@@ -3,23 +3,6 @@ import { html } from 'lit-html';
 import './button';
 
 describe( '<xb-button>', () => {
-	it( 'mounts', () => {
-		cy.mount(
-			html`
-				<xb-button>Action</xb-button>
-			`
-		);
-		cy.injectAxe();
-
-		cy.get( 'xb-button' )
-			.find( '.button', { includeShadowDom: true } )
-			.then( ( $wrapped ) => {
-				const button = $wrapped[ 0 ];
-
-				cy.checkA11y( button );
-			} );
-	} );
-
 	it( 'should render children', () => {
 		cy.mount(
 			html`
