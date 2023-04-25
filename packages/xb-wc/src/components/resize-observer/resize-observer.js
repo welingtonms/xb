@@ -8,7 +8,7 @@ import styles from './resize-observer.styles';
  * Based on https://github.dev/shoelace-style/shoelace/blob/a0f83c3b2bbee6089bdfb1f56a6474fff027865b/src/components/resize-observer/resize-observer.ts#L17
  */
 @customElement( 'xb-resize-observer' )
-export default class XBResizeObserver extends XBElement {
+export class XBResizeObserver extends XBElement {
 	static styles = [ styles() ];
 
 	/** Disables the observer. */
