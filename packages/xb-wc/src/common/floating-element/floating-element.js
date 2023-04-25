@@ -3,8 +3,6 @@ import { computePosition, flip, shift, offset } from '@floating-ui/dom';
 
 import XBElement from '../xb-element';
 
-import '../../components/resize-observer';
-
 export default class FloatingElement extends XBElement {
 	/**
 	 * FloatingElement positioning strategy.
