@@ -1,6 +1,8 @@
 import { html } from 'lit';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 import { TestingFactory } from '../../utils/test-tools';
+import { useSyncOptions, useAsyncOptions, useSlowAsyncOptions } from './select.fixtures';
 import './select';
 
 function createAliases() {
@@ -28,19 +30,40 @@ const { given } = TestingFactory(
 	 */
 	function factory( { Given, When, Then } ) {
 		Given(
-			'select is rendered with',
-			( args = { loading: false, multiple: false, disabled: false } ) => {
+			'static-options select is rendered with',
+			( args = { loading: false, multiple: false, disabled: false, value } ) => {
 				cy.mount( html`
 					<xb-select
 						?loading=${ args.loading }
 						?multiple=${ args.multiple }
 						@xb-change=${ args.change }
 						?disabled=${ args.disabled }
+						.value=${ ifDefined( args.value ) }
 					>
 						<xb-option value="accept">Accept</xb-option>
 						<xb-option value="change">Change</xb-option>
 						<xb-option value="leave">Leave</xb-option>
 					</xb-select>
+				` );
+
+				createAliases();
+			}
+		);
+
+		Given(
+			'datasource select is rendered with',
+			(
+				args = { loading: false, multiple: false, disabled: false, value, datasources }
+			) => {
+				cy.mount( html`
+					<xb-select
+						?loading=${ args.loading }
+						?multiple=${ args.multiple }
+						@xb-change=${ args.change }
+						?disabled=${ args.disabled }
+						.value=${ ifDefined( args.value ) }
+						.datasources=${ ifDefined( args.datasources ) }
+					></xb-select>
 				` );
 
 				createAliases();
@@ -88,9 +111,9 @@ const { given } = TestingFactory(
 		} );
 
 		Then( 'no option is visible', () => {
-			cy.get( 'xb-option[value="accept"]' ).should( 'not.be.visible' );
-			cy.get( 'xb-option[value="change"]' ).should( 'not.be.visible' );
-			cy.get( 'xb-option[value="leave"]' ).should( 'not.be.visible' );
+			cy.get( 'xb-option[value="accept"]' ).should( 'not.exist' );
+			cy.get( 'xb-option[value="change"]' ).should( 'not.exist' );
+			cy.get( 'xb-option[value="leave"]' ).should( 'not.exist' );
 		} );
 
 		Then( 'option {option} is not visible', ( { option } ) => {
@@ -130,39 +153,39 @@ const { given } = TestingFactory(
 		Then( 'option {option} is not selected', ( { option } ) => {
 			cy.get( `xb-option[value="${ option }"]` ).should( 'not.have.attr', 'selected' );
 		} );
+
+		Then( 'loading is visible', () => {
+			cy.get( '@menu' )
+				.find( 'xb-spinner', { includeShadowDom: true } )
+				.should( 'exist' );
+		} );
+
+		Then( 'loading is not visible', () => {
+			cy.get( '@menu' )
+				.find( 'xb-spinner', { includeShadowDom: true } )
+				.should( 'not.exist' );
+		} );
 	}
 );
 
 describe( '<xb-select>', () => {
 	describe( 'static options', () => {
 		describe( 'single selection', () => {
+			const args = {
+				loading: false,
+				multiple: false,
+				disabled: false,
+			};
+
 			it( 'should expand correctly', () => {
-				const onChangeSpy = cy.stub().as( 'onChangeSpy' );
-
-				const args = {
-					loading: false,
-					multiple: false,
-					disabled: false,
-					change: ( e ) => onChangeSpy( e ),
-				};
-
-				given( 'select is rendered with', args )
+				given( 'static-options select is rendered with', args )
 					.when( 'user clicks the select' )
 					.then( 'menu is visible' )
 					.and( 'all options are visible' );
 			} );
 
 			it( 'should search correctly', () => {
-				const onChangeSpy = cy.stub().as( 'onChangeSpy' );
-
-				const args = {
-					loading: false,
-					multiple: false,
-					disabled: false,
-					change: ( e ) => onChangeSpy( e ),
-				};
-
-				given( 'select is rendered with', args )
+				given( 'static-options select is rendered with', args )
 					.when( 'user searches for "change"' )
 					.then( 'menu is visible' )
 					.and( 'option "change" is visible' )
@@ -171,16 +194,7 @@ describe( '<xb-select>', () => {
 			} );
 
 			it( 'should clear search correctly', () => {
-				const onChangeSpy = cy.stub().as( 'onChangeSpy' );
-
-				const args = {
-					loading: false,
-					multiple: false,
-					disabled: false,
-					change: ( e ) => onChangeSpy( e ),
-				};
-
-				given( 'select is rendered with', args )
+				given( 'static-options select is rendered with', args )
 					.when( 'user searches for "change"' )
 					.and( 'user clears search' )
 					.then( 'all options are visible' )
@@ -188,16 +202,7 @@ describe( '<xb-select>', () => {
 			} );
 
 			it( 'should select correctly', () => {
-				const onChangeSpy = cy.stub().as( 'onChangeSpy' );
-
-				const args = {
-					loading: false,
-					multiple: false,
-					disabled: false,
-					change: ( e ) => onChangeSpy( e ),
-				};
-
-				given( 'select is rendered with', args )
+				given( 'static-options select is rendered with', args )
 					.when( 'user expands menu' )
 					.and( 'user selects "leave"' )
 					.then( 'option "accept" is not selected' )
@@ -207,7 +212,18 @@ describe( '<xb-select>', () => {
 			} );
 
 			it( 'should search & select correctly', () => {
+				given( 'static-options select is rendered with', args )
+					.when( 'user searches for "accept"' )
+					.and( 'user selects "accept"' )
+					.then( 'option "accept" is selected' )
+					.and( 'option "change" is not selected' )
+					.and( 'option "leave" is not selected' )
+					.and( 'search input has value "Accept"' );
+			} );
+
+			it( 'should render with initial value', () => {
 				const onChangeSpy = cy.stub().as( 'onChangeSpy' );
+
 				const args = {
 					loading: false,
 					multiple: false,
@@ -215,8 +231,23 @@ describe( '<xb-select>', () => {
 					change: ( e ) => onChangeSpy( e ),
 				};
 
-				given( 'select is rendered with', args )
-					.when( 'user searches for "accept"' )
+				given( 'static-options select is rendered with', {
+					...args,
+					value: { label: 'Leave', value: 'leave' },
+				} )
+					.when( 'user expands menu' )
+					.then( 'option "accept" is not selected' )
+					.and( 'option "change" is not selected' )
+					.and( 'option "leave" is selected' )
+					.and( 'search input has value "Leave"' );
+			} );
+
+			it( 'should change initially rendered value', () => {
+				given( 'static-options select is rendered with', {
+					...args,
+					value: { label: 'Leave', value: 'leave' },
+				} )
+					.when( 'user expands menu' )
 					.and( 'user selects "accept"' )
 					.then( 'option "accept" is selected' )
 					.and( 'option "change" is not selected' )
@@ -226,51 +257,49 @@ describe( '<xb-select>', () => {
 
 			// TODO
 			it.skip( 'should select & clear correctly', () => {
-				const onChangeSpy = cy.stub().as( 'onChangeSpy' );
-
-				const args = {
-					loading: false,
-					multiple: false,
-					disabled: false,
-					change: ( e ) => onChangeSpy( e ),
-				};
-
-				given( 'select is rendered with', args )
+				given( 'static-options select is rendered with', args )
 					.when( 'user expands menu' )
 					.and( 'user selects "accept"' )
 					.and( 'user clears search' )
 					.then( 'search input is empty' );
 			} );
+
+			it( 'should call onChange callback', () => {
+				const onChangeSpy = cy.stub().as( 'onChangeSpy' );
+
+				given( 'static-options select is rendered with', {
+					...args,
+					change: ( e ) => onChangeSpy( e ),
+				} )
+					.when( 'user expands menu' )
+					.and( 'user selects "accept"' )
+					.then( 'option "accept" is selected' );
+
+				cy.get( '@onChangeSpy' ).should(
+					'have.been.calledWith',
+					Cypress.sinon.match.hasNested( 'detail', {
+						value: { label: 'Accept', value: 'accept', _type: 'generic' },
+					} )
+				);
+			} );
 		} );
 
 		describe( 'multiple selection', () => {
+			const args = {
+				loading: false,
+				multiple: true,
+				disabled: false,
+			};
+
 			it( 'should expand correctly', () => {
-				const onChangeSpy = cy.stub().as( 'onChangeSpy' );
-
-				const args = {
-					loading: false,
-					multiple: true,
-					disabled: false,
-					change: ( e ) => onChangeSpy( e ),
-				};
-
-				given( 'select is rendered with', args )
+				given( 'static-options select is rendered with', args )
 					.when( 'user clicks the select' )
 					.then( 'menu is visible' )
 					.and( 'all options are visible' );
 			} );
 
 			it( 'should search correctly', () => {
-				const onChangeSpy = cy.stub().as( 'onChangeSpy' );
-
-				const args = {
-					loading: false,
-					multiple: true,
-					disabled: false,
-					change: ( e ) => onChangeSpy( e ),
-				};
-
-				given( 'select is rendered with', args )
+				given( 'static-options select is rendered with', args )
 					.when( 'user searches for "change"' )
 					.then( 'menu is visible' )
 					.and( 'option "change" is visible' )
@@ -279,16 +308,7 @@ describe( '<xb-select>', () => {
 			} );
 
 			it( 'should clear search correctly', () => {
-				const onChangeSpy = cy.stub().as( 'onChangeSpy' );
-
-				const args = {
-					loading: false,
-					multiple: true,
-					disabled: false,
-					change: ( e ) => onChangeSpy( e ),
-				};
-
-				given( 'select is rendered with', args )
+				given( 'static-options select is rendered with', args )
 					.when( 'user searches for "change"' )
 					.and( 'user clears search' )
 					.then( 'all options are visible' )
@@ -296,16 +316,7 @@ describe( '<xb-select>', () => {
 			} );
 
 			it( 'should select correctly', () => {
-				const onChangeSpy = cy.stub().as( 'onChangeSpy' );
-
-				const args = {
-					loading: false,
-					multiple: true,
-					disabled: false,
-					change: ( e ) => onChangeSpy( e ),
-				};
-
-				given( 'select is rendered with', args )
+				given( 'static-options select is rendered with', args )
 					.when( 'user expands menu' )
 					.and( 'user selects "change"' )
 					.and( 'user selects "leave"' )
@@ -316,16 +327,7 @@ describe( '<xb-select>', () => {
 			} );
 
 			it( 'should search & select correctly', () => {
-				const onChangeSpy = cy.stub().as( 'onChangeSpy' );
-
-				const args = {
-					loading: false,
-					multiple: true,
-					disabled: false,
-					change: ( e ) => onChangeSpy( e ),
-				};
-
-				given( 'select is rendered with', args )
+				given( 'static-options select is rendered with', args )
 					.when( 'user searches for "accept"' )
 					.and( 'user selects "accept"' )
 					.then( 'option "accept" is selected' )
@@ -333,24 +335,430 @@ describe( '<xb-select>', () => {
 					.and( 'option "leave" is not visible' )
 					.and( 'search input has value "1 selected"' );
 			} );
+
+			it( 'should render with initial value', () => {
+				given( 'static-options select is rendered with', {
+					...args,
+					value: { label: 'Leave', value: 'leave' },
+				} )
+					.when( 'user expands menu' )
+					.then( 'option "accept" is not selected' )
+					.and( 'option "change" is not selected' )
+					.and( 'option "leave" is selected' )
+					.and( 'search input has value "1 selected"' );
+			} );
+
+			it( 'should change initially rendered value', () => {
+				given( 'static-options select is rendered with', {
+					...args,
+					value: { label: 'Leave', value: 'leave' },
+				} )
+					.when( 'user expands menu' )
+					.and( 'user selects "accept"' )
+					.then( 'option "accept" is selected' )
+					.and( 'option "change" is not selected' )
+					.and( 'option "leave" is selected' )
+					.and( 'search input has value "2 selected"' );
+			} );
+
+			it( 'should call onChange callback', () => {
+				const onChangeSpy = cy.stub().as( 'onChangeSpy' );
+
+				given( 'static-options select is rendered with', {
+					...args,
+					change: ( e ) => onChangeSpy( e ),
+				} )
+					.when( 'user expands menu' )
+					.and( 'user selects "accept"' )
+					.then( 'option "accept" is selected' );
+
+				cy.get( '@onChangeSpy' ).should(
+					'have.been.calledWith',
+					Cypress.sinon.match.hasNested( 'detail', {
+						value: [ { label: 'Accept', value: 'accept', _type: 'generic' } ],
+					} )
+				);
+			} );
 		} );
 	} );
 
-	describe( 'static options', () => {
-		describe( 'single selection', () => {} );
-
-		describe( 'multiple selection', () => {} );
-	} );
-
 	describe( 'sync datasource', () => {
-		describe( 'single selection', () => {} );
+		describe( 'single selection', () => {
+			const args = {
+				loading: false,
+				multiple: false,
+				disabled: false,
+				datasources: [ useSyncOptions ],
+			};
 
-		describe( 'multiple selection', () => {} );
+			it( 'should expand correctly', () => {
+				given( 'datasource select is rendered with', args )
+					.when( 'user clicks the select' )
+					.then( 'menu is visible' )
+					.and( 'no option is visible' );
+			} );
+
+			it( 'should search correctly', () => {
+				given( 'datasource select is rendered with', args )
+					.when( 'user searches for "change"' )
+					.then( 'menu is visible' )
+					.and( 'option "change" is visible' )
+					.and( 'option "accept" is not visible' )
+					.and( 'option "leave" is not visible' );
+			} );
+
+			it( 'should clear search correctly', () => {
+				given( 'datasource select is rendered with', args )
+					.when( 'user searches for "change"' )
+					.and( 'user clears search' )
+					.then( 'option "change" is visible' )
+					.and( 'search input is empty' );
+			} );
+
+			it( 'should search & select correctly', () => {
+				given( 'datasource select is rendered with', args )
+					.when( 'user searches for "accept"' )
+					.and( 'user selects "accept"' )
+					.then( 'option "accept" is selected' )
+					.and( 'option "change" is not visible' )
+					.and( 'option "leave" is not visible' )
+					.and( 'search input has value "Accept"' );
+			} );
+
+			it( 'should render with initial value', () => {
+				given( 'datasource select is rendered with', {
+					...args,
+					value: { label: 'Leave', value: 'leave' },
+				} )
+					.when( 'user expands menu' )
+					.then( 'option "accept" is not visible' )
+					.and( 'option "change" is not visible' )
+					.and( 'option "leave" is selected' )
+					.and( 'search input has value "Leave"' );
+			} );
+
+			it( 'should change initially rendered value', () => {
+				given( 'datasource select is rendered with', {
+					...args,
+					value: { label: 'Leave', value: 'leave' },
+				} )
+					.when( 'user searches for "accept"' )
+					.and( 'user selects "accept"' )
+					.then( 'option "accept" is selected' )
+					.and( 'option "change" is not visible' )
+					.and( 'option "leave" is not visible' )
+					.and( 'search input has value "Accept"' );
+			} );
+
+			it( 'should call onChange callback', () => {
+				const onChangeSpy = cy.stub().as( 'onChangeSpy' );
+
+				given( 'datasource select is rendered with', {
+					...args,
+					change: ( e ) => onChangeSpy( e ),
+				} )
+					.when( 'user searches for "accept"' )
+					.and( 'user selects "accept"' )
+					.then( 'option "accept" is selected' );
+
+				cy.get( '@onChangeSpy' ).should(
+					'have.been.calledWith',
+					Cypress.sinon.match.hasNested( 'detail', {
+						value: { label: 'Accept', value: 'accept', _type: 'life-option' },
+					} )
+				);
+			} );
+		} );
+
+		describe( 'multiple selection', () => {
+			const args = {
+				loading: false,
+				multiple: true,
+				disabled: false,
+				datasources: [ useSyncOptions ],
+			};
+
+			it( 'should expand correctly', () => {
+				given( 'datasource select is rendered with', args )
+					.when( 'user clicks the select' )
+					.then( 'menu is visible' )
+					.and( 'no option is visible' );
+			} );
+
+			it( 'should search correctly', () => {
+				given( 'datasource select is rendered with', args )
+					.when( 'user searches for "change"' )
+					.then( 'menu is visible' )
+					.and( 'option "change" is visible' )
+					.and( 'option "accept" is not visible' )
+					.and( 'option "leave" is not visible' );
+			} );
+
+			it( 'should clear search correctly', () => {
+				given( 'datasource select is rendered with', args )
+					.when( 'user searches for "change"' )
+					.and( 'user clears search' )
+					.then( 'option "change" is visible' )
+					.and( 'search input is empty' );
+			} );
+
+			it( 'should search & select correctly', () => {
+				given( 'datasource select is rendered with', args )
+					.when( 'user searches for "accept"' )
+					.and( 'user selects "accept"' )
+					.then( 'option "accept" is selected' )
+					.and( 'option "change" is not visible' )
+					.and( 'option "leave" is not visible' )
+					.and( 'search input has value "1 selected"' );
+			} );
+
+			it( 'should render with initial value', () => {
+				given( 'datasource select is rendered with', {
+					...args,
+					value: [ { label: 'Leave', value: 'leave' } ],
+				} )
+					.when( 'user expands menu' )
+					.then( 'option "accept" is not visible' )
+					.and( 'option "change" is not visible' )
+					.and( 'option "leave" is selected' )
+					.and( 'search input has value "1 selected"' );
+			} );
+
+			it( 'should change initially rendered value', () => {
+				given( 'datasource select is rendered with', {
+					...args,
+					value: [ { label: 'Leave', value: 'leave' } ],
+				} )
+					.when( 'user searches for "accept"' )
+					.and( 'user selects "accept"' )
+					.and( 'user clears search' )
+					.then( 'option "accept" is selected' )
+					.and( 'option "change" is not visible' )
+					.and( 'option "leave" is selected' )
+					.and( 'search input has value "2 selected"' );
+			} );
+
+			it( 'should call onChange callback', () => {
+				const onChangeSpy = cy.stub().as( 'onChangeSpy' );
+
+				given( 'datasource select is rendered with', {
+					...args,
+					change: ( e ) => onChangeSpy( e ),
+				} )
+					.when( 'user searches for "accept"' )
+					.and( 'user selects "accept"' )
+					.then( 'option "accept" is selected' );
+
+				cy.get( '@onChangeSpy' ).should(
+					'have.been.calledWith',
+					Cypress.sinon.match.hasNested( 'detail', {
+						value: [ { label: 'Accept', value: 'accept', _type: 'life-option' } ],
+					} )
+				);
+			} );
+		} );
 	} );
 
 	describe( 'async datasource', () => {
-		describe( 'single selection', () => {} );
+		describe( 'single selection', () => {
+			const args = {
+				loading: false,
+				multiple: false,
+				disabled: false,
+				datasources: [ useAsyncOptions ],
+			};
 
-		describe( 'multiple selection', () => {} );
+			it( 'should expand correctly', () => {
+				given( 'datasource select is rendered with', args )
+					.when( 'user clicks the select' )
+					.then( 'menu is visible' )
+					.and( 'no option is visible' );
+			} );
+
+			it( 'should search correctly', () => {
+				given( 'datasource select is rendered with', args )
+					.when( 'user searches for "change"' )
+					.then( 'menu is visible' )
+					.and( 'option "change" is visible' )
+					.and( 'option "accept" is not visible' )
+					.and( 'option "leave" is not visible' );
+			} );
+
+			it( 'should show loading during search correctly', () => {
+				given( 'datasource select is rendered with', {
+					...args,
+					datasources: [ useSlowAsyncOptions ],
+				} )
+					.when( 'user searches for "change"' )
+					.then( 'menu is visible' )
+					.and( 'loading is visible' )
+					.and( 'option "change" is visible' )
+					.and( 'option "accept" is not visible' )
+					.and( 'option "leave" is not visible' );
+			} );
+
+			it( 'should clear search correctly', () => {
+				given( 'datasource select is rendered with', args )
+					.when( 'user searches for "change"' )
+					.and( 'user clears search' )
+					.then( 'option "change" is visible' )
+					.and( 'search input is empty' );
+			} );
+
+			it( 'should search & select correctly', () => {
+				given( 'datasource select is rendered with', args )
+					.when( 'user searches for "accept"' )
+					.and( 'user selects "accept"' )
+					.then( 'option "accept" is selected' )
+					.and( 'option "change" is not visible' )
+					.and( 'option "leave" is not visible' )
+					.and( 'search input has value "Accept"' );
+			} );
+
+			it( 'should render with initial value', () => {
+				given( 'datasource select is rendered with', {
+					...args,
+					value: { label: 'Leave', value: 'leave' },
+				} )
+					.when( 'user expands menu' )
+					.then( 'option "accept" is not visible' )
+					.and( 'option "change" is not visible' )
+					.and( 'option "leave" is selected' )
+					.and( 'search input has value "Leave"' );
+			} );
+
+			it( 'should change initially rendered value', () => {
+				given( 'datasource select is rendered with', {
+					...args,
+					value: { label: 'Leave', value: 'leave' },
+				} )
+					.when( 'user searches for "accept"' )
+					.and( 'user selects "accept"' )
+					.then( 'option "accept" is selected' )
+					.and( 'option "change" is not visible' )
+					.and( 'option "leave" is not visible' )
+					.and( 'search input has value "Accept"' );
+			} );
+
+			it( 'should call onChange callback', () => {
+				const onChangeSpy = cy.stub().as( 'onChangeSpy' );
+
+				given( 'datasource select is rendered with', {
+					...args,
+					change: ( e ) => onChangeSpy( e ),
+				} )
+					.when( 'user searches for "accept"' )
+					.and( 'user selects "accept"' )
+					.then( 'option "accept" is selected' );
+
+				cy.get( '@onChangeSpy' ).should(
+					'have.been.calledWith',
+					Cypress.sinon.match.hasNested( 'detail', {
+						value: { label: 'Accept', value: 'accept', _type: 'life-option' },
+					} )
+				);
+			} );
+		} );
+
+		describe( 'multiple selection', () => {
+			const args = {
+				loading: false,
+				multiple: true,
+				disabled: false,
+				datasources: [ useAsyncOptions ],
+			};
+
+			it( 'should expand correctly', () => {
+				given( 'datasource select is rendered with', args )
+					.when( 'user clicks the select' )
+					.then( 'menu is visible' )
+					.and( 'no option is visible' );
+			} );
+
+			it( 'should search correctly', () => {
+				given( 'datasource select is rendered with', args )
+					.when( 'user searches for "change"' )
+					.then( 'menu is visible' )
+					.and( 'option "change" is visible' )
+					.and( 'option "accept" is not visible' )
+					.and( 'option "leave" is not visible' );
+			} );
+
+			it( 'should clear search correctly', () => {
+				given( 'datasource select is rendered with', args )
+					.when( 'user searches for "change"' )
+					.and( 'user clears search' )
+					.then( 'option "change" is visible' )
+					.and( 'search input is empty' );
+			} );
+
+			it( 'should show loading during search correctly', () => {
+				given( 'datasource select is rendered with', {
+					...args,
+					datasources: [ useSlowAsyncOptions ],
+				} )
+					.when( 'user searches for "change"' )
+					.then( 'menu is visible' )
+					.and( 'loading is visible' )
+					.and( 'option "change" is visible' )
+					.and( 'option "accept" is not visible' )
+					.and( 'option "leave" is not visible' );
+			} );
+
+			it( 'should search & select correctly', () => {
+				given( 'datasource select is rendered with', args )
+					.when( 'user searches for "accept"' )
+					.and( 'user selects "accept"' )
+					.then( 'option "accept" is selected' )
+					.and( 'option "change" is not visible' )
+					.and( 'option "leave" is not visible' )
+					.and( 'search input has value "1 selected"' );
+			} );
+
+			it( 'should render with initial value', () => {
+				given( 'datasource select is rendered with', {
+					...args,
+					value: [ { label: 'Leave', value: 'leave' } ],
+				} )
+					.when( 'user expands menu' )
+					.then( 'option "accept" is not visible' )
+					.and( 'option "change" is not visible' )
+					.and( 'option "leave" is selected' )
+					.and( 'search input has value "1 selected"' );
+			} );
+
+			it( 'should change initially rendered value', () => {
+				given( 'datasource select is rendered with', {
+					...args,
+					value: [ { label: 'Leave', value: 'leave' } ],
+				} )
+					.when( 'user searches for "accept"' )
+					.and( 'user selects "accept"' )
+					.and( 'user clears search' )
+					.then( 'option "accept" is selected' )
+					.and( 'option "change" is not visible' )
+					.and( 'option "leave" is selected' )
+					.and( 'search input has value "2 selected"' );
+			} );
+
+			it( 'should call onChange callback', () => {
+				const onChangeSpy = cy.stub().as( 'onChangeSpy' );
+
+				given( 'datasource select is rendered with', {
+					...args,
+					change: ( e ) => onChangeSpy( e ),
+				} )
+					.when( 'user searches for "accept"' )
+					.and( 'user selects "accept"' )
+					.then( 'option "accept" is selected' );
+
+				cy.get( '@onChangeSpy' ).should(
+					'have.been.calledWith',
+					Cypress.sinon.match.hasNested( 'detail', {
+						value: [ { label: 'Accept', value: 'accept', _type: 'life-option' } ],
+					} )
+				);
+			} );
+		} );
 	} );
 } );

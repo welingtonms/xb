@@ -1,3 +1,9 @@
+export const OPTIONS = [
+	{ label: 'Accept', value: 'accept' },
+	{ label: 'Change', value: 'change' },
+	{ label: 'Leave', value: 'leave' },
+];
+
 export const FRUITS = [
 	{ label: 'Acerola', value: 'acerola' },
 	{ label: 'Apple', value: 'apple' },
@@ -593,6 +599,53 @@ export function useAsyncUsers() {
 				setTimeout( () => {
 					resolve( USERS.filter( ( { name } ) => regex.test( name ) ) );
 				}, 1000 );
+			} );
+		},
+	};
+}
+
+export function useSyncOptions() {
+	return {
+		name: 'life-option',
+		fetch: function fetch( { query, regex } ) {
+			if ( query.length < 3 ) {
+				return [];
+			}
+
+			return OPTIONS.filter( ( { value } ) => regex.test( value ) );
+		},
+	};
+}
+
+export function useAsyncOptions() {
+	return {
+		name: 'life-option',
+		fetch: async function fetch( { query, regex } ) {
+			return new Promise( ( resolve ) => {
+				if ( query.length < 3 ) {
+					return resolve( [] );
+				}
+
+				setTimeout( () => {
+					resolve( OPTIONS.filter( ( { value } ) => regex.test( value ) ) );
+				}, 750 );
+			} );
+		},
+	};
+}
+
+export function useSlowAsyncOptions() {
+	return {
+		name: 'life-option',
+		fetch: async function fetch( { query, regex } ) {
+			return new Promise( ( resolve ) => {
+				if ( query.length < 3 ) {
+					return resolve( [] );
+				}
+
+				setTimeout( () => {
+					resolve( OPTIONS.filter( ( { value } ) => regex.test( value ) ) );
+				}, 1750 );
 			} );
 		},
 	};
