@@ -35,3 +35,34 @@
 //     }
 //   }
 // }
+
+/**
+ * Based on https://github.com/wlsf82/cy-press/blob/main/src/index.js and
+ * https://github.com/cypress-io/cypress-example-todomvc/blob/master/cypress/support/commands.js
+ * */
+Cypress.Commands.add( 'keydown', { prevSubject: true }, ( subject, key ) => {
+	if ( ! key ) throw new Error( 'You need to provide a key (e.g, .keydown("enter"))' );
+
+	const log = Cypress.log( {
+		autoEnd: false,
+		name: 'keydown',
+		displayName: 'keydown',
+		message: `pressing ${ key }`,
+		consoleProps: () => {
+			return { Key: key };
+		},
+	} );
+
+	log.set( { $el: subject } ).snapshot( 'before' );
+
+	/** @type {HTMLElement} */
+	const element = subject[ 0 ];
+
+	element.dispatchEvent(
+		new KeyboardEvent( 'keydown', { key, code: key, bubbles: true } )
+	);
+
+	log.set( { $el: subject } ).snapshot().end();
+
+	return cy.wrap( subject, { log: false } );
+} );

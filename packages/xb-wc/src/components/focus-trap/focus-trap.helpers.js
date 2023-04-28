@@ -32,6 +32,7 @@ function unknownKey() {
  * @param {KeyboardEvent} event
  */
 export function getIncrementByKey( event ) {
+	// TODO: receive keyHandler as parameter to allow different types of increments
 	const key = Keyboard.getEventKey( event );
 
 	const increment = ( keyHandler[ key ] || unknownKey )( event );
