@@ -1,56 +1,15 @@
 import { html, nothing } from 'lit';
-import { map } from 'lit/directives/map.js';
 import { customElement, property } from 'lit/decorators.js';
+import { map } from 'lit/directives/map.js';
+import { repeat } from 'lit/directives/repeat.js';
 import withClassy from '@welingtonms/classy';
-import { DateConstraint, DateFactory, DateFormatter } from '@welingtonms/xb-date';
 
 import XBElement from '../../common/xb-element';
+import styles from './calendar.styles';
+import CalendarController from './calendar.controller';
+
 import '../button';
 import '../text';
-import styles from './calendar.styles';
-
-const t = DateFactory();
-t.set( {
-	hour: 0,
-	minute: 0,
-	second: 0,
-	millisecond: 0,
-} );
-
-const f = new DateFormatter( 'ddd, DD/MM/YYYY hh:mm:ss', {
-	// delimiters: [ ' ', 'de', ',' ],
-} );
-console.log( 'DateFormatter', t.get(), f.format( t ) );
-
-const today = t.get();
-console.log( 'today', today );
-
-function buildWeeks( dateArg ) {
-	const date = DateFactory( dateArg );
-
-	const skip = new Date( date.getYear(), date.getMonth() ).getDay();
-	const daysInMonth = 40 - new Date( date.getYear(), date.getMonth(), 40 ).getDate();
-
-	const weeks = [ [ ...Array( skip ) ].map( () => null ) ];
-
-	for ( let i = 0; i < daysInMonth; i++ ) {
-		const lastWeek = weeks[ weeks.length - 1 ];
-
-		lastWeek.push( i + 1 );
-
-		if ( lastWeek.length === 7 ) {
-			weeks.push( [] );
-		}
-	}
-
-	const lastWeek = weeks[ weeks.length - 1 ];
-	while ( lastWeek.length % 7 !== 0 ) {
-		lastWeek.push( null );
-	}
-
-	console.log( 'weeks', weeks );
-	return weeks;
-}
 
 @customElement( 'xb-calendar' )
 export class Calendar extends XBElement {
@@ -62,8 +21,12 @@ export class Calendar extends XBElement {
 	 */
 	@property( { type: Date } ) date;
 
-	/** @type {Array<Array<number | null>>} */
-	weeks;
+	@property( { type: String, state: true } ) rangeStart;
+
+	@property( { type: String, state: true } ) rangeEnd;
+
+	/** @type {CalendarController} */
+	controller;
 
 	constructor() {
 		super();
@@ -71,67 +34,71 @@ export class Calendar extends XBElement {
 		/** @type {CalendarAttributes['date']} */
 		this.date = new Date();
 
-		this.weeks = buildWeeks( this.date );
+		this.controller = new CalendarController( this );
 	}
 
 	render() {
-		const { when, classy } = withClassy( { variant: this.variant } );
+		const { classy } = withClassy( {} );
 
-		/**
-		 * heavily based on https://developer.mozilla.org/en-US/docs/Web/HTML/Element/table
-		 */
 		return html`
-			<table
-				class=${ classy( 'calendar', {
-					'-primary': when( { variant: 'primary' } ),
-					'-secondary': when( { variant: 'secondary' } ),
-					'-tertiary': when( { variant: 'tertiary' } ),
-				} ) }
-			>
-				<thead>
-					<tr>
-						${ map(
-							[ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ],
-							( day ) =>
-								html`
-									<th scope="col">
-										<xb-text
-											variant="overline"
-											style="--xb-text-color: rgba(var(--xb-color-primary-500, 38, 84, 124), 1)"
-										>
-											${ day }
-										</xb-text>
-									</th>
-								`
-						) }
-					</tr>
-				</thead>
-				<tbody>
-					${ map(
-						this.weeks,
-						( week ) =>
-							html`
-								<tr>
-									${ map(
-										week,
-										( day ) => html`
-											<td>
-												${ day == null
-													? nothing
-													: html`
-															<xb-button emphasis="text">${ day }</xb-button>
-													  ` }
-											</td>
-										`
-									) }
-								</tr>
-							`
-					) }
-				</tbody>
-				<slot></slot>
-			</table>
+			<div class="header">
+				${ map(
+					[ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ],
+					( day ) =>
+						html`
+							<xb-text
+								variant="overline"
+								align="center"
+								style="--xb-text-color: rgba(var(--xb-color-primary-500, 38, 84, 124), 1)"
+							>
+								${ day }
+							</xb-text>
+						`
+				) }
+			</div>
+
+			<div class="days">
+				${ repeat(
+					this.controller.days,
+					( day, index ) =>
+						day == null
+							? String( index )
+							: `${ this.controller.getYear() }-${ this.controller.getMonth() }-${ day }`,
+					( day ) => html`
+						${ day == null
+							? html`
+									<span></span>
+							  `
+							: html`
+									<xb-button
+										class=${ classy( 'day', {
+											'-range-start': this.rangeStart == day,
+											'-range-end': this.rangeEnd == day,
+										} ) }
+										emphasis="text"
+										@click=${ () => {
+											if ( this.rangeStart == null || this.rangeEnd != null ) {
+												this.rangeStart = day;
+												this.rangeEnd = null;
+											} else {
+												if ( day < this.rangeStart ) {
+													[ this.rangeStart, this.rangeEnd ] = [ day, this.rangeStart ];
+												} else {
+													this.rangeEnd = day;
+												}
+											}
+										} }
+									>
+										${ day }
+									</xb-button>
+							  ` }
+					`
+				) }
+			</div>
 		`;
 	}
+
+	handleClick( event ) {}
 }
 
 /**
@@ -139,3 +106,49 @@ export class Calendar extends XBElement {
  * @property {Date} [date] - Date value.
  * @property {Function} [onChange] - Function
  */
+
+{
+	/* <table class=${ classy( 'calendar', {} ) }>
+<thead>
+<tr>
+${ map(
+[ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ],
+( day ) =>
+html`
+<th scope="col">
+<xb-text
+variant="overline"
+style="--xb-text-color: rgba(var(--xb-color-primary-500, 38, 84, 124), 1)"
+>
+${ day }
+</xb-text>
+</th>
+`
+) }
+</tr>
+</thead>
+<tbody>
+${ map(
+this.weeks,
+( week ) =>
+html`
+<tr>
+${ map(
+week,
+( day ) => html`
+<td>
+${ day == null
+? nothing
+: html`
+<xb-button emphasis="text">${ day }</xb-button>
+` }
+</td>
+`
+) }
+</tr>
+`
+) }
+</tbody>
+<slot></slot>
+</table> */
+}

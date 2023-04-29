@@ -35,46 +35,33 @@ function styles() {
 				position: relative;
 				display: inline-flex;
 				flex-direction: column;
+				gap: 1px;
 			}
 
-			td,
-			th {
-				inline-size: 40px;
-				text-align: center;
-				box-sizing: border-box;
+			/* Source: https://www.bram.us/2023/01/12/sibling-scopes-in-css-thanks-to-has/?utm_source=pocket_saves */
+			.-range-start,
+			.-range-start ~ :has( ~ .-range-end ),
+			.-range-end {
+				${ transition( [ { property: 'background-color' } ] ) };
+
+				background-color: ${ token( 'color-gray-200' ) };
 			}
 
-			th {
-				vertical-align: bottom;
+			.-range-start:hover,
+			.-range-end:hover,
+			.-range-start ~ :has( ~ .-range-end ):hover {
+				background-color: ${ token( 'color-gray-300' ) };
 			}
-
-			td:not( :empty ) {
-				block-size: 40px;
-				border: 1px solid gray;
-				vertical-align: middle;
-
-				/* td { */
-				border: calc( var( --dash, 0 ) * 4px ) dashed hsl( var( --primary ) );
-				background-color: hsl( var( --bbg ) );
-				opacity: var( --alpha, 1 );
-				border-radius: var( --radius );
-
-				/* } */
-			}
-			/*
-			td:focus-within {
-				border: 4px dashed hsl( var( --primary ) );
-			} */
 
 			.header {
 				@include p( spacing-0 );
 
 				display: grid;
 				grid-template-rows: 40px;
-				grid-template-columns: 40px 40px 1fr 40px 40px;
+				grid-template-columns: repeat( 7, 40px );
 				align-items: center;
 
-				column-gap: $spacing-2;
+				gap: 1px;
 
 				& > .previous-year,
 				& > .previous-month,
@@ -126,6 +113,8 @@ function styles() {
 				@include pt( $spacing-4 );
 				@include pb( $spacing-0 );
 
+				gap: 1px;
+
 				& > .day {
 					@include rounded( 0 );
 					font-size: $font-size-xs;
@@ -148,37 +137,6 @@ function styles() {
 						}
 					}
 				}
-
-				// .day.is-selected:after,
-				// .day.is-selected + .day.is-selected:before,
-				// .day.is-selected + .day:not(.is-selected):before {
-				//   position: absolute;
-				//   content: '';
-				//   display: block;
-				//   top: -1px;
-				//   bottom: -1px;
-				//   width: calc(40px + 0.25rem);
-
-				//   z-index: -1;
-				// }
-
-				// .day.is-selected:after {
-				//   @include bordered(rgba($color: color(gray-200)), 1);
-				//   background: rgba($color-gray-200, 1);
-				//   left: 20px;
-				// }
-
-				// .day.is-selected + .day.is-selected:before {
-				//   @include bordered(rgba($color: color(gray-200)), 1);
-				//   background: rgba($color-gray-200, 1);
-				//   left: calc(-20px - 0.25rem);
-				// }
-
-				// .day.is-selected + .day:not(.is-selected):before {
-				//   @include bordered(rgba($color: color(white)), 1);
-				//   background: rgba($color-white, 1);
-				//   left: calc(-20px - 0.25rem);
-				// }
 
 				& > .week-day {
 					font-weight: $font-weight-bold;
