@@ -8,7 +8,8 @@
 		"dist/*"
 	],
 	"scripts": {
-		"prebuild": "rm -rf dist && node ./src/scripts/convert-svg.js",
+		"generate": "node ./src/scripts/convert-svg.js",
+		"prebuild": "rm -rf dist && yarn generate",
 		"build": "yarn prebuild && rollup -c --environment BUILD:prod"
 	},
 	"keywords": [
@@ -18,12 +19,12 @@
 		"icons"
 	],
 	"devDependencies": {
-		"glob": "8.1.0",
-		"lit": "2.6.1",
+		"glob": "10.2.2",
+		"lit": "2.7.3",
 		"svgo": "3.0.2"
 	},
 	"peerDependencies": {
-		"lit": "2.6.1"
+		"lit": "2.7.3"
 	},
 	"publishConfig": {
 		"access": "public"
@@ -43,9 +44,18 @@
 	"homepage": "https://gitlab.com/welington/xb/-#readme",
 	"nx": {
 		"targets": {
+			"generate": {
+				"inputs": [
+					"{projectRoot}/src/assets/*"
+				],
+				"outputs": [
+					"{projectRoot}/src/index.js"
+				]
+			},
 			"build": {
 				"inputs": [
-					"default"
+					"^generate",
+					"{projectRoot}/src/index.js"
 				],
 				"outputs": [
 					"{projectRoot}/dist"
