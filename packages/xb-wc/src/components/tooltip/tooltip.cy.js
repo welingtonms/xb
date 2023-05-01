@@ -58,7 +58,13 @@ describe( '<xb-tooltip>', () => {
 
 		cy.get( 'xb-tooltip' ).find( '[slot="floating"]' ).should( 'not.be.visible' );
 
-		cy.get( 'xb-tooltip' ).find( '[slot="reference"]' ).focus();
+		/**
+		 * no, this won't work (for headlesss, firefox, and electron):
+		 * cy.get( 'xb-tooltip' ).find( '[slot="reference"]' ).focus();
+		 * I tried it.
+		 * Tabbing to focus on first focusable element instead.
+		 */
+		cy.get( 'body' ).tab();
 
 		cy.get( 'xb-tooltip' ).find( '[slot="floating"]' ).should( 'be.visible' );
 

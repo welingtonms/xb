@@ -1,0 +1,28 @@
+name: Cypress component testing
+
+on:
+  push:
+    # branches:
+    #   - 'master'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        uses: cypress-io/github-action@v5
+        with:
+          # just perform install
+          runTests: false
+      - run: yarn build
+      - name: Run tests
+        uses: cypress-io/github-action@v5
+        with:
+          # we have already installed all dependencies above
+          install: false
+          # Cypress tests and config file are in "e2e" folder
+          working-directory: packages/xb-wc
+          component: true

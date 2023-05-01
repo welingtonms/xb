@@ -1,4 +1,19 @@
 {
+	"tasksRunnerOptions": {
+		"default": {
+			"runner": "nx/tasks-runners/default",
+			"options": {
+				"cacheableOperations": [
+					"build"
+				]
+			}
+		}
+	},
+	"pluginsConfig": {
+		"@nrwl/js": {
+			"analyzeSourceFiles": false
+		}
+	},
 	"extends": "nx/presets/npm.json",
 	"affected": {
 		"defaultBase": "main"
@@ -44,21 +59,6 @@
 			"dependsOn": [
 				"^build"
 			]
-		}
-	},
-	"tasksRunnerOptions": {
-		"default": {
-			"runner": "nx/tasks-runners/default",
-			"options": {
-				"cacheableOperations": [
-					"build"
-				]
-			}
-		}
-	},
-	"pluginsConfig": {
-		"@nrwl/js": {
-			"analyzeSourceFiles": false
 		}
 	}
 }

@@ -1,6 +1,6 @@
 const { optimize } = require( 'svgo' );
 const { readFileSync, writeFileSync } = require( 'fs' );
-const glob = require( 'glob' );
+const { glob } = require( 'glob' );
 const path = require( 'path' );
 
 function getFilename( fullPath ) {
@@ -9,7 +9,11 @@ function getFilename( fullPath ) {
 
 const date = new Date().toUTCString();
 
-glob( './src/assets/*', ( error, files ) => {
+console.log( '>>', process.cwd() );
+
+async function f() {
+	const files = await glob( './src/assets/*.svg' );
+
 	const svgs = files
 		.map( ( file ) => ( {
 			filename: getFilename( file ),
@@ -29,33 +33,35 @@ glob( './src/assets/*', ( error, files ) => {
 	writeFileSync(
 		`./src/index.js`,
 		`
-	/**
- 	* Do not modify this file manually.
- 	* You can re-generate it by running the convert-svg script.
-	* Generated on ${ date }
- 	*/
-	import { svg } from 'lit';
+/**
+ * Do not modify this file manually.
+ * You can re-generate it by running the convert-svg script.
+* Generated on ${ date }
+ */
+import { svg } from 'lit';
 
-	const icons = {
-	${ svgs
-		.map( ( svg ) => {
-			console.log( 'Processing icon', svg.filename + '.svg' );
+const icons = {
+${ svgs
+	.map( ( svg ) => {
+		console.log( 'Processing icon', svg.filename + '.svg' );
 
-			const name = svg.filename
-				.replace( 'ic_', '' )
-				.replace( /_48(px|dp)/gi, '' )
-				.replace( /_/g, '-' )
-				.toLowerCase();
+		const name = svg.filename
+			.replace( 'ic_', '' )
+			.replace( /_48(px|dp)/gi, '' )
+			.replace( /_/g, '-' )
+			.toLowerCase();
 
-			return `'${ name }': svg\`${ svg.data }\`,`;
-		} )
-		.join( '\n' ) }
-	};
+		return `'${ name }': svg\`${ svg.data }\`,`;
+	} )
+	.join( '\n' ) }
+};
 
-	export default icons;
-	`
+export default icons;
+`
 	);
-} );
+}
+
+f();
 
 // one icon per file
 

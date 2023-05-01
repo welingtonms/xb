@@ -21,20 +21,19 @@
 		"lit"
 	],
 	"dependencies": {
-		"@floating-ui/dom": "1.1.1",
-		"@lit-labs/context": "0.2.0",
-		"@lit-labs/observers": "1.1.0",
+		"@floating-ui/dom": "1.2.7",
+		"@lit-labs/context": "0.3.1",
 		"@welingtonms/classy": "1.2.0",
 		"@welingtonms/xb-icons": "workspace:*",
 		"@welingtonms/xb-tokens": "workspace:*",
 		"@welingtonms/xb-toolset": "workspace:*",
-		"lit": "2.6.1"
+		"lit": "2.7.3"
 	},
 	"devDependencies": {
 		"@babel/plugin-proposal-class-properties": "7.18.6",
-		"@babel/plugin-proposal-decorators": "7.20.13",
-		"@babel/preset-env": "7.20.2",
-		"@cypress/mount-utils": "3.0.0",
+		"@babel/plugin-proposal-decorators": "7.21.0",
+		"@babel/preset-env": "7.21.5",
+		"@cypress/mount-utils": "4.0.0",
 		"@rollup/plugin-babel": "6.0.3",
 		"@rollup/plugin-replace": "5.0.2",
 		"@storybook/addon-actions": "7.0.0-beta.36",
@@ -42,9 +41,10 @@
 		"@storybook/addon-links": "7.0.0-beta.36",
 		"@storybook/web-components-webpack5": "7.0.0-beta.36",
 		"babel-loader": "9.1.2",
-		"cypress": "12.4.1",
+		"cypress": "12.11.0",
 		"cypress-axe": "1.4.0",
-		"lit-html": "2.6.1",
+		"cypress-plugin-tab": "1.0.5",
+		"lit-html": "2.7.3",
 		"react": "18.2.0",
 		"react-dom": "18.2.0",
 		"storybook": "7.0.0-beta.36"
