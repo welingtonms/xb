@@ -43,6 +43,7 @@
 		"babel-loader": "9.1.2",
 		"cypress": "12.11.0",
 		"cypress-axe": "1.4.0",
+		"cypress-plugin-tab": "1.0.5",
 		"lit-html": "2.7.3",
 		"react": "18.2.0",
 		"react-dom": "18.2.0",

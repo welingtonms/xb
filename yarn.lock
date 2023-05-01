@@ -5138,6 +5138,7 @@ __metadata:
     babel-loader: 9.1.2
     cypress: 12.11.0
     cypress-axe: 1.4.0
+    cypress-plugin-tab: 1.0.5
     lit: 2.7.3
     lit-html: 2.7.3
     react: 18.2.0
@@ -5375,6 +5376,16 @@ __metadata:
     require-from-string: ^2.0.2
     uri-js: ^4.2.2
   checksum: 4dc13714e316e67537c8b31bc063f99a1d9d9a497eb4bbd55191ac0dcd5e4985bbb71570352ad6f1e76684fb6d790928f96ba3b2d4fd6e10024be9612fe3f001
+  languageName: node
+  linkType: hard
+
+"ally.js@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "ally.js@npm:1.4.1"
+  dependencies:
+    css.escape: ^1.5.0
+    platform: 1.3.3
+  checksum: 78c397235c9c063854e880757795ff181a0668d918d9c3d7cde1a5288c583a0a65842631a565582bd01f429e16e2a2942d8b810c3164fd2c48f90a2bf83f5841
   languageName: node
   linkType: hard
 
@@ -7215,6 +7226,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"css.escape@npm:^1.5.0":
+  version: 1.5.1
+  resolution: "css.escape@npm:1.5.1"
+  checksum: f6d38088d870a961794a2580b2b2af1027731bb43261cfdce14f19238a88664b351cc8978abc20f06cc6bbde725699dec8deb6fe9816b139fc3f2af28719e774
+  languageName: node
+  linkType: hard
+
 "cssesc@npm:^3.0.0":
   version: 3.0.0
   resolution: "cssesc@npm:3.0.0"
@@ -7247,6 +7265,15 @@ __metadata:
     axe-core: ^3 || ^4
     cypress: ^10 || ^11 || ^12
   checksum: b202de37c38aab899a9bb0f813069221bc14a9a76e1f3998595f7097d9296efac8c7679c81279e20ce023b69bcc379657a4d5fcfa3da342826cb22eec7938ef2
+  languageName: node
+  linkType: hard
+
+"cypress-plugin-tab@npm:1.0.5":
+  version: 1.0.5
+  resolution: "cypress-plugin-tab@npm:1.0.5"
+  dependencies:
+    ally.js: ^1.4.1
+  checksum: 87d68c8caf03bb8d330901c68caa4253442d7c5364dae92899c744286a459dd16fd47c3633288eb35940655b3079502d425c83fbb489841722c7f4d7c77dd212
   languageName: node
   linkType: hard
 
@@ -13331,6 +13358,13 @@ __metadata:
   dependencies:
     find-up: ^5.0.0
   checksum: b167bb8dac7bbf22b1d5e30ec223e6b064b84b63010c9d49384619a36734caf95ed23ad23d4f9bd975e8e8082b60a83395f43a89bb192df53a7c25a38ecb57d9
+  languageName: node
+  linkType: hard
+
+"platform@npm:1.3.3":
+  version: 1.3.3
+  resolution: "platform@npm:1.3.3"
+  checksum: e7a95273e0ec33b6fcf85ba1464bb8ae028f101530dc51f2ee3430fa0b93783511da874af75a5fc065084376619b2382aad7fce0377bcce82dd9f6d3c812183a
   languageName: node
   linkType: hard
 

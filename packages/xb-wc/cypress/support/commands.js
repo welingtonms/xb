@@ -36,6 +36,8 @@
 //   }
 // }
 
+import 'cypress-plugin-tab';
+
 /**
  * Based on https://github.com/wlsf82/cy-press/blob/main/src/index.js and
  * https://github.com/cypress-io/cypress-example-todomvc/blob/master/cypress/support/commands.js
