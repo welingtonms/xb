@@ -8,8 +8,6 @@ import FloatingElement from '../../common/floating-element';
 
 import styles from './tooltip.styles';
 
-import '../resize-observer';
-
 @customElement( 'xb-tooltip' )
 export class Tooltip extends FloatingElement {
 	static styles = [ styles() ];
@@ -60,21 +58,39 @@ export class Tooltip extends FloatingElement {
 		this.removeEventListener( 'mouseout', this.handleMouseOut );
 	}
 
-	render() {
-		const { classy } = withClassy( {
-			open: this.open,
-		} );
+	/**
+	 * @returns {HTMLElement | null}
+	 */
+	getReferenceElement() {
+		const referenceSlot = this.shadowRoot.querySelector( 'slot[name="reference"]' );
+		const [ reference ] = referenceSlot?.assignedElements( { flatten: true } ) ?? [];
 
+		return reference;
+	}
+
+	/**
+	 * @returns {HTMLElement | null}
+	 */
+	getFloatingElement() {
+		const floatingSlot = this.shadowRoot.querySelector( 'slot[name="floating"]' );
+		const [ floating ] = floatingSlot?.assignedElements( { flatten: true } ) ?? [];
+
+		return floating;
+	}
+
+	getArrowElement() {
+		return null;
+	}
+
+	render() {
 		return html`
-			<xb-resize-observer type="window" @xb-resize=${ this.reposition }>
-				<slot name="reference" aria-describedby="floating"></slot>
-				<slot
-					name="floating"
-					id="floating"
-					role="tooltip"
-					aria-live=${ this.open ? 'polite' : 'off' }
-				></slot>
-			</xb-resize-observer>
+			<slot name="reference" aria-describedby="floating"></slot>
+			<slot
+				name="floating"
+				id="floating"
+				role="tooltip"
+				aria-live=${ this.open ? 'polite' : 'off' }
+			></slot>
 		`;
 	}
 

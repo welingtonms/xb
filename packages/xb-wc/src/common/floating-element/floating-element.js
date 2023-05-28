@@ -22,6 +22,9 @@ export default class FloatingElement extends XBElement {
 	 */
 	@property( { type: Boolean, reflect: true } ) open;
 
+	/** @type {number | null} */
+	_resizeTimeout = null;
+
 	constructor() {
 		super();
 
@@ -35,16 +38,22 @@ export default class FloatingElement extends XBElement {
 		this.open = false;
 	}
 
-	firstUpdated() {
-		super.firstUpdated();
+	connectedCallback() {
+		super.connectedCallback();
 
-		const [ referenceSlot, floatingSlot ] = this.shadowRoot.querySelectorAll( 'slot' );
-
-		[ this._reference ] = referenceSlot.assignedElements( { flatten: true } );
-		[ this._floating ] = floatingSlot.assignedElements( { flatten: true } );
-		// this._arrow = this.shadowRoot.querySelector( '.arrow' );
+		window.addEventListener( 'resize', this._handleWindowResize );
 	}
 
+	disconnectedCallback() {
+		super.disconnectedCallback();
+
+		window.removeEventListener( 'resize', this._handleWindowResize );
+	}
+
+	/**
+	 *
+	 * @param {import('lit').PropertyValueMap<FloatingElement>} changedProperties
+	 */
 	updated( changedProperties ) {
 		super.updated( changedProperties );
 
@@ -54,15 +63,15 @@ export default class FloatingElement extends XBElement {
 	}
 
 	get reference() {
-		return this._reference;
+		return this.getReferenceElement();
 	}
 
 	get floating() {
-		return this._floating;
+		return this.getFloatingElement();
 	}
 
 	get arrow() {
-		return this._arrow;
+		return this.getArrowElement();
 	}
 
 	show() {
@@ -108,21 +117,8 @@ export default class FloatingElement extends XBElement {
 		computePosition( this.reference, this.floating, {
 			strategy,
 			placement,
-			middleware: [
-				offset( 4 ),
-				flip(),
-				shift(),
-				// arrow( { element: this.arrow() } ),
-			],
+			middleware: [ offset( 4 ), flip(), shift() ],
 		} ).then( ( { x, y, placement } ) => {
-			// console.debug(
-			// 	'[xb-popover]',
-			// 	'requested placement at',
-			// 	this.placement,
-			// 	'; was placed at',
-			// 	placement
-			// );
-
 			this.floating.style.setProperty( '--xb-popover-left', `${ x }px` );
 			this.floating.style.setProperty( '--xb-popover-top', `${ y }px` );
 
@@ -142,56 +138,34 @@ export default class FloatingElement extends XBElement {
 				'--xb-popover-border-bottom-left-radius',
 				`${ [ 'top-start', 'right-end' ].includes( placement ) ? 0 : 4 }px`
 			);
-
-			// Accessing the data
-			// const { x: arrowX, y: arrowY } = arrow;
-
-			// const staticSide = {
-			// 	top: 'bottom',
-			// 	right: 'left',
-			// 	bottom: 'top',
-			// 	left: 'right',
-			// }[ placement.split( '-' )[ 0 ] ];
-
-			// const referenceHeight = this.reference.getBoundingClientRect().height;
-			// const referenceWidth = this.reference.getBoundingClientRect().width;
-			// const batata = {
-			// 	top: referenceHeight,
-			// 	right: referenceWidth,
-			// 	bottom: referenceHeight,
-			// 	left: referenceWidth,
-			// };
-
-			// const cebola = {
-			// 	top: {
-			// 		left: `calc(${ Math.floor( referenceWidth / 2 ) }px - 4px)`, // left value
-			// 	},
-			// 	right: {
-			// 		top: `calc(${ Math.floor( referenceHeight / 2 ) }px - 4px)`, // top value
-			// 	},
-			// 	bottom: {
-			// 		left: `calc(${ Math.floor( referenceWidth / 2 ) }px - 4px)`, // left value
-			// 	},
-			// 	left: {
-			// 		top: `calc(${ Math.floor( referenceHeight / 2 ) }px - 4px)`, // top value
-			// 	},
-			// };
-
-			// console.log(
-			// 	staticSide,
-			// 	`calc(-4px + ${ batata[ staticSide ] }px)`,
-			// 	cebola[ staticSide ]
-			// );
-
-			// Object.assign( this.arrow().style, {
-			// 	left: arrowX != null ? `${ arrowX }px` : '',
-			// 	top: arrowY != null ? `${ arrowY }px` : '',
-			// 	right: '',
-			// 	bottom: '',
-			// 	...cebola[ staticSide ],
-			// 	[ staticSide ]: `calc(2px + ${ batata[ staticSide ] }px)`,
-			// } );
 		} );
+	}
+
+	_handleWindowResize = () => {
+		clearTimeout( this._resizeTimeout );
+
+		this._resizeTimeout = window.setTimeout( () => {
+			this.reposition();
+		}, 250 );
+	};
+
+	/**
+	 * @returns {HTMLElement | null}
+	 */
+	getReferenceElement() {
+		throw new Error( 'Not implemented' );
+	}
+	/**
+	 * @returns {HTMLElement | null}
+	 */
+	getFloatingElement() {
+		throw new Error( 'Not implemented' );
+	}
+	/**
+	 * @returns {HTMLElement | null}
+	 */
+	getArrowElement() {
+		throw new Error( 'Not implemented' );
 	}
 }
 

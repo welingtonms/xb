@@ -8,7 +8,6 @@ import styles from './dropdown.styles';
 import '../boundary';
 import '../focus-trap';
 import '../menu';
-import '../resize-observer';
 import './dropdown-item';
 import './dropdown-menu';
 import './dropdown-trigger';
@@ -23,14 +22,8 @@ export class Dropdown extends FloatingElement {
 	 */
 	@property( { type: Boolean, reflect: true } ) disabled;
 
-	/** @type {import('./dropdown-trigger').DropdownTrigger} */
-	_trigger;
-
-	/** @type {import('./dropdown-menu').DropdownMenu} */
-	_menu;
-
-	/** @type {import('../focus-trap').FocusTrap} */
-	_trap;
+	/** @type {ContextProvider<import('./dropdown-context').DropdownContext>} */
+	_provider;
 
 	constructor() {
 		super();
@@ -74,16 +67,58 @@ export class Dropdown extends FloatingElement {
 		}
 	}
 
+	/**
+	 * @returns {import('./dropdown-trigger').DropdownTrigger}
+	 * */
+	get trigger() {
+		return this.reference;
+	}
+
+	/**
+	 * @returns {import('./dropdown-menu').DropdownMenu}
+	 * */
+	get menu() {
+		return this.floating;
+	}
+
+	/**
+	 * @returns {import('../focus-trap').FocusTrap}
+	 * */
+	get trap() {
+		return this.menu?.shadowRoot.querySelector( 'xb-focus-trap' );
+	}
+
 	render() {
 		return html`
-			<xb-resize-observer type="window" @xb-resize=${ this.reposition }>
-				<xb-boundary @xb-interact-out=${ this._handleClickOutside }>
-					<slot name="reference"></slot>
-
-					<slot name="floating"></slot>
-				</xb-boundary>
-			</xb-resize-observer>
+			<xb-boundary @xb-interact-out=${ this._handleClickOutside }>
+				<slot name="reference"></slot>
+				<slot name="floating"></slot>
+			</xb-boundary>
 		`;
+	}
+
+	/**
+	 * @returns {HTMLElement | null}
+	 */
+	getReferenceElement() {
+		const referenceSlot = this.shadowRoot.querySelector( 'slot[name="reference"]' );
+		const [ reference ] = referenceSlot?.assignedElements( { flatten: true } ) ?? [];
+
+		return reference;
+	}
+
+	/**
+	 * @returns {HTMLElement | null}
+	 */
+	getFloatingElement() {
+		const floatingSlot = this.shadowRoot.querySelector( 'slot[name="floating"]' );
+		const [ floating ] = floatingSlot?.assignedElements( { flatten: true } ) ?? [];
+
+		return floating;
+	}
+
+	getArrowElement() {
+		return null;
 	}
 
 	/**
@@ -120,32 +155,6 @@ export class Dropdown extends FloatingElement {
 		} else {
 			this.expand( emit );
 		}
-	}
-
-	get trigger() {
-		if ( this._trigger == null ) {
-			const triggerSlot = this.shadowRoot.querySelector( 'slot[name="reference"]' );
-			[ this._trigger ] = triggerSlot.assignedElements( { flatten: true } );
-		}
-
-		return this._trigger;
-	}
-
-	get menu() {
-		if ( this._menu == null ) {
-			const menuSlot = this.shadowRoot.querySelector( 'slot[name="floating"]' );
-			[ this._menu ] = menuSlot.assignedElements( { flatten: true } );
-		}
-
-		return this._menu;
-	}
-
-	get trap() {
-		if ( this._trap == null ) {
-			this._trap = this.menu.shadowRoot.querySelector( 'xb-focus-trap' );
-		}
-
-		return this._trap;
 	}
 
 	_handleDropdownExpand() {
