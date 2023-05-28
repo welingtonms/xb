@@ -43,36 +43,26 @@ export class MenuItem extends XBElement {
 	 */
 	@property( { type: String, reflect: true } ) value;
 
-	/** @type {HTMLSlotElement} */
-	_defaultSlot;
-
-	/** @type {import('../button/button').Button} */
-	_button;
-
 	constructor() {
 		super();
 
-		this.size = 'small';
-
-		this.selected = false;
-
 		this.disabled = false;
-
-		this.value = '';
-
+		this.selected = false;
+		this.size = 'small';
 		this.type = 'single';
+		this.value = '';
 	}
 
 	/** Returns a text label based on the contents of the menu item's default slot. */
 	text() {
-		this._defaultSlot =
-			this._defaultSlot ?? this.shadowRoot.querySelector( 'slot:not([name])' );
+		/** @type {HTMLSlotElement} */
+		const slot = this.shadowRoot.querySelector( 'slot:not([name])' );
 
 		/**
-		 * FIXME: the fallback is needed for when this._defaultSlot is still null,
+		 * FIXME: the fallback is needed for when `slot` is still null,
 		 * but this might not be enough for all cases.
 		 */
-		return getTextContent( this._defaultSlot ) || String( this.textContent ?? '' ).trim();
+		return getTextContent( slot ) || String( this.textContent ?? '' ).trim();
 	}
 
 	focus() {
@@ -96,8 +86,9 @@ export class MenuItem extends XBElement {
 				} ) }"
 				role="option"
 				aria-selected="${ this.selected ? 'true' : 'false' }"
+				aria-label="${ this.text() }"
 				?disabled="${ this.disabled }"
-				@click=${ this._handleClick }
+				@click=${ this.reemit }
 			>
 				${ this.type == 'multiple'
 					? html`
@@ -117,22 +108,11 @@ export class MenuItem extends XBElement {
 		`;
 	}
 
-	get button() {
-		this._button = this._button ?? this.shadowRoot.querySelector( 'button' );
-
-		return this._button;
-	}
-
 	/**
-	 *
-	 * @param {MouseEvent} event
-	 */
-	_handleClick( event ) {
-		event.stopPropagation();
-
-		this.emit( 'xb-menu-item-click', {
-			detail: { value: this.value, label: this.text() },
-		} );
+	 * @returns {import('../button/button').Button}
+	 **/
+	get button() {
+		return this.shadowRoot.querySelector( 'button' );
 	}
 }
 

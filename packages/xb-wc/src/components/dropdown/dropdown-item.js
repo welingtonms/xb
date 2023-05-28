@@ -9,21 +9,16 @@ export class DropdownMenuItem extends MenuItem {
 	connectedCallback() {
 		super.connectedCallback();
 
-		this.addEventListener( 'xb-menu-item-click', this._handleMenuClick );
+		this.addEventListener( 'click', this._handleMenuClick );
 	}
 
 	disconnectedCallback() {
 		super.disconnectedCallback();
 
-		this.removeEventListener( 'xb-menu-item-click', this._handleMenuClick );
+		this.removeEventListener( 'click', this._handleMenuClick );
 	}
 
-	_handleMenuClick( event ) {
-		event.stopPropagation();
-
+	_handleMenuClick = () => {
 		this.emit( 'xb-dropdown-collapse' );
-
-		// informs the outside world about which item was clicked
-		this.emit( 'xb-click', { detail: event.detail } );
-	}
+	};
 }
