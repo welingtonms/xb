@@ -1,21 +1,28 @@
 import { html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { ContextConsumer } from '@lit-labs/context';
+import { customElement } from 'lit/decorators.js';
 import withClassy from '@welingtonms/classy';
 
-import XBElement from '../../common/xb-element';
+import { dropdownContext } from './dropdown-context';
 import styles from './dropdown-trigger.styles';
+import XBElement from '../../common/xb-element';
 
 import '../button';
 
 @customElement( 'xb-dropdown-trigger' )
 export class DropdownTrigger extends XBElement {
+	_consumer;
+
 	static styles = [ styles() ];
 
-	/**
-	 * Is the dropdown menu open.
-	 * @type {DropdownTriggerAttributes['open']}
-	 */
-	@property( { type: Boolean, reflect: true } ) open;
+	constructor() {
+		super();
+
+		this._consumer = new ContextConsumer( this, {
+			context: dropdownContext,
+			subscribe: true,
+		} );
+	}
 
 	connectedCallback() {
 		super.connectedCallback();
@@ -32,7 +39,9 @@ export class DropdownTrigger extends XBElement {
 	}
 
 	render() {
-		const { classy, when } = withClassy( { open: this.open } );
+		const { classy, when } = withClassy( {
+			open: Boolean( this._consumer.value?.open ),
+		} );
 
 		return html`
 			<xb-button
@@ -43,10 +52,10 @@ export class DropdownTrigger extends XBElement {
 			>
 				<slot></slot>
 				<xb-icon
+					slot="trailing"
 					class=${ classy( 'indicator', {
 						'is-open': when( { open: true } ),
 					} ) }
-					slot="trailing"
 					name="expand-more"
 					size="16"
 				></xb-icon>

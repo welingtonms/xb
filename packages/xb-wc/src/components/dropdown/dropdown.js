@@ -1,7 +1,10 @@
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { ContextProvider } from '@lit-labs/context';
 
 import FloatingElement from '../../common/floating-element';
+import { dropdownContext } from './dropdown-context';
+import { attachContextRoot } from '../../utils/context';
 
 import styles from './dropdown.styles';
 
@@ -11,6 +14,8 @@ import '../menu';
 import './dropdown-item';
 import './dropdown-menu';
 import './dropdown-trigger';
+
+attachContextRoot();
 
 @customElement( 'xb-dropdown' )
 export class Dropdown extends FloatingElement {
@@ -31,6 +36,13 @@ export class Dropdown extends FloatingElement {
 		this.position = 'absolute';
 		this.placement = 'bottom-start';
 		this.disabled = false;
+
+		this.context = {
+			disabled: false,
+			open: false,
+		};
+
+		this._provider = new ContextProvider( this, { context: dropdownContext } );
 	}
 
 	connectedCallback() {
@@ -56,7 +68,7 @@ export class Dropdown extends FloatingElement {
 		super.updated( changedProperties );
 
 		if ( changedProperties.has( 'open' ) ) {
-			this.trigger.open = this.open;
+			this._provider.setValue( { open: this.open, disabled: this.disabled } );
 
 			if ( this.open ) {
 				this.trap?.activate();
