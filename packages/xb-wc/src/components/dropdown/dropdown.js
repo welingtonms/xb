@@ -37,12 +37,13 @@ export class Dropdown extends FloatingElement {
 		this.placement = 'bottom-start';
 		this.disabled = false;
 
-		this.context = {
-			disabled: false,
-			open: false,
-		};
-
-		this._provider = new ContextProvider( this, { context: dropdownContext } );
+		this._provider = new ContextProvider( this, {
+			context: dropdownContext,
+			initialValue: {
+				open: false,
+				disabled: false,
+			},
+		} );
 	}
 
 	connectedCallback() {
