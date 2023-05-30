@@ -3,14 +3,13 @@ import { customElement, property } from 'lit/decorators.js';
 import withClassy from '@welingtonms/classy';
 
 import styles from './radio-group.styles';
-import XBElement from '../../../common/xb-element';
+import SelectionBoundary from '../../../common/selection-boundary';
 
-import '../../selection-keeper';
 import '../../focus-trap';
 import '../../layout/stack';
 
 @customElement( 'xb-radio-group' )
-export class RadioGroup extends XBElement {
+export class RadioGroup extends SelectionBoundary {
 	static styles = [ styles() ];
 
 	/**
@@ -25,33 +24,17 @@ export class RadioGroup extends XBElement {
 	 */
 	@property( { type: String } ) size;
 
-	/**
-	 * Selection value.
-	 * @type {RadioGroupAttributes['value']}
-	 */
-	@property( {} ) value;
-
-	/**
-	 * `Set` that represents the current selection value.
-	 * @type {SelectionState}
-	 */
-	@property( { state: true } ) _selection;
-
-	/** @type {import('../../focus-trap').FocusTrap} */
-	_trap;
-
 	constructor() {
 		super();
 
-		this._selection = new Set();
+		this.listen = 'xb-check';
+		this.type = 'single-strict';
 	}
 
 	connectedCallback() {
 		super.connectedCallback();
 
 		this.setAttribute( 'role', 'radiogroup' );
-
-		this._handleSelectionChange = this._handleSelectionChange.bind( this );
 
 		this.addEventListener( 'focusin', this._handleFocus );
 		this.addEventListener( 'focusout', this._handleBlur );
@@ -71,12 +54,16 @@ export class RadioGroup extends XBElement {
 		super.updated( changedProperties );
 
 		if ( changedProperties.has( 'disabled' ) ) {
-			this._getRadios().forEach( ( radio ) => {
+			this.radios.forEach( ( radio ) => {
 				this._setRadioDisabled( radio );
 			} );
 		}
 
-		this._getRadios().forEach( ( radio ) => {
+		if ( changedProperties.has( 'selection' ) ) {
+			this._handleSelectionChange();
+		}
+
+		this.radios.forEach( ( radio ) => {
 			this._setRadioChecked( radio );
 		} );
 	}
@@ -86,44 +73,35 @@ export class RadioGroup extends XBElement {
 
 		// TODO: add proper accessibility features
 		return html`
-			<xb-selection-keeper
-				.value=${ this.value }
-				@xb-change=${ this._handleSelectionChange }
-				listen="xb-check"
-				type="single-strict"
-			>
-				<xb-focus-trap>
-					<xb-stack
-						as="fieldset"
-						class=${ classy( 'radio-group' ) }
-						paddingless
-						?disabled="${ this.disabled }"
-					>
-						<slot></slot>
-					</xb-stack>
-				</xb-focus-trap>
-			</xb-selection-keeper>
+			<xb-focus-trap>
+				<xb-stack
+					as="fieldset"
+					class=${ classy( 'radio-group' ) }
+					paddingless
+					?disabled="${ this.disabled }"
+				>
+					<slot></slot>
+				</xb-stack>
+			</xb-focus-trap>
 		`;
 	}
 
 	get trap() {
-		this._trap = this._trap ?? this.shadowRoot.querySelector( 'xb-focus-trap' );
-
-		return this._trap;
+		return this.shadowRoot.querySelector( 'xb-focus-trap' );
 	}
 
-	_handleFocus() {
+	_handleFocus = () => {
 		this.trap.activate();
-	}
+	};
 
-	_handleBlur() {
+	_handleBlur = () => {
 		this.trap.deactivate();
-	}
+	};
 
 	/**
 	 * @returns {import('./radio').RadioInput[]}
 	 */
-	_getRadios() {
+	get radios() {
 		const _defaultSlot = this.shadowRoot.querySelector( 'slot' );
 
 		return [ ..._defaultSlot.assignedElements( { flatten: true } ) ].filter( ( item ) =>
@@ -135,7 +113,7 @@ export class RadioGroup extends XBElement {
 	 * @param {import('./radio').RadioInput} radio
 	 */
 	_setRadioChecked( radio ) {
-		radio.checked = this._selection.has( radio.value );
+		radio.checked = this.selection.has( radio.value );
 	}
 
 	/**
@@ -145,16 +123,10 @@ export class RadioGroup extends XBElement {
 		radio.disabled = this.disabled;
 	}
 
-	_handleSelectionChange( event ) {
-		event.stopPropagation();
-
-		const {
-			detail: { value, state },
-		} = event;
-
-		this._selection = state;
-
-		this.emit( 'xb-change', { detail: { value } } );
+	_handleSelectionChange() {
+		this.emit( 'xb-change', {
+			detail: { value: this.strategy.value( this.selection ) },
+		} );
 	}
 }
 

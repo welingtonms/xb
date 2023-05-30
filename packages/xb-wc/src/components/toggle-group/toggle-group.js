@@ -3,13 +3,12 @@ import { customElement, property } from 'lit/decorators.js';
 import withClassy from '@welingtonms/classy';
 
 import styles from './toggle-group.styles';
-import XBElement from '../../common/xb-element';
+import SelectionBoundary from '../../common/selection-boundary';
 
-import '../selection-keeper';
 import '../layout/cluster';
 
 @customElement( 'xb-toggle-group' )
-export class ToggleGroup extends XBElement {
+export class ToggleGroup extends SelectionBoundary {
 	static styles = [ styles() ];
 
 	/**
@@ -30,48 +29,15 @@ export class ToggleGroup extends XBElement {
 	 */
 	@property( { type: String } ) size;
 
-	/**
-	 * Selection strategy.
-	 * @type {ToggleGroupAttributes['type']}
-	 */
-	@property( { type: String } ) type;
-
-	/**
-	 * Selection value.
-	 * @type {ToggleGroupAttributes['value']}
-	 */
-	@property( {} ) value;
-
-	/**
-	 * `Set` that represents the current selection value.
-	 * @type {SelectionState}
-	 */
-	@property( { state: true } ) _selection;
-
-	/** @type {HTMLSlotElement} */
-	_defaultSlot;
-
 	constructor() {
 		super();
 
-		/** @type {ToggleGroupAttributes['type']} */
-		this.type = 'single-strict';
-
-		/** @type {ToggleGroupAttributes['size']} */
-		this.size = 'small';
-
+		this.listen = 'xb-toggle-click';
 		this.role = [ 'single', 'single-strict' ].includes( this.type )
 			? 'radiogroup'
 			: 'group';
-
-		/** @type {SelectionState} */
-		this._selection = new Set();
-	}
-
-	connectedCallback() {
-		super.connectedCallback();
-
-		this._handleSelectionChange = this._handleSelectionChange.bind( this );
+		this.size = 'small';
+		this.type = 'single-strict';
 	}
 
 	/**
@@ -81,24 +47,28 @@ export class ToggleGroup extends XBElement {
 		super.updated( changedProperties );
 
 		if ( changedProperties.has( 'role' ) ) {
-			this._getToggles().forEach( ( toggle ) => {
+			this.toggles.forEach( ( toggle ) => {
 				this._setToggleRole( toggle );
 			} );
 		}
 
 		if ( changedProperties.has( 'disabled' ) ) {
-			this._getToggles().forEach( ( toggle ) => {
+			this.toggles.forEach( ( toggle ) => {
 				this._setToggleDisabled( toggle );
 			} );
 		}
 
 		if ( changedProperties.has( 'size' ) ) {
-			this._getToggles().forEach( ( toggle ) => {
+			this.toggles.forEach( ( toggle ) => {
 				this._setToggleSize( toggle );
 			} );
 		}
 
-		this._getToggles().forEach( ( toggle ) => {
+		if ( changedProperties.has( 'selection' ) ) {
+			this._handleSelectionChange();
+		}
+
+		this.toggles.forEach( ( toggle ) => {
 			this._setToggleChecked( toggle );
 		} );
 	}
@@ -108,35 +78,28 @@ export class ToggleGroup extends XBElement {
 
 		// TODO: add proper accessibility features
 		return html`
-			<xb-selection-keeper
-				.value=${ this.value }
-				@xb-change=${ this._handleSelectionChange }
-				listen="xb-toggle-click"
-				type=${ this.type }
+			<xb-cluster
+				class=${ classy( 'toggle-group', {
+					'-single': when( { type: [ 'single', 'single-strict' ] } ),
+					'-multiple': when( { type: 'multiple' } ),
+				} ) }
+				borderless="none"
+				paddingless="none"
+				?disabled="${ this.disabled }"
 			>
-				<xb-cluster
-					class=${ classy( 'toggle-group', {
-						'-single': when( { type: [ 'single', 'single-strict' ] } ),
-						'-multiple': when( { type: 'multiple' } ),
-					} ) }
-					borderless="none"
-					paddingless="none"
-					?disabled="${ this.disabled }"
-				>
-					<slot></slot>
-				</xb-cluster>
-			</xb-selection-keeper>
+				<slot></slot>
+			</xb-cluster>
 		`;
 	}
 
 	/**
 	 * @returns {import('./toggle').ToggleButton[]}
 	 */
-	_getToggles() {
-		this._defaultSlot = this._defaultSlot ?? this.shadowRoot.querySelector( 'slot' );
+	get toggles() {
+		const defaultSlot = this.shadowRoot.querySelector( 'slot' );
 
-		return [ ...this._defaultSlot.assignedElements( { flatten: true } ) ].filter(
-			( item ) => item.matches( 'xb-toggle' )
+		return ( defaultSlot?.assignedElements() || [] ).filter( ( item ) =>
+			item.matches( 'xb-toggle' )
 		);
 	}
 
@@ -161,7 +124,7 @@ export class ToggleGroup extends XBElement {
 	 * @param {import('./toggle').ToggleButton} toggle
 	 */
 	_setToggleChecked( toggle ) {
-		toggle.checked = this._selection.has( toggle.value );
+		toggle.checked = this.selection.has( toggle.value );
 	}
 
 	/**
@@ -171,16 +134,10 @@ export class ToggleGroup extends XBElement {
 		toggle.disabled = this.disabled;
 	}
 
-	_handleSelectionChange( event ) {
-		event.stopPropagation();
-
-		const {
-			detail: { value, state },
-		} = event;
-
-		this._selection = state;
-
-		this.emit( 'xb-change', { detail: { value } } );
+	_handleSelectionChange() {
+		this.emit( 'xb-change', {
+			detail: { value: this.strategy.value( this.selection ) },
+		} );
 	}
 }
 
@@ -193,7 +150,6 @@ export class ToggleGroup extends XBElement {
 
 /**
  * @typedef {Object} ToggleGroupAttributes
- * @property {ToggleGroupType} type Strategy for toggling.
  * @property {boolean} disabled Should the button be disabled.
  * @property {ToggleSize} size Toggle button size.
  * @property {'group' | 'radiogroup'} role Aria role

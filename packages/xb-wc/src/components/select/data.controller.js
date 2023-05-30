@@ -85,7 +85,7 @@ class DataController {
 			this.getGroup( 'static' ).clear();
 
 			/**
-			 * Here we are grabbing the static options (xb-option) rendered inside the select
+			 * Here we grab the static options (xb-option) rendered inside the select
 			 * and wrapping them in a datasource so we can search them.
 			 */
 			const staticOptions = this.host.options.map( ( option ) => {
@@ -142,12 +142,7 @@ class DataController {
 				fetched = { ...fetched, _type: datasource.name };
 
 				const { value } = this.toOption( fetched );
-				// const previouslyFetched = this.getItem( value );
 
-				// this.items.set( value, {
-				// 	...( isObject( previouslyFetched ) ? previouslyFetched : {} ),
-				// 	...fetched,
-				// } );
 				this.items.set( value, fetched );
 
 				this.getGroup( group ?? 'queried' ).add( value );
@@ -166,17 +161,15 @@ class DataController {
 		const staticDatasources = new Map();
 
 		toArray( datasources ).forEach( ( datasource ) => {
-			const staticDatasource = getStaticDatasource( datasource );
-
-			staticDatasources.set(
-				staticDatasource.name,
-				Object.assign(
-					{
-						adapter: GenericAdapter,
-					},
-					staticDatasource
-				)
+			const staticDatasource = Object.assign(
+				{
+					// this is the fallback adapter in case the datasource does not have one.
+					adapter: GenericAdapter,
+				},
+				getStaticDatasource( datasource )
 			);
+
+			staticDatasources.set( staticDatasource.name, staticDatasource );
 		} );
 
 		this.datasources = staticDatasources;
@@ -189,7 +182,7 @@ class DataController {
 	setMode( mode ) {
 		if ( mode == 'default' ) {
 			for ( const key of this.getGroup( 'queried' ) ) {
-				if ( ! this.host._selection.has( key ) ) {
+				if ( ! this.host.selection.has( key ) ) {
 					this.items.delete( key );
 				}
 			}
@@ -260,7 +253,7 @@ export default DataController;
  * @typedef {import('lit').ReactiveController} ReactiveController
  * @typedef {import('lit').ReactiveControllerHost} ReactiveControllerHost
  * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionState} SelectionState
- * @typedef {import('../selection-keeper').SelectionEventDetail} SelectionEventDetail
+ * @typedef {import('../../common/selection-boundary').SelectionEventDetail} SelectionEventDetail
  * @typedef {import('./select-option').SelectOption} SelectOption
  */
 
