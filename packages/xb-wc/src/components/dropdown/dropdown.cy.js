@@ -13,15 +13,13 @@ describe( '<xb-dropdown>', () => {
 				<xb-dropdown-trigger>Actions</xb-dropdown-trigger>
 
 				<xb-dropdown-menu>
-					<xb-dropdown-item value="change" @xb-click=${ args.click }>
-						Change
-					</xb-dropdown-item>
-					<xb-dropdown-item value="accept" @xb-click=${ args.click }>
+					<xb-dropdown-item value="accept" @click=${ args.click }>
 						Accept
 					</xb-dropdown-item>
-					<xb-dropdown-item value="leave" @xb-click=${ args.click }>
-						Leave
+					<xb-dropdown-item value="change" @click=${ args.click }>
+						Change
 					</xb-dropdown-item>
+					<xb-dropdown-item value="leave" @click=${ args.click }>Leave</xb-dropdown-item>
 				</xb-dropdown-menu>
 			</xb-dropdown>
 		` );
@@ -43,9 +41,9 @@ describe( '<xb-dropdown>', () => {
 				<xb-dropdown-trigger>Actions</xb-dropdown-trigger>
 
 				<xb-dropdown-menu>
-					<xb-dropdown-item data-cy="change" value="change">Change</xb-dropdown-item>
 					<xb-dropdown-item data-cy="accept" value="accept">Accept</xb-dropdown-item>
-					<xb-dropdown-item data-cy="leave" value="leave" @xb-click=${ args.click }>
+					<xb-dropdown-item data-cy="change" value="change">Change</xb-dropdown-item>
+					<xb-dropdown-item data-cy="leave" value="leave" @click=${ args.click }>
 						Leave
 					</xb-dropdown-item>
 				</xb-dropdown-menu>
@@ -65,87 +63,53 @@ describe( '<xb-dropdown>', () => {
 	} );
 
 	it( 'emit expand, collapse, and toggle events', () => {
+		const onExpandSpy = cy.stub().as( 'onExpandSpy' );
+		const onCollapseSpy = cy.stub().as( 'onCollapseSpy' );
+		const onToggleSpy = cy.stub().as( 'onToggleSpy' );
+
 		const args = {
 			placement: 'bottom-start',
 		};
 
 		cy.mount( html`
-			<xb-dropdown placement=${ args.placement }>
+			<xb-dropdown
+				placement=${ args.placement }
+				@xb-dropdown-expand=${ ( event ) => {
+					onExpandSpy( event );
+				} }
+				@xb-dropdown-collapse=${ ( event ) => {
+					onCollapseSpy( event );
+				} }
+				@xb-dropdown-toggle=${ ( event ) => {
+					onToggleSpy( event );
+				} }
+			>
 				<xb-dropdown-trigger>Actions</xb-dropdown-trigger>
 
 				<xb-dropdown-menu>
-					<xb-dropdown-item value="change">Change</xb-dropdown-item>
 					<xb-dropdown-item value="accept">Accept</xb-dropdown-item>
+					<xb-dropdown-item value="change">Change</xb-dropdown-item>
 					<xb-dropdown-item value="leave">Leave</xb-dropdown-item>
 				</xb-dropdown-menu>
-
-				<button
-					type="button"
-					data-cy="expand"
-					@click=${ ( event ) => {
-						event.target.dispatchEvent(
-							new CustomEvent( 'xb-dropdown-expand', {
-								bubbles: true,
-							} )
-						);
-					} }
-				>
-					Expand
-				</button>
-
-				<button
-					type="button"
-					data-cy="collapse"
-					@click=${ ( event ) => {
-						event.target.dispatchEvent(
-							new CustomEvent( 'xb-dropdown-collapse', {
-								bubbles: true,
-							} )
-						);
-					} }
-				>
-					Collapse
-				</button>
-
-				<button
-					type="button"
-					data-cy="toggle"
-					@click=${ ( event ) => {
-						event.target.dispatchEvent(
-							new CustomEvent( 'xb-dropdown-toggle', {
-								bubbles: true,
-							} )
-						);
-					} }
-				>
-					Toggle
-				</button>
 			</xb-dropdown>
 		` );
 
-		cy.get( 'xb-dropdown' )
-			.find( '[data-cy="expand"]', { includeShadowDom: true } )
-			.click( { force: true } );
+		cy.get( 'xb-dropdown' ).as( 'dropdown' );
+		cy.get( 'xb-dropdown' ).find( 'xb-dropdown-trigger' ).as( 'dropdown-trigger' );
 
-		cy.get( 'xb-dropdown' ).find( 'xb-dropdown-menu' ).should( 'be.visible' );
+		cy.get( '@dropdown' ).then( ( dropdowns ) => {
+			/** @type {import('./dropdown').Dropdown} */
+			const dropdown = dropdowns[ 0 ];
 
-		cy.get( 'xb-dropdown' )
-			.find( '[data-cy="collapse"]', { includeShadowDom: true } )
-			.click( { force: true } );
+			dropdown.expand();
+			cy.get( '@onExpandSpy' ).should( 'have.been.called' );
 
-		cy.get( 'xb-dropdown' ).find( 'xb-dropdown-menu' ).should( 'not.be.visible' );
+			dropdown.collapse();
+			cy.get( '@onCollapseSpy' ).should( 'have.been.called' );
 
-		cy.get( 'xb-dropdown' )
-			.find( '[data-cy="toggle"]', { includeShadowDom: true } )
-			.click( { force: true } );
-
-		cy.get( 'xb-dropdown' ).find( 'xb-dropdown-menu' ).should( 'be.visible' );
-
-		cy.get( 'xb-dropdown' )
-			.find( '[data-cy="toggle"]', { includeShadowDom: true } )
-			.click( { force: true } );
-
-		cy.get( 'xb-dropdown' ).find( 'xb-dropdown-menu' ).should( 'not.be.visible' );
+			cy.get( '@dropdown-trigger' ).click();
+			cy.get( '@onToggleSpy' ).should( 'have.been.called' );
+		} );
 	} );
 
 	it( 'should navigate the keyboard', () => {
@@ -188,7 +152,7 @@ describe( '<xb-dropdown>', () => {
 					<xb-dropdown-item value="change">Change</xb-dropdown-item>
 					<xb-dropdown-item
 						value="leave"
-						@xb-click=${ ( e ) => {
+						@click=${ ( e ) => {
 							onClickSpy( e );
 						} }
 					>

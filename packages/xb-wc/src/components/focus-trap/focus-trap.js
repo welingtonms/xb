@@ -38,6 +38,12 @@ export class FocusTrap extends XBElement {
 		this.active = false;
 	}
 
+	disconnectedCallback() {
+		super.disconnectedCallback();
+
+		this._unsubscribe();
+	}
+
 	/**
 	 * @param {import('lit').PropertyValues<ToggleGroup>} changedProperties
 	 */

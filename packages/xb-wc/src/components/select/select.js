@@ -1,24 +1,34 @@
-// import { ContextProvider, ContextRoot, createContext } from '@lit-labs/context';
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import toArray from '@welingtonms/xb-toolset/dist/to-array';
 
 import DataController from './data.controller';
+import SelectionBoundary from '../../common/selection-boundary';
+
 import styles from './select.styles';
-import XBElement from '../../common/xb-element';
 
 import '../dropdown';
 import '../layout/box';
 import '../menu';
-import '../selection-keeper';
 import '../text';
 import './select-menu';
 import './select-option';
 import './select-trigger';
 
-// const root = new ContextRoot();
-// const selectContext = createContext( 'select' );
+/**
+ * @param {SelectionState} state
+ * @param {SelectionEventDetail['value']} value
+ * @returns {string[]}
+ */
+function getChanged( state, value ) {
+	/**
+	 * TODO: evaluate the need to optimize based on the type (multiple, single, or single-strict),
+	 * for example, returning only `value` (since the existing selected options won't change), and
+	 * returning both the current state and value for single selections.
+	 */
+	return Array.from( new Set( [ ...state.keys(), ...toArray( value ) ] ) );
+}
 
 function createOption( { value, label, type, disabled, selected } ) {
 	const option = Object.assign( document.createElement( 'xb-option' ), {
@@ -35,7 +45,7 @@ function createOption( { value, label, type, disabled, selected } ) {
 }
 
 @customElement( 'xb-select' )
-export class Select extends XBElement {
+export class Select extends SelectionBoundary {
 	static styles = [ styles() ];
 
 	@property( {} ) datasources;
@@ -76,70 +86,26 @@ export class Select extends XBElement {
 	 */
 	@property( { type: String } ) placement;
 
-	/**
-	 * Selection value.
-	 * @type {SelectAttributes['value']}
-	 */
-	@property( {} ) value;
-
-	/**
-	 * Selection value for the internal selection-keeper. It is the received
-	 * `value` attribute after applying `DataController`'s `toValue` method.
-	 * @type {string[]}
-	 */
-	@property( { state: true } ) _value;
-
-	/**
-	 * `Set` that represents the current selection value.
-	 * @type {SelectionState}
-	 */
-	@property( { state: true } ) _selection;
-
 	/** @type {DataController} */
 	_controller;
-
-	/** @type {SelectOption[]} */
-	_options;
-
-	/** @type {SelectTrigger} */
-	_trigger;
 
 	constructor() {
 		super();
 
 		this.datasources = [];
-
 		this.disabled = false;
-
+		this.listen = 'xb-option-click';
 		this.loading = false;
-
 		this.multiple = false;
-
 		this.open = false;
-
 		this.placeholder = 'Search & Select';
-
 		this.placement = 'bottom-start';
-
-		this.value = null;
-
-		/** @type {string[]} */
-		this._value = [];
-
-		/** @type {SelectionState} */
-		this._selection = new Set();
 	}
 
 	connectedCallback() {
 		super.connectedCallback();
 
 		this._controller = new DataController( this, this.datasources );
-
-		this._handleClear = this._handleClear.bind( this );
-		this._handleCollapse = this._handleCollapse.bind( this );
-		this._handleSearch = this._handleSearch.bind( this );
-		this._handleSelectionChange = this._handleSelectionChange.bind( this );
-		this._syncOptions = this._syncOptions.bind( this );
 
 		this.addEventListener( 'xb-clear', this._handleClear );
 		this.addEventListener( 'xb-dropdown-collapse', this._handleCollapse );
@@ -176,12 +142,12 @@ export class Select extends XBElement {
 	 * @param {import('lit').PropertyValues<Select>} changedProperties
 	 */
 	update( changedProperties ) {
-		if ( changedProperties.has( 'datasources' ) ) {
-			this._controller.setDatasources( this.datasources );
+		if ( changedProperties.has( 'multiple' ) ) {
+			this.type = this.multiple ? 'multiple' : 'single';
 		}
 
-		if ( changedProperties.has( 'value' ) ) {
-			this._value = this._controller.toValue( this.value );
+		if ( changedProperties.has( 'datasources' ) ) {
+			this._controller.setDatasources( this.datasources );
 		}
 
 		super.update( changedProperties );
@@ -195,21 +161,13 @@ export class Select extends XBElement {
 
 		this._renderDataOptions();
 
-		if ( changedProperties.has( '_value' ) ) {
-			this._updateTrigger();
+		if ( changedProperties.has( 'selection' ) ) {
+			this._handleSelectionChange();
 		}
 	}
 
 	get dropdown() {
-		this._dropdown = this._dropdown ?? this.shadowRoot.querySelector( 'xb-dropdown' );
-
-		return this._dropdown;
-	}
-
-	get menu() {
-		this._menu = this._menu ?? this.shadowRoot.querySelector( 'xb-select-menu' );
-
-		return this._menu;
+		return this.shadowRoot.querySelector( 'xb-dropdown' );
 	}
 
 	get options() {
@@ -221,54 +179,40 @@ export class Select extends XBElement {
 	}
 
 	get trigger() {
-		this._trigger = this._trigger ?? this.shadowRoot.querySelector( 'xb-select-trigger' );
-
-		return this._trigger;
+		return this.shadowRoot.querySelector( 'xb-select-trigger' );
 	}
 
 	render() {
 		return html`
-			<xb-selection-keeper
-				listen="xb-option-click"
-				type=${ this.multiple ? 'multiple' : 'single' }
-				.value=${ this._value }
-				@xb-change=${ this._handleSelectionChange }
-			>
-				<xb-dropdown placement="${ ifDefined( this.placement ) }">
-					<xb-select-trigger slot="reference"></xb-select-trigger>
+			<xb-dropdown placement="${ ifDefined( this.placement ) }">
+				<xb-select-trigger slot="reference"></xb-select-trigger>
 
-					<xb-select-menu
-						slot="floating"
-						id="menu"
-						role="listbox"
-						aria-multiselectable=${ this.multiple ? 'true' : 'false' }
-						aria-label="Options"
-						?loading=${ this.loading }
-					>
-						<slot @slotchange=${ this._handleSlotChanged }>
-							<xb-text class="empty" variant="body-2">No options available.</xb-text>
-						</slot>
-					</xb-select-menu>
-				</xb-dropdown>
-			</xb-selection-keeper>
+				<xb-select-menu
+					slot="floating"
+					id="menu"
+					role="listbox"
+					aria-multiselectable=${ this.multiple ? 'true' : 'false' }
+					aria-label="Options"
+					?loading=${ this.loading }
+				>
+					<slot @slotchange=${ this._handleSlotChanged }>
+						<xb-text class="empty" variant="body-2">No options available.</xb-text>
+					</slot>
+				</xb-select-menu>
+			</xb-dropdown>
 		`;
 	}
 
 	/**
-	 * Sync the `disabled`, and `selected` attributes for the provided
-	 * `options`, or all the rendered options, if no `options` is provided.
-	 * @param {SelectOption[]} [options]
+	 * @param {SelectionOption | SelectionOption[] | null} value
+	 * @returns {string[]}
 	 */
-	_syncOptions( options ) {
-		( options ?? this.options ).forEach( ( option ) => {
-			option.disabled = this.disabled || option.disabled;
-			option.selected = this._selection.has( option.value );
-			option.type = this.multiple ? 'multiple' : 'single';
-		} );
+	_toSelectionValue( value ) {
+		return this._controller.toValue( value );
 	}
 
 	_updateTrigger() {
-		const selection = this._selection;
+		const selection = this.selection;
 		const trigger = this.trigger;
 
 		if ( selection.size === 0 ) {
@@ -291,8 +235,6 @@ export class Select extends XBElement {
 		this.options.forEach( ( option ) => {
 			option.remove();
 		} );
-
-		this._options = [];
 	}
 
 	_renderDataOptions() {
@@ -301,13 +243,13 @@ export class Select extends XBElement {
 		if ( this._controller.mode == 'default' ) {
 			keys = new Set( [
 				...this._controller.getGroup( 'static' ).keys(),
-				...this._selection.keys(),
+				...this.selection.keys(),
 			] );
 		} else {
 			keys = new Set( this._controller.getGroup( 'queried' ) );
 		}
 
-		Array.from( keys.keys() ).forEach( ( key ) => {
+		Array.from( keys ).forEach( ( key ) => {
 			const item = this._controller.getItem( key );
 
 			if ( ! item ) {
@@ -329,7 +271,7 @@ export class Select extends XBElement {
 
 					// TODO: how to keep the previous disabled state?
 					disabled: this.disabled,
-					selected: this._selection.has( value ),
+					selected: this.selection.has( value ),
 				} )
 			);
 		} );
@@ -338,11 +280,24 @@ export class Select extends XBElement {
 	}
 
 	/**
-	 * Trigger search operation for the select.
-	 * @param {CustomEvent<SearchEventDetail>} e
+	 * Sync the `disabled`, and `selected` attributes for the provided
+	 * `options`, or all the rendered options, if no `options` is provided.
+	 * @param {SelectOption[]} [options]
 	 */
-	async _handleSearch( e ) {
-		const { query } = e.detail;
+	_syncOptions( options ) {
+		( options ?? this.options ).forEach( ( option ) => {
+			option.disabled = this.disabled || option.disabled;
+			option.selected = this.selection.has( option.value );
+			option.type = this.multiple ? 'multiple' : 'single';
+		} );
+	}
+
+	/**
+	 * Trigger search operation for the select.
+	 * @param {CustomEvent<SearchEventDetail>} event
+	 */
+	_handleSearch = async ( event ) => {
+		const { query } = event.detail;
 
 		this._removeDataOptions();
 
@@ -357,59 +312,51 @@ export class Select extends XBElement {
 
 		this.dropdown.expand();
 
-		this.menu.loading = true;
+		this.loading = true;
 
 		await this._controller.query( query );
 
-		this.menu.loading = false;
-	}
+		this.loading = false;
+	};
 
-	_handleClear() {
+	_handleClear = () => {
 		this._removeDataOptions();
 
 		this._controller.setMode( 'default' );
 		this._controller.query( '' );
-	}
+	};
 
 	_handleSlotChanged() {
 		this._syncOptions();
 	}
 
-	/**
-	 *
-	 * @param {CustomEvent<SelectionEventDetail>} event
-	 */
-	_handleSelectionChange( event ) {
-		event.stopPropagation();
-
-		const {
-			detail: { value, state, changed },
-		} = event;
-
-		this._selection = state;
+	_handleSelectionChange = () => {
+		const changed = getChanged( this.selection, this._toSelectionValue( this.value ) );
 
 		let optionsToSync = [];
-		Array.from( new Set( [ ...changed, ...state.keys() ] ) ).forEach( ( value ) => {
-			const node = this.querySelector( `xb-option[value="${ value }"]` );
+		Array.from( new Set( [ ...changed, ...this.selection.keys() ] ) ).forEach(
+			( value ) => {
+				const node = this.querySelector( `xb-option[value="${ value }"]` );
 
-			if ( node ) {
-				optionsToSync.push( node );
+				if ( node ) {
+					optionsToSync.push( node );
+				}
 			}
-		} );
+		);
 
 		this._syncOptions( optionsToSync );
 		this._updateTrigger();
 
-		if ( ! this.multiple && value != null ) {
+		if ( ! this.multiple && this.selection.size === 1 ) {
 			this.dropdown.collapse();
 		}
 
 		const getConsolidatedValue = () => {
-			if ( value == null ) {
+			if ( this.selection.size === 0 ) {
 				return null;
 			}
 
-			const values = toArray( value ).map( ( key ) => {
+			const values = Array.from( this.selection ).map( ( key ) => {
 				return this._controller.getItem( key ) ?? key;
 			} );
 
@@ -419,9 +366,9 @@ export class Select extends XBElement {
 		this.emit( 'xb-change', {
 			detail: { value: getConsolidatedValue() },
 		} );
-	}
+	};
 
-	_handleCollapse() {
+	_handleCollapse = () => {
 		this.trigger.clear();
 
 		if ( this._controller.mode == 'search' ) {
@@ -430,22 +377,19 @@ export class Select extends XBElement {
 		}
 
 		this._controller.setMode( 'default' );
-	}
+	};
 }
 
 /**
  * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionType} SelectionType
  * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionState} SelectionState
- * @typedef {import('../../common/xb-element').default} XBElement
  */
 
 /**
  * @typedef {import('../dropdown/dropdown').Dropdown} Dropdown
  * @typedef {import('../popover/popover').PopoverPlacement} SelectPlacement
- * @typedef {import('../selection-keeper').SelectionEventDetail} SelectionEventDetail
- * @typedef {import('../selection-keeper).SelectionKeeper} SelectionKeeper
- * @typedef {import('../selection-keeper).SelectionOption} SelectionOption
- * @typedef {import('../selection-keeper).SelectionContext} SelectionContext
+ * @typedef {import('../../common/selection-boundary').SelectionEventDetail} SelectionEventDetail
+ * @typedef {import('../../common/selection-boundary').SelectionOption} SelectionOption
  * @typedef {import('./data.controller').Datasource} SelectDatasource
  * @typedef {import('./data.controller').DatasourceAdapter} SelectDatasourceAdapter
  * @typedef {import('./data.controller').DatasourcesHelper} DatasourcesHelper

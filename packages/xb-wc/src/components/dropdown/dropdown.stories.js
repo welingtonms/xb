@@ -31,15 +31,15 @@ export const Playground = {
 			<xb-dropdown-trigger>Actions</xb-dropdown-trigger>
 
 			<xb-dropdown-menu>
-				<xb-dropdown-item value="change" @xb-click=${ args.click }>
+				<xb-dropdown-item value="change" @click=${ args.click }>
 					<!-- <xb-icon name="favorite" slot="leading"></xb-icon> -->
 					Change
 				</xb-dropdown-item>
-				<xb-dropdown-item value="accept" @xb-click=${ args.click }>
+				<xb-dropdown-item value="accept" @click=${ args.click }>
 					<!-- <xb-icon name="star" slot="leading"></xb-icon> -->
 					Accept
 				</xb-dropdown-item>
-				<xb-dropdown-item value="leave" @xb-click=${ args.click }>
+				<xb-dropdown-item value="leave" @click=${ args.click }>
 					<!-- <xb-icon name="cloud" slot="leading"></xb-icon> -->
 					Leave
 				</xb-dropdown-item>

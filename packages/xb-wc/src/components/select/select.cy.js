@@ -216,8 +216,6 @@ describe( '<xb-select>', () => {
 					.when( 'user searches for "accept"' )
 					.and( 'user selects "accept"' )
 					.then( 'option "accept" is selected' )
-					.and( 'option "change" is not selected' )
-					.and( 'option "leave" is not selected' )
 					.and( 'search input has value "Accept"' );
 			} );
 

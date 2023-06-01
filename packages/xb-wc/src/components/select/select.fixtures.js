@@ -96,7 +96,8 @@ export function useAsyncFruits() {
 		fetch: async function fetch( { query, regex } ) {
 			return new Promise( ( resolve ) => {
 				if ( query.length < 3 ) {
-					return resolve( [] );
+					resolve( [] );
+					return;
 				}
 
 				setTimeout( () => {
@@ -593,7 +594,8 @@ export function useAsyncUsers() {
 		fetch: async function fetch( { query, regex } ) {
 			return new Promise( ( resolve ) => {
 				if ( query.length < 3 ) {
-					return resolve( [] );
+					resolve( [] );
+					return;
 				}
 
 				setTimeout( () => {
@@ -623,7 +625,8 @@ export function useAsyncOptions() {
 		fetch: async function fetch( { query, regex } ) {
 			return new Promise( ( resolve ) => {
 				if ( query.length < 3 ) {
-					return resolve( [] );
+					resolve( [] );
+					return;
 				}
 
 				setTimeout( () => {
@@ -640,7 +643,8 @@ export function useSlowAsyncOptions() {
 		fetch: async function fetch( { query, regex } ) {
 			return new Promise( ( resolve ) => {
 				if ( query.length < 3 ) {
-					return resolve( [] );
+					resolve( [] );
+					return;
 				}
 
 				setTimeout( () => {

@@ -2,13 +2,9 @@ import toArray from '../to-array';
 
 type AcceptedType = string;
 
-export const SELECTION_TYPES = [
-	'single',
-	'single-strict',
-	'multiple',
-] as const;
+export const SELECTION_TYPES = [ 'single', 'single-strict', 'multiple' ] as const;
 
-export type SelectionType = typeof SELECTION_TYPES[ number ];
+export type SelectionType = ( typeof SELECTION_TYPES )[ number ];
 
 export type SelectionState = Set< AcceptedType >;
 
@@ -107,10 +103,7 @@ export function SingleStrictSelectionStrategy(): SelectionStrategy {
 		init( values: AcceptedType[] ): SelectionState {
 			return this.select( values, new Set() );
 		},
-		select(
-			values: AcceptedType[],
-			selection: SelectionState
-		): SelectionState {
+		select( values: AcceptedType[], selection: SelectionState ): SelectionState {
 			const safeValues = toArray( values );
 
 			if ( safeValues.length == 0 ) {
@@ -124,10 +117,7 @@ export function SingleStrictSelectionStrategy(): SelectionStrategy {
 
 			return newSelection;
 		},
-		unselect(
-			values: AcceptedType[],
-			selection: SelectionState
-		): SelectionState {
+		unselect( values: AcceptedType[], selection: SelectionState ): SelectionState {
 			const safeValues = toArray( values );
 
 			if ( safeValues.length == 0 || selection.size == 0 ) {
@@ -143,10 +133,7 @@ export function SingleStrictSelectionStrategy(): SelectionStrategy {
 
 			return newSelection;
 		},
-		toggle(
-			values: AcceptedType[],
-			selection: SelectionState
-		): SelectionState {
+		toggle( values: AcceptedType[], selection: SelectionState ): SelectionState {
 			const safeValues = toArray( values );
 
 			if ( safeValues.length == 0 ) {
@@ -195,10 +182,7 @@ export function SingleSelectionStrategy(): SelectionStrategy {
 		init( values: AcceptedType[] ): SelectionState {
 			return this.select( values, new Set() );
 		},
-		select(
-			values: AcceptedType[],
-			selection: SelectionState
-		): SelectionState {
+		select( values: AcceptedType[], selection: SelectionState ): SelectionState {
 			const safeValues = toArray( values );
 
 			if ( safeValues.length == 0 ) {
@@ -212,10 +196,7 @@ export function SingleSelectionStrategy(): SelectionStrategy {
 
 			return newSelection;
 		},
-		unselect(
-			values: AcceptedType[],
-			selection: SelectionState
-		): SelectionState {
+		unselect( values: AcceptedType[], selection: SelectionState ): SelectionState {
 			const safeValues = toArray( values );
 
 			if ( safeValues.length == 0 || selection.size == 0 ) {
@@ -231,10 +212,7 @@ export function SingleSelectionStrategy(): SelectionStrategy {
 
 			return newSelection;
 		},
-		toggle(
-			values: AcceptedType[],
-			selection: SelectionState
-		): SelectionState {
+		toggle( values: AcceptedType[], selection: SelectionState ): SelectionState {
 			const safeValues = toArray( values );
 
 			if ( safeValues.length == 0 ) {
@@ -287,10 +265,7 @@ export function MultipleSelectionStrategy(): SelectionStrategy {
 		init( values: AcceptedType[] ): SelectionState {
 			return this.select( values, new Set() );
 		},
-		select(
-			values: AcceptedType[],
-			selection: SelectionState
-		): SelectionState {
+		select( values: AcceptedType[], selection: SelectionState ): SelectionState {
 			const safeValues = toArray( values );
 
 			if ( safeValues.length == 0 ) {
@@ -306,10 +281,7 @@ export function MultipleSelectionStrategy(): SelectionStrategy {
 
 			return newSelection;
 		},
-		unselect(
-			values: AcceptedType[],
-			selection: SelectionState
-		): SelectionState {
+		unselect( values: AcceptedType[], selection: SelectionState ): SelectionState {
 			const safeValues = toArray( values );
 
 			if ( safeValues.length == 0 || selection.size == 0 ) {
@@ -325,10 +297,7 @@ export function MultipleSelectionStrategy(): SelectionStrategy {
 
 			return newSelection;
 		},
-		toggle(
-			values: AcceptedType[],
-			selection: SelectionState
-		): SelectionState {
+		toggle( values: AcceptedType[], selection: SelectionState ): SelectionState {
 			const safeValues = toArray( values );
 
 			if ( safeValues.length == 0 ) {
