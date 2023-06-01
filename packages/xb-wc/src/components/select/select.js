@@ -210,18 +210,6 @@ export class Select extends SelectionBoundary {
 	_toSelectionValue( value ) {
 		return this._controller.toValue( value );
 	}
-	/**
-	 * Sync the `disabled`, and `selected` attributes for the provided
-	 * `options`, or all the rendered options, if no `options` is provided.
-	 * @param {SelectOption[]} [options]
-	 */
-	_syncOptions( options ) {
-		( options ?? this.options ).forEach( ( option ) => {
-			option.disabled = this.disabled || option.disabled;
-			option.selected = this.selection.has( option.value );
-			option.type = this.multiple ? 'multiple' : 'single';
-		} );
-	}
 
 	_updateTrigger() {
 		const selection = this.selection;
@@ -289,6 +277,19 @@ export class Select extends SelectionBoundary {
 		} );
 
 		this._syncOptions();
+	}
+
+	/**
+	 * Sync the `disabled`, and `selected` attributes for the provided
+	 * `options`, or all the rendered options, if no `options` is provided.
+	 * @param {SelectOption[]} [options]
+	 */
+	_syncOptions( options ) {
+		( options ?? this.options ).forEach( ( option ) => {
+			option.disabled = this.disabled || option.disabled;
+			option.selected = this.selection.has( option.value );
+			option.type = this.multiple ? 'multiple' : 'single';
+		} );
 	}
 
 	/**
