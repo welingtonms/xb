@@ -249,7 +249,7 @@ export class Select extends SelectionBoundary {
 			keys = new Set( this._controller.getGroup( 'queried' ) );
 		}
 
-		Array.from( keys.keys() ).forEach( ( key ) => {
+		Array.from( keys ).forEach( ( key ) => {
 			const item = this._controller.getItem( key );
 
 			if ( ! item ) {
