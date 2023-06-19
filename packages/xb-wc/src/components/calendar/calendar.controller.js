@@ -1,4 +1,4 @@
-import { DateFactory } from '@welingtonms/xb-date';
+import { createDate } from '@welingtonms/xb-date';
 
 /**
  * @implements {import('lit').ReactiveController}
@@ -23,13 +23,13 @@ class CalendarController {
 
 	hostConnected() {
 		if ( this.date == null ) {
-			this.date = DateFactory( this.host.date );
+			this.date = createDate( this.host.date );
 			this.days = this.getCalendarDays();
 		}
 	}
 
 	hostUpdated() {
-		const newDate = DateFactory( this.host.date );
+		const newDate = createDate( this.host.date );
 
 		if ( newDate.toString() !== this.date.toString() ) {
 			this.date = newDate;
@@ -38,21 +38,21 @@ class CalendarController {
 	}
 
 	getYear() {
-		return this.date.getYear();
+		return this.date.year();
 	}
 
 	getMonth() {
 		// we sum 1 because months start at 0
-		return this.date.getMonth() + 1;
+		return this.date.month() + 1;
 	}
 
 	getCalendarDays() {
 		const date = this.date;
 
 		// get in which day of the week the month starts so we skip the days of the previous month
-		const skip = new Date( date.getYear(), date.getMonth() ).getDay();
+		const skip = new Date( date.year(), date.month() ).getDay();
 		// setting the day to 0 to the next month sets the date to the last day of the specified month.
-		const daysInMonth = new Date( date.getYear(), date.getMonth() + 1, 0 ).getDate();
+		const daysInMonth = new Date( date.year(), date.month() + 1, 0 ).getDate();
 
 		const days = [ ...Array( skip ) ].map( () => null ); //?
 
