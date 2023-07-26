@@ -146,6 +146,7 @@ export class FocusTrap extends XBElement {
 				// TODO: add support for other focusable elements
 				if (
 					[
+						'button',
 						'xb-button',
 						'xb-checkbox',
 						'xb-dropdown-item',

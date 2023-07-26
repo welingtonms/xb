@@ -36,7 +36,7 @@
 //   }
 // }
 
-import 'cypress-plugin-tab';
+import './tab.command';
 
 /**
  * Based on https://github.com/wlsf82/cy-press/blob/main/src/index.js and
