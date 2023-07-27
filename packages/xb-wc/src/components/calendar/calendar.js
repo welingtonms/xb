@@ -1,4 +1,4 @@
-import { html, nothing } from 'lit';
+import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
 import { repeat } from 'lit/directives/repeat.js';
@@ -16,23 +16,34 @@ export class Calendar extends XBElement {
 	static styles = [ styles() ];
 
 	/**
-	 * Calendar date.
-	 * @type {CalendarAttributes['date']}
+	 * Calendar month.
+	 * @type {CalendarAttributes['month']}
 	 */
-	@property( { type: Date } ) date;
+	@property( { type: Number } ) month;
 
-	@property( { type: String, state: true } ) rangeStart;
+	/**
+	 * Calendar year.
+	 * @type {CalendarAttributes['year']}
+	 */
+	@property( { type: Number } ) year;
 
-	@property( { type: String, state: true } ) rangeEnd;
+	/**
+	 * Calendar range start.
+	 * @type {CalendarAttributes['rangeStart']}
+	 */
+	@property( { type: String, attribute: 'range-start', reflect: true } ) rangeStart;
+
+	/**
+	 * Calendar range start.
+	 * @type {CalendarAttributes['rangeEnd']}
+	 */
+	@property( { type: String, attribute: 'range-end', reflect: true } ) rangeEnd;
 
 	/** @type {CalendarController} */
 	controller;
 
 	constructor() {
 		super();
-
-		/** @type {CalendarAttributes['date']} */
-		this.date = new Date();
 
 		this.controller = new CalendarController( this );
 	}
@@ -103,7 +114,10 @@ export class Calendar extends XBElement {
 
 /**
  * @typedef {Object} CalendarAttributes
- * @property {Date} [date] - Date value.
+ * @property {number} [month] - Month to be shown.
+ * @property {number} [year] - Year to be shown.
+ * @property {string} [rangeStart] - Selected date range start.
+ * @property {string} [rangeEnd] - Selected date range end.
  * @property {Function} [onChange] - Function
  */
 

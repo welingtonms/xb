@@ -20,8 +20,11 @@ export default meta;
 /** @type {import('../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) => html`
-		<xb-calendar></xb-calendar>
+		<xb-calendar month=${ args.month } year=${ args.year }></xb-calendar>
 	`,
 
-	args: {},
+	args: {
+		month: 6,
+		year: 2023,
+	},
 };
