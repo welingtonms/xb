@@ -1,6 +1,7 @@
 import { html } from 'lit-html';
 
 import '@welingtonms/xb-tokens/dist/tokens/web/xb/variables.css';
+import './preview.css';
 
 export const parameters = {
 	actions: { argTypesRegex: '^on[A-Z].*' },
@@ -29,10 +30,6 @@ export const parameters = {
 
 export const decorators = [
 	( Story ) => html`
-		<div
-			style="display: flex; align-items: center; justify-content: center; min-height: 50vh; gap: var(--xb-spacing-4); padding: var(--xb-spacing-8); background-color: var(--xb-color-background); background-size: 10px 10px; background-image: repeating-linear-gradient(45deg, rgba(var(--xb-color-gray-200), 0.75) 0, rgba(var(--xb-color-gray-200), 0.75) 1px, rgb(var(--xb-color-background)) 0, rgb(var(--xb-color-background)) 50%);"
-		>
-			${ Story() }
-		</div>
+		<div id="xb-root">${ Story() }</div>
 	`,
 ];
