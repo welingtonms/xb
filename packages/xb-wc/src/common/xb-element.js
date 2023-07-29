@@ -29,7 +29,7 @@ export default class XBElement extends LitElement {
 	 * @param {CustomEventInit} [options] - [Optional] Event additional options.
 	 * @returns {CustomEvent}
 	 */
-	emit( name, options = {} ) {
+	emit = ( name, options = {} ) => {
 		const event = new CustomEvent( name, {
 			bubbles: true,
 			cancelable: true,
@@ -41,7 +41,7 @@ export default class XBElement extends LitElement {
 		this.dispatchEvent( event );
 
 		return event;
-	}
+	};
 
 	/**
 	 * Re-dispatches an event from the provided element.
