@@ -12,22 +12,26 @@ function styles( args ) {
 
 	return [
 		css`
-			.-extra-small {
+			.-extra-small,
+			:host( [size='extra-small'] ) {
 				${ unsafeCSS( property ) }: 24px;
 				min-width: 24px;
 			}
 
-			.-small {
+			.-small,
+			:host( [size='small'] ) {
 				${ unsafeCSS( property ) }: 40px;
 				min-width: 40px;
 			}
 
-			.-medium {
+			.-medium,
+			:host( [size='medium'] ) {
 				${ unsafeCSS( property ) }: 56px;
 				min-width: 56px;
 			}
 
-			.-large {
+			.-large,
+			:host( [size='large'] ) {
 				${ unsafeCSS( property ) }: 72px;
 				min-width: 72px;
 			}
