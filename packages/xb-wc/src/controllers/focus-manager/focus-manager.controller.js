@@ -53,7 +53,7 @@ class FocusManagerController {
 	 * If we are at the end of the `queried` array, the focus moves to the first option.
 	 */
 	focusNext = () => {
-		const currentFocusedIndex = this._getIndexOf( focused );
+		const currentFocusedIndex = this._getIndexOf( this.focused );
 
 		if ( currentFocusedIndex === -1 ) {
 			logger.debug(
@@ -76,7 +76,7 @@ class FocusManagerController {
 	 * If we are at the start of the `queried` array, the focus moves to the last option.
 	 */
 	focusPrevious = () => {
-		const currentFocusedIndex = this._getIndexOf( focused );
+		const currentFocusedIndex = this._getIndexOf( this.focused );
 
 		if ( currentFocusedIndex === -1 ) {
 			logger.debug(
