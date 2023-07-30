@@ -11,9 +11,9 @@ import '../button';
 
 @customElement( 'xb-dropdown-trigger' )
 export class DropdownTrigger extends XBElement {
-	_consumer;
-
 	static styles = [ styles() ];
+
+	_consumer;
 
 	constructor() {
 		super();
