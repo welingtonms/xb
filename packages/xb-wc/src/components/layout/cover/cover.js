@@ -3,14 +3,14 @@ import { customElement } from 'lit/decorators.js';
 import withClassy from '@welingtonms/classy';
 
 import { sided } from '../../../common/prop-toolset';
-import PolymorphicElementMixin from '../../../mixins/polymorphic';
+import withPolymorphicTag from '../../../mixins/polymorphic';
 import BaseLayout from '../base-layout';
 
 import styles from './cover.styles';
 
 /**
  * @class
- * @mixes PolymorphicElementMixin
+ * @mixes withPolymorphicTag
  */
 @customElement( 'xb-cover' )
 export class CoverLayout extends BaseLayout {

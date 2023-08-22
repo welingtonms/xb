@@ -4,14 +4,14 @@ import { createRef, ref } from 'lit/directives/ref.js';
 import withClassy from '@welingtonms/classy';
 
 import { sided } from '../../../common/prop-toolset';
-import PolymorphicElementMixin from '../../../mixins/polymorphic';
+import withPolymorphicTag from '../../../mixins/polymorphic';
 import BaseLayout from '../base-layout';
 
 import styles from './reel.styles';
 
 /**
  * @class
- * @mixes PolymorphicElementMixin
+ * @mixes withPolymorphicTag
  */
 @customElement( 'xb-reel' )
 export class ReelLayout extends BaseLayout {

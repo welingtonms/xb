@@ -57,8 +57,6 @@ function styles() {
 			}
 
 			::slotted( * ) {
-				${ typography( 'body-1' ) };
-
 				margin-block: 0;
 				width: 100%;
 			}

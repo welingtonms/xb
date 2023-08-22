@@ -2,16 +2,16 @@ import { html } from 'lit/static-html.js';
 import { customElement, property } from 'lit/decorators.js';
 import withClassy from '@welingtonms/classy';
 
-import PolymorphicElementMixin from '../../mixins/polymorphic';
+import withPolymorphicTag from '../../mixins/polymorphic';
 import XBElement from '../../common/xb-element';
 import styles from './text.styles';
 
 /**
  * @class
- * @mixes PolymorphicElementMixin
+ * @mixes withPolymorphicTag
  */
 @customElement( 'xb-text' )
-export class Text extends PolymorphicElementMixin( XBElement ) {
+export class Text extends withPolymorphicTag( XBElement ) {
 	static styles = [ styles() ];
 
 	/**

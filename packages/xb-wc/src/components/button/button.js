@@ -5,16 +5,16 @@ import withClassy from '@welingtonms/classy';
 
 import { convertDirectionFromAttribute } from '../layout/layout.helpers';
 import { sided } from '../../common/prop-toolset';
-import PolymorphicElementMixin from '../../mixins/polymorphic';
+import withPolymorphicTag from '../../mixins/polymorphic';
 import styles from './button.styles';
 import XBElement from '../../common/xb-element';
 
 /**
  * @class
- * @mixes PolymorphicElementMixin
+ * @mixes withPolymorphicTag
  */
 @customElement( 'xb-button' )
-export class Button extends PolymorphicElementMixin( XBElement ) {
+export class Button extends withPolymorphicTag( XBElement ) {
 	static styles = [ styles() ];
 
 	/**
