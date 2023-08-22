@@ -23,6 +23,10 @@ export default class XBElement extends LitElement {
 		};
 	}
 
+	get tag() {
+		return this.tagName.toLowerCase();
+	}
+
 	/**
 	 * Emits a custom event with convenient defaults.
 	 * @param {string} name - event name.
@@ -61,4 +65,18 @@ export default class XBElement extends LitElement {
 	reemit = ( event ) => {
 		return redispatchEvent( this, event );
 	};
+
+	/**
+	 * Sets the provided attribute on the element if `value` is truthy;
+	 * otherwise, removes the attribute.
+	 * @param {*} name
+	 * @param {*} value
+	 */
+	setBooleanAttribute( name, value ) {
+		if ( value ) {
+			this.setAttribute( name, value );
+		} else {
+			this.removeAttribute( name );
+		}
+	}
 }
