@@ -71,7 +71,7 @@ export const Playground = {
 		<xb-select
 			?loading=${ args.loading }
 			?multiple=${ args.multiple }
-			@xb-change=${ args.change }
+			@xb:change=${ args.change }
 			?disabled=${ args.disabled }
 		>
 			<xb-option value="change">Change</xb-option>
@@ -97,7 +97,7 @@ export const StaticOptions = {
 			<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
 				<xb-text variant="subtitle-2">Static options</xb-text>
 				<xb-select
-					@xb-change=${ args.change }
+					@xb:change=${ args.change }
 					?disabled=${ args.disabled }
 					?multiple=${ args.multiple }
 				>
@@ -110,7 +110,7 @@ export const StaticOptions = {
 			<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
 				<xb-text variant="subtitle-2">Static options with initial value</xb-text>
 				<xb-select
-					@xb-change=${ args.change }
+					@xb:change=${ args.change }
 					?disabled=${ args.disabled }
 					?multiple=${ args.multiple }
 					.value=${ { label: 'Accept', value: 'accept' } }
@@ -143,7 +143,7 @@ export const SyncDatasource = {
 			<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
 				<xb-text variant="subtitle-2">Sync datasource</xb-text>
 				<xb-select
-					@xb-change=${ args.change }
+					@xb:change=${ args.change }
 					?disabled=${ args.disabled }
 					?multiple=${ args.multiple }
 					.datasources=${ [ useSyncFruits ] }
@@ -153,7 +153,7 @@ export const SyncDatasource = {
 			<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
 				<xb-text variant="subtitle-2">Sync datasource with initial value</xb-text>
 				<xb-select
-					@xb-change=${ args.change }
+					@xb:change=${ args.change }
 					?disabled=${ args.disabled }
 					?multiple=${ args.multiple }
 					.datasources=${ [ useSyncFruits ] }
@@ -176,7 +176,7 @@ export const AsyncDatasource = {
 			<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
 				<xb-text variant="subtitle-2">Async datasource</xb-text>
 				<xb-select
-					@xb-change=${ args.change }
+					@xb:change=${ args.change }
 					?disabled=${ args.disabled }
 					?multiple=${ args.multiple }
 					.datasources=${ [ useAsyncFruits, useAsyncUsers ] }
@@ -187,7 +187,7 @@ export const AsyncDatasource = {
 				<xb-text variant="subtitle-2">Async datasource with initial value</xb-text>
 				<xb-select
 					?multiple=${ args.multiple }
-					@xb-change=${ args.change }
+					@xb:change=${ args.change }
 					?disabled=${ args.disabled }
 					.datasources=${ [ useAsyncUsers, useAsyncFruits ] }
 					.value=${ [

@@ -135,7 +135,7 @@ export class ToggleGroup extends SelectionBoundary {
 	}
 
 	_handleSelectionChange() {
-		this.emit( 'xb-change', {
+		this.emit( 'xb:change', {
 			detail: { value: this.strategy.value( this.selection ) },
 		} );
 	}

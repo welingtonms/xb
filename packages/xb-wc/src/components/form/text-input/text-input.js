@@ -158,13 +158,13 @@ export class TextInput extends XBElement {
 	_handleChange( e ) {
 		this.value = e.target.value;
 
-		this.emit( 'xb-change', { detail: { value: e.target.value } } );
+		this.emit( 'xb:change', { detail: { value: e.target.value } } );
 	}
 
 	_handleInput( e ) {
 		this.value = e.target.value;
 
-		this.emit( 'xb-input', { detail: { value: e.target.value } } );
+		this.emit( 'xb:input', { detail: { value: e.target.value } } );
 	}
 
 	_handleClear( e ) {
@@ -172,7 +172,7 @@ export class TextInput extends XBElement {
 
 		this.clear();
 
-		this.emit( 'xb-clear' );
+		this.emit( 'xb:clear' );
 
 		this.focus();
 	}

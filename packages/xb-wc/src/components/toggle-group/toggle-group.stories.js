@@ -39,7 +39,7 @@ export const Playground = {
 			<xb-toggle-group
 				type="${ args.type }"
 				size="${ args.size }"
-				@xb-change=${ args.change }
+				@xb:change=${ args.change }
 			>
 				<xb-toggle ?disabled=${ args.disabled } value="accept">
 					<span slot="leading">&diams;</span>
@@ -60,7 +60,7 @@ export const Playground = {
 			<xb-toggle-group
 				type="${ args.type }"
 				size="${ args.size }"
-				@xb-change=${ args.change }
+				@xb:change=${ args.change }
 			>
 				<xb-toggle ?disabled=${ args.disabled } value="change">Change</xb-toggle>
 
@@ -72,7 +72,7 @@ export const Playground = {
 			<xb-toggle-group
 				type="${ args.type }"
 				size="${ args.size }"
-				@xb-change=${ args.change }
+				@xb:change=${ args.change }
 			>
 				<xb-toggle ?disabled=${ args.disabled } value="change">&hearts;</xb-toggle>
 

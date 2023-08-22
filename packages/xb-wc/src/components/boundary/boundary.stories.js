@@ -24,7 +24,7 @@ export default meta;
 export const Playground = {
 	render: ( args ) =>
 		html`
-			<xb-boundary @xb-interact-in=${ args.interact } @xb-interact-out=${ args.interact }>
+			<xb-boundary @xb:interact-in=${ args.interact } @xb:interact-out=${ args.interact }>
 				Proin facilisis mauris ut tortor vulputate placerat. Nulla ut ligula mattis,
 				sagittis arcu non, venenatis urna. Praesent tincidunt odio vitae luctus aliquet.
 				Morbi nisl ante, ultricies vel fringilla pulvinar, lacinia quis mi. Mauris a

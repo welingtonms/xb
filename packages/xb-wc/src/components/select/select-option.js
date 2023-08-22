@@ -19,6 +19,6 @@ export class SelectOption extends MenuItem {
 		event.stopPropagation();
 
 		// informs the outside world about which item was clicked
-		this.emit( 'xb-option-click', { detail: { value: this.value } } );
+		this.emit( 'xb:option-click', { detail: { value: this.value } } );
 	};
 }
