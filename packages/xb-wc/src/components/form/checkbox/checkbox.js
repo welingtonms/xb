@@ -1,13 +1,21 @@
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import withClassy from '@welingtonms/classy';
 
-import { CHECK_EVENT } from './checkbox.constants';
+import { getTextContent } from '../../../utils/slot';
+import KeyboardSupportController from '../../../controllers/keyboard-support';
+import {
+	CheckboxController,
+	CheckboxGroupController,
+} from '../../../controllers/checkbox-pattern';
+import withID from '../../../mixins/with-id';
 import XBElement from '../../../common/xb-element';
+
+import '../../icon';
+
 import styles from './checkbox.styles';
 
 @customElement( 'xb-checkbox' )
-export class CheckboxInput extends XBElement {
+export class Checkbox extends withID( XBElement ) {
 	static styles = [ styles() ];
 
 	/**
@@ -23,39 +31,56 @@ export class CheckboxInput extends XBElement {
 	@property( { type: Boolean, reflect: true } ) checked;
 
 	/**
-	 * Value this radio button represents.
+	 * Should the button be checked.
+	 * @type {CheckboxAttributes['indeterminate']}
+	 */
+	@property( { type: Boolean, reflect: true } ) indeterminate;
+
+	/**
+	 * Value this radio checkbox represents.
 	 * @type {CheckboxAttributes['size']}
 	 */
 	@property( { type: String } ) size;
 
 	/**
-	 * Value this radio button represents.
+	 * Value this radio checkbox represents.
 	 * @type {CheckboxAttributes['value']}
 	 */
 	@property( { type: String } ) value;
+
+	/**
+	 * @type {Checkbox[]}
+	 */
+	_group;
+
+	/** @type {CheckboxPatternController} */
+	_controller;
 
 	constructor() {
 		super();
 
 		this.checked = false;
-
 		this.disabled = false;
-
 		this.size = 'small';
 	}
 
 	connectedCallback() {
+		this._controller = this.getAttribute( 'aria-controls' )
+			? new CheckboxGroupController( this )
+			: new CheckboxController( this );
+
+		this.role = 'checkbox';
+		this.tabIndex = 0;
+
 		super.connectedCallback();
-
-		this.setAttribute( 'role', 'checkbox' );
-
-		this.addEventListener( 'click', this._handleClick );
 	}
 
-	disconnectedCallback() {
-		super.disconnectedCallback();
+	firstUpdated( changedProperties ) {
+		super.firstUpdated( changedProperties );
 
-		this.removeEventListener( 'click', this._handleClick );
+		if ( ! this.value ) {
+			this.value = this.text();
+		}
 	}
 
 	/**
@@ -66,71 +91,47 @@ export class CheckboxInput extends XBElement {
 		super.updated( changedProperties );
 
 		if ( changedProperties.has( 'disabled' ) ) {
-			this._setDisabled();
+			this.setBooleanAttribute( 'aria-disabled', this.disabled );
 		}
 
-		if ( changedProperties.has( 'checked' ) ) {
-			this._setChecked();
+		if (
+			changedProperties.get( 'checked' ) != null ||
+			changedProperties.get( 'indeterminate' ) != null
+		) {
+			// this.setAttribute( 'aria-checked', this.checked );
+
+			this.emit( 'xb:change', {
+				detail: {
+					value: this.value,
+					checked: Boolean( this.checked ),
+					indeterminate: Boolean( this.indeterminate ),
+				},
+			} );
 		}
 	}
 
-	focus() {
-		this.button.focus();
+	/** Returns a text label based on the contents of the menu item's default slot. */
+	text() {
+		/** @type {HTMLSlotElement} */
+		const slot = this.shadowRoot.querySelector( 'slot:not([name])' );
+
+		/**
+		 * FIXME: the fallback is needed for when `slot` is still null,
+		 * but this might not be enough for all cases.
+		 */
+		return getTextContent( slot ) || String( this.textContent ?? '' ).trim();
 	}
 
 	render() {
-		const { when, classy } = withClassy( { size: this.size } );
-
 		return html`
-			<button
-				type="button"
-				class=${ classy( 'checkbox', {
-					'-small': when( { size: 'small' } ),
-					'-medium': when( { size: 'medium' } ),
-					'-large': when( { size: 'large' } ),
-				} ) }
-				role="checkbox"
-				aria-checked="${ this.checked }"
-				?disabled="${ this.disabled }"
-			>
-				<xb-icon name="check" class="check"></xb-icon>
-				<slot name="leading"></slot>
-				<slot></slot>
-				<slot name="trailing"></slot>
-			</button>
+			<span class="check">
+				<xb-icon name="check"></xb-icon>
+				<xb-icon name="remove"></xb-icon>
+			</span>
+			<slot name="leading"></slot>
+			<slot></slot>
+			<slot name="trailing"></slot>
 		`;
-	}
-
-	get button() {
-		return this.shadowRoot.querySelector( 'button' );
-	}
-
-	_setDisabled() {
-		this.setAttribute( 'aria-disabled', String( this.disabled ) );
-		this.button.disabled = this.disabled;
-	}
-
-	_setChecked() {
-		this.setAttribute( 'aria-checked', String( this.checked ) );
-		this.button.setAttribute( 'aria-checked', String( this.checked ) );
-	}
-
-	_handleClick() {
-		if ( this.disabled ) {
-			return;
-		}
-
-		this.checked = ! this.checked;
-
-		this._publish();
-	}
-
-	_publish() {
-		const options = {
-			detail: { value: this.value, checked: this.checked },
-		};
-
-		this.emit( CHECK_EVENT, options );
 	}
 }
 
@@ -139,9 +140,27 @@ export class CheckboxInput extends XBElement {
  */
 
 /**
+ * @typedef {import('../../../controllers/keyboard-support').default} KeyboardSupportController
+ */
+
+/**
+ * @typedef {{
+ * 	keyboard: KeyboardSupportController;
+ * }} CheckboxPatternControllers
+ */
+
+/**
+ * @typedef {{
+ * 	value: string;
+ *   checked: boolean;
+ * }} CheckboxEventDetail
+ */
+
+/**
  * @typedef {Object} CheckboxAttributes
  * @property {boolean} disabled
  * @property {boolean} checked
+ * @property {boolean} hasMixedState
  * @property {string} value
  * @property {CheckboxSize} size
  */

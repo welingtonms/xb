@@ -1,4 +1,4 @@
-export { CheckboxInput } from './checkbox';
+export { Checkbox } from './checkbox';
 
 /**
  * @typedef {import('./checkbox').CheckboxAttributes} CheckboxAttributes
