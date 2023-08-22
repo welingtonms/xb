@@ -47,7 +47,6 @@ function styles() {
 				box-sizing: border-box;
 			}
 
-			::slotted( * ),
 			slot[name='leading']::slotted( * ),
 			slot[name='trailing']::slotted( * ) {
 				${ typography( 'body-1' ) };

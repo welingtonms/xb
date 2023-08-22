@@ -1,14 +1,14 @@
 import { property } from 'lit/decorators.js';
 
 import { convertDirectionFromAttribute } from './layout.helpers';
-import PolymorphicElementMixin from '../../mixins/polymorphic';
+import withPolymorphicTag from '../../mixins/polymorphic';
 import XBElement from '../../common/xb-element';
 
 /**
  * @class
- * @mixes PolymorphicElementMixin
+ * @mixes withPolymorphicTag
  */
-export default class BaseLayout extends PolymorphicElementMixin( XBElement ) {
+export default class BaseLayout extends withPolymorphicTag( XBElement ) {
 	/**
 	 * Determine borders to be supressed.
 	 * @type {BaseLayoutAttributes['borderless']}

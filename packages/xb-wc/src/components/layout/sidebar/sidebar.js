@@ -3,14 +3,14 @@ import { customElement, property } from 'lit/decorators.js';
 import withClassy from '@welingtonms/classy';
 
 import { sided } from '../../../common/prop-toolset';
-import PolymorphicElementMixin from '../../../mixins/polymorphic';
+import withPolymorphicTag from '../../../mixins/polymorphic';
 import BaseLayout from '../base-layout';
 
 import styles from './sidebar.styles';
 
 /**
  * @class
- * @mixes PolymorphicElementMixin
+ * @mixes withPolymorphicTag
  */
 @customElement( 'xb-sidebar' )
 export class SidebarLayout extends BaseLayout {
