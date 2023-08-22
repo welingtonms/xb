@@ -1,6 +1,8 @@
 import toArray from '@welingtonms/xb-toolset/dist/to-array';
 
-import logger from '../../utils/logger';
+import createLogger from '../../utils/logger';
+
+const logger = createLogger( 'keyboard-support' );
 
 /**
  *
@@ -45,24 +47,23 @@ class KeyboardSupport {
 	}
 
 	hostConnected() {
-		if ( this.keymap != null ) {
-			document.addEventListener( 'keyup', this._handleEvent );
-		}
+		this.host.addEventListener( 'keyup', this._handleKeyPress );
 	}
 
 	hostDisconnected() {
-		if ( this.keymap != null ) {
-			document.removeEventListener( 'keyup', this._handleEvent );
-		}
+		this.host.removeEventListener( 'keyup', this._handleKeyPress );
 	}
 
 	hostUpdate() {}
 
-	_handleEvent = ( event ) => {
+	/**
+	 * @param {KeyboardEvent} event
+	 */
+	_handleKeyPress = ( event ) => {
 		const isInsideHost = event.composedPath().includes( this.host );
 
+		// FIXME: Is this check still necessary?
 		if ( ! isInsideHost ) {
-			logger.debug( '[KeyboardSupport]', 'Key event is outside host' );
 			return;
 		}
 
@@ -74,7 +75,7 @@ class KeyboardSupport {
 		} );
 
 		if ( this.keymap.has( shortcut ) ) {
-			logger.debug( '[KeyboardSupport]', 'Triggering calback for shortcut', shortcut );
+			logger.debug( 'triggering calback for shortcut', shortcut );
 			const callback = this.keymap.get( shortcut );
 			callback( event );
 		}
@@ -99,5 +100,5 @@ export default KeyboardSupport;
 
 /**
  * @typedef {Object} KeyboardSupportProps
- * @property {[Shortcut, CallableFunction][]} keymap
+ * @property {[Shortcut, (event: KeyboardEvent) => void][]} keymap
  */
