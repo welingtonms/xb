@@ -74,10 +74,10 @@ export class InteractionBoundary extends XBElement {
 
 		if ( isInside && ! this.active ) {
 			this.activate();
-			this.emit( 'xb-interact-in' );
+			this.emit( 'xb:interact-in' );
 		} else if ( ( ! isInside || Keyboard( e ).is( 'ESC' ) ) && this.active ) {
 			this.deactivate();
-			this.emit( 'xb-interact-out' );
+			this.emit( 'xb:interact-out' );
 		}
 	};
 
@@ -90,7 +90,7 @@ export class InteractionBoundary extends XBElement {
 			 * watcher is activated, then we deactivate it
 			 */
 			this.deactivate();
-			this.emit( 'xb-interact-out' );
+			this.emit( 'xb:interact-out' );
 		}
 	};
 }

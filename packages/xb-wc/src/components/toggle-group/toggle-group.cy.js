@@ -9,7 +9,7 @@ function setup( args = { size: 'small', value: null, disabled: false, type, chan
 			type=${ args.type }
 			size=${ args.size }
 			.value=${ args.value }
-			@xb-change=${ args.change }
+			@xb:change=${ args.change }
 		>
 			<xb-toggle ?disabled=${ args.disabled } value="accept">Accept</xb-toggle>
 			<xb-toggle ?disabled=${ args.disabled } value="change">Change</xb-toggle>

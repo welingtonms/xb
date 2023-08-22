@@ -107,17 +107,17 @@ export class Select extends SelectionBoundary {
 
 		this._controller = new DataController( this, this.datasources );
 
-		this.addEventListener( 'xb-clear', this._handleClear );
-		this.addEventListener( 'xb-dropdown-collapse', this._handleCollapse );
-		this.addEventListener( 'xb-select-search', this._handleSearch );
+		this.addEventListener( 'xb:clear', this._handleClear );
+		this.addEventListener( 'xb:dropdown-collapse', this._handleCollapse );
+		this.addEventListener( 'xb:select-search', this._handleSearch );
 	}
 
 	disconnectedCallback() {
 		super.disconnectedCallback();
 
-		this.removeEventListener( 'xb-clear', this._handleClear );
-		this.removeEventListener( 'xb-dropdown-collapse', this._handleCollapse );
-		this.removeEventListener( 'xb-select-search', this._handleSearch );
+		this.removeEventListener( 'xb:clear', this._handleClear );
+		this.removeEventListener( 'xb:dropdown-collapse', this._handleCollapse );
+		this.removeEventListener( 'xb:select-search', this._handleSearch );
 	}
 
 	firstUpdated() {
@@ -194,11 +194,7 @@ export class Select extends SelectionBoundary {
 					aria-multiselectable=${ this.multiple ? 'true' : 'false' }
 					aria-label="Options"
 					?loading=${ this.loading }
-				>
-					<slot @slotchange=${ this._handleSlotChanged }>
-						<xb-text class="empty" variant="body-2">No options available.</xb-text>
-					</slot>
-				</xb-select-menu>
+				></xb-select-menu>
 			</xb-dropdown>
 		`;
 	}
@@ -363,7 +359,7 @@ export class Select extends SelectionBoundary {
 			return this.multiple ? values : values[ 0 ];
 		};
 
-		this.emit( 'xb-change', {
+		this.emit( 'xb:change', {
 			detail: { value: getConsolidatedValue() },
 		} );
 	};

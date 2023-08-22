@@ -99,8 +99,8 @@ export class SelectTrigger extends XBElement {
 				} ) }"
 				placeholder="${ this.placeholder }"
 				@click=${ this._handleTriggerClick }
-				@xb-change=${ this._handleTriggerChange }
-				@xb-input=${ this._handleTriggerInput }
+				@xb:change=${ this._handleTriggerChange }
+				@xb:input=${ this._handleTriggerInput }
 			>
 				<xb-button
 					class="handle"
@@ -136,7 +136,7 @@ export class SelectTrigger extends XBElement {
 	}
 
 	_handleTriggerClick() {
-		this.emit( 'xb-dropdown-expand' );
+		this.emit( 'xb:dropdown-expand' );
 	}
 
 	_handleTriggerChange( e ) {
@@ -150,7 +150,7 @@ export class SelectTrigger extends XBElement {
 		clearTimeout( this._timeout );
 
 		this._timeout = setTimeout( () => {
-			this.emit( 'xb-select-search', {
+			this.emit( 'xb:select-search', {
 				detail: { query },
 			} );
 		}, 450 );
@@ -159,7 +159,7 @@ export class SelectTrigger extends XBElement {
 	_handleTrailingClick( e ) {
 		e.stopPropagation();
 
-		this.emit( 'xb-dropdown-toggle' );
+		this.emit( 'xb:dropdown-toggle' );
 	}
 }
 

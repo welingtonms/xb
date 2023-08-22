@@ -36,7 +36,7 @@ const { given } = TestingFactory(
 					<xb-select
 						?loading=${ args.loading }
 						?multiple=${ args.multiple }
-						@xb-change=${ args.change }
+						@xb:change=${ args.change }
 						?disabled=${ args.disabled }
 						.value=${ ifDefined( args.value ) }
 					>
@@ -59,7 +59,7 @@ const { given } = TestingFactory(
 					<xb-select
 						?loading=${ args.loading }
 						?multiple=${ args.multiple }
-						@xb-change=${ args.change }
+						@xb:change=${ args.change }
 						?disabled=${ args.disabled }
 						.value=${ ifDefined( args.value ) }
 						.datasources=${ ifDefined( args.datasources ) }

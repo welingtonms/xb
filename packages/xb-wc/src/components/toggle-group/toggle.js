@@ -90,7 +90,7 @@ export class ToggleButton extends XBElement {
 			composed: false,
 		};
 
-		this.emit( 'xb-toggle-click', options );
+		this.emit( 'xb:toggle-click', options );
 	}
 }
 
