@@ -1,4 +1,6 @@
 import { html } from 'lit-html';
+import { userEvent, within } from '@storybook/testing-library';
+import { expect } from '@storybook/jest';
 
 import './radio-group';
 import './radio';
@@ -46,17 +48,29 @@ export const Playground = {
 		<xb-radio-group
 			size=${ args.size }
 			?disabled=${ args.disabled }
-			@xb-change=${ args.change }
+			@xb:change=${ args.change }
 		>
-			<xb-radio value="change">Change</xb-radio>
-			<xb-radio value="accept">Accept</xb-radio>
-			<xb-radio value="leave">Leave</xb-radio>
+			<xb-radio value="accept" size=${ args.size }>Accept</xb-radio>
+			<xb-radio value="change" size=${ args.size }>Change</xb-radio>
+			<xb-radio value="leave" size=${ args.size }>Leave</xb-radio>
 		</xb-radio-group>
 	`,
+	play: async ( { canvasElement } ) => {
+		const canvas = within( canvasElement );
+
+		await expect( canvas.getByRole( 'radio', { name: /accept/i } ) ).not.toBeChecked();
+		await expect( canvas.getByRole( 'radio', { name: /change/i } ) ).not.toBeChecked();
+		await expect( canvas.getByRole( 'radio', { name: /leave/i } ) ).not.toBeChecked();
+
+		await userEvent.click( canvas.getByRole( 'radio', { name: /change/i } ) );
+
+		await expect( canvas.getByRole( 'radio', { name: /accept/i } ) ).not.toBeChecked();
+		await expect( canvas.getByRole( 'radio', { name: /change/i } ) ).toBeChecked();
+		await expect( canvas.getByRole( 'radio', { name: /leave/i } ) ).not.toBeChecked();
+	},
 
 	args: {
-		type: 'text',
 		disabled: false,
-		size: 'small',
+		size: 'extra-small',
 	},
 };
