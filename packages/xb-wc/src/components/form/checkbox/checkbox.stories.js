@@ -61,7 +61,6 @@ export const Playground = {
 	`,
 
 	args: {
-		type: 'text',
 		disabled: false,
 		size: 'extra-small',
 	},
@@ -134,7 +133,6 @@ export const Mixed = {
 	`,
 
 	args: {
-		type: 'text',
 		disabled: false,
 		size: 'extra-small',
 	},
