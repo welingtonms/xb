@@ -1,13 +1,15 @@
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { createRef, ref } from 'lit/directives/ref.js';
-import withClassy from '@welingtonms/classy';
 
-import XBElement from '../../../common/xb-element';
 import styles from './radio.styles';
+import { getTextContent } from '../../../utils/slot';
+import withID from '../../../mixins/with-id';
+import XBElement from '../../../common/xb-element';
+
+import '../../icon';
 
 @customElement( 'xb-radio' )
-export class RadioInput extends XBElement {
+export class Radio extends withID( XBElement ) {
 	static styles = [ styles() ];
 
 	/**
@@ -23,31 +25,29 @@ export class RadioInput extends XBElement {
 	@property( { type: Boolean, reflect: true } ) checked;
 
 	/**
-	 * Value this radio button represents.
+	 * Value this radio checkbox represents.
 	 * @type {RadioAttributes['size']}
 	 */
-	@property( { type: String } ) size;
+	@property( { type: String, reflect: true } ) size;
 
 	/**
-	 * Value this radio button represents.
+	 * Value this radio checkbox represents.
 	 * @type {RadioAttributes['value']}
 	 */
-	@property( { type: String } ) value;
+	@property( { type: String, reflect: true } ) value;
 
 	constructor() {
 		super();
 
-		this.disabled = false;
-
-		this.size = 'small';
-
 		this.checked = false;
+		this.disabled = false;
+		this.size = 'small';
 	}
 
 	connectedCallback() {
 		super.connectedCallback();
 
-		this.setAttribute( 'role', 'radio' );
+		this.role = 'radio';
 
 		this.addEventListener( 'click', this._handleClick );
 	}
@@ -58,6 +58,14 @@ export class RadioInput extends XBElement {
 		this.removeEventListener( 'click', this._handleClick );
 	}
 
+	firstUpdated( changedProperties ) {
+		super.firstUpdated( changedProperties );
+
+		if ( ! this.value ) {
+			this.value = this.text();
+		}
+	}
+
 	/**
 	 *
 	 * @param {import("lit").PropertyValues} changedProperties
@@ -66,79 +74,75 @@ export class RadioInput extends XBElement {
 		super.updated( changedProperties );
 
 		if ( changedProperties.has( 'disabled' ) ) {
-			this._setDisabled();
+			this.setBooleanAttribute( 'aria-disabled', this.disabled );
 		}
 
 		if ( changedProperties.has( 'checked' ) ) {
-			this._setChecked();
+			this.setAttribute( 'aria-checked', this.checked );
+		}
+
+		if ( changedProperties.get( 'checked' ) != null ) {
+			this.emit( 'xb:change', {
+				detail: {
+					value: this.value,
+					checked: Boolean( this.checked ),
+				},
+			} );
 		}
 	}
 
-	focus() {
-		this.button.focus();
+	/** Returns a text label based on the contents of the menu item's default slot. */
+	text() {
+		/** @type {HTMLSlotElement} */
+		const slot = this.shadowRoot.querySelector( 'slot:not([name])' );
 
-		// to mimic the native behavior
-		this._handleClick();
+		/**
+		 * FIXME: the fallback is needed for when `slot` is still null,
+		 * but this might not be enough for all cases.
+		 */
+		return getTextContent( slot ) || String( this.textContent ?? '' ).trim();
 	}
 
 	render() {
-		const { when, classy } = withClassy( { size: this.size } );
-
 		return html`
-			<button
-				type="button"
-				class=${ classy( 'radio', {
-					'-small': when( { size: 'small' } ),
-					'-medium': when( { size: 'medium' } ),
-					'-large': when( { size: 'large' } ),
-				} ) }
-				role="radio"
-				aria-checked="${ this.checked }"
-				?disabled="${ this.disabled }"
-			>
-				<xb-icon class="check" name="circle"></xb-icon>
-				<slot name="leading"></slot>
-				<slot></slot>
-				<slot name="trailing"></slot>
-			</button>
+			<span class="check">
+				<xb-icon name="circle"></xb-icon>
+			</span>
+			<slot name="leading"></slot>
+			<slot></slot>
+			<slot name="trailing"></slot>
 		`;
 	}
 
-	get button() {
-		return this.shadowRoot.querySelector( 'button' );
-	}
-
-	_setDisabled() {
-		this.setAttribute( 'aria-disabled', String( this.disabled ) );
-		this.button.disabled = this.disabled;
-	}
-
-	_setChecked() {
-		this.setAttribute( 'aria-checked', String( this.checked ) );
-		this.button.setAttribute( 'aria-checked', String( this.checked ) );
-	}
-
-	_handleClick( e ) {
+	_handleClick = ( event ) => {
 		if ( this.disabled ) {
-			return;
+			event.stopPropagation();
+			event.preventDefault();
 		}
 
-		this.checked = ! this.checked;
-
-		this._publish();
-	}
-
-	_publish() {
-		const options = {
-			detail: { value: this.value, type: 'select' },
-		};
-
-		this.emit( 'xb-check', options );
-	}
+		return false;
+	};
 }
 
 /**
  * @typedef {import('../../../styles/size.styles').ElementSize} RadioSize
+ */
+
+/**
+ * @typedef {import('../../../controllers/keyboard-support').default} KeyboardSupportController
+ */
+
+/**
+ * @typedef {{
+ * 	keyboard: KeyboardSupportController;
+ * }} RadioPatternControllers
+ */
+
+/**
+ * @typedef {{
+ * 	value: string;
+ *   checked: boolean;
+ * }} RadioEventDetail
  */
 
 /**
