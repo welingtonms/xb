@@ -42,12 +42,9 @@ function styles() {
 				background-color: ${ token( 'color-primary-300' ) };
 			}
 
-			:host( [aria-checked='true'] ) xb-icon[name='check'] {
-				display: inline-block;
-			}
-
+			:host( [aria-checked='true'] ) xb-icon[name='check'],
 			:host( [aria-checked='mixed'] ) xb-icon[name='remove'] {
-				display: inline-block;
+				display: inline-flex;
 			}
 
 			:host( [disabled] ) {
