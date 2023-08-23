@@ -172,7 +172,6 @@ class FocusManagerController {
 	 * @param {number | HTMLElement} indexOrElement
 	 */
 	focus( indexOrElement ) {
-		console.log( 'focus', indexOrElement, this.queried );
 		const element =
 			typeof indexOrElement === 'number'
 				? this.queried.at( indexOrElement )
