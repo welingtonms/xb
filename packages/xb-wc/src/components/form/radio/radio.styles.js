@@ -1,17 +1,12 @@
 import { css } from 'lit';
 
-import {
-	active,
-	disabled,
-	focused,
-	hovered,
-} from '../../../styles/state.styles';
 import m from '../../../styles/margin.styles';
 import outline from '../../../styles/outline.styles';
-import p, { px } from '../../../styles/padding.styles';
+import p from '../../../styles/padding.styles';
 import token from '../../../utils/get-token';
 import transition from '../../../styles/transition.styles';
 import typography from '../../../styles/typography.styles';
+import sizeStyles from '../../../styles/size.styles';
 
 function styles() {
 	return [
@@ -19,13 +14,7 @@ function styles() {
 			:host {
 				--xb-radio-height: initial;
 				--xb-radio-outline-color: ${ token( 'color-white', 0 ) };
-			}
 
-			:host( [disabled] ) {
-				pointer-events: none;
-			}
-
-			.radio {
 				${ transition( [ { property: 'color' }, { property: 'opacity' } ] ) };
 
 				${ typography( 'body-2' ) };
@@ -46,56 +35,37 @@ function styles() {
 				box-sizing: border-box;
 			}
 
-			.check {
-				${ transition( [
-					{ property: 'background-color' },
-					{ property: 'border-color' },
-					{ property: 'border-width' },
-					{ property: 'box-shadow' },
-					{ property: 'outline' },
-				] ) };
-
-				${ outline( '--xb-radio-outline-color' ) };
-
+			:host( :is( [aria-checked='true'], [aria-checked='mixed'] ) ) .check {
 				--xb-icon-color: ${ token( 'color-white' ) };
 
-				flex-shrink: 0;
-				appearance: none;
-
-				${ p( token( 'spacing-0' ) ) };
-				${ m( token( 'spacing-0' ) ) };
-
-				border: 1px solid ${ token( 'color-gray-400' ) };
-				background-color: ${ token( 'color-white' ) };
-				border-radius: 8px;
-
-				box-sizing: border-box;
+				border-color: ${ token( 'color-primary-300' ) };
+				background-color: ${ token( 'color-primary-300' ) };
 			}
 
-			${ disabled( '.radio' ) } {
+			:host( [aria-checked='true'] ) xb-icon[name='circle'] {
+				--xb-icon-size: 12px;
+				display: inline-flex;
+			}
+
+			:host( [disabled] ) {
+				pointer-events: none;
+				user-select: none;
 				opacity: 0.25;
 
 				cursor: default;
-				pointer-events: none;
 			}
 
-			/* When disabled, prevent mouse events from bubbling up */
-			${ disabled( '.radio' ) } * {
+			:host( [disabled] ) ::slotted( * ) {
 				pointer-events: none;
 				user-select: none;
 			}
 
-			${ focused( '.radio' ) } {
+			:host( :is( :focus, :focus-within, :focus-visible, .is-focused ) ) {
 				outline: none;
 			}
 
-			${ focused( '.radio' ) } .check {
+			:host( :is( :focus, :focus-within, :focus-visible, .is-focused ) ) .check {
 				--xb-radio-outline-color: ${ token( 'color-primary-200', 0.2 ) };
-			}
-
-			/* When disabled, prevent mouse events from bubbling up */
-			${ disabled( '.radio' ) } * {
-				pointer-events: none;
 			}
 
 			slot[name='leading']::slotted( span ),
@@ -108,45 +78,60 @@ function styles() {
 				${ m( token( 'spacing-0' ) ) };
 			}
 
-			${ hovered( '.radio' ) } .check {
+			:host( :hover ) .check {
 				border-color: ${ token( 'color-primary-500' ) };
 			}
 
-			${ hovered( '.radio' ) }[aria-checked='true'] .check {
+			:host( [aria-checked='true']:hover ) .check {
 				border-color: ${ token( 'color-primary-500' ) };
 				background-color: ${ token( 'color-primary-500' ) };
 			}
 
-			${ active( '.radio' ) } .check {
+			:host( :active ) .check {
 				border-color: ${ token( 'color-primary-100' ) };
 			}
 
-			${ active( '.radio' ) }[aria-checked='true'] .check {
+			:host( [aria-checked='true']:active ) .check {
 				border-color: ${ token( 'color-primary-100' ) };
 				background-color: ${ token( 'color-primary-100' ) };
 			}
 
-			.radio[aria-checked='true'] .check {
-				--xb-icon-color: ${ token( 'color-white' ) };
+			.check {
+				${ transition( [
+					{ property: 'background-color' },
+					{ property: 'border-color' },
+					{ property: 'box-shadow' },
+					{ property: 'outline' },
+				] ) };
 
-				border-color: ${ token( 'color-primary-300' ) };
-				background-color: ${ token( 'color-primary-300' ) };
-				border-width: 2px;
+				${ outline( '--xb-radio-outline-color' ) };
+
+				--xb-icon-color: ${ token( 'color-white', 0 ) };
+
+				flex-shrink: 0;
+				display: inline-flex;
+				justify-content: center;
+				align-items: center;
+
+				${ p( token( 'spacing-0' ) ) };
+				${ m( token( 'spacing-0' ) ) };
+
+				border: 1px solid ${ token( 'color-gray-400' ) };
+				background-color: ${ token( 'color-white' ) };
+				border-radius: calc( 0.5 * var( --xb-radio-height ) );
+
+				box-sizing: border-box;
+				block-size: calc( 0.75 * var( --xb-radio-height ) );
+				inline-size: calc( 0.75 * var( --xb-radio-height ) );
+			}
+
+			xb-icon[name='circle'] {
+				--xb-icon-size: 0;
+
+				display: none;
 			}
 		`,
-		css`
-			.-small {
-				--xb-radio-height: 24px;
-			}
-
-			.-medium {
-				--xb-radio-height: 24px;
-			}
-
-			.-large {
-				--xb-radio-height: 24px;
-			}
-		`,
+		sizeStyles( { property: '--xb-radio-height' } ),
 	];
 }
 

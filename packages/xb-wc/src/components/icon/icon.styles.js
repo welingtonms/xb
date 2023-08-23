@@ -21,7 +21,12 @@ function styles() {
 				display: inline-flex;
 				align-items: center;
 				justify-content: center;
-				${ transition( [ { property: 'color' }, { property: 'fill' } ] ) };
+				${ transition( [
+					{ property: 'color' },
+					{ property: 'fill' },
+					{ property: 'inline-size', duration: '.75s' },
+					{ property: 'block-size', duration: '.75s' },
+				] ) };
 
 				inline-size: var( --xb-icon-size );
 				block-size: var( --xb-icon-size );
