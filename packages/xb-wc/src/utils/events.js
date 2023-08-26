@@ -33,3 +33,17 @@ export function redispatchEvent( element, event ) {
 
 	return dispatched;
 }
+
+/**
+ * Check if `event` happened on the given `element`.
+ * @param {Event} event
+ * @param {HTMLElement} element
+ * @returns {boolean} - true if the event happened on the given element, false otherwise.
+ */
+export function isInsideElement( event, element ) {
+	if ( element.shadowRoot ) {
+		return event.composedPath().includes( element );
+	}
+
+	return element.contains( event.target );
+}

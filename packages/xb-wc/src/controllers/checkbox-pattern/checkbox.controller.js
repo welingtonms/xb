@@ -14,17 +14,15 @@ class CheckboxController {
 		this.host = host;
 
 		this.controllers = {
-			keyboard: new KeyboardSupportController( host, [
-				[
-					{
-						key: ' ',
-					},
-					( event ) => {
-						event.stopPropagation();
-						this.toggle();
-					},
-				],
-			] ),
+			keyboard: new KeyboardSupportController( host, {
+				shortcut: {
+					key: ' ',
+				},
+				callback: ( event ) => {
+					event.stopPropagation();
+					this.toggle();
+				},
+			} ),
 		};
 
 		this.host.addController( this );
