@@ -34,60 +34,48 @@ class RadioGroupPatternController {
 				query: [ `${ ITEM_QUERY }:not([disabled])` ],
 			} ),
 			keyboard: new KeyboardSupportController( host, [
-				[
-					{
-						key: 'ArrowUp',
-					},
-					() => {
+				{
+					shortcut: [
+						{
+							key: 'ArrowUp',
+						},
+						{
+							key: 'ArrowLeft',
+						},
+					],
+					callback: () => {
 						this.controllers.focus.focusPrevious();
 
 						const target = this.controllers.focus.focused;
 						this.controllers.selection.select( target.value );
 					},
-				],
-				[
-					{
-						key: 'ArrowLeft',
-					},
-					() => {
-						this.controllers.focus.focusPrevious();
-
-						const target = this.controllers.focus.focused;
-						this.controllers.selection.select( target.value );
-					},
-				],
-				[
-					{
-						key: 'ArrowDown',
-					},
-					() => {
+				},
+				{
+					shortcut: [
+						{
+							key: 'ArrowDown',
+						},
+						{
+							key: 'ArrowRight',
+						},
+					],
+					callback: () => {
 						this.controllers.focus.focusNext();
 
 						const target = this.controllers.focus.focused;
 						this.controllers.selection.select( target.value );
 					},
-				],
-				[
-					{
-						key: 'ArrowRight',
-					},
-					() => {
-						this.controllers.focus.focusNext();
-
-						const target = this.controllers.focus.focused;
-						this.controllers.selection.select( target.value );
-					},
-				],
-				[
-					{
+				},
+				{
+					shortcut: {
 						key: ' ',
 					},
-					() => {
+					callback: () => {
 						const target = this.controllers.focus.focused;
 
 						this.controllers.selection.select( target.value );
 					},
-				],
+				},
 			] ),
 			selection: new SelectionManagerController( host ),
 		};
@@ -164,7 +152,6 @@ class RadioGroupPatternController {
 			return;
 		}
 
-		console.log( '>>>>>', target );
 		this.controllers.focus.focus( target );
 		this.controllers.selection.toggle( target.value );
 	};

@@ -2,7 +2,6 @@ import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 import { getTextContent } from '../../../utils/slot';
-import KeyboardSupportController from '../../../controllers/keyboard-support';
 import {
 	CheckboxController,
 	CheckboxGroupController,
@@ -69,8 +68,8 @@ export class Checkbox extends withID( XBElement ) {
 			? new CheckboxGroupController( this )
 			: new CheckboxController( this );
 
-		this.role = 'checkbox';
-		this.tabIndex = 0;
+		this.setAttribute( 'role', 'checkbox' );
+		this.setAttribute( 'tabindex', 0 );
 
 		super.connectedCallback();
 	}
@@ -137,16 +136,6 @@ export class Checkbox extends withID( XBElement ) {
 
 /**
  * @typedef {import('../../../styles/size.styles').ElementSize} CheckboxSize
- */
-
-/**
- * @typedef {import('../../../controllers/keyboard-support').default} KeyboardSupportController
- */
-
-/**
- * @typedef {{
- * 	keyboard: KeyboardSupportController;
- * }} CheckboxPatternControllers
  */
 
 /**

@@ -38,9 +38,13 @@ class KeyboardSupport {
 	 */
 	constructor( host, keymap ) {
 		this.keymap = new Map(
-			toArray( keymap ).map( ( [ shortcut, callback ] ) => {
-				return [ getShortcutKey( shortcut ), callback ];
-			} )
+			toArray( keymap ).reduce( ( map, { shortcut, callback } ) => {
+				function createShortcut( shortcut ) {
+					return [ getShortcutKey( shortcut ), callback ];
+				}
+
+				return map.concat( toArray( shortcut ).map( createShortcut ) );
+			}, [] )
 		);
 
 		( this.host = host ).addController( this );
@@ -54,19 +58,10 @@ class KeyboardSupport {
 		this.host.removeEventListener( 'keyup', this._handleKeyPress );
 	}
 
-	hostUpdate() {}
-
 	/**
 	 * @param {KeyboardEvent} event
 	 */
 	_handleKeyPress = ( event ) => {
-		const isInsideHost = event.composedPath().includes( this.host );
-
-		// FIXME: Is this check still necessary?
-		if ( ! isInsideHost ) {
-			return;
-		}
-
 		const shortcut = getShortcutKey( {
 			key: event.key,
 			meta: event.metaKey,
@@ -74,11 +69,13 @@ class KeyboardSupport {
 			ctrl: event.ctrlKey,
 		} );
 
-		if ( this.keymap.has( shortcut ) ) {
-			logger.debug( 'triggering calback for shortcut', shortcut );
-			const callback = this.keymap.get( shortcut );
-			callback( event );
+		if ( ! this.keymap.has( shortcut ) ) {
+			logger.debug( `[${ this.host.tag }]`, 'no calback for shortcut', shortcut );
+			return;
 		}
+
+		const callback = this.keymap.get( shortcut );
+		callback( event );
 	};
 }
 
@@ -99,6 +96,13 @@ export default KeyboardSupport;
  */
 
 /**
+ * @typedef {{
+ * 	shortcut: Shortcut | Shortcut[];
+ * 	callback: (event: KeyboardEvent) => void
+ * }} Keymap
+ */
+
+/**
  * @typedef {Object} KeyboardSupportProps
- * @property {[Shortcut, (event: KeyboardEvent) => void][]} keymap
+ * @property {Keymap | Keymap[]} keymap
  */
