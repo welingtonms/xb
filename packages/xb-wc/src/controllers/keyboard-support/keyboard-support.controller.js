@@ -8,7 +8,7 @@ const logger = createLogger( 'keyboard-support' );
  *
  * @param {Shortcut} shortcut
  */
-function getShortcutKey( shortcut ) {
+export function getShortcutKey( shortcut ) {
 	const keys = [
 		shortcut.alt ? 'alt' : '',
 		shortcut.ctrl ? 'ctrl' : '',
@@ -25,7 +25,7 @@ function getShortcutKey( shortcut ) {
  * @implements {ReactiveController}
  */
 class KeyboardSupport {
-	/** @type {ReactiveControllerHost} */
+	/** @type {ReactiveControllerHost & XBElement} */
 	host;
 
 	/** @type {Map<string, CallableFunction>} */
@@ -76,6 +76,8 @@ class KeyboardSupport {
 
 		const callback = this.keymap.get( shortcut );
 		callback( event );
+
+		return false;
 	};
 }
 
