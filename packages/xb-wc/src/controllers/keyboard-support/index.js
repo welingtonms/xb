@@ -1,1 +1,1 @@
-export { default } from './keyboard-support.controller';
+export { default, getShortcutKey } from './keyboard-support.controller';
