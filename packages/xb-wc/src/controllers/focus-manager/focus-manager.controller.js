@@ -5,6 +5,7 @@ import createLogger from '../../utils/logger';
 const logger = createLogger( 'focus-manager' );
 
 /**
+ * Manages **virtual** focus, for a11y purposes.
  * @implements {ReactiveController}
  */
 class FocusManagerController {
@@ -168,26 +169,56 @@ class FocusManagerController {
 	}
 
 	/**
-	 * Focus the given element or the element at the given index (based on `queried`).
-	 * @param {number | HTMLElement} indexOrElement
+	 * Focus the given element or the element at the given index or position ('first', 'last'), based on `queried`.
+	 * @param {number | HTMLElement | ('first' | 'last')} where
 	 */
-	focus( indexOrElement ) {
-		const element =
-			typeof indexOrElement === 'number'
-				? this.queried.at( indexOrElement )
-				: indexOrElement;
+	focus( where ) {
+		/**
+		 * @param {HTMLElement} element
+		 */
+		const focusElement = ( element ) => {
+			if ( ! element || element.disabled || ! element.id ) {
+				logger.debug(
+					'could not focus element',
+					element,
+					'(arg: ',
+					where,
+					')',
+					! element.id ? ' element has no id' : ''
+				);
+				return;
+			}
 
-		if ( ! element || element.disabled ) {
-			logger.debug( 'could not focus element', element, '(arg: ', indexOrElement, ')' );
-			return;
+			this.blur( document.getElementById( this.activeDescendant ) );
+
+			element.classList.add( 'is-focused' );
+
+			this.host.setAttribute( 'aria-activedescendant', element.id );
+			this.activeDescendant = element.id;
+		};
+
+		/**
+		 * @param {number} index
+		 */
+		const focusIndex = ( index ) => {
+			focusElement( this.queried.at( index ) );
+		};
+
+		const focusPosition = ( position ) => {
+			if ( position === 'first' ) {
+				focusElement( this.queried.at( 0 ) );
+			} else if ( position === 'last' ) {
+				focusElement( this.queried.at( this.queried.length - 1 ) );
+			}
+		};
+
+		if ( typeof where === 'number' ) {
+			focusIndex( where );
+		} else if ( typeof where === 'string' ) {
+			focusPosition( where );
+		} else {
+			focusElement( where );
 		}
-
-		this.blur( document.getElementById( this.activeDescendant ) );
-
-		element.classList.add( 'is-focused' );
-
-		this.host.setAttribute( 'aria-activedescendant', element.id );
-		this.activeDescendant = element.id;
 	}
 
 	/**
@@ -249,7 +280,6 @@ class FocusManagerController {
 		};
 
 		if ( ! isPrintableCharacter( key ) ) {
-			logger.debug( 'skipping non-printable character', key );
 			return;
 		}
 
