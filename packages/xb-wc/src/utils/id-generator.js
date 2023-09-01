@@ -1,23 +1,57 @@
-// radix accepts min of 2 and max of 36
 const ALPHABET = 'fkqan_eiodprgzxhstywlbjvucm-';
+// const MAX_LENGTH = 2;
 
 /** @type {number} */
-let counter = -1;
+let length = 1;
+/** @type {number[]} */
+let positions = [];
 
-/**
- *
- * @param {number} number
- * @returns {string}
- */
-function numberToRadix( number ) {
-	return number.toString( ALPHABET.length );
+function setup() {
+	positions = Array( length ).fill( 0 );
 }
 
-function generateID() {
-	counter++;
-	const positions = numberToRadix( counter ).split( '' );
+function increment( position = -1 ) {
+	if ( positions.at( position ) < ALPHABET.length - 1 ) {
+		// we increment from right to left
+		positions[ length + position ]++;
+	} else if ( length + position > 0 ) {
+		/**
+		 * if we have an available to position at the left side to increment,
+		 * then we zero the current position and proceed to increment the position to the left.
+		 */
+		positions[ length + position ] = 0;
+		increment( position - 1 );
+	} else {
+		/**
+		 * if we can't increment the current position, and we have no available positions on the left side to increment,
+		 * then we increase the length by one and proceed to generate a new ID.
+		 */
+		length++;
+		setup();
+	}
+}
 
-	return positions.map( ( position ) => ALPHABET[ Number( position ) ] ).join( '' );
+setup( 1 );
+
+/**
+ * Generates a new ID.
+ * [!] We haven't set a limit on the length of the generated ID.
+ * @returns
+ */
+function generateID() {
+	const id = positions
+		.map( ( position ) => {
+			if ( position == null ) {
+				return '';
+			}
+
+			return ALPHABET[ position % ALPHABET.length ];
+		} )
+		.join( '' );
+
+	increment();
+
+	return id;
 }
 
 export default generateID;
