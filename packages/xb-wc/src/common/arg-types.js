@@ -24,12 +24,12 @@ export const SizeArg = Object.freeze( {
 } );
 
 export const PaddinglessArg = Object.freeze( {
-	control: 'select',
+	control: 'check',
 	options: [ 'none', 'horizontal', 'vertical', 'top', 'right', 'bottom', 'left' ],
 } );
 
 export const BorderlessArg = Object.freeze( {
-	control: 'select',
+	control: 'check',
 	options: [ 'none', 'horizontal', 'vertical', 'top', 'right', 'bottom', 'left' ],
 } );
 
