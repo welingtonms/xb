@@ -81,7 +81,19 @@ class SelectionManagerController {
 	 * @param {string[]}
 	 */
 	init = ( values ) => {
+		logger.debug(
+			`initializing strategy "${ this.strategy.type }" with value ${ values }`
+		);
+
 		this.selection = this.strategy.init( values );
+	};
+
+	reset = ( values ) => {
+		logger.debug( `resetting strategy "${ this.strategy.type }" with value ${ values }` );
+
+		this.selection = this.strategy.init( values );
+
+		this.host.requestUpdate();
 	};
 
 	/**
@@ -89,6 +101,8 @@ class SelectionManagerController {
 	 * @param {string | string[] | null} values
 	 */
 	select = ( values ) => {
+		logger.debug( `selecting values ${ values } in strategy "${ this.strategy.type }"` );
+
 		this.selection = this.strategy.select( toArray( values ), this.selection );
 
 		this.host.requestUpdate();
@@ -99,6 +113,10 @@ class SelectionManagerController {
 	 * @param {string | string[] | null} values
 	 */
 	unselect = ( values ) => {
+		logger.debug(
+			`unselecting values ${ values } in strategy "${ this.strategy.type }"`
+		);
+
 		this.selection = this.strategy.unselect( toArray( values ), this.selection );
 
 		this.host.requestUpdate();
@@ -109,6 +127,8 @@ class SelectionManagerController {
 	 * @param {string | string[] | null} values
 	 */
 	toggle = ( values ) => {
+		logger.debug( `toggling values ${ values } in strategy "${ this.strategy.type }"` );
+
 		this.selection = this.strategy.toggle( toArray( values ), this.selection );
 
 		this.host.requestUpdate();
@@ -133,6 +153,10 @@ class SelectionManagerController {
 	 */
 	has = ( value ) => {
 		return this.selection.has( value );
+	};
+
+	toValue = () => {
+		return this.strategy.value( this.selection );
 	};
 }
 
