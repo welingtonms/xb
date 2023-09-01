@@ -42,29 +42,60 @@ import 'cypress-plugin-tab';
  * Based on https://github.com/wlsf82/cy-press/blob/main/src/index.js and
  * https://github.com/cypress-io/cypress-example-todomvc/blob/master/cypress/support/commands.js
  * */
-Cypress.Commands.add( 'keydown', { prevSubject: true }, ( subject, key ) => {
-	if ( ! key ) throw new Error( 'You need to provide a key (e.g, .keydown("enter"))' );
+const CODE_TO_KEY = {
+	ArrowUp: 'ArrowUp',
+	Enter: 'Enter',
+	Escape: 'Escape',
+	Space: ' ',
+	ArrowDown: 'ArrowDown',
+	ArrowLeft: 'ArrowLeft',
+	ArrowRight: 'ArrowRight',
+};
 
-	const log = Cypress.log( {
-		autoEnd: false,
-		name: 'keydown',
-		displayName: 'keydown',
-		message: `pressing ${ key }`,
-		consoleProps: () => {
-			return { Key: key };
-		},
-	} );
+Cypress.Commands.add(
+	'press',
+	{ prevSubject: true },
 
-	log.set( { $el: subject } ).snapshot( 'before' );
+	/**
+	 *
+	 * @param {unknown} subject
+	 * @param {keyof CODE_TO_KEY} code
+	 * @returns
+	 */
+	( subject, code ) => {
+		if ( ! code )
+			throw new Error( 'You need to provide a key code (e.g, .press("Enter"))' );
 
-	/** @type {HTMLElement} */
-	const element = subject[ 0 ];
+		const log = Cypress.log( {
+			autoEnd: false,
+			name: 'press',
+			displayName: 'press',
+			message: `pressing ${ code }`,
+			consoleProps: () => {
+				return { Key: code };
+			},
+		} );
 
-	element.dispatchEvent(
-		new KeyboardEvent( 'keydown', { key, code: key, bubbles: true } )
-	);
+		log.set( { $el: subject } ).snapshot( 'before' );
 
-	log.set( { $el: subject } ).snapshot().end();
+		/** @type {HTMLElement} */
+		const element = subject[ 0 ];
 
-	return cy.wrap( subject, { log: false } );
-} );
+		/**
+		 * based on https://docs.cypress.io/api/commands/type#Events-that-fire
+		 * not dispatching `keypress`, as it is deprecated (https://developer.mozilla.org/en-US/docs/Web/API/Element/keypress_event#browser_compatibility).
+		 **/
+
+		element.dispatchEvent(
+			new KeyboardEvent( 'keydown', { key: CODE_TO_KEY[ code ], code, bubbles: true } )
+		);
+
+		element.dispatchEvent(
+			new KeyboardEvent( 'keyup', { key: CODE_TO_KEY[ code ], code, bubbles: true } )
+		);
+
+		log.set( { $el: subject } ).snapshot().end();
+
+		return cy.wrap( subject, { log: false } );
+	}
+);
