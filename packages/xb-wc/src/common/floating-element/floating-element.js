@@ -1,8 +1,14 @@
 import { property } from 'lit/decorators.js';
 import { computePosition, flip, shift, offset } from '@floating-ui/dom';
 
-import XBElement from '../xb-element';
+import createLogger from '../../utils/logger';
+import XBElement from '../../common/xb-element';
 
+const logger = createLogger( 'floating-element' );
+
+/**
+ * Offer the basic wiring to `@floating-ui/dom` to render a floating element.
+ */
 export default class FloatingElement extends XBElement {
 	/**
 	 * FloatingElement positioning strategy.
@@ -22,9 +28,6 @@ export default class FloatingElement extends XBElement {
 	 */
 	@property( { type: Boolean, reflect: true } ) open;
 
-	/** @type {number | null} */
-	_resizeTimeout = null;
-
 	constructor() {
 		super();
 
@@ -36,18 +39,6 @@ export default class FloatingElement extends XBElement {
 
 		/** @type {FloatingElementAttributes['open']} */
 		this.open = false;
-	}
-
-	connectedCallback() {
-		super.connectedCallback();
-
-		window.addEventListener( 'resize', this._handleWindowResize );
-	}
-
-	disconnectedCallback() {
-		super.disconnectedCallback();
-
-		window.removeEventListener( 'resize', this._handleWindowResize );
 	}
 
 	/**
@@ -72,6 +63,25 @@ export default class FloatingElement extends XBElement {
 
 	get arrow() {
 		return this.getArrowElement();
+	}
+
+	/**
+	 * @returns {HTMLElement | null}
+	 */
+	getReferenceElement() {
+		throw new Error( 'Not implemented' );
+	}
+	/**
+	 * @returns {HTMLElement | null}
+	 */
+	getFloatingElement() {
+		throw new Error( 'Not implemented' );
+	}
+	/**
+	 * @returns {HTMLElement | null}
+	 */
+	getArrowElement() {
+		throw new Error( 'Not implemented' );
 	}
 
 	show() {
@@ -102,11 +112,10 @@ export default class FloatingElement extends XBElement {
 
 	reposition() {
 		if ( this.floating == null || this.reference == null ) {
-			console.warn(
-				'[popover-element]',
-				'both floating and reference elements should be available',
-				{ reference: this.reference, floating: this.floating }
-			);
+			logger.warn( 'both floating and reference elements should be available', {
+				reference: this.reference,
+				floating: this.floating,
+			} );
 
 			return;
 		}
@@ -139,33 +148,6 @@ export default class FloatingElement extends XBElement {
 				`${ [ 'top-start', 'right-end' ].includes( placement ) ? 0 : 4 }px`
 			);
 		} );
-	}
-
-	_handleWindowResize = () => {
-		clearTimeout( this._resizeTimeout );
-
-		this._resizeTimeout = window.setTimeout( () => {
-			this.reposition();
-		}, 250 );
-	};
-
-	/**
-	 * @returns {HTMLElement | null}
-	 */
-	getReferenceElement() {
-		throw new Error( 'Not implemented' );
-	}
-	/**
-	 * @returns {HTMLElement | null}
-	 */
-	getFloatingElement() {
-		throw new Error( 'Not implemented' );
-	}
-	/**
-	 * @returns {HTMLElement | null}
-	 */
-	getArrowElement() {
-		throw new Error( 'Not implemented' );
 	}
 }
 
