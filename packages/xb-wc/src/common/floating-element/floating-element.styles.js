@@ -26,11 +26,13 @@ function styles() {
 				position: relative;
 			}
 
-			slot[name='reference']::slotted( * ) {
+			slot[name='reference']::slotted( * ),
+			::slotted( [aria-haspopup='true'] ) {
 				display: inline-flex;
 			}
 
-			slot[name='floating']::slotted( * ) {
+			slot[name='floating']::slotted( * ),
+			::slotted( [role='menu'] ) {
 				${ transition( [ { property: 'box-shadow' } ] ) };
 
 				${ typography( 'body-2' ) };
@@ -61,15 +63,18 @@ function styles() {
 				z-index: var( --xb-popover-z-index );
 			}
 
-			:host( [position='absolute'] ) slot[name='floating']::slotted( * ) {
+			:host( [position='absolute'] ) slot[name='floating']::slotted( * ),
+			:host( [position='absolute'] ) ::slotted( [role='menu'] ) {
 				position: absolute;
 			}
 
-			:host( [position='fixed'] ) slot[name='floating']::slotted( * ) {
+			:host( [position='fixed'] ) slot[name='floating']::slotted( * ),
+			:host( [position='fixed'] ) ::slotted( [role='menu'] ) {
 				position: fixed;
 			}
 
 			:host( [open] ) slot[name='floating']::slotted( * ),
+			:host( [open] ) ::slotted( [role='menu'] ),
 			:host( [open] ) .arrow {
 				display: inline-block;
 			}
