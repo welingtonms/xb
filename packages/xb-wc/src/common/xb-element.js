@@ -67,14 +67,14 @@ export default class XBElement extends LitElement {
 	};
 
 	/**
-	 * Sets the provided attribute on the element if `value` is truthy;
+	 * Sets the provided attribute on the element if `value` is `true`;
 	 * otherwise, removes the attribute.
 	 * @param {*} name
 	 * @param {*} value
 	 */
 	setBooleanAttribute( name, value ) {
-		if ( value ) {
-			this.setAttribute( name, value );
+		if ( value === true ) {
+			this.setAttribute( name, true );
 		} else {
 			this.removeAttribute( name );
 		}
