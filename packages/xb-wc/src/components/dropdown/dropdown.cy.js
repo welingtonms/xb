@@ -1,6 +1,9 @@
 import { html } from 'lit';
 
 import './dropdown';
+import './dropdown-item';
+import './dropdown-menu';
+import './dropdown-trigger';
 
 describe( '<xb-dropdown>', () => {
 	it( 'should render correctly', () => {
@@ -13,13 +16,9 @@ describe( '<xb-dropdown>', () => {
 				<xb-dropdown-trigger>Actions</xb-dropdown-trigger>
 
 				<xb-dropdown-menu>
-					<xb-dropdown-item value="accept" @click=${ args.click }>
-						Accept
-					</xb-dropdown-item>
-					<xb-dropdown-item value="change" @click=${ args.click }>
-						Change
-					</xb-dropdown-item>
-					<xb-dropdown-item value="leave" @click=${ args.click }>Leave</xb-dropdown-item>
+					<xb-dropdown-item @click=${ args.click }>Accept</xb-dropdown-item>
+					<xb-dropdown-item @click=${ args.click }>Change</xb-dropdown-item>
+					<xb-dropdown-item @click=${ args.click }>Leave</xb-dropdown-item>
 				</xb-dropdown-menu>
 			</xb-dropdown>
 		` );
@@ -41,11 +40,9 @@ describe( '<xb-dropdown>', () => {
 				<xb-dropdown-trigger>Actions</xb-dropdown-trigger>
 
 				<xb-dropdown-menu>
-					<xb-dropdown-item data-cy="accept" value="accept">Accept</xb-dropdown-item>
-					<xb-dropdown-item data-cy="change" value="change">Change</xb-dropdown-item>
-					<xb-dropdown-item data-cy="leave" value="leave" @click=${ args.click }>
-						Leave
-					</xb-dropdown-item>
+					<xb-dropdown-item data-cy="accept">Accept</xb-dropdown-item>
+					<xb-dropdown-item data-cy="change">Change</xb-dropdown-item>
+					<xb-dropdown-item data-cy="leave" @click=${ args.click }>Leave</xb-dropdown-item>
 				</xb-dropdown-menu>
 			</xb-dropdown>
 		` );
@@ -54,9 +51,7 @@ describe( '<xb-dropdown>', () => {
 
 		cy.get( 'xb-dropdown' ).find( 'xb-dropdown-menu' ).should( 'be.visible' );
 
-		cy.get( 'xb-dropdown' )
-			.find( '[data-cy="leave"]', { includeShadowDom: true } )
-			.click();
+		cy.get( 'xb-dropdown-item[data-cy="leave"]' ).click();
 
 		cy.get( '@onClickSpy' ).should( 'have.been.called' );
 		cy.get( 'xb-dropdown' ).find( 'xb-dropdown-menu' ).should( 'not.be.visible' );
@@ -74,22 +69,22 @@ describe( '<xb-dropdown>', () => {
 		cy.mount( html`
 			<xb-dropdown
 				placement=${ args.placement }
-				@xb-dropdown-expand=${ ( event ) => {
+				@xb:dropdown-expand=${ ( event ) => {
 					onExpandSpy( event );
 				} }
-				@xb-dropdown-collapse=${ ( event ) => {
+				@xb:dropdown-collapse=${ ( event ) => {
 					onCollapseSpy( event );
 				} }
-				@xb-dropdown-toggle=${ ( event ) => {
+				@xb:dropdown-toggle=${ ( event ) => {
 					onToggleSpy( event );
 				} }
 			>
 				<xb-dropdown-trigger>Actions</xb-dropdown-trigger>
 
 				<xb-dropdown-menu>
-					<xb-dropdown-item value="accept">Accept</xb-dropdown-item>
-					<xb-dropdown-item value="change">Change</xb-dropdown-item>
-					<xb-dropdown-item value="leave">Leave</xb-dropdown-item>
+					<xb-dropdown-item>Accept</xb-dropdown-item>
+					<xb-dropdown-item>Change</xb-dropdown-item>
+					<xb-dropdown-item>Leave</xb-dropdown-item>
 				</xb-dropdown-menu>
 			</xb-dropdown>
 		` );
@@ -118,28 +113,43 @@ describe( '<xb-dropdown>', () => {
 				<xb-dropdown-trigger>Actions</xb-dropdown-trigger>
 
 				<xb-dropdown-menu>
-					<xb-dropdown-item value="accept">Accept</xb-dropdown-item>
-					<xb-dropdown-item value="change">Change</xb-dropdown-item>
-					<xb-dropdown-item value="leave">Leave</xb-dropdown-item>
+					<xb-dropdown-item>Accept</xb-dropdown-item>
+					<xb-dropdown-item>Change</xb-dropdown-item>
+					<xb-dropdown-item>Leave</xb-dropdown-item>
 				</xb-dropdown-menu>
 			</xb-dropdown>
 		` );
 
-		cy.get( 'xb-dropdown' ).find( 'xb-dropdown-trigger' ).click();
+		cy.get( 'xb-dropdown' ).find( 'xb-dropdown-trigger' ).as( 'trigger' );
 		cy.get( 'xb-dropdown' ).find( 'xb-dropdown-menu' ).as( 'menu' );
 
-		cy.get( '@menu' ).keydown( 'ArrowDown' );
-		cy.focused().should( 'have.attr', 'value', 'accept' );
-		cy.get( '@menu' ).keydown( 'ArrowDown' );
-		cy.focused().should( 'have.attr', 'value', 'change' );
-		cy.get( '@menu' ).keydown( 'ArrowDown' );
-		cy.focused().should( 'have.attr', 'value', 'leave' );
+		cy.get( '@menu' ).should( 'not.be.visible' );
 
-		cy.get( '@menu' ).keydown( 'ArrowDown' ); // return to first option
-		cy.focused().should( 'have.attr', 'value', 'accept' );
+		cy.get( '@trigger' ).focus();
+		cy.get( '@trigger' ).press( 'ArrowDown' );
 
-		cy.get( '@menu' ).keydown( 'ArrowUp' ); // return to last option
-		cy.focused().should( 'have.attr', 'value', 'leave' );
+		cy.get( '@menu' ).should( 'be.visible' );
+		cy.get( '@menu' ).should( 'be.focused' ); // as per spec
+
+		// navigates from first option to last option
+		cy.get( '@menu' ).find( '.is-focused' ).should( 'have.text', 'Accept' );
+		cy.get( '@menu' ).press( 'ArrowDown' );
+		cy.get( '@menu' ).find( '.is-focused' ).should( 'have.text', 'Change' );
+		cy.get( '@menu' ).press( 'ArrowDown' );
+		cy.get( '@menu' ).find( '.is-focused' ).should( 'have.text', 'Leave' );
+		cy.get( '@menu' ).press( 'ArrowDown' ); // return to first option
+
+		// navigates from last option to first option
+		cy.get( '@menu' ).press( 'ArrowUp' );
+		cy.get( '@menu' ).find( '.is-focused' ).should( 'have.text', 'Leave' );
+		cy.get( '@menu' ).press( 'ArrowUp' );
+		cy.get( '@menu' ).find( '.is-focused' ).should( 'have.text', 'Change' );
+		cy.get( '@menu' ).press( 'ArrowUp' );
+		cy.get( '@menu' ).find( '.is-focused' ).should( 'have.text', 'Accept' );
+
+		cy.get( '@menu' ).press( 'Escape' );
+
+		cy.get( '@menu' ).should( 'not.be.visible' );
 	} );
 
 	it( 'should navigate & select using the keyboard', () => {
@@ -148,26 +158,38 @@ describe( '<xb-dropdown>', () => {
 			<xb-dropdown>
 				<xb-dropdown-trigger>Actions</xb-dropdown-trigger>
 				<xb-dropdown-menu>
-					<xb-dropdown-item value="accept">Accept</xb-dropdown-item>
-					<xb-dropdown-item value="change">Change</xb-dropdown-item>
 					<xb-dropdown-item
-						value="leave"
 						@click=${ ( e ) => {
 							onClickSpy( e );
 						} }
 					>
-						Leave
+						Accept
 					</xb-dropdown-item>
+					<xb-dropdown-item>Change</xb-dropdown-item>
+					<xb-dropdown-item>Leave</xb-dropdown-item>
 				</xb-dropdown-menu>
 			</xb-dropdown>
 		` );
-		cy.get( 'xb-dropdown' ).find( 'xb-dropdown-trigger' ).click();
+
+		cy.get( 'xb-dropdown' ).find( 'xb-dropdown-trigger' ).as( 'trigger' );
 		cy.get( 'xb-dropdown' ).find( 'xb-dropdown-menu' ).as( 'menu' );
-		cy.get( '@menu' ).keydown( 'ArrowUp' );
 
-		cy.focused().should( 'have.attr', 'value', 'leave' );
-		cy.focused().click();
+		cy.get( '@trigger' ).focus();
+		cy.get( '@trigger' ).press( 'ArrowDown' );
 
-		cy.get( '@onClickSpy' ).should( 'have.been.called' );
+		// selecting with the space key ----------------------------------------------------------------
+		// this is just a check to ensure the necessary internal updates were made
+		cy.get( '@menu' ).find( '.is-focused' ).should( 'exist' );
+
+		cy.get( '@menu' ).press( 'Space' );
+
+		cy.get( '@onClickSpy' ).should( 'have.been.calledOnce' );
+
+		cy.get( '@trigger' ).press( 'ArrowDown' );
+		cy.get( '@menu' ).find( '.is-focused' ).should( 'exist' );
+
+		cy.get( '@menu' ).press( 'Space' );
+
+		cy.get( '@onClickSpy' ).should( 'have.been.calledTwice' );
 	} );
 } );

@@ -1,70 +1,81 @@
 import { html } from 'lit';
 import { ContextConsumer } from '@lit-labs/context';
 import { customElement } from 'lit/decorators.js';
-import withClassy from '@welingtonms/classy';
 
+import { Button } from '../button';
 import { dropdownContext } from './dropdown-context';
-import styles from './dropdown-trigger.styles';
-import XBElement from '../../common/xb-element';
+import KeyboardSupportController from '../../controllers/keyboard-support';
+import withID from '../../mixins/with-id';
 
-import '../button';
+import styles from './dropdown-trigger.styles';
 
 @customElement( 'xb-dropdown-trigger' )
-export class DropdownTrigger extends XBElement {
-	static styles = [ styles() ];
+export class DropdownTrigger extends withID( Button ) {
+	static styles = [ ...Button.styles, styles() ];
+
+	/** @type {{ keyboard: KeyboardSupportController }} */
+	_controllers;
 
 	_consumer;
 
 	constructor() {
 		super();
 
+		this.emphasis = 'flat';
+
 		this._consumer = new ContextConsumer( this, {
 			context: dropdownContext,
 			subscribe: true,
 		} );
+
+		this.controllers = {
+			keyboard: new KeyboardSupportController( this, [
+				{
+					shortcut: {
+						key: 'ArrowUp',
+					},
+					callback: () => {
+						this.emit( 'xb:dropdown-expand', { detail: 'up' } );
+					},
+				},
+				{
+					shortcut: {
+						key: 'ArrowDown',
+					},
+					callback: () => {
+						this.emit( 'xb:dropdown-expand', { detail: 'down' } );
+					},
+				},
+			] ),
+		};
 	}
 
 	connectedCallback() {
 		super.connectedCallback();
 
-		this.setAttribute( 'slot', 'reference' );
+		this.setAttribute( 'aria-haspopup', 'true' );
 
 		this.addEventListener( 'click', this._handleClick );
 	}
 
-	focus() {
-		const button = this.shadowRoot.querySelector( 'xb-button' );
+	updated( changedProperties ) {
+		super.updated( changedProperties );
 
-		button?.focus();
+		const open = Boolean( this._consumer.value?.open );
+
+		this.setBooleanAttribute( 'aria-expanded', open );
 	}
 
 	render() {
-		const { classy, when } = withClassy( {
-			open: Boolean( this._consumer.value?.open ),
-		} );
-
 		return html`
-			<xb-button
-				class="${ classy( 'dropdown-trigger', {
-					'is-open': when( { open: true } ),
-				} ) }"
-				emphasis="flat"
-			>
-				<slot></slot>
-				<xb-icon
-					slot="trailing"
-					class=${ classy( 'indicator', {
-						'is-open': when( { open: true } ),
-					} ) }
-					name="expand-more"
-					size="16"
-				></xb-icon>
-			</xb-button>
+			<slot name="leading"></slot>
+			<slot></slot>
+			<xb-icon name="expand-more" size="16" class="indicator"></xb-icon>
 		`;
 	}
 
 	_handleClick() {
-		this.emit( 'xb-dropdown-toggle' );
+		this.emit( 'xb:dropdown-toggle' );
 	}
 }
 
