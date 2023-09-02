@@ -11,9 +11,7 @@ describe( '<xb-listbox>', () => {
 			html`
 				<xb-listbox>
 					<xb-option data-cy="accept">Accept</xb-option>
-					<xb-option data-cy="change" @click=${ ( e ) => onClickSpy( e ) }>
-						Change
-					</xb-option>
+					<xb-option data-cy="change" @click=${ ( e ) => onClickSpy( e ) }>Change</xb-option>
 					<xb-option data-cy="leave">Leave</xb-option>
 				</xb-listbox>
 			`
@@ -38,25 +36,25 @@ describe( '<xb-listbox>', () => {
 			</xb-listbox>
 		` );
 
-		cy.get( 'xb-listbox' ).as( 'menu' );
+		cy.get( 'xb-listbox' ).as( 'listbox' );
 
-		cy.get( '@menu' ).focus();
+		cy.get( '@listbox' ).focus();
 
 		// navigates from first to last option
-		cy.get( '@menu' ).find( '.is-focused' ).should( 'have.text', 'Accept' );
-		cy.get( '@menu' ).press( 'ArrowDown' );
-		cy.get( '@menu' ).find( '.is-focused' ).should( 'have.text', 'Change' );
-		cy.get( '@menu' ).press( 'ArrowDown' );
-		cy.get( '@menu' ).find( '.is-focused' ).should( 'have.text', 'Leave' );
-		cy.get( '@menu' ).press( 'ArrowDown' ); // return to first option
+		cy.get( '@listbox' ).find( '.is-focused' ).should( 'have.text', 'Accept' );
+		cy.get( '@listbox' ).press( 'ArrowDown' );
+		cy.get( '@listbox' ).find( '.is-focused' ).should( 'have.text', 'Change' );
+		cy.get( '@listbox' ).press( 'ArrowDown' );
+		cy.get( '@listbox' ).find( '.is-focused' ).should( 'have.text', 'Leave' );
+		cy.get( '@listbox' ).press( 'ArrowDown' ); // return to first option
 
 		// navigates from last to first option
-		cy.get( '@menu' ).press( 'ArrowUp' );
-		cy.get( '@menu' ).find( '.is-focused' ).should( 'have.text', 'Leave' );
-		cy.get( '@menu' ).press( 'ArrowUp' );
-		cy.get( '@menu' ).find( '.is-focused' ).should( 'have.text', 'Change' );
-		cy.get( '@menu' ).press( 'ArrowUp' );
-		cy.get( '@menu' ).find( '.is-focused' ).should( 'have.text', 'Accept' );
+		cy.get( '@listbox' ).press( 'ArrowUp' );
+		cy.get( '@listbox' ).find( '.is-focused' ).should( 'have.text', 'Leave' );
+		cy.get( '@listbox' ).press( 'ArrowUp' );
+		cy.get( '@listbox' ).find( '.is-focused' ).should( 'have.text', 'Change' );
+		cy.get( '@listbox' ).press( 'ArrowUp' );
+		cy.get( '@listbox' ).find( '.is-focused' ).should( 'have.text', 'Accept' );
 	} );
 
 	it( 'should navigate & single select using the keyboard', () => {
@@ -70,11 +68,11 @@ describe( '<xb-listbox>', () => {
 			</xb-listbox>
 		` );
 
-		cy.get( 'xb-listbox' ).as( 'menu' );
-		cy.get( '@menu' ).focus();
+		cy.get( 'xb-listbox' ).as( 'listbox' );
+		cy.get( '@listbox' ).focus();
 
-		cy.get( '@menu' ).press( 'ArrowDown' );
-		cy.get( '@menu' ).press( 'Space' );
+		cy.get( '@listbox' ).press( 'ArrowDown' );
+		cy.get( '@listbox' ).press( 'Space' );
 		cy.get( '@onChangeSpy' ).should(
 			'have.been.calledWith',
 			Cypress.sinon.match.hasNested( 'detail', {
@@ -82,8 +80,8 @@ describe( '<xb-listbox>', () => {
 			} )
 		);
 
-		cy.get( '@menu' ).press( 'ArrowDown' );
-		cy.get( '@menu' ).press( 'Space' );
+		cy.get( '@listbox' ).press( 'ArrowDown' );
+		cy.get( '@listbox' ).press( 'Space' );
 		cy.get( '@onChangeSpy' ).should(
 			'have.been.calledWith',
 			Cypress.sinon.match.hasNested( 'detail', {
@@ -92,7 +90,7 @@ describe( '<xb-listbox>', () => {
 		);
 
 		// unselects the selected option
-		cy.get( '@menu' ).press( 'Space' );
+		cy.get( '@listbox' ).press( 'Space' );
 		cy.get( '@onChangeSpy' ).should(
 			'have.been.calledWith',
 			Cypress.sinon.match.hasNested( 'detail', {
@@ -112,11 +110,11 @@ describe( '<xb-listbox>', () => {
 			</xb-listbox>
 		` );
 
-		cy.get( 'xb-listbox' ).as( 'menu' );
-		cy.get( '@menu' ).focus();
+		cy.get( 'xb-listbox' ).as( 'listbox' );
+		cy.get( '@listbox' ).focus();
 
-		cy.get( '@menu' ).press( 'ArrowDown' );
-		cy.get( '@menu' ).press( 'Space' );
+		cy.get( '@listbox' ).press( 'ArrowDown' );
+		cy.get( '@listbox' ).press( 'Space' );
 		cy.get( '@onChangeSpy' ).should(
 			'have.been.calledWith',
 			Cypress.sinon.match.hasNested( 'detail', {
@@ -124,8 +122,8 @@ describe( '<xb-listbox>', () => {
 			} )
 		);
 
-		cy.get( '@menu' ).press( 'ArrowDown' );
-		cy.get( '@menu' ).press( 'Space' );
+		cy.get( '@listbox' ).press( 'ArrowDown' );
+		cy.get( '@listbox' ).press( 'Space' );
 		cy.get( '@onChangeSpy' ).should(
 			'have.been.calledWith',
 			Cypress.sinon.match.hasNested( 'detail', {
@@ -134,7 +132,7 @@ describe( '<xb-listbox>', () => {
 		);
 
 		// does not unselect the selected option
-		cy.get( '@menu' ).press( 'Space' );
+		cy.get( '@listbox' ).press( 'Space' );
 		cy.get( '@onChangeSpy' ).should(
 			'have.been.calledWith',
 			Cypress.sinon.match.hasNested( 'detail', {
@@ -154,11 +152,11 @@ describe( '<xb-listbox>', () => {
 			</xb-listbox>
 		` );
 
-		cy.get( 'xb-listbox' ).as( 'menu' );
-		cy.get( '@menu' ).focus();
+		cy.get( 'xb-listbox' ).as( 'listbox' );
+		cy.get( '@listbox' ).focus();
 
-		cy.get( '@menu' ).press( 'ArrowDown' );
-		cy.get( '@menu' ).press( 'Space' );
+		cy.get( '@listbox' ).press( 'ArrowDown' );
+		cy.get( '@listbox' ).press( 'Space' );
 		cy.get( '@onChangeSpy' ).should(
 			'have.been.calledWith',
 			Cypress.sinon.match.hasNested( 'detail', {
@@ -166,8 +164,8 @@ describe( '<xb-listbox>', () => {
 			} )
 		);
 
-		cy.get( '@menu' ).press( 'ArrowDown' );
-		cy.get( '@menu' ).press( 'Space' );
+		cy.get( '@listbox' ).press( 'ArrowDown' );
+		cy.get( '@listbox' ).press( 'Space' );
 		cy.get( '@onChangeSpy' ).should(
 			'have.been.calledWith',
 			Cypress.sinon.match.hasNested( 'detail', {
@@ -176,7 +174,7 @@ describe( '<xb-listbox>', () => {
 		);
 
 		// unselects the 'leave' option
-		cy.get( '@menu' ).press( 'Space' );
+		cy.get( '@listbox' ).press( 'Space' );
 		// FIXME: ensure this is not the call from the first selection
 		cy.get( '@onChangeSpy' ).should(
 			'have.been.calledWith',
@@ -185,10 +183,10 @@ describe( '<xb-listbox>', () => {
 			} )
 		);
 
-		cy.get( '@menu' ).press( 'ArrowUp' );
+		cy.get( '@listbox' ).press( 'ArrowUp' );
 
 		// unselects the 'change' option
-		cy.get( '@menu' ).press( 'Space' );
+		cy.get( '@listbox' ).press( 'Space' );
 		cy.get( '@onChangeSpy' ).should(
 			'have.been.calledWith',
 			Cypress.sinon.match.hasNested( 'detail', {

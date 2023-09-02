@@ -26,8 +26,6 @@ class ListboxPatternController {
 	 * @param {ListboxPatternControllerHost} host
 	 */
 	constructor( host ) {
-		this.host = host;
-
 		this.controllers = {
 			focus: new FocusManagerController( host, {
 				// complies with https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#focusabilityofdisabledcontrols
@@ -64,7 +62,7 @@ class ListboxPatternController {
 			selection: new SelectionManagerController( host ),
 		};
 
-		this.host.addController( this );
+		( this.host = host ).addController( this );
 	}
 
 	get focus() {
