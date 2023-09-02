@@ -39,20 +39,20 @@ class SelectionManagerController {
 		( this.host = host ).addController( this );
 	}
 
-	hostConnected() {}
-
-	hostUpdate() {
+	hostConnected() {
 		if ( this.strategy == null ) {
 			const value = Array.from( this.selection );
 
-			logger.debug(
-				`creating strategy "${ this.host.selection }" with value ${ value }`
-			);
+			logger.debug( `creating strategy "${ this.host.selection }" with value ${ value }` );
 
 			this.strategy = createSelectionStrategy( { type: this.host.selection } );
 			this.init( toArray( this.host.value ) );
 		}
 
+		this.value = this.host.value;
+	}
+
+	hostUpdate() {
 		if ( this.host.selection !== this.strategy.type ) {
 			const value = Array.from( this.selection );
 
@@ -67,23 +67,19 @@ class SelectionManagerController {
 		if ( this.host.value !== this.value ) {
 			const value = toArray( this.host.value );
 
-			logger.debug(
-				`updating strategy "${ this.host.selection }" with new value ${ value }`
-			);
+			logger.debug( `updating strategy "${ this.host.selection }" with new value ${ value }` );
 
-			this.init( toArray( this.host.value ) );
+			this.value = this.host.value;
+
+			this.reset( toArray( this.host.value ) );
 		}
-
-		this.value = this.host.value;
 	}
 
 	/**
 	 * @param {string[]}
 	 */
 	init = ( values ) => {
-		logger.debug(
-			`initializing strategy "${ this.strategy.type }" with value ${ values }`
-		);
+		logger.debug( `initializing strategy "${ this.strategy.type }" with value ${ values }` );
 
 		this.selection = this.strategy.init( values );
 	};
@@ -113,9 +109,7 @@ class SelectionManagerController {
 	 * @param {string | string[] | null} values
 	 */
 	unselect = ( values ) => {
-		logger.debug(
-			`unselecting values ${ values } in strategy "${ this.strategy.type }"`
-		);
+		logger.debug( `unselecting values ${ values } in strategy "${ this.strategy.type }"` );
 
 		this.selection = this.strategy.unselect( toArray( values ), this.selection );
 

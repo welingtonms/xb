@@ -80,7 +80,14 @@ class FocusManagerController {
 			return null;
 		}
 
-		return document.getElementById( this.activeDescendant );
+		/**
+		 * FIXME: for some reason I could not pinpoint, document.getElementById( this.activeDescendant )
+		 * this.host.querySelector( `#${ this.activeDescendant }` ) did not work during the headless Cypress tests.
+		 * For that reason I changed this function, the `focusElement`, and the clear function to use the newly
+		 * created `_findQueriedByID` method.
+		 */
+
+		return this._findQueriedByID( this.activeDescendant );
 	}
 
 	/**
@@ -189,7 +196,7 @@ class FocusManagerController {
 				return;
 			}
 
-			this.blur( document.getElementById( this.activeDescendant ) );
+			this.blur( this._findQueriedByID( this.activeDescendant ) );
 
 			element.classList.add( 'is-focused' );
 
@@ -226,7 +233,7 @@ class FocusManagerController {
 	 * clear the `activeDescendant` attribute.
 	 */
 	clearFocus() {
-		this.blur( document.getElementById( this.activeDescendant ) );
+		this.blur( this._findQueriedByID( this.activeDescendant ) );
 
 		this.host.removeAttribute( 'aria-activedescendant' );
 		this.activeDescendant = null;
@@ -255,6 +262,18 @@ class FocusManagerController {
 		}
 
 		return this.queried.indexOf( element );
+	};
+
+	/**
+	 * Find the given `id` in the `queried` array.
+	 * @param {string} id
+	 * @returns {HTMLElement | undefined}
+	 */
+	_findQueriedByID = ( id ) => {
+		// return document.getElementById( id );
+		return this.queried.find( ( element ) => {
+			return element.id === id;
+		} );
 	};
 
 	_subscribe() {

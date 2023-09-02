@@ -125,7 +125,10 @@ describe( '<xb-dropdown>', () => {
 
 		cy.get( '@menu' ).should( 'not.be.visible' );
 
+		// this is just a check to ensure the necessary internal updates were made
+		cy.get( '@trigger' ).should( 'have.attr', 'tabindex', '0' );
 		cy.get( '@trigger' ).focus();
+
 		cy.get( '@trigger' ).press( 'ArrowDown' );
 
 		cy.get( '@menu' ).should( 'be.visible' );
@@ -174,7 +177,10 @@ describe( '<xb-dropdown>', () => {
 		cy.get( 'xb-dropdown' ).find( 'xb-dropdown-trigger' ).as( 'trigger' );
 		cy.get( 'xb-dropdown' ).find( 'xb-dropdown-menu' ).as( 'menu' );
 
+		// this is just a check to ensure the necessary internal updates were made
+		cy.get( '@trigger' ).should( 'have.attr', 'tabindex', '0' );
 		cy.get( '@trigger' ).focus();
+
 		cy.get( '@trigger' ).press( 'ArrowDown' );
 
 		// selecting with the space key ----------------------------------------------------------------
