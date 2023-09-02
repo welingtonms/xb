@@ -1,15 +1,16 @@
 import { html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import withClassy from '@welingtonms/classy';
 
+import MenuPatternController from '../../controllers/menu-pattern';
 import XBElement from '../../common/xb-element';
+import withID from '../../mixins/with-id';
+
 import styles from './menu.styles';
 
-import '../focus-trap';
 import '../spinner';
 
 @customElement( 'xb-menu' )
-export class Menu extends XBElement {
+export class Menu extends withID( XBElement ) {
 	static styles = [ styles() ];
 
 	/**
@@ -19,61 +20,42 @@ export class Menu extends XBElement {
 	@property( { type: Boolean } ) loading;
 
 	/**
-	 * Should menu items be hoverable.
-	 * @type {MenuAttributes['hoverable']}
-	 */
-	@property( { type: Boolean } ) hoverable;
-
-	/**
-	 * Should menu items be striped.
-	 * @type {MenuAttributes['striped']}
-	 */
-	@property( { type: Boolean } ) striped;
-
-	/**
 	 * Should menu items be [bottom] bordered.
 	 * @type {MenuAttributes['bordered']}
 	 */
 	@property( { type: Boolean } ) bordered;
 
+	/** @type {MenuPatternController} */
+	_controller;
+
 	constructor() {
 		super();
 
-		this.loading = false;
-
-		this.striped = false;
-
-		this.hoverable = false;
-
 		this.bordered = false;
+		this.loading = false;
+	}
+
+	createController() {
+		return new MenuPatternController( this );
+	}
+
+	connectedCallback() {
+		super.connectedCallback();
+
+		this.setAttribute( 'role', 'menu' );
+		this.setAttribute( 'tabindex', 0 );
+
+		this._controller = this.createController();
 	}
 
 	render() {
-		const { classy, when } = withClassy( {
-			hoverable: this.hoverable,
-			striped: this.striped,
-			bordered: this.bordered,
-		} );
-
 		return html`
 			${ this.loading
 				? html`
 						<xb-spinner class="spinner"></xb-spinner>
 				  `
 				: nothing }
-
-			<xb-focus-trap>
-				<xb-stack
-					role="listbox"
-					class="${ classy( 'menu', {
-						'-hoverable': when( { hoverable: true } ),
-						'-striped': when( { striped: true } ),
-						'-bordered': when( { bordered: true } ),
-					} ) }"
-				>
-					<slot></slot>
-				</xb-stack>
-			</xb-focus-trap>
+			<slot></slot>
 		`;
 	}
 }
@@ -86,6 +68,24 @@ export class Menu extends XBElement {
  * @typedef {Object} MenuAttributes
  * @property {HTMLTag} as - List tag to render, defaults to 'section'.
  * @property {boolean} loading - Is the menu options being loaded.
- * @property {boolean} hoverable - Should the list item be hoverable?
- * @property {boolean} striped - Should the list be striped?
+ * @property {boolean} bordered - Should the list item be bordered?
+ */
+
+/**
+ * @typedef {Object} GenericSelectionOption
+ * @property {string} label
+ * @property {string} value
+ */
+
+/**
+ * @typedef {Object} CustomSelectionOption
+ * @property {string} _type
+ */
+
+/**
+ * @typedef {string | GenericSelectionOption | CustomSelectionOption} SelectionOption
+ */
+
+/**
+ * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionType} SelectionType
  */
