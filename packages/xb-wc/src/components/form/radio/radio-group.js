@@ -1,26 +1,16 @@
 import { html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators.js';
+import toArray from '@welingtonms/xb-toolset/dist/to-array';
 
+import withSelection from '../../../mixins/with-selection';
 import RadioGroupPatternController from '../../../controllers/radio-group-pattern';
 import XBElement from '../../../common/xb-element';
 
 import styles from './radio-group.styles';
 
 @customElement( 'xb-radio-group' )
-export class RadioGroup extends XBElement {
+export class RadioGroup extends withSelection( XBElement ) {
 	static styles = [ styles() ];
-	/**
-	 * Selection strategy.
-	 * @type {SelectionType}
-	 */
-	@property( { type: String } ) selection;
-
-	/**
-	 * Selection value.
-	 * This should be typed in the subclass.
-	 * @type {SelectionOption | SelectionOption[] | null}
-	 */
-	@property() value;
 
 	/** @type {RadioGroupPatternController} */
 	_controller;
@@ -44,11 +34,7 @@ export class RadioGroup extends XBElement {
 	 */
 	update( changedProperties ) {
 		if ( changedProperties.has( 'value' ) ) {
-			this._controller.selection.value = toArray( value );
-		}
-
-		if ( changedProperties.has( 'type' ) ) {
-			this._provider.setValue( { type: this.type } );
+			this._controller.selection.init( toArray( this.value ) );
 		}
 
 		super.update( changedProperties );

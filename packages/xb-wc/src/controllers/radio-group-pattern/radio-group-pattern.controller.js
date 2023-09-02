@@ -26,11 +26,8 @@ class RadioGroupPatternController {
 	 * @param {RadioGroupPatternControllerHost} host
 	 */
 	constructor( host ) {
-		this.host = host;
-
 		this.controllers = {
 			focus: new FocusManagerController( host, {
-				// TODO: adjust to comply with https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#focusabilityofdisabledcontrols
 				query: [ `${ ITEM_QUERY }:not([disabled])` ],
 			} ),
 			keyboard: new KeyboardSupportController( host, [
@@ -47,7 +44,7 @@ class RadioGroupPatternController {
 						this.controllers.focus.focusPrevious();
 
 						const target = this.controllers.focus.focused;
-						this.controllers.selection.select( target.value );
+						this._toggleValue( target.value );
 					},
 				},
 				{
@@ -63,7 +60,7 @@ class RadioGroupPatternController {
 						this.controllers.focus.focusNext();
 
 						const target = this.controllers.focus.focused;
-						this.controllers.selection.select( target.value );
+						this._toggleValue( target.value );
 					},
 				},
 				{
@@ -73,14 +70,14 @@ class RadioGroupPatternController {
 					callback: () => {
 						const target = this.controllers.focus.focused;
 
-						this.controllers.selection.select( target.value );
+						this._toggleValue( target.value );
 					},
 				},
 			] ),
 			selection: new SelectionManagerController( host ),
 		};
 
-		this.host.addController( this );
+		( this.host = host ).addController( this );
 	}
 
 	get focus() {
@@ -111,21 +108,6 @@ class RadioGroupPatternController {
 		this.host.removeEventListener( 'click', this._handleOptionClick );
 	}
 
-	hostUpdate() {
-		// TODO: delegate this to the element using this controller
-		// if ( changedProperties.has( 'value' ) ) {
-		// 	this.controllers.selection.value = toArray( value );
-		// }
-	}
-
-	hostUpdated() {
-		// TODO: delegate this to the element using this controller
-		// this.setAttribute( 'aria-multiselectable', this.selection === 'multiple' );
-		// for ( const element of this.controllers.focus.queried ) {
-		// 	element.checked = this.controllers.selection.selection.has( element.value );
-		// }
-	}
-
 	_handleFocusIn = () => {
 		const firstChecked = this.queried.find( ( item ) => item.checked && ! item.disabled );
 
@@ -141,9 +123,7 @@ class RadioGroupPatternController {
 	};
 
 	/**
-	 * Handle selection events, listened by the `listen` attribute.
 	 * @param {Event} event
-	 * @returns
 	 */
 	_handleOptionClick = ( event ) => {
 		const { target } = event;
@@ -153,7 +133,15 @@ class RadioGroupPatternController {
 		}
 
 		this.controllers.focus.focus( target );
-		this.controllers.selection.toggle( target.value );
+		this._toggleValue( target.value );
+	};
+
+	_toggleValue = ( value ) => {
+		this.controllers.selection.select( value );
+
+		this.host.emit( 'xb:change', {
+			detail: { value: this.controllers.selection.toValue() },
+		} );
 	};
 }
 

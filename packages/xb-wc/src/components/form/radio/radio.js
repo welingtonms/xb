@@ -13,13 +13,13 @@ export class Radio extends withID( XBElement ) {
 	static styles = [ styles() ];
 
 	/**
-	 * Should the button be disabled.
+	 * Should the radio be disabled.
 	 * @type {RadioAttributes['disabled']}
 	 */
 	@property( { type: Boolean, reflect: true } ) disabled;
 
 	/**
-	 * Should the button be checked.
+	 * Should the radio be checked.
 	 * @type {RadioAttributes['checked']}
 	 */
 	@property( { type: Boolean, reflect: true } ) checked;
@@ -42,22 +42,20 @@ export class Radio extends withID( XBElement ) {
 		this.checked = false;
 		this.disabled = false;
 		this.size = 'small';
+
+		// Based on https://lit.dev/docs/components/events/#adding-event-listeners-to-the-component-or-its-shadow-root
+		this.addEventListener( 'click', this._handleClick );
 	}
 
 	connectedCallback() {
 		super.connectedCallback();
 
-		this.role = 'radio';
-
-		this.addEventListener( 'click', this._handleClick );
+		this.setAttribute( 'role', 'radio' );
 	}
 
-	disconnectedCallback() {
-		super.disconnectedCallback();
-
-		this.removeEventListener( 'click', this._handleClick );
-	}
-
+	/**
+	 * @param {import('lit').PropertyValues<this>} changedProperties
+	 */
 	firstUpdated( changedProperties ) {
 		super.firstUpdated( changedProperties );
 
@@ -70,8 +68,8 @@ export class Radio extends withID( XBElement ) {
 	 *
 	 * @param {import("lit").PropertyValues} changedProperties
 	 */
-	updated( changedProperties ) {
-		super.updated( changedProperties );
+	update( changedProperties ) {
+		super.update( changedProperties );
 
 		if ( changedProperties.has( 'disabled' ) ) {
 			this.setBooleanAttribute( 'aria-disabled', this.disabled );
@@ -79,15 +77,6 @@ export class Radio extends withID( XBElement ) {
 
 		if ( changedProperties.has( 'checked' ) ) {
 			this.setAttribute( 'aria-checked', this.checked );
-		}
-
-		if ( changedProperties.get( 'checked' ) != null ) {
-			this.emit( 'xb:change', {
-				detail: {
-					value: this.value,
-					checked: Boolean( this.checked ),
-				},
-			} );
 		}
 	}
 
@@ -118,6 +107,7 @@ export class Radio extends withID( XBElement ) {
 		if ( this.disabled ) {
 			event.stopPropagation();
 			event.preventDefault();
+			return;
 		}
 
 		return false;
