@@ -1,14 +1,35 @@
 import { html } from 'lit';
+import { ContextProvider } from '@lit-labs/context';
 import { customElement, property } from 'lit/decorators.js';
-import withClassy from '@welingtonms/classy';
+import toArray from '@welingtonms/xb-toolset/dist/to-array';
 
+import { attachContextRoot } from '../../utils/context';
+import { toggleGroupContext } from './toggle-group-context';
 import styles from './toggle-group.styles';
-import SelectionBoundary from '../../common/selection-boundary';
+import ToggleGroupController from './toggle-group.controller';
+import withSelection from '../../mixins/with-selection';
+import XBElement from '../../common/xb-element';
 
 import '../layout/cluster';
 
+attachContextRoot();
+
+/**
+ * @param {ToggleGroupType} role
+ */
+function getGroupRole( type ) {
+	return [ 'single', 'single-strict' ].includes( type ) ? 'radiogroup' : 'group';
+}
+
+/**
+ * @param {ToggleGroupType} role
+ */
+function getToggleRole( type ) {
+	return [ 'single', 'single-strict' ].includes( type ) ? 'radio' : 'checkbox';
+}
+
 @customElement( 'xb-toggle-group' )
-export class ToggleGroup extends SelectionBoundary {
+export class ToggleGroup extends withSelection( XBElement ) {
 	static styles = [ styles() ];
 
 	/**
@@ -18,126 +39,94 @@ export class ToggleGroup extends SelectionBoundary {
 	@property( { type: Boolean, reflect: true } ) disabled;
 
 	/**
-	 * Aria role
-	 * @type {ToggleGroupAttributes['role']}
-	 */
-	@property( { type: String, reflect: true } ) role;
-
-	/**
 	 * Button size.
 	 * @type {ToggleGroupAttributes['size']}
 	 */
-	@property( { type: String } ) size;
+	@property( { type: String, reflect: true } ) size;
+
+	/** @type {ToggleGroupController} */
+	_controller;
+
+	/** @type {ContextProvider<import('./toggle-group-context').ToggleGroupContext>} */
+	_provider;
 
 	constructor() {
 		super();
 
-		this.listen = 'xb-toggle-click';
-		this.role = [ 'single', 'single-strict' ].includes( this.type )
-			? 'radiogroup'
-			: 'group';
-		this.size = 'small';
-		this.type = 'single-strict';
+		this.disabled = false;
+		this.role = getGroupRole( this.selection );
+		this.selection = 'single-strict';
+		this.size = 'extra-small';
+
+		this._controller = new ToggleGroupController( this );
+
+		this._provider = new ContextProvider( this, {
+			context: toggleGroupContext,
+			initialValue: {
+				disabled: this.disabled,
+				size: this.size,
+				selection: this.selection,
+			},
+		} );
+	}
+
+	connectedCallback() {
+		super.connectedCallback();
+
+		this.setAttribute( 'tabindex', 0 );
+		this.setAttribute( 'role', getGroupRole( this.selection ) );
 	}
 
 	/**
-	 * @param {import('lit').PropertyValues<ToggleGroup>} changedProperties
+	 * @param {import('lit').PropertyValues<this>} changedProperties
+	 */
+	update( changedProperties ) {
+		if ( changedProperties.has( 'value' ) ) {
+			this._controller.selection.init( toArray( this.value ) );
+		}
+
+		if (
+			changedProperties.has( 'disabled' ) ||
+			changedProperties.has( 'size' ) ||
+			changedProperties.has( 'selection' )
+		) {
+			this._provider.setValue( {
+				disabled: this.disabled,
+				size: this.size,
+				selection: this.selection,
+			} );
+		}
+
+		super.update( changedProperties );
+	}
+
+	/**
+	 * @param {import('lit').PropertyValues<this>} changedProperties
 	 */
 	updated( changedProperties ) {
 		super.updated( changedProperties );
 
-		if ( changedProperties.has( 'role' ) ) {
-			this.toggles.forEach( ( toggle ) => {
-				this._setToggleRole( toggle );
-			} );
-		}
-
-		if ( changedProperties.has( 'disabled' ) ) {
-			this.toggles.forEach( ( toggle ) => {
-				this._setToggleDisabled( toggle );
-			} );
-		}
-
-		if ( changedProperties.has( 'size' ) ) {
-			this.toggles.forEach( ( toggle ) => {
-				this._setToggleSize( toggle );
-			} );
-		}
-
 		if ( changedProperties.has( 'selection' ) ) {
-			this._handleSelectionChange();
+			this.setAttribute( 'role', getGroupRole( this.selection ) );
 		}
 
-		this.toggles.forEach( ( toggle ) => {
-			this._setToggleChecked( toggle );
-		} );
+		this._updateGroup();
 	}
 
 	render() {
-		const { classy, when } = withClassy( { type: this.type } );
-
-		// TODO: add proper accessibility features
 		return html`
-			<xb-cluster
-				class=${ classy( 'toggle-group', {
-					'-single': when( { type: [ 'single', 'single-strict' ] } ),
-					'-multiple': when( { type: 'multiple' } ),
-				} ) }
-				borderless="none"
-				paddingless="none"
-				?disabled="${ this.disabled }"
-			>
-				<slot></slot>
-			</xb-cluster>
+			<slot @slotchange=${ this._updateGroup }></slot>
 		`;
 	}
 
-	/**
-	 * @returns {import('./toggle').ToggleButton[]}
-	 */
-	get toggles() {
-		const defaultSlot = this.shadowRoot.querySelector( 'slot' );
+	_updateGroup() {
+		for ( const element of this._controller.focus.queried ) {
+			element.checked = this._controller.selection.selection.has( element.value );
+			// element.role = getToggleRole( this.selection );
 
-		return ( defaultSlot?.assignedElements() || [] ).filter( ( item ) =>
-			item.matches( 'xb-toggle' )
-		);
-	}
-
-	/**
-	 * @param {import('./toggle').ToggleButton} toggle
-	 */
-	_setToggleRole( toggle ) {
-		toggle.setAttribute(
-			'role',
-			[ 'single', 'single-strict' ].includes( this.type ) ? 'radio' : 'checkbox'
-		);
-	}
-
-	/**
-	 * @param {import('./toggle').ToggleButton} toggle
-	 */
-	_setToggleSize( toggle ) {
-		toggle.size = this.size;
-	}
-
-	/**
-	 * @param {import('./toggle').ToggleButton} toggle
-	 */
-	_setToggleChecked( toggle ) {
-		toggle.checked = this.selection.has( toggle.value );
-	}
-
-	/**
-	 * @param {import('./toggle').ToggleButton} toggle
-	 */
-	_setToggleDisabled( toggle ) {
-		toggle.disabled = this.disabled;
-	}
-
-	_handleSelectionChange() {
-		this.emit( 'xb:change', {
-			detail: { value: this.strategy.value( this.selection ) },
-		} );
+			// TODO: handle when the toggle itself is disabled (has the disabled attribute)
+			element.disabled = this.disabled;
+		}
 	}
 }
 

@@ -8,10 +8,6 @@ function styles() {
 	return [
 		baseButtonStyles(),
 		css`
-			.toggle {
-				/* Placeholder */
-			}
-
 			/* .toggle[role='radio']:before {
 				content: '';
 				width: 1px;
@@ -21,58 +17,62 @@ function styles() {
 				position: absolute;
 			} */
 
-			.toggle[aria-checked='false'] {
+			:host {
 				--xb-button-background-color: ${ token( 'color-white', 0 ) };
 				--xb-button-border-color: ${ token( 'color-white', 0 ) };
 				--xb-button-color: ${ token( 'color-primary-500' ) };
 			}
 
-			${ hovered( '.toggle[aria-checked="false"]' ) } {
+			:host( :hover ) {
 				--xb-button-background-color: ${ token( 'color-white', 0 ) };
 				--xb-button-border-color: ${ token( 'color-white', 0 ) };
 				--xb-button-color: ${ token( 'color-secondary-500' ) };
 			}
 
-			${ active( '.toggle[aria-checked="false"]' ) } {
+			:host( :active ) {
 				--xb-button-background-color: ${ token( 'color-white', 0 ) };
 				--xb-button-border-color: ${ token( 'color-white', 0 ) };
 				--xb-button-color: ${ token( 'color-secondary-300' ) };
 				--xb-button-outline-color: ${ token( 'color-secondary-500', 0.2 ) };
 			}
 
-			.toggle[aria-checked='true'] {
+			:host( [aria-checked='true'] ) {
 				--xb-button-background-color: ${ token( 'color-primary-500' ) };
 				--xb-button-border-color: ${ token( 'color-primary-500' ) };
 				--xb-button-color: ${ token( 'color-white' ) };
 			}
 
-			${ hovered( '.toggle[aria-checked="true"]' ) } {
+			:host( [aria-checked='true']:hover ) {
 				--xb-button-background-color: ${ token( 'color-secondary-500' ) };
 				--xb-button-border-color: ${ token( 'color-secondary-500' ) };
 				--xb-button-color: ${ token( 'color-white' ) };
 				--xb-button-outline-color: ${ token( 'color-secondary-500', 0.2 ) };
 			}
 
-			${ active( '.toggle[aria-checked="true"]' ) } {
+			:host( [aria-checked='true']:active ) {
 				--xb-button-background-color: ${ token( 'color-secondary-300' ) };
 				--xb-button-border-color: ${ token( 'color-secondary-300' ) };
 				--xb-button-color: ${ token( 'color-white' ) };
 				--xb-button-outline-color: ${ token( 'color-secondary-500', 0.2 ) };
 			}
-		`,
-		css`
-			.-small {
-				height: 34px;
+
+			:host-context( [size='extra-small'] ) {
+				--xb-button-height: 34px;
 				min-width: 34px;
 			}
 
-			.-medium {
-				height: 50px;
+			:host-context( [size='small'] ) {
+				--xb-button-height: 50px;
 				min-width: 50px;
 			}
 
-			.-large {
-				height: 66px;
+			:host-context( [size='medium'] ) {
+				--xb-button-height: 56px;
+				min-width: 56px;
+			}
+
+			:host-context( [size='large'] ) {
+				--xb-button-height: 66px;
 				min-width: 66px;
 			}
 		`,

@@ -1,33 +1,34 @@
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import withClassy from '@welingtonms/classy';
+import { ContextConsumer } from '@lit-labs/context';
 
+import { toggleGroupContext } from './toggle-group-context';
+import withID from '../../mixins/with-id';
 import XBElement from '../../common/xb-element';
 import styles from './toggle.styles';
 
-import '../button';
+/**
+ * @param {import('./toggle-group').ToggleGroupType} role
+ */
+function getRole( type ) {
+	return [ 'single', 'single-strict' ].includes( type ) ? 'radio' : 'checkbox';
+}
 
 @customElement( 'xb-toggle' )
-export class ToggleButton extends XBElement {
+export class ToggleButton extends withID( XBElement ) {
 	static styles = [ styles() ];
 
 	/**
-	 * Should the button be disabled.
-	 * @type {Boolean}
+	 * Should the toggle be disabled.
+	 * @type {boolean}
 	 */
-	@property( { type: Boolean } ) disabled;
+	@property( { type: Boolean, reflect: true } ) disabled;
 
 	/**
-	 * Aria role
-	 * @type {'group' | 'radiogroup'}
+	 * Should the toggle be checked.
+	 * @type {boolean}
 	 */
-	@property( { type: String, reflect: true } ) role;
-
-	/**
-	 * Should the button be disabled.
-	 * @type {'true' | 'false'}
-	 */
-	@property( { type: String, reflect: true, attribute: 'aria-checked' } ) checked;
+	@property( { type: Boolean, reflect: true } ) checked;
 
 	/**
 	 * Button emphasis variant.
@@ -35,63 +36,77 @@ export class ToggleButton extends XBElement {
 	 */
 	@property( { type: String } ) value;
 
-	/**
-	 * Button size.
-	 * @type {import('../button/button').ButtonSize}
-	 */
-	@property( { type: String } ) size;
-
 	constructor() {
 		super();
 
-		this.disabled = false;
 		this.checked = false;
-		this.size = 'small';
+		this.disabled = false;
+
+		this._consumer = new ContextConsumer( this, {
+			context: toggleGroupContext,
+			subscribe: true,
+		} );
+
+		// Based on https://lit.dev/docs/components/events/#adding-event-listeners-to-the-component-or-its-shadow-root
+		this.addEventListener( 'click', this._handleClick );
+	}
+
+	connectedCallback() {
+		super.connectedCallback();
+
+		this.setAttribute( 'tabindex', '-1' );
+	}
+
+	/**
+	 * @param {import('lit').PropertyValues<this>} changedProperties
+	 */
+	firstUpdated( changedProperties ) {
+		super.firstUpdated( changedProperties );
+
+		if ( ! this.value ) {
+			this.value = this.text();
+		}
+	}
+
+	/**
+	 * @param {import('lit').PropertyValues<this>} changedProperties
+	 */
+	update( changedProperties ) {
+		super.update( changedProperties );
+
+		if ( changedProperties.has( 'disabled' ) ) {
+			this.setBooleanAttribute( 'aria-disabled', this.disabled );
+		}
+
+		if ( changedProperties.has( 'checked' ) ) {
+			this.setAttribute( 'aria-checked', this.checked );
+		}
+
+		// TODO: evaluate dropping the context and updating this in the toggle group.
+		this.setAttribute( 'role', getRole( this._consumer.value?.selection ) );
 	}
 
 	render() {
-		const { classy, when } = withClassy( {
-			role: this.role,
-			emphasis: this.emphasis,
-			size: this.size,
-			checked: this.checked,
-		} );
-
 		return html`
-			<button
-				class=${ classy( 'toggle', 'button', {
-					'-small': when( { size: 'small' } ),
-					'-medium': when( { size: 'medium' } ),
-					'-large': when( { size: 'large' } ),
-				} ) }
-				type="button"
-				role="${ this.role }"
-				aria-checked="${ this.checked ? 'true' : 'false' }"
-				?disabled="${ this.disabled }"
-				@click=${ this._handleClick }
-			>
-				<slot name="leading" slot="leading"></slot>
-				<slot></slot>
-				<slot name="trailing" slot="trailing"></slot>
-			</button>
+			<slot name="leading"></slot>
+			<slot></slot>
+			<slot name="trailing"></slot>
 		`;
 	}
 
-	_handleClick( e ) {
+	// _isDisabled = () => {
+	// 	return Boolean( this._consumer.value?.disabled ) || this.disabled;
+	// };
+
+	_handleClick = ( event ) => {
 		if ( this.disabled ) {
+			event.stopPropagation();
+			event.preventDefault();
 			return;
 		}
 
-		this.checked = ! this.checked;
-
-		const options = {
-			detail: { value: this.value, type: 'toggle' },
-			bubbles: true,
-			composed: false,
-		};
-
-		this.emit( 'xb:toggle-click', options );
-	}
+		return false;
+	};
 }
 
 /**
