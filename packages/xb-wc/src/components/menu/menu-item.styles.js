@@ -1,6 +1,5 @@
 import { css } from 'lit';
 
-import { active, disabled, focused, hovered } from '../../styles/state.styles';
 import m from '../../styles/margin.styles';
 import p, { px, py } from '../../styles/padding.styles';
 import token from '../../utils/get-token';
@@ -13,29 +12,18 @@ function styles() {
 	return [
 		css`
 			:host {
-				--xb-menu-item-background-color: ${ token( 'color-white', 0 ) };
-				--xb-menu-item-color: ${ token( 'color-gray-600' ) };
-				--xb-menu-item-height: initial;
-				--xb-menu-item-border-width: 1px;
-				--xb-menu-item-border-style: none;
-				--xb-menu-item-border-color: ${ token( 'color-gray-200' ) }
+				--xb-item-background-color: ${ token( 'color-white', 0 ) };
+				--xb-item-border-color: ${ token( 'color-gray-200' ) };
+				--xb-item-border-style: none;
+				--xb-item-border-width: 1px;
+				--xb-item-color: ${ token( 'color-gray-700' ) };
+				--xb-item-height: initial;
 
-				display: inline-block;
-
-				height: var( --xb-menu-item-height );
-
-				width: 100%;
-			}
-
-			:host( [disabled] ) {
-				pointer-events: none;
-				user-select: none;
-			}
-
-			.menu-item {
 				${ transition( [ { property: 'color' }, { property: 'background-color' } ] ) };
-
 				${ typography( 'button' ) };
+
+				height: var( --xb-item-height );
+				width: 100%;
 
 				cursor: pointer;
 				position: relative;
@@ -53,54 +41,21 @@ function styles() {
 				${ px( token( 'spacing-4' ) ) };
 				${ py( token( 'spacing-2' ) ) };
 
-				background-color: var( --xb-menu-item-background-color );
-				color: var( --xb-menu-item-color );
+				background-color: var( --xb-item-background-color );
+				color: var( --xb-item-color );
 
 				border-top: none;
 				border-inline: none;
-				border-bottom-width: var(--xb-menu-item-border-width) ;
-				border-bottom-style: var(--xb-menu-item-border-style) ;
-				border-bottom-color: var(--xb-menu-item-border-color) ;
+				border-bottom-width: var( --xb-item-border-width );
+				border-bottom-style: var( --xb-item-border-style );
+				border-bottom-color: var( --xb-item-border-color );
 
 				font-size: ${ token( 'font-size-sm' ) };
-
-				height: 100%;
-				width: 100%;
 			}
 
-			.menu-item[aria-selected='true'] {
-				--xb-menu-item-background-color: ${ token( 'color-primary-100', 0.2 ) };
-
-				--xb-menu-item-color: ${ token( 'color-primary-600' ) };
-			}
-
-			${ disabled( '.menu-item' ) } {
-				opacity: 0.25;
-
-				cursor: default;
-				pointer-events: none;
-			}
-
-			/* When disabled, prevent mouse events from bubbling up */
-			${ disabled( '.menu-item' ) } * {
-				pointer-events: none;
-				user-select: none;
-			}
-
-			${ hovered( '.menu-item' ) },
-			${ focused( '.menu-item' ) } {
-				--xb-menu-item-background-color: ${ token( 'color-gray-200', 0.5 ) };
-				--xb-menu-item-color: ${ token( 'color-gray-700' ) };
-
-				outline: none;
-			}
-
-			${ active( '.menu-item' ) } {
-				--xb-menu-item-color: ${ token( 'color-gray-500' ) };
-			}
-
-			slot[name='leading']::slotted( * ) {
-				--xb-global-color: var( --xb-menu-item-color );
+			slot[name='leading']::slotted( * ),
+			slot[name='trailing']::slotted( * ) {
+				--xb-global-color: var( --xb-item-color );
 
 				display: inline-flex;
 				align-items: center;
@@ -110,18 +65,32 @@ function styles() {
 				${ m( token( 'spacing-0' ) ) };
 			}
 
-			.check {
-				--xb-icon-color: ${ token( 'color-blue-600' ) };
+			:host( :hover ),
+			:host( :is( :focus, :focus-within, :focus-visible, .is-focused ) ) {
+				--xb-item-background-color: ${ token( 'color-primary-100', 0.1 ) };
+				--xb-item-color: ${ token( 'color-primary-600' ) };
 
-				visibility: hidden;
-				margin-left: auto;
+				outline: none;
 			}
 
-			.menu-item[aria-selected='true'] .check {
-				visibility: visible;
+			:host( :active ) {
+				--xb-item-color: ${ token( 'color-gray-500' ) };
+			}
+
+			:host( [disabled] ) {
+				pointer-events: none;
+				user-select: none;
+				opacity: 0.25;
+
+				cursor: default;
+			}
+
+			:host( [disabled] ) ::slotted( * ) {
+				pointer-events: none;
+				user-select: none;
 			}
 		`,
-		sizeStyles( '--xb-menu-item-height' ),
+		sizeStyles( { property: '--xb-item-height' } ),
 	];
 }
 

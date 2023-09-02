@@ -1,16 +1,16 @@
-import { html, nothing } from 'lit';
+import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import withClassy from '@welingtonms/classy';
 
 import { getTextContent } from '../../utils/slot';
 import XBElement from '../../common/xb-element';
+import withID from '../../mixins/with-id';
+
 import styles from './menu-item.styles';
 
-import '../form/checkbox';
 import '../icon';
 
-@customElement( 'xb-menu-item' )
-export class MenuItem extends XBElement {
+@customElement( 'xb-item' )
+export class MenuItem extends withID( XBElement ) {
 	static styles = [ styles() ];
 
 	/**
@@ -19,38 +19,33 @@ export class MenuItem extends XBElement {
 	 */
 	@property( { type: Boolean, reflect: true } ) disabled;
 
-	/**
-	 * Select item size.
-	 * @type {MenuItemAttributes['size']}
-	 */
-	@property( { type: String } ) size;
-
-	/**
-	 * Is this a selected option.
-	 * @type {MenuItemAttributes['selected']}
-	 */
-	@property( { type: Boolean, reflect: true } ) selected;
-
-	/**
-	 * Selection strategy.
-	 * @type {MenuItemAttributes['type']}
-	 */
-	@property( { type: String } ) type;
-
-	/**
-	 * Value that this option represents.
-	 * @type {MenuItemAttributes['value']}
-	 */
-	@property( { type: String, reflect: true } ) value;
-
 	constructor() {
 		super();
 
 		this.disabled = false;
-		this.selected = false;
-		this.size = 'small';
-		this.type = 'single';
-		this.value = '';
+	}
+
+	connectedCallback() {
+		super.connectedCallback();
+
+		this.setAttribute( 'role', 'menuitem' );
+
+		// TODO: investigat why moving this to the constructor is breaking the dropdown option click
+		this.addEventListener( 'click', this._handleClick );
+	}
+
+	disconnectedCallback() {
+		super.disconnectedCallback();
+
+		this.removeEventListener( 'click', this._handleClick );
+	}
+
+	updated( changedProperties ) {
+		super.updated( changedProperties );
+
+		if ( changedProperties.has( 'disabled' ) ) {
+			this.setBooleanAttribute( 'aria-disabled', this.disabled );
+		}
 	}
 
 	/** Returns a text label based on the contents of the menu item's default slot. */
@@ -65,59 +60,24 @@ export class MenuItem extends XBElement {
 		return getTextContent( slot ) || String( this.textContent ?? '' ).trim();
 	}
 
-	focus() {
-		this.button.focus();
-	}
-
 	render() {
-		const { classy, when } = withClassy( {
-			selected: this.selected,
-			size: this.size,
-		} );
-
 		return html`
-			<button
-				type="button"
-				class="${ classy( 'menu-item', {
-					'-extra-small': when( { size: 'extra-small' } ),
-					'-small': when( { size: 'small' } ),
-					'-medium': when( { size: 'medium' } ),
-					'-large': when( { size: 'large' } ),
-				} ) }"
-				role="option"
-				aria-selected="${ this.selected ? 'true' : 'false' }"
-				aria-label="${ this.text() }"
-				?disabled="${ this.disabled }"
-				@click=${ this.reemit }
-			>
-				${ this.type == 'multiple'
-					? html`
-							<xb-checkbox tabindex="-1" ?checked=${ this.selected }></xb-checkbox>
-					  `
-					: nothing }
-
-				<slot name="leading"></slot>
-				<slot></slot>
-
-				${ this.type != 'multiple'
-					? html`
-							<xb-icon name="check" class="check"></xb-icon>
-					  `
-					: nothing }
-			</button>
+			<slot name="leading"></slot>
+			<slot></slot>
+			<slot name="trailing"></slot>
 		`;
 	}
 
-	/**
-	 * @returns {import('../button/button').Button}
-	 **/
-	get button() {
-		return this.shadowRoot.querySelector( 'button' );
-	}
+	_handleClick = ( event ) => {
+		if ( this.disabled ) {
+			event.stopPropagation();
+			event.preventDefault();
+		}
+	};
 }
 
 /**
- * @typedef {import('../../styles/size.styles').ElementSize} SelectionOptionSize
+ * @typedef {import('../../styles/size.styles').ElementSize} SelectionMenuItemSize
  * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionType} SelectionType
  */
 
@@ -125,8 +85,40 @@ export class MenuItem extends XBElement {
  * @typedef {Object} MenuItemAttributes
  * @property {boolean} [open] - Is the dropdown menu open.
  * @property {boolean} disabled Should the button be disabled.
- * @property {SelectionOptionSize} size
+ * @property {SelectionMenuItemSize} size
  * @property {SelectionType} type
  * @property {boolean} [selected] - Is this a selected option
  * @property {string} value Value that this option represents.
  */
+
+// return html`
+// 			<button
+// 				type="button"
+// 				class="${ classy( 'menu-item', {
+// 					'-extra-small': when( { size: 'extra-small' } ),
+// 					'-small': when( { size: 'small' } ),
+// 					'-medium': when( { size: 'medium' } ),
+// 					'-large': when( { size: 'large' } ),
+// 				} ) }"
+// 				role="option"
+// 				aria-selected="${ this.selected ? 'true' : 'false' }"
+// 				aria-label="${ this.text() }"
+// 				?disabled="${ this.disabled }"
+// 				@click=${ this.reemit }
+// 			>
+// 				${ this.type == 'multiple'
+// 					? html`
+// 							<xb-checkbox tabindex="-1" ?checked=${ this.selected }></xb-checkbox>
+// 					  `
+// 					: nothing }
+
+// 				<slot name="leading"></slot>
+// 				<slot></slot>
+
+// 				${ this.type != 'multiple'
+// 					? html`
+// 							<xb-icon name="check" class="check"></xb-icon>
+// 					  `
+// 					: nothing }
+// 			</button>
+// 		`;
