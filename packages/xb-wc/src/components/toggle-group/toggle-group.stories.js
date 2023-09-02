@@ -1,8 +1,10 @@
 import { html } from 'lit-html';
+import { userEvent, within } from '@storybook/testing-library';
+import { expect } from '@storybook/jest';
 import { SELECTION_TYPES } from '@welingtonms/xb-toolset/dist/selection';
 
 import { SizeArg } from '../../common/arg-types';
-import '../layout/stack';
+
 import './toggle-group';
 import './toggle';
 
@@ -23,7 +25,7 @@ const meta = {
 			},
 		},
 		size: SizeArg,
-		type: {
+		selection: {
 			control: 'inline-radio',
 			options: SELECTION_TYPES,
 		},
@@ -35,58 +37,75 @@ export default meta;
 /** @type {import('../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) => html`
-		<xb-stack>
-			<xb-toggle-group
-				type="${ args.type }"
-				size="${ args.size }"
-				@xb:change=${ args.change }
-			>
-				<xb-toggle ?disabled=${ args.disabled } value="accept">
-					<span slot="leading">&diams;</span>
-					Accept
-				</xb-toggle>
+		<xb-toggle-group
+			selection="${ args.selection }"
+			size="${ args.size }"
+			?disabled=${ args.disabled }
+			@xb:change=${ args.change }
+		>
+			<xb-toggle value="accept">
+				<span slot="leading">&diams;</span>
+				Accept
+			</xb-toggle>
 
-				<xb-toggle ?disabled=${ args.disabled } value="change">
-					<span slot="leading">&hearts;</span>
-					Change
-				</xb-toggle>
+			<xb-toggle value="change">
+				<span slot="leading">&hearts;</span>
+				Change
+			</xb-toggle>
 
-				<xb-toggle ?disabled=${ args.disabled } value="leave">
-					<span slot="leading">&clubs;</span>
-					Leave
-				</xb-toggle>
-			</xb-toggle-group>
-
-			<xb-toggle-group
-				type="${ args.type }"
-				size="${ args.size }"
-				@xb:change=${ args.change }
-			>
-				<xb-toggle ?disabled=${ args.disabled } value="change">Change</xb-toggle>
-
-				<xb-toggle ?disabled=${ args.disabled } value="accept">Accept</xb-toggle>
-
-				<xb-toggle ?disabled=${ args.disabled } value="leave">Leave</xb-toggle>
-			</xb-toggle-group>
-
-			<xb-toggle-group
-				type="${ args.type }"
-				size="${ args.size }"
-				@xb:change=${ args.change }
-			>
-				<xb-toggle ?disabled=${ args.disabled } value="change">&hearts;</xb-toggle>
-
-				<xb-toggle ?disabled=${ args.disabled } value="accept">&diams;</xb-toggle>
-
-				<xb-toggle ?disabled=${ args.disabled } value="leave">&clubs;</xb-toggle>
-			</xb-toggle-group>
-		</xb-stack>
+			<xb-toggle value="leave">
+				<span slot="leading">&clubs;</span>
+				Leave
+			</xb-toggle>
+		</xb-toggle-group>
 	`,
+	play: async ( { canvasElement, step } ) => {
+		const canvas = within( canvasElement );
+
+		await expect( canvas.getByRole( 'radiogroup' ) ).toBeInTheDocument();
+
+		await step( 'No toggle is selected', async () => {
+			await expect( canvas.getByRole( 'radio', { name: /accept/i } ) ).not.toBeChecked();
+			await expect( canvas.getByRole( 'radio', { name: /change/i } ) ).not.toBeChecked();
+			await expect( canvas.getByRole( 'radio', { name: /leave/i } ) ).not.toBeChecked();
+		} );
+
+		await step( "Select 'change' toggle", async () => {
+			await userEvent.click( canvas.getByRole( 'radio', { name: /change/i } ) );
+
+			await expect( canvas.getByRole( 'radio', { name: /accept/i } ) ).not.toBeChecked();
+			await expect( canvas.getByRole( 'radio', { name: /change/i } ) ).toBeChecked();
+			await expect( canvas.getByRole( 'radio', { name: /leave/i } ) ).not.toBeChecked();
+		} );
+
+		await step( "Select 'accept' toggle", async () => {
+			await userEvent.click( canvas.getByRole( 'radio', { name: /accept/i } ) );
+
+			await expect( canvas.getByRole( 'radio', { name: /accept/i } ) ).toBeChecked();
+			await expect( canvas.getByRole( 'radio', { name: /change/i } ) ).not.toBeChecked();
+			await expect( canvas.getByRole( 'radio', { name: /leave/i } ) ).not.toBeChecked();
+		} );
+
+		await step( "Select 'leave' toggle", async () => {
+			await userEvent.click( canvas.getByRole( 'radio', { name: /leave/i } ) );
+
+			await expect( canvas.getByRole( 'radio', { name: /accept/i } ) ).not.toBeChecked();
+			await expect( canvas.getByRole( 'radio', { name: /change/i } ) ).not.toBeChecked();
+			await expect( canvas.getByRole( 'radio', { name: /leave/i } ) ).toBeChecked();
+		} );
+
+		await step( "Unselect 'leave' toggle", async () => {
+			await userEvent.click( canvas.getByRole( 'radio', { name: /leave/i } ) );
+
+			await expect( canvas.getByRole( 'radio', { name: /accept/i } ) ).not.toBeChecked();
+			await expect( canvas.getByRole( 'radio', { name: /change/i } ) ).not.toBeChecked();
+			await expect( canvas.getByRole( 'radio', { name: /leave/i } ) ).not.toBeChecked();
+		} );
+	},
 
 	args: {
-		// emphasis: 'ghost',
-		type: 'multiple',
-		size: 'small',
+		selection: 'single',
+		size: 'extra-small',
 		disabled: false,
 	},
 };

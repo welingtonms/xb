@@ -3,10 +3,15 @@ import { html } from 'lit';
 import './toggle-group';
 import './toggle';
 
-function setup( args = { size: 'small', value: null, disabled: false, type, change } ) {
+/**
+ * @param {import('./toggle-group').ToggleGroupAttributes} args
+ */
+function setup(
+	args = { size: 'small', value: null, disabled: false, selection, change }
+) {
 	cy.mount( html`
 		<xb-toggle-group
-			type=${ args.type }
+			selection=${ args.selection }
 			size=${ args.size }
 			.value=${ args.value }
 			@xb:change=${ args.change }
@@ -22,12 +27,12 @@ describe( '<xb-toggle-group>', () => {
 	describe( 'single selection', () => {
 		it( 'mounts correctly', () => {
 			const props = {
-				type: 'single',
+				selection: 'single',
 			};
 
 			cy.mount( setup( props ) );
 
-			cy.get( 'xb-toggle-group' ).should( 'have.attr', 'role', 'group' );
+			cy.get( 'xb-toggle-group' ).should( 'have.attr', 'role', 'radiogroup' );
 
 			cy.get( 'xb-toggle' ).then( ( toggles ) => {
 				for ( const toggle of toggles ) {
@@ -40,7 +45,7 @@ describe( '<xb-toggle-group>', () => {
 		it( 'mounts correctly, with initial value', () => {
 			cy.mount(
 				setup( {
-					type: 'single',
+					selection: 'single',
 					value: 'change',
 				} )
 			);
@@ -61,7 +66,7 @@ describe( '<xb-toggle-group>', () => {
 
 			cy.mount(
 				setup( {
-					type: 'single',
+					selection: 'single',
 					change: onChangeSpy,
 					value: 'accept',
 				} )
@@ -76,7 +81,7 @@ describe( '<xb-toggle-group>', () => {
 			cy.get( '@leave' ).should( 'have.attr', 'aria-checked', 'false' );
 
 			// the position 'top' is the recommendation for [this known issue](https://docs.cypress.io/api/commands/shadow#Known-Issue)
-			cy.get( 'xb-toggle[value="change"]' ).click( 'top' );
+			cy.get( 'xb-toggle[value="change"]' ).click();
 
 			cy.get( '@accept' ).should( 'have.attr', 'aria-checked', 'false' );
 			cy.get( '@change' ).should( 'have.attr', 'aria-checked', 'true' );
@@ -89,7 +94,7 @@ describe( '<xb-toggle-group>', () => {
 				} )
 			);
 
-			cy.get( 'xb-toggle[value="change"]' ).click( 'top' );
+			cy.get( 'xb-toggle[value="change"]' ).click();
 
 			cy.get( '@accept' ).should( 'have.attr', 'aria-checked', 'false' );
 			cy.get( '@change' ).should( 'have.attr', 'aria-checked', 'false' );
@@ -107,12 +112,12 @@ describe( '<xb-toggle-group>', () => {
 	describe( 'single-strict selection', () => {
 		it( 'mounts correctly', () => {
 			const props = {
-				type: 'single-strict',
+				selection: 'single-strict',
 			};
 
 			cy.mount( setup( props ) );
 
-			cy.get( 'xb-toggle-group' ).should( 'have.attr', 'role', 'group' );
+			cy.get( 'xb-toggle-group' ).should( 'have.attr', 'role', 'radiogroup' );
 
 			cy.get( 'xb-toggle' ).then( ( toggles ) => {
 				for ( const toggle of toggles ) {
@@ -125,7 +130,7 @@ describe( '<xb-toggle-group>', () => {
 		it( 'mounts correctly, with initial value', () => {
 			cy.mount(
 				setup( {
-					type: 'single-strict',
+					selection: 'single-strict',
 					value: 'change',
 				} )
 			);
@@ -146,7 +151,7 @@ describe( '<xb-toggle-group>', () => {
 
 			cy.mount(
 				setup( {
-					type: 'single-strict',
+					selection: 'single-strict',
 					change: onChangeSpy,
 					value: 'accept',
 				} )
@@ -192,7 +197,7 @@ describe( '<xb-toggle-group>', () => {
 	describe( 'multiple selection', () => {
 		it( 'mounts correctly', () => {
 			const props = {
-				type: 'multiple',
+				selection: 'multiple',
 			};
 
 			cy.mount( setup( props ) );
@@ -210,7 +215,7 @@ describe( '<xb-toggle-group>', () => {
 		it( 'mounts correctly, with initial value', () => {
 			cy.mount(
 				setup( {
-					type: 'multiple',
+					selection: 'multiple',
 					value: [ 'accept', 'leave' ],
 				} )
 			);
@@ -231,7 +236,7 @@ describe( '<xb-toggle-group>', () => {
 
 			cy.mount(
 				setup( {
-					type: 'multiple',
+					selection: 'multiple',
 					change: onChangeSpy,
 					value: [ 'accept' ],
 				} )
