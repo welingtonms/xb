@@ -30,13 +30,7 @@ function styles() {
 
 				height: var( --xb-button-height );
 				min-width: var( --xb-button-height );
-			}
 
-			:host( [disabled] ) {
-				pointer-events: none;
-			}
-
-			.button {
 				${ transition( [
 					{ property: 'color' },
 					{ property: 'background-color' },
@@ -70,29 +64,26 @@ function styles() {
 				--xb-global-color: var( --xb-button-color );
 
 				${ outline( '--xb-button-outline-color' ) };
-
-				height: 100%;
-				width: 100%;
 			}
 
-			${ disabled( '.button' ) } {
+			:host( [disabled] ) {
 				opacity: 0.25;
 
 				cursor: default;
 				pointer-events: none;
 			}
 
-			/* When disabled, prevent mouse events from bubbling up */
-			${ disabled( '.button' ) } * {
+			:host( [disabled] ) *,
+			:host( [disabled] ) ::slotted( * ) {
 				pointer-events: none;
 				user-select: none;
 			}
 
-			${ focused( '.button' ) } {
+			:host( :is( :focus, :focus-within, :focus-visible, .is-focused ) ) {
 				--xb-button-outline-color: ${ token( 'color-primary-200', 0.2 ) };
 			}
 
-			${ active( '.button' ) } {
+			:host( :active ) {
 				--xb-button-color: ${ token( 'color-gray-500' ) };
 			}
 
@@ -106,23 +97,23 @@ function styles() {
 				${ m( token( 'spacing-0' ) ) };
 			}
 
-			.-extra-small {
+			:host( [size='extra-small'] ) {
 				${ px( token( 'spacing-1' ) ) };
 
 				font-size: ${ token( 'font-size-xs' ) };
 			}
 
-			.-small {
+			:host( [size='small'] ) {
 				/* ${ px( token( 'spacing-2' ) ) }; */
 
 				font-size: ${ token( 'font-size-sm' ) };
 			}
 
-			.-medium {
+			:host( [size='medium'] ) {
 				font-size: ${ token( 'font-size-sm' ) };
 			}
 
-			.-large {
+			:host( [size='large'] ) {
 				font-size: ${ token( 'font-size-base' ) };
 			}
 		`,

@@ -1,6 +1,5 @@
 import { css } from 'lit';
 
-import { active, hovered, enabled } from '../../styles/state.styles';
 import token from '../../utils/get-token';
 
 import baseButtonStyles from './base-button.styles';
@@ -9,72 +8,88 @@ function styles() {
 	return [
 		baseButtonStyles(),
 		css`
-			.-text {
+			:host( [emphasis='text'] ) {
 				--xb-button-background-color: ${ token( 'color-white', 0 ) };
 				--xb-button-border-color: ${ token( 'color-white', 0 ) };
 				--xb-button-color: ${ token( 'color-primary-500' ) };
 			}
 
-			${ hovered( '.-text' ) } {
+			:host( [emphasis='text']:hover ) {
 				--xb-button-background-color: ${ token( 'color-white', 0 ) };
 				--xb-button-border-color: ${ token( 'color-white', 0 ) };
 				--xb-button-color: ${ token( 'color-secondary-500' ) };
 			}
 
-			${ active( '.-text' ) } {
+			:host( [emphasis='text']:is( :active, .is-active ) ) {
 				--xb-button-background-color: ${ token( 'color-white', 0 ) };
 				--xb-button-border-color: ${ token( 'color-white', 0 ) };
 				--xb-button-color: ${ token( 'color-secondary-300' ) };
 				--xb-button-outline-color: ${ token( 'color-secondary-500', 0.2 ) };
 			}
 
-			${ enabled( '.-text' ) }:focus:hover {
+			:host(
+					[emphasis='text']:is( :focus, :focus-within, :focus-visible, .is-focused ):hover
+				) {
 				--xb-button-outline-color: ${ token( 'color-secondary-500', 0.2 ) };
 			}
 
-			.-ghost {
+			:host( [emphasis='ghost'] ) {
 				--xb-button-background-color: ${ token( 'color-white', 0 ) };
 				--xb-button-border-color: ${ token( 'color-primary-500' ) };
 				--xb-button-color: ${ token( 'color-primary-500' ) };
 			}
 
-			${ hovered( '.-ghost' ) } {
+			:host( [emphasis='ghost']:hover ) {
 				--xb-button-background-color: ${ token( 'color-primary-500' ) };
 				--xb-button-border-color: ${ token( 'color-primary-500' ) };
 				--xb-button-color: ${ token( 'color-white' ) };
 			}
 
-			${ active( '.-ghost' ) } {
+			:host( [emphasis='ghost']:is( :active, .is-active ) ) {
 				--xb-button-background-color: ${ token( 'color-primary-300' ) };
 				--xb-button-border-color: ${ token( 'color-primary-300' ) };
 				--xb-button-color: ${ token( 'color-white' ) };
 			}
 
-			${ enabled( '.-ghost' ) }:focus:hover {
+			:host(
+					[emphasis='ghost']:is(
+							:focus,
+							:focus-within,
+							:focus-visible,
+							.is-focused
+						):hover
+				) {
 				--xb-button-outline-color: ${ token( 'color-primary-500', 0.2 ) };
 			}
 
-			.-flat {
+			:host( [emphasis='flat'] ) {
 				--xb-button-background-color: ${ token( 'color-primary-500' ) };
 				--xb-button-border-color: ${ token( 'color-primary-500' ) };
 				--xb-button-color: ${ token( 'color-white' ) };
 			}
 
-			${ hovered( '.-flat' ) } {
+			:host( [emphasis='flat']:hover ) {
 				--xb-button-background-color: ${ token( 'color-secondary-500' ) };
 				--xb-button-border-color: ${ token( 'color-secondary-500' ) };
 				--xb-button-color: ${ token( 'color-white' ) };
 			}
 
-			${ active( '.-flat' ) } {
+			:host( [emphasis='flat']:is( :active, .is-active ) ) {
 				--xb-button-background-color: ${ token( 'color-secondary-300' ) };
 				--xb-button-border-color: ${ token( 'color-secondary-300' ) };
 				--xb-button-color: ${ token( 'color-white' ) };
 				--xb-button-outline-color: ${ token( 'color-secondary-500', 0.2 ) };
 			}
 
-			${ enabled( '.-flat' ) }:focus:hover {
+			:host(
+					[emphasis='flat']:is( :focus, :focus-within, :focus-visible, .is-focused ):hover
+				) {
 				--xb-button-outline-color: ${ token( 'color-secondary-500', 0.2 ) };
+			}
+
+			:host a {
+				position: absolute;
+				inset: 0;
 			}
 		`,
 	];

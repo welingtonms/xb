@@ -1,31 +1,25 @@
 import { customElement, property } from 'lit/decorators.js';
-import { html } from 'lit/static-html.js';
+import { html, nothing } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import withClassy from '@welingtonms/classy';
 
-import { convertDirectionFromAttribute } from '../layout/layout.helpers';
-import { sided } from '../../common/prop-toolset';
-import withPolymorphicTag from '../../mixins/polymorphic';
-import styles from './button.styles';
+import ButtonPatternController from '../../controllers/button-pattern';
+import LinkPatternController from '../../controllers/link-pattern';
 import XBElement from '../../common/xb-element';
+
+import styles from './button.styles';
 
 /**
  * @class
- * @mixes withPolymorphicTag
  */
 @customElement( 'xb-button' )
-export class Button extends withPolymorphicTag( XBElement ) {
+export class Button extends XBElement {
 	static styles = [ styles() ];
 
 	/**
 	 * Determine borders to be supressed.
 	 * @type {ButtonAttributes['borderless']}
 	 */
-	@property( {
-		converter: {
-			fromAttribute: convertDirectionFromAttribute,
-		},
-	} )
+	@property( { type: String } )
 	borderless;
 
 	/**
@@ -38,24 +32,20 @@ export class Button extends withPolymorphicTag( XBElement ) {
 	 * Button emphasis variant.
 	 * @type {ButtonAttributes['emphasis']}
 	 */
-	@property( { type: String } ) emphasis;
+	@property( { type: String, reflect: true } ) emphasis;
 
 	/**
 	 * Determine paddings to be supressed.
 	 * @type {ButtonAttributes['paddingless']}
 	 */
-	@property( {
-		converter: {
-			fromAttribute: convertDirectionFromAttribute,
-		},
-	} )
+	@property( { type: String } )
 	paddingless;
 
 	/**
 	 * Button size.
 	 * @type {ButtonAttributes['size']}
 	 */
-	@property( { type: String } ) size;
+	@property( { type: String, reflect: true } ) size;
 
 	/**
 	 * The type of button. When the type is `submit`, the button will submit the surrounding form. Note that the default
@@ -79,84 +69,65 @@ export class Button extends withPolymorphicTag( XBElement ) {
 	constructor() {
 		super();
 
-		this.role = 'button';
-
-		this.emphasis = 'ghost';
-
-		this.size = 'small';
-
 		this.borderless = 'none';
-
-		this.paddingless = 'none';
-
 		this.disabled = false;
-
-		this.as = 'button';
-
+		this.emphasis = 'ghost';
+		this.paddingless = 'none';
+		this.role = 'button';
+		this.size = 'small';
 		this.type = 'button';
-
-		this.target = '_blank';
 	}
 
 	connectedCallback() {
 		super.connectedCallback();
 
-		this.setAttribute( 'role', 'button' );
+		if ( this.href != null ) {
+			this.setAttribute( 'role', 'link' );
+			new LinkPatternController( this );
+		} else {
+			this.setAttribute( 'role', 'button' );
+			new ButtonPatternController( this );
+		}
 	}
 
-	focus() {
-		const button = this.shadowRoot.querySelector( this.as );
+	/**
+	 * @param {import('lit').PropertyValues<this>} changedProperties
+	 */
+	update( changedProperties ) {
+		super.update( changedProperties );
 
-		button.focus();
+		if ( changedProperties.has( 'disabled' ) ) {
+			this.setBooleanAttribute( 'aria-disabled', this.disabled );
+
+			/**
+			 * FIXME: according to https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-disabled
+			 * "there can be instances where elements need to be exposed as disabled, but are still available for users to find when navigating via the Tab key"
+			 */
+			this.setAttribute( 'tabindex', this.disabled ? '-1' : '0' );
+		}
 	}
 
 	render() {
-		const { classy, when } = withClassy( {
-			emphasis: this.emphasis,
-			size: this.size,
-		} );
-
-		const isLink = this._isLink();
-
 		return html`
-			<${ this.tag }
-				class=${ classy(
-					'button',
-					{
-						'-flat': when( { emphasis: 'flat' } ),
-						'-ghost': when( { emphasis: 'ghost' } ),
-						'-text': when( { emphasis: 'text' } ),
-					},
-					{
-						'-extra-small': when( { size: 'extra-small' } ),
-						'-small': when( { size: 'small' } ),
-						'-medium': when( { size: 'medium' } ),
-						'-large': when( { size: 'large' } ),
-					},
-					{
-						'is-disabled': this.disabled,
-					},
-					sided( 'padding', this.paddingless ),
-					sided( 'border', this.borderless )
-				) }
-				?disabled=${ ifDefined( isLink ? undefined : this.disabled ) }
-				aria-disabled=${ this.disabled ? 'true' : 'false' }
-				role=${ ifDefined( isLink ? undefined : 'button' ) }
-        		type=${ ifDefined( isLink ? undefined : this.type ) }
-				href=${ ifDefined( isLink ? this.href : undefined ) }
-				target=${ ifDefined( isLink ? this.target : undefined ) }
-				download=${ ifDefined( isLink ? this.download : undefined ) }
-				rel=${ ifDefined( isLink && this.target ? 'noreferrer noopener' : undefined ) }
-			>
-				<slot name="leading"></slot>
-				<slot></slot>
-				<slot name="trailing"></slot>
-			</${ this.tag }>
-		`;
-	}
+			<slot name="leading"></slot>
+			<slot></slot>
+			<slot name="trailing"></slot>
 
-	_isLink() {
-		return this.href ? true : false;
+			${ this.href != null
+				? html`
+						<a
+							aria-hidden="true"
+							tabindex="-1"
+							href=${ ifDefined( this.href ) }
+							target=${ ifDefined( this.target ) }
+							download=${ ifDefined( this.download ) }
+							rel=${ ifDefined( this.target ? 'noreferrer noopener' : undefined ) }
+						>
+							<slot></slot>
+						</a>
+				  `
+				: nothing }
+		`;
 	}
 }
 
@@ -180,3 +151,39 @@ export class Button extends withPolymorphicTag( XBElement ) {
  * @property {string} href
  * @property {'_blank' | '_parent' | '_self' | '_top'} target
  */
+
+// return html`
+// 			<${ this.tag }
+// 				class=${ classy(
+// 					'button',
+// 					{
+// 						'-flat': when( { emphasis: 'flat' } ),
+// 						'-ghost': when( { emphasis: 'ghost' } ),
+// 						'-text': when( { emphasis: 'text' } ),
+// 					},
+// 					{
+// 						'-extra-small': when( { size: 'extra-small' } ),
+// 						'-small': when( { size: 'small' } ),
+// 						'-medium': when( { size: 'medium' } ),
+// 						'-large': when( { size: 'large' } ),
+// 					},
+// 					{
+// 						'is-disabled': this.disabled,
+// 					},
+// 					sided( 'padding', this.paddingless ),
+// 					sided( 'border', this.borderless )
+// 				) }
+// 				?disabled=${ ifDefined( isLink ? undefined : this.disabled ) }
+// 				aria-disabled=${ this.disabled ? 'true' : 'false' }
+// 				role=${ ifDefined( isLink ? undefined : 'button' ) }
+//         		type=${ ifDefined( isLink ? undefined : this.type ) }
+// 				href=${ ifDefined( isLink ? this.href : undefined ) }
+// 				target=${ ifDefined( isLink ? this.target : undefined ) }
+// 				download=${ ifDefined( isLink ? this.download : undefined ) }
+// 				rel=${ ifDefined( isLink && this.target ? 'noreferrer noopener' : undefined ) }
+// 			>
+// 				<slot name="leading"></slot>
+// 				<slot></slot>
+// 				<slot name="trailing"></slot>
+// 			</${ this.tag }>
+// 		`;
