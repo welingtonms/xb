@@ -1,5 +1,6 @@
-// keep here arg types for storybook stories
+import { SELECTION_TYPES } from '@welingtonms/xb-toolset/dist/selection';
 
+// keep here arg types for storybook stories
 export const PlacementArg = Object.freeze( {
 	control: 'select',
 	options: [
@@ -31,6 +32,11 @@ export const PaddinglessArg = Object.freeze( {
 export const BorderlessArg = Object.freeze( {
 	control: 'check',
 	options: [ 'none', 'horizontal', 'vertical', 'top', 'right', 'bottom', 'left' ],
+} );
+
+export const SelectionArg = Object.freeze( {
+	control: 'inline-radio',
+	options: SELECTION_TYPES,
 } );
 
 /**
