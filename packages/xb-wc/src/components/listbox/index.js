@@ -1,5 +1,5 @@
-export { Menu } from './listbox';
-export { MenuItem } from './listbox-option';
+export { Listbox } from './listbox';
+export { Option } from './listbox-option';
 
 /**
  * @typedef {import('./listbox').MenuAttributes} MenuAttributes
