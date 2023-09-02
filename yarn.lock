@@ -5563,6 +5563,7 @@ __metadata:
     "@welingtonms/xb-icons": "workspace:*"
     "@welingtonms/xb-tokens": "workspace:*"
     "@welingtonms/xb-toolset": "workspace:*"
+    aria-query: 5.3.0
     babel-loader: 9.1.2
     cypress: 12.11.0
     cypress-axe: 1.4.0
@@ -5976,7 +5977,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aria-query@npm:^5.0.0":
+"aria-query@npm:5.3.0, aria-query@npm:^5.0.0":
   version: 5.3.0
   resolution: "aria-query@npm:5.3.0"
   dependencies:
