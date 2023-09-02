@@ -58,7 +58,6 @@ function styles() {
 
 			::slotted( * ) {
 				margin-block: 0;
-				width: 100%;
 			}
 
 			::slotted( *:not( :first-child ) ) {
