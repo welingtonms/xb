@@ -1,9 +1,8 @@
 import { html } from 'lit-html';
 import { userEvent, within } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
-import { SELECTION_TYPES } from '@welingtonms/xb-toolset/dist/selection';
 
-import { SizeArg } from '../../common/arg-types';
+import { SelectionArg, SizeArg } from '../../common/arg-types';
 
 import './toggle-group';
 import './toggle';
@@ -25,10 +24,7 @@ const meta = {
 			},
 		},
 		size: SizeArg,
-		selection: {
-			control: 'inline-radio',
-			options: SELECTION_TYPES,
-		},
+		selection: SelectionArg,
 	},
 };
 
