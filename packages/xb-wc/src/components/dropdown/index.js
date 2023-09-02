@@ -1,4 +1,7 @@
 export { Dropdown } from './dropdown';
+export { DropdownItem } from './dropdown-item';
+export { DropdownMenu } from './dropdown-menu';
+export { DropdownTrigger } from './dropdown-trigger';
 
 /**
  * @typedef {import('./dropdown-item').DropdownMenuItem} DropdownMenuItem

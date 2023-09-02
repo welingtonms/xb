@@ -6,7 +6,7 @@ import transition from '../../styles/transition.styles';
 function styles() {
 	return [
 		css`
-			.dropdown-trigger {
+			:host {
 				--xb-button-padding-x: ${ token( 'spacing-4' ) };
 			}
 
@@ -18,7 +18,7 @@ function styles() {
 				] ) };
 			}
 
-			.indicator.is-open {
+			:host( [aria-expanded='true'] ) .indicator {
 				transform: rotate( 180deg );
 			}
 		`,

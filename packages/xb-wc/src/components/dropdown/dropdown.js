@@ -2,18 +2,12 @@ import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { ContextProvider } from '@lit-labs/context';
 
-import FloatingElement from '../../common/floating-element';
-import { dropdownContext } from './dropdown-context';
 import { attachContextRoot } from '../../utils/context';
+import { dropdownContext } from './dropdown-context';
+import BoundaryController from '../../controllers/boundary';
+import FloatingElement from '../../common/floating-element';
 
 import styles from './dropdown.styles';
-
-import '../boundary';
-import '../focus-trap';
-import '../menu';
-import './dropdown-item';
-import './dropdown-menu';
-import './dropdown-trigger';
 
 attachContextRoot();
 
@@ -27,6 +21,9 @@ export class Dropdown extends FloatingElement {
 	 */
 	@property( { type: Boolean, reflect: true } ) disabled;
 
+	/** @type {{ boundary: BoundaryController }} */
+	_controllers;
+
 	/** @type {ContextProvider<import('./dropdown-context').DropdownContext>} */
 	_provider;
 
@@ -36,6 +33,10 @@ export class Dropdown extends FloatingElement {
 		this.position = 'absolute';
 		this.placement = 'bottom-start';
 		this.disabled = false;
+
+		this._controllers = {
+			boundary: new BoundaryController( this ),
+		};
 
 		this._provider = new ContextProvider( this, {
 			context: dropdownContext,
@@ -49,17 +50,24 @@ export class Dropdown extends FloatingElement {
 	connectedCallback() {
 		super.connectedCallback();
 
-		this.addEventListener( 'xb-dropdown-collapse', this._handleDropdownCollapse );
-		this.addEventListener( 'xb-dropdown-expand', this._handleDropdownExpand );
-		this.addEventListener( 'xb-dropdown-toggle', this._handleDropdownToggle );
+		this.addEventListener( 'xb:dropdown-collapse', this._handleDropdownCollapse );
+		this.addEventListener( 'xb:dropdown-expand', this._handleDropdownExpand );
+		this.addEventListener( 'xb:dropdown-toggle', this._handleDropdownToggle );
+		this.addEventListener( 'xb:interact-out', this._handleClickOutside );
 	}
 
 	disconnectedCallback() {
 		super.disconnectedCallback();
 
-		this.removeEventListener( 'xb-dropdown-collapse', this._handleDropdownCollapse );
-		this.removeEventListener( 'xb-dropdown-expand', this._handleDropdownExpand );
-		this.removeEventListener( 'xb-dropdown-toggle', this._handleDropdownToggle );
+		this.removeEventListener( 'xb:dropdown-collapse', this._handleDropdownCollapse );
+		this.removeEventListener( 'xb:dropdown-expand', this._handleDropdownExpand );
+		this.removeEventListener( 'xb:dropdown-toggle', this._handleDropdownToggle );
+		this.removeEventListener( 'xb:interact-out', this._handleClickOutside );
+	}
+
+	firstUpdated() {
+		this.reference.setAttribute( 'aria-controls', this.floating.id );
+		this.floating.setAttribute( 'aria-labelledby', this.reference.id );
 	}
 
 	/**
@@ -70,121 +78,112 @@ export class Dropdown extends FloatingElement {
 
 		if ( changedProperties.has( 'open' ) ) {
 			this._provider.setValue( { open: this.open, disabled: this.disabled } );
-
-			if ( this.open ) {
-				this.trap?.activate();
-			} else {
-				this.trap?.deactivate();
-				this.trigger.focus();
-			}
 		}
-	}
-
-	/**
-	 * @returns {import('./dropdown-trigger').DropdownTrigger}
-	 * */
-	get trigger() {
-		return this.reference;
-	}
-
-	/**
-	 * @returns {import('./dropdown-menu').DropdownMenu}
-	 * */
-	get menu() {
-		return this.floating;
-	}
-
-	/**
-	 * @returns {import('../focus-trap').FocusTrap}
-	 * */
-	get trap() {
-		return this.menu?.shadowRoot.querySelector( 'xb-focus-trap' );
-	}
-
-	render() {
-		return html`
-			<xb-boundary @xb-interact-out=${ this._handleClickOutside }>
-				<slot name="reference"></slot>
-				<slot name="floating"></slot>
-			</xb-boundary>
-		`;
 	}
 
 	/**
 	 * @returns {HTMLElement | null}
 	 */
 	getReferenceElement() {
-		const referenceSlot = this.shadowRoot.querySelector( 'slot[name="reference"]' );
-		const [ reference ] = referenceSlot?.assignedElements( { flatten: true } ) ?? [];
-
-		return reference;
+		return this.querySelector( '[aria-haspopup="true"]' );
 	}
 
 	/**
 	 * @returns {HTMLElement | null}
 	 */
 	getFloatingElement() {
-		const floatingSlot = this.shadowRoot.querySelector( 'slot[name="floating"]' );
-		const [ floating ] = floatingSlot?.assignedElements( { flatten: true } ) ?? [];
-
-		return floating;
+		return this.querySelector( '[role="menu"]' );
 	}
 
 	getArrowElement() {
 		return null;
 	}
 
+	render() {
+		return html`
+			<slot></slot>
+		`;
+	}
+
 	/**
 	 * Expand dropdown menu.
-	 * @param {boolean} emit - should emit `xb-dropdown-expand` event. Defaults to `true`.
+	 * @param {Object} options
+	 * @param {boolean} options.emit - should emit `xb:dropdown-expand` event. Defaults to `true`.
+	 * @param {'first' | 'last'} options.position - should focus on first or last dropdown item.
 	 */
-	expand( emit = true ) {
+	async expand( options = { emit: true, position: 'first' } ) {
+		const { emit = true, position = 'first' } = options;
+
 		this.show();
+		this._controllers.boundary.activate();
+
+		/**
+		 * this prevents that, when we expand the menu when the user presses <Enter> - the
+		 * focus applied to the floating element, which goes to the first dropdown item - from triggering
+		 * the action of that first dropdown item.
+		 */
+		window.setTimeout( () => {
+			this.floating.focus();
+			this.floating._controller.focus.focus( position );
+		}, 150 );
 
 		if ( emit ) {
-			this.emit( 'xb-dropdown-expand' );
+			this.emit( 'xb:dropdown-expand' );
 		}
 	}
 
 	/**
 	 * Collapse dropdown menu.
-	 * @param {boolean} emit - should emit `xb-dropdown-collapse` event. Defaults to `true`.
+	 * @param {Object} options
+	 * @param {boolean} options.emit - should emit `xb:dropdown-collapse` event. Defaults to `true`.
 	 */
-	collapse( emit = true ) {
+	async collapse( { emit } = { emit: true } ) {
 		this.hide();
+		this._controllers.boundary.deactivate();
+
+		window.setTimeout( () => {
+			this.floating.blur(); // forcing clear focus
+			this.reference.focus();
+		}, 0 );
 
 		if ( emit ) {
-			this.emit( 'xb-dropdown-collapse' );
+			this.emit( 'xb:dropdown-collapse' );
 		}
 	}
 
 	/**
 	 * Toggle dropdown menu.
-	 * @param {boolean} emit - should emit `xb-dropdown-expand` or `xb-dropdown-collapse` event. Defaults to `true`.
+	 * @param {Object} options
+	 * @param {boolean} options.emit - should emit `xb:dropdown-expand` or `xb-dropdown-collapse` event. Defaults to `true`.
 	 */
-	toggle( emit = true ) {
+	toggle( { emit } = { emit: true } ) {
 		if ( this.open ) {
-			this.collapse( emit );
+			this.collapse( { emit } );
 		} else {
-			this.expand( emit );
+			this.expand( { emit } );
 		}
 	}
 
-	_handleDropdownExpand() {
-		this.expand( /** emit */ false );
-	}
+	/**
+	 *
+	 * @param {CustomEvent<'up' | 'down'>} event
+	 */
+	_handleDropdownExpand = ( event ) => {
+		const { detail } = event;
+		this.expand( { emit: false, position: detail === 'up' ? 'last' : 'first' } );
+	};
 
-	_handleDropdownCollapse() {
-		this.collapse( /** emit */ false );
-	}
+	_handleDropdownCollapse = () => {
+		this.collapse( { emit: false } );
+	};
 
-	_handleDropdownToggle() {
-		this.toggle( /** emit */ false );
-	}
+	_handleDropdownToggle = () => {
+		this.toggle( { emit: false } );
+	};
 
-	_handleClickOutside() {
+	_handleClickOutside = () => {
 		this.collapse();
-	}
+	};
 }
 
 /**
