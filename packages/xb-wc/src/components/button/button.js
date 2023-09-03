@@ -1,7 +1,7 @@
 import { customElement, property } from 'lit/decorators.js';
 import { html, nothing } from 'lit';
-import { ifDefined } from 'lit/directives/if-defined.js';
 
+import asLink from '../../mixins/as-link';
 import ButtonPatternController from '../../controllers/button-pattern';
 import LinkPatternController from '../../controllers/link-pattern';
 import XBElement from '../../common/xb-element';
@@ -12,7 +12,7 @@ import styles from './button.styles';
  * @class
  */
 @customElement( 'xb-button' )
-export class Button extends XBElement {
+export class Button extends asLink( XBElement ) {
 	static styles = [ styles() ];
 
 	/**
@@ -54,18 +54,6 @@ export class Button extends XBElement {
 	 */
 	@property( { type: String } ) type;
 
-	/**
-	 * When set, the underlying button will be rendered as an `<a>` with this `href` instead of a `<button>`.
-	 * @type {ButtonAttributes['href']
-	 */
-	@property( { type: String } ) href;
-
-	/**
-	 * Tells the browser where to open the link. Only used when `href` is set.
-	 * @type {ButtonAttributes['target']}
-	 * */
-	@property( { type: String } ) target;
-
 	constructor() {
 		super();
 
@@ -73,7 +61,6 @@ export class Button extends XBElement {
 		this.disabled = false;
 		this.emphasis = 'ghost';
 		this.paddingless = 'none';
-		this.role = 'button';
 		this.size = 'small';
 		this.type = 'button';
 	}
@@ -82,10 +69,8 @@ export class Button extends XBElement {
 		super.connectedCallback();
 
 		if ( this.href != null ) {
-			this.setAttribute( 'role', 'link' );
 			new LinkPatternController( this );
 		} else {
-			this.setAttribute( 'role', 'button' );
 			new ButtonPatternController( this );
 		}
 	}
@@ -114,18 +99,7 @@ export class Button extends XBElement {
 			<slot name="trailing"></slot>
 
 			${ this.href != null
-				? html`
-						<a
-							aria-hidden="true"
-							tabindex="-1"
-							href=${ ifDefined( this.href ) }
-							target=${ ifDefined( this.target ) }
-							download=${ ifDefined( this.download ) }
-							rel=${ ifDefined( this.target ? 'noreferrer noopener' : undefined ) }
-						>
-							<slot></slot>
-						</a>
-				  `
+				? asLink.renderLink( { href: this.href, target: this.target, download: this.download } )
 				: nothing }
 		`;
 	}

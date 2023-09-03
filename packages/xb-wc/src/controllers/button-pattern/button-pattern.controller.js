@@ -34,7 +34,10 @@ class ButtonPatternController {
 	}
 
 	hostConnected() {
+		this.host.setAttribute( 'role', 'button' );
+
 		this.host.addEventListener( 'click', this._handleClick );
+
 		this.host.addEventListener( 'keydown', this._handleKeyDown );
 		this.host.addEventListener( 'keyup', this._handleKeyUp );
 		this.host.addEventListener( 'focusout', this._handleKeyUp );
@@ -42,6 +45,7 @@ class ButtonPatternController {
 
 	hostDisconnected() {
 		this.host.removeEventListener( 'click', this._handleClick );
+
 		this.host.removeEventListener( 'keydown', this._handleKeyDown );
 		this.host.removeEventListener( 'keyup', this._handleKeyUp );
 		this.host.removeEventListener( 'focusout', this._handleKeyUp );
