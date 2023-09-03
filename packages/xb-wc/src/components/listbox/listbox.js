@@ -6,8 +6,6 @@ import ListboxPatternController from '../../controllers/listbox-pattern';
 
 import styles from './listbox.styles';
 
-import '../spinner';
-
 @customElement( 'xb-listbox' )
 export class Listbox extends withSelection( Menu ) {
 	static styles = [ styles() ];
