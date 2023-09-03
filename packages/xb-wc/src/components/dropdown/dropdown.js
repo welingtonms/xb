@@ -1,7 +1,7 @@
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-import BoundaryController from '../../controllers/boundary';
+import DropdownController from './dropdown.controller';
 import FloatingElement from '../../common/floating-element';
 
 import styles from './dropdown.styles';
@@ -16,8 +16,8 @@ export class Dropdown extends FloatingElement {
 	 */
 	@property( { type: Boolean, reflect: true } ) disabled;
 
-	/** @type {{ boundary: BoundaryController }} */
-	_controllers;
+	/** @type {DropdownController} */
+	_controller;
 
 	constructor() {
 		super();
@@ -26,9 +26,7 @@ export class Dropdown extends FloatingElement {
 		this.placement = 'bottom-start';
 		this.disabled = false;
 
-		this._controllers = {
-			boundary: new BoundaryController( this ),
-		};
+		this._controller = new DropdownController( this );
 	}
 
 	connectedCallback() {
@@ -99,7 +97,7 @@ export class Dropdown extends FloatingElement {
 		const { emit = true, position = 'first' } = options;
 
 		this.show();
-		this._controllers.boundary.activate();
+		this._controller.boundary.activate();
 
 		/**
 		 * this prevents that, when we expand the menu when the user presses <Enter> - the
@@ -108,7 +106,7 @@ export class Dropdown extends FloatingElement {
 		 */
 		window.setTimeout( () => {
 			this.floating.focus();
-			this.floating._controller.focus.focus( position );
+			this._controller.focus.focus( position );
 		}, 150 );
 
 		if ( emit ) {
@@ -123,7 +121,7 @@ export class Dropdown extends FloatingElement {
 	 */
 	async collapse( { emit } = { emit: true } ) {
 		this.hide();
-		this._controllers.boundary.deactivate();
+		this._controller.boundary.deactivate();
 
 		window.setTimeout( () => {
 			this.floating.blur(); // forcing clear focus
