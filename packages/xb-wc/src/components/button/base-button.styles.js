@@ -104,8 +104,6 @@ function styles() {
 			}
 
 			:host( [size='small'] ) {
-				/* ${ px( token( 'spacing-2' ) ) }; */
-
 				font-size: ${ token( 'font-size-sm' ) };
 			}
 

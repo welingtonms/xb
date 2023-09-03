@@ -25,4 +25,12 @@
  * @typedef {'info' | 'success' | 'warn' | 'danger'} StatusProp
  */
 
+/**
+ * @typedef {import('./xb-element').default} XBElement
+ */
+
+/**
+ * @typedef {new (...args: any[]) => XBElement} Constructor
+ */
+
 export default function noop() {}

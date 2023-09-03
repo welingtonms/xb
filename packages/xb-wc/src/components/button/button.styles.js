@@ -2,11 +2,8 @@ import { css } from 'lit';
 
 import token from '../../utils/get-token';
 
-import baseButtonStyles from './base-button.styles';
-
 function styles() {
 	return [
-		baseButtonStyles(),
 		css`
 			:host( [emphasis='text'] ) {
 				--xb-button-background-color: ${ token( 'color-white', 0 ) };
@@ -27,9 +24,7 @@ function styles() {
 				--xb-button-outline-color: ${ token( 'color-secondary-500', 0.2 ) };
 			}
 
-			:host(
-					[emphasis='text']:is( :focus, :focus-within, :focus-visible, .is-focused ):hover
-				) {
+			:host( [emphasis='text']:is( :focus, :focus-within, :focus-visible, .is-focused ):hover ) {
 				--xb-button-outline-color: ${ token( 'color-secondary-500', 0.2 ) };
 			}
 
@@ -51,14 +46,7 @@ function styles() {
 				--xb-button-color: ${ token( 'color-white' ) };
 			}
 
-			:host(
-					[emphasis='ghost']:is(
-							:focus,
-							:focus-within,
-							:focus-visible,
-							.is-focused
-						):hover
-				) {
+			:host( [emphasis='ghost']:is( :focus, :focus-within, :focus-visible, .is-focused ):hover ) {
 				--xb-button-outline-color: ${ token( 'color-primary-500', 0.2 ) };
 			}
 
@@ -81,9 +69,7 @@ function styles() {
 				--xb-button-outline-color: ${ token( 'color-secondary-500', 0.2 ) };
 			}
 
-			:host(
-					[emphasis='flat']:is( :focus, :focus-within, :focus-visible, .is-focused ):hover
-				) {
+			:host( [emphasis='flat']:is( :focus, :focus-within, :focus-visible, .is-focused ):hover ) {
 				--xb-button-outline-color: ${ token( 'color-secondary-500', 0.2 ) };
 			}
 

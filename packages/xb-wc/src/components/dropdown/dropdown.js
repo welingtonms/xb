@@ -1,15 +1,10 @@
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { ContextProvider } from '@lit-labs/context';
 
-import { attachContextRoot } from '../../utils/context';
-import { dropdownContext } from './dropdown-context';
 import BoundaryController from '../../controllers/boundary';
 import FloatingElement from '../../common/floating-element';
 
 import styles from './dropdown.styles';
-
-attachContextRoot();
 
 @customElement( 'xb-dropdown' )
 export class Dropdown extends FloatingElement {
@@ -24,9 +19,6 @@ export class Dropdown extends FloatingElement {
 	/** @type {{ boundary: BoundaryController }} */
 	_controllers;
 
-	/** @type {ContextProvider<import('./dropdown-context').DropdownContext>} */
-	_provider;
-
 	constructor() {
 		super();
 
@@ -37,14 +29,6 @@ export class Dropdown extends FloatingElement {
 		this._controllers = {
 			boundary: new BoundaryController( this ),
 		};
-
-		this._provider = new ContextProvider( this, {
-			context: dropdownContext,
-			initialValue: {
-				open: false,
-				disabled: false,
-			},
-		} );
 	}
 
 	connectedCallback() {
@@ -77,7 +61,7 @@ export class Dropdown extends FloatingElement {
 		super.updated( changedProperties );
 
 		if ( changedProperties.has( 'open' ) ) {
-			this._provider.setValue( { open: this.open, disabled: this.disabled } );
+			this.reference.setBooleanAttribute( 'aria-expanded', this.open );
 		}
 	}
 

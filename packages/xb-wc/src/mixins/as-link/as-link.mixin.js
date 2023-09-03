@@ -3,13 +3,14 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { html } from 'lit';
 
 /**
- * Mixin that adds the properties necessary for the `SelectionManagerController` to work.
- * @mixin
- * @param {XBElement} superClass
- * @returns {AsLink & XBElement}
+ * Mixin that adds the properties necessary for a link element.
+ * It is not a simple base classe because we apply it to buttons rendered as
+ * links as well as to link elements.
+ * @template {!Constructor} T
+ * @param {T} BaseClass - The class to extend
  */
-function AsLinkMixin( superClass ) {
-	class AsLink extends superClass {
+function AsLinkMixin( BaseClass ) {
+	return class AsLink extends BaseClass {
 		/**
 		 * When set, the underlying button will be rendered as an `<a>` with this `href` instead of a `<button>`.
 		 * @type {string}
@@ -27,9 +28,7 @@ function AsLinkMixin( superClass ) {
 
 			this.setAttribute( 'role', 'link' );
 		}
-	}
-
-	return AsLink;
+	};
 }
 
 AsLinkMixin.renderLink = function ( { href, target, download } ) {
@@ -51,25 +50,11 @@ export default AsLinkMixin;
 
 /**
  * @typedef {import('../../common/xb-element').default} XBElement
+ * @typedef {import('../../common/prop-types').Constructor} Constructor
  */
 
 /**
- * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionType} SelectionType
- * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionState} SelectionState
- * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionStrategy} SelectionStrategy
- */
-
-/**
- * @typedef {Object} GenericSelectionOption
- * @property {string} label
- * @property {string} value
- */
-
-/**
- * @typedef {Object} CustomSelectionOption
- * @property {string} _type
- */
-
-/**
- * @typedef {string | GenericSelectionOption | CustomSelectionOption} SelectionOption
+ * @typedef {Object} AsLinkAttributes
+ * @property {string} [href]
+ * @property {'_blank' | '_parent' | '_self' | '_top'} [target]
  */
