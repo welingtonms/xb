@@ -1,9 +1,9 @@
 import { css } from 'lit';
 
-import token from '../../utils/get-token';
 import { px, py } from '../../styles/padding.styles';
 import m from '../../styles/margin.styles';
 import outline from '../../styles/outline.styles';
+import token from '../../utils/get-token';
 
 function styles() {
 	return [

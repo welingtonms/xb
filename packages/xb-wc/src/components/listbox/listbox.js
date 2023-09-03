@@ -1,29 +1,31 @@
 import { customElement } from 'lit/decorators.js';
 
-import { Menu } from '../menu/menu';
-import withSelection from '../../mixins/with-selection';
+import { BaseMenu } from '../menu';
+import WithSelection from '../../mixins/with-selection';
 import ListboxPatternController from '../../controllers/listbox-pattern';
 
-import styles from './listbox.styles';
-
+/**
+ * @class
+ * @template WithSelection, BaseMenu
+ */
 @customElement( 'xb-listbox' )
-export class Listbox extends withSelection( Menu ) {
-	static styles = [ styles() ];
+export class Listbox extends WithSelection( BaseMenu ) {
+	/** @type {ListboxPatternController} */
+	_controller;
 
 	constructor() {
 		super();
 
 		this.selection = 'multiple';
-	}
 
-	createController() {
-		return new ListboxPatternController( this );
+		this._controller = new ListboxPatternController( this );
 	}
 
 	connectedCallback() {
 		super.connectedCallback();
 
 		this.setAttribute( 'role', 'listbox' );
+		this.setAttribute( 'tabindex', 0 );
 	}
 
 	/**
@@ -31,11 +33,7 @@ export class Listbox extends withSelection( Menu ) {
 	 */
 	update( changedProperties ) {
 		if ( changedProperties.has( 'value' ) ) {
-			this._controller.selection.value = toArray( value );
-		}
-
-		if ( changedProperties.has( 'type' ) ) {
-			this._provider.setValue( { type: this.type } );
+			this._controller.selection.value = toArray( this.value );
 		}
 
 		super.update( changedProperties );
@@ -56,11 +54,10 @@ export class Listbox extends withSelection( Menu ) {
 }
 
 /**
- * @typedef {import('../../common/prop-types').HTMLTag} HTMLTag
+ * @typedef {import('../menu').BaseMenuAttributes} BaseMenuAttributes
+ * @typedef {import('../../mixins/with-selection').WithSelectionAttributes} WithSelectionAttributes
  */
 
 /**
- * @typedef {Object} ListboxAttributes
- * @property {boolean} loading - Is the menu options being loaded.
- * @property {boolean} bordered - Should the list item be bordered?
+ * @typedef {BaseMenuAttributes & WithSelectionAttributes} ListboxAttributes
  */
