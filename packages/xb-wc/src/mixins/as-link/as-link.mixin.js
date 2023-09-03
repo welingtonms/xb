@@ -13,13 +13,13 @@ function AsLinkMixin( BaseClass ) {
 	return class AsLink extends BaseClass {
 		/**
 		 * When set, the underlying button will be rendered as an `<a>` with this `href` instead of a `<button>`.
-		 * @type {string}
+		 * @type {AsLinkAttributes['href']}
 		 */
 		@property( { type: String } ) href;
 
 		/**
 		 * Tells the browser where to open the link. Only used when `href` is set.
-		 * @type {string}
+		 * @type {AsLinkAttributes['target']}
 		 * */
 		@property( { type: String } ) target;
 
