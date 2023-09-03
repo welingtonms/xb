@@ -129,7 +129,7 @@ export const Playground = {
 export const Link = {
 	render: ( args ) => html`
 		<xb-button
-			emphasis="text"
+			emphasis=${ args.emphasis }
 			paddingless=${ args.paddingless }
 			borderless=${ args.borderless }
 			size=${ args.size }

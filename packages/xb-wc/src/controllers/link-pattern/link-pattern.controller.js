@@ -29,6 +29,8 @@ class LinkPatternController {
 	}
 
 	hostConnected() {
+		this.host.setAttribute( 'role', 'link' );
+
 		this.host.addEventListener( 'click', this._handleClick, false );
 
 		this.host.addEventListener( 'keydown', this._handleKeyDown );
