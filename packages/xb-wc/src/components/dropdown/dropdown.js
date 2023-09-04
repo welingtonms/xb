@@ -27,24 +27,9 @@ export class Dropdown extends FloatingElement {
 		this.disabled = false;
 
 		this._controller = new DropdownController( this );
-	}
-
-	connectedCallback() {
-		super.connectedCallback();
 
 		this.addEventListener( 'xb:dropdown-collapse', this._handleDropdownCollapse );
-		this.addEventListener( 'xb:dropdown-expand', this._handleDropdownExpand );
 		this.addEventListener( 'xb:dropdown-toggle', this._handleDropdownToggle );
-		this.addEventListener( 'xb:interact-out', this._handleClickOutside );
-	}
-
-	disconnectedCallback() {
-		super.disconnectedCallback();
-
-		this.removeEventListener( 'xb:dropdown-collapse', this._handleDropdownCollapse );
-		this.removeEventListener( 'xb:dropdown-expand', this._handleDropdownExpand );
-		this.removeEventListener( 'xb:dropdown-toggle', this._handleDropdownToggle );
-		this.removeEventListener( 'xb:interact-out', this._handleClickOutside );
 	}
 
 	firstUpdated() {
@@ -146,25 +131,12 @@ export class Dropdown extends FloatingElement {
 		}
 	}
 
-	/**
-	 *
-	 * @param {CustomEvent<'up' | 'down'>} event
-	 */
-	_handleDropdownExpand = ( event ) => {
-		const { detail } = event;
-		this.expand( { emit: false, position: detail === 'up' ? 'last' : 'first' } );
-	};
-
 	_handleDropdownCollapse = () => {
 		this.collapse( { emit: false } );
 	};
 
 	_handleDropdownToggle = () => {
 		this.toggle( { emit: false } );
-	};
-
-	_handleClickOutside = () => {
-		this.collapse();
 	};
 }
 

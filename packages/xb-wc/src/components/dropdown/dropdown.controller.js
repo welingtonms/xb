@@ -22,6 +22,9 @@ class DropdownController {
 			boundary: new BoundaryController( host ),
 			focus: new FocusManagerController( host, {
 				query: [ `${ ITEM_QUERY }:not([disabled])` ],
+				getInteractiveElement: () => {
+					return host.getFloatingElement();
+				},
 			} ),
 			keyboard: new KeyboardSupportController( host, [
 				{
@@ -116,11 +119,13 @@ class DropdownController {
 	hostConnected() {
 		this.host.addEventListener( 'focusout', this._handleFocusOut );
 		this.host.addEventListener( 'click', this._handleOptionClick );
+		this.host.addEventListener( 'xb:interact-out', this._handleClickOutside );
 	}
 
 	hostDisconnected() {
 		this.host.removeEventListener( 'focusout', this._handleFocusOut );
 		this.host.removeEventListener( 'click', this._handleOptionClick );
+		this.host.removeEventListener( 'xb:interact-out', this._handleClickOutside );
 	}
 
 	_handleFocusOut = () => {
@@ -138,6 +143,10 @@ class DropdownController {
 		}
 
 		this.controllers.focus.focus( target );
+	};
+
+	_handleClickOutside = () => {
+		this.host.collapse();
 	};
 }
 

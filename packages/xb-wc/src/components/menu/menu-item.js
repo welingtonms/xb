@@ -10,7 +10,7 @@ import styles from './menu-item.styles';
 import '../icon';
 
 @customElement( 'xb-item' )
-export class MenuItem extends withID( XBElement ) {
+export class MenuItem extends withID( XBElement, 'xb-item' ) {
 	static styles = [ styles() ];
 
 	/**
@@ -29,6 +29,7 @@ export class MenuItem extends withID( XBElement ) {
 		super.connectedCallback();
 
 		this.setAttribute( 'role', 'menuitem' );
+		this.setAttribute( 'tabindex', -1 );
 
 		// TODO: investigat why moving this to the constructor is breaking the dropdown option click
 		this.addEventListener( 'click', this._handleClick );
