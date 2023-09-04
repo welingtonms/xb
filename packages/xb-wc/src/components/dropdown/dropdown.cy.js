@@ -190,6 +190,37 @@ describe( '<xb-dropdown>', () => {
 		cy.get( '@menu' ).should( 'not.have.attr', 'aria-activedescendant' );
 	} );
 
+	it( 'should focus via keyboard-typed search', () => {
+		// this is powed by the focus-manager
+
+		cy.mount( html`
+			<xb-dropdown>
+				<xb-dropdown-trigger id="trigger-actions">Actions</xb-dropdown-trigger>
+
+				<xb-dropdown-menu id="actions-menu">
+					<xb-dropdown-item id="item-accept">Accept</xb-dropdown-item>
+					<xb-dropdown-item id="item-change">Change</xb-dropdown-item>
+					<xb-dropdown-item id="item-leave">Leave</xb-dropdown-item>
+				</xb-dropdown-menu>
+			</xb-dropdown>
+		` );
+
+		cy.get( 'xb-dropdown' ).find( 'xb-dropdown-trigger' ).as( 'trigger' );
+		cy.get( 'xb-dropdown' ).find( 'xb-dropdown-menu' ).as( 'menu' );
+
+		cy.get( '@trigger' ).click();
+
+		cy.get( '@menu' ).should( 'have.attr', 'aria-activedescendant', 'item-accept' );
+		cy.get( '@menu' ).find( '.is-focused' ).should( 'have.text', 'Accept' );
+
+		cy.get( '@menu' ).type( 'leav' );
+
+		cy.get( '@menu' ).should( 'have.attr', 'aria-activedescendant', 'item-leave' );
+		cy.get( '@menu' ).find( '.is-focused' ).should( 'have.text', 'Leave' );
+
+		cy.get( '@trigger' ).click();
+	} );
+
 	it( 'should navigate & select using the keyboard', () => {
 		const onClickSpy = cy.stub().as( 'onClickSpy' );
 		cy.mount( html`
