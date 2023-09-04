@@ -2,7 +2,6 @@ import { html } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
 import { BaseButton } from '../button';
-import KeyboardSupportController from '../../controllers/keyboard-support';
 import withID from '../../mixins/with-id';
 
 import styles from './dropdown-trigger.styles';
@@ -10,9 +9,6 @@ import styles from './dropdown-trigger.styles';
 @customElement( 'xb-dropdown-trigger' )
 export class DropdownTrigger extends withID( BaseButton ) {
 	static styles = [ ...BaseButton.styles, styles() ];
-
-	/** @type {{ keyboard: KeyboardSupportController }} */
-	_controllers;
 
 	constructor() {
 		super();
