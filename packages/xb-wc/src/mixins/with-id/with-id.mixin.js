@@ -6,9 +6,10 @@ import generateID from '../../utils/id-generator';
  * Ensures the element has an id.
  * @mixin
  * @param {XBElement} superClass
+ * @param {string} [prefix] - Prefix for the id.
  * @returns {WithIdElement & XBElement}
  */
-const WithIdElementMixin = ( superClass ) => {
+const WithIdElementMixin = ( superClass, prefix = 'xb-element' ) => {
 	class WithIdElement extends superClass {
 		/**
 		 * Element id.
@@ -21,7 +22,7 @@ const WithIdElementMixin = ( superClass ) => {
 			super.connectedCallback();
 
 			if ( ! this.hasAttribute( 'id' ) ) {
-				this.id = `xb-element-${ generateID() }`;
+				this.id = `${ prefix }-${ generateID() }`;
 			}
 		}
 	}
