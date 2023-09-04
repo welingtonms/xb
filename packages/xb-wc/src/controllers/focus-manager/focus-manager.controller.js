@@ -41,12 +41,31 @@ class FocusManagerController {
 	active;
 
 	/**
+	 * Get the element that will receive the `aria-activedescendant` attribute. This is necessary when the
+	 * host element is not the one directly hosting the focusable elements.
+	 * If no override is provided, the host element itself is used.
+	 *
+	 * @see {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-activedescendant MDN, aria-activedescendant}
+	 * @type {(host: FocusManagerControllerHost) => HTMLElement}
+	 */
+	getInteractiveElement;
+
+	/**
 	 * @param {FocusManagerControllerHost} host
-	 * @param {{ query: string, active: boolean }} options
+	 * @param {{
+	 * 	query: string;
+	 * 	active: boolean;
+	 * 	getInteractiveElement: (host: FocusManagerControllerHost) => HTMLElement
+	 * }} options
 	 */
 	constructor( host, options ) {
 		this.query = toArray( options.query ).join( ',' );
 		this.active = Boolean( options.active ?? true );
+		this.getInteractiveElement =
+			options.getInteractiveElement ??
+			( () => {
+				return host;
+			} );
 
 		this.buffer = '';
 
@@ -200,7 +219,7 @@ class FocusManagerController {
 
 			element.classList.add( 'is-focused' );
 
-			this.host.setAttribute( 'aria-activedescendant', element.id );
+			this.getInteractiveElement().setAttribute( 'aria-activedescendant', element.id );
 			this.activeDescendant = element.id;
 		};
 
@@ -235,7 +254,7 @@ class FocusManagerController {
 	clearFocus() {
 		this.blur( this._findQueriedByID( this.activeDescendant ) );
 
-		this.host.removeAttribute( 'aria-activedescendant' );
+		this.getInteractiveElement().removeAttribute( 'aria-activedescendant' );
 		this.activeDescendant = null;
 	}
 
