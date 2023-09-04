@@ -219,6 +219,8 @@ class FocusManagerController {
 
 			element.classList.add( 'is-focused' );
 
+			// TODO: scroll element into view
+
 			this.getInteractiveElement().setAttribute( 'aria-activedescendant', element.id );
 			this.activeDescendant = element.id;
 		};
