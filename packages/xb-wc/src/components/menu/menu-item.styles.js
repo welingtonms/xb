@@ -22,8 +22,7 @@ function styles() {
 				${ transition( [ { property: 'color' }, { property: 'background-color' } ] ) };
 				${ typography( 'button' ) };
 
-				height: var( --xb-item-height );
-				width: 100%;
+				block-size: var( --xb-item-height );
 
 				cursor: pointer;
 				position: relative;
@@ -33,7 +32,6 @@ function styles() {
 				display: inline-flex;
 				align-items: center;
 				justify-content: flex-start;
-				overflow: hidden;
 				text-decoration: none;
 
 				gap: ${ token( 'spacing-2' ) };
@@ -90,7 +88,24 @@ function styles() {
 				user-select: none;
 			}
 		`,
-		sizeStyles( { property: '--xb-item-height' } ),
+		// TODO: use sizeStyles( { property: '--xb-item-height' } ),
+		css`
+			:host-context( [size='extra-small'] ) {
+				--xb-item-height: 24px;
+			}
+
+			:host-context( [size='small'] ) {
+				--xb-item-height: 40px;
+			}
+
+			:host-context( [size='medium'] ) {
+				--xb-item-height: 56px;
+			}
+
+			:host-context( [size='large'] ) {
+				--xb-item-height: 72px;
+			}
+		`,
 	];
 }
 
