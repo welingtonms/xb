@@ -27,7 +27,7 @@ export default meta;
 /** @type {import('../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) => html`
-		<xb-menu aria-label="Life choices" @click=${ args.click }>
+		<xb-menu aria-label="Life choices" size=${ args.size } @click=${ args.click }>
 			<xb-item>Accept</xb-item>
 			<xb-item>Change</xb-item>
 			<xb-item>Leave</xb-item>
