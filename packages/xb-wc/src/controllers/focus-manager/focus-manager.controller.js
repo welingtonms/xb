@@ -12,7 +12,7 @@ class FocusManagerController {
 	/** @type {FocusManagerControllerHost} */
 	host;
 
-	/** @type {Element | null} */
+	/** @type {string | null} */
 	activeDescendant;
 
 	/**
@@ -210,18 +210,17 @@ class FocusManagerController {
 					'(arg: ',
 					where,
 					')',
-					! element.id ? ' element has no id' : ''
+					! element?.id ? ' element has no id' : ''
 				);
 				return;
 			}
 
 			this.blur( this._findQueriedByID( this.activeDescendant ) );
 
+			this.getInteractiveElement( this.host ).setAttribute( 'aria-activedescendant', element.id );
 			element.classList.add( 'is-focused' );
+			element.scrollIntoView( { block: 'start', inline: 'nearest', behavior: 'smooth' } );
 
-			// TODO: scroll element into view
-
-			this.getInteractiveElement().setAttribute( 'aria-activedescendant', element.id );
 			this.activeDescendant = element.id;
 		};
 
@@ -256,7 +255,7 @@ class FocusManagerController {
 	clearFocus() {
 		this.blur( this._findQueriedByID( this.activeDescendant ) );
 
-		this.getInteractiveElement().removeAttribute( 'aria-activedescendant' );
+		this.getInteractiveElement( this.host ).removeAttribute( 'aria-activedescendant' );
 		this.activeDescendant = null;
 	}
 
@@ -340,7 +339,7 @@ class FocusManagerController {
 		const findMatchInRange = ( startAt, endAt ) => {
 			for ( let i = startAt; i < endAt; i++ ) {
 				/**
-				 * [!] Be aware that `innerText` can be expensive as it takes CSS styles into accoun (it triggers a reflow to
+				 * [!] Be aware that `innerText` can be expensive as it takes CSS styles into account (it triggers a reflow to
 				 * ensure up-to-date computed styles).
 				 * Source: https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent#differences_from_innertext
 				 * // TODO: replace `innerText` with `textContent`?
