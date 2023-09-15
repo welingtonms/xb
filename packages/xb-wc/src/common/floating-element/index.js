@@ -1,5 +1,5 @@
 export { default } from './floating-element';
-export { default as popoverStyles } from './floating-element.styles';
+export { default as floatingStyles } from './floating-element.styles';
 
 /**
  * @typedef {import('./floating-element').FloatingElementAttributes} FloatingElementAttributes
