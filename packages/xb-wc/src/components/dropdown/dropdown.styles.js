@@ -1,7 +1,7 @@
-import { popoverStyles } from '../../common/floating-element';
+import { floatingStyles } from '../../common/floating-element';
 
 function styles() {
-	return [ popoverStyles() ];
+	return [ floatingStyles() ];
 }
 
 export default styles;

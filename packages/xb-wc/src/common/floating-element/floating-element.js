@@ -2,7 +2,7 @@ import { property } from 'lit/decorators.js';
 import { computePosition, flip, shift, offset } from '@floating-ui/dom';
 
 import createLogger from '../../utils/logger';
-import XBElement from '../../common/xb-element';
+import XBElement from '../xb-element';
 
 const logger = createLogger( 'floating-element' );
 
@@ -128,23 +128,23 @@ export default class FloatingElement extends XBElement {
 			placement,
 			middleware: [ offset( 4 ), flip(), shift() ],
 		} ).then( ( { x, y, placement } ) => {
-			this.floating.style.setProperty( '--xb-popover-left', `${ x }px` );
-			this.floating.style.setProperty( '--xb-popover-top', `${ y }px` );
+			this.floating.style.setProperty( '--xb-floating-left', `${ x }px` );
+			this.floating.style.setProperty( '--xb-floating-top', `${ y }px` );
 
 			this.floating.style.setProperty(
-				'--xb-popover-border-top-left-radius',
+				'--xb-floating-border-top-left-radius',
 				`${ [ 'bottom-start', 'right-start' ].includes( placement ) ? 0 : 4 }px`
 			);
 			this.floating.style.setProperty(
-				'--xb-popover-border-top-right-radius',
+				'--xb-floating-border-top-right-radius',
 				`${ [ 'bottom-end', 'left-start' ].includes( placement ) ? 0 : 4 }px`
 			);
 			this.floating.style.setProperty(
-				'--xb-popover-border-bottom-right-radius',
+				'--xb-floating-border-bottom-right-radius',
 				`${ [ 'left-end', 'top-end' ].includes( placement ) ? 0 : 4 }px`
 			);
 			this.floating.style.setProperty(
-				'--xb-popover-border-bottom-left-radius',
+				'--xb-floating-border-bottom-left-radius',
 				`${ [ 'top-start', 'right-end' ].includes( placement ) ? 0 : 4 }px`
 			);
 		} );
