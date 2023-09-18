@@ -24,7 +24,6 @@ class ButtonPatternController {
 					},
 				],
 				callback: () => {
-					console.log( 'Button Controller', 'click' );
 					this._dispatchClick();
 				},
 			} ),
