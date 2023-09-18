@@ -1,6 +1,7 @@
 import toArray from '@welingtonms/xb-toolset/dist/to-array';
 
 import createLogger from '../../utils/logger';
+import { isPrintableCharacter } from '../../utils/string';
 
 const logger = createLogger( 'focus-manager' );
 
@@ -41,6 +42,14 @@ class FocusManagerController {
 	active;
 
 	/**
+	 * When the focus manager is active and the user types A-Z|a-z characters, the focus should
+	 * moves to the next `queried` item with a label that starts with the typed character, if such an item exists;
+	 * otherwise, focus does not move.
+	 * @type {boolean}
+	 */
+	focusOnType;
+
+	/**
 	 * Get the element that will receive the `aria-activedescendant` attribute. This is necessary when the
 	 * host element is not the one directly hosting the focusable elements.
 	 * If no override is provided, the host element itself is used.
@@ -55,17 +64,15 @@ class FocusManagerController {
 	 * @param {{
 	 * 	query: string;
 	 * 	active: boolean;
+	 * 	focusOnType: boolean;
 	 * 	getInteractiveElement: (host: FocusManagerControllerHost) => HTMLElement
 	 * }} options
 	 */
-	constructor( host, options ) {
+	constructor( host, options = {} ) {
 		this.query = toArray( options.query ).join( ',' );
 		this.active = Boolean( options.active ?? true );
-		this.getInteractiveElement =
-			options.getInteractiveElement ??
-			( () => {
-				return host;
-			} );
+		this.focusOnType = Boolean( options.focusOnType ?? true );
+		this.getInteractiveElement = options.getInteractiveElement ?? ( ( host ) => host );
 
 		this.buffer = '';
 
@@ -167,7 +174,7 @@ class FocusManagerController {
 		if ( currentFocusedIndex === -1 ) {
 			logger.debug(
 				'focusPrevious, could not get current focused (',
-				focused,
+				this.focused,
 				') index returned -1. Focusing last.'
 			);
 
@@ -196,7 +203,7 @@ class FocusManagerController {
 
 	/**
 	 * Focus the given element or the element at the given index or position ('first', 'last'), based on `queried`.
-	 * @param {number | HTMLElement | ('first' | 'last')} where
+	 * @param {number | HTMLElement | ('first' | 'last' | 'previous' | 'next')} where
 	 */
 	focus( where ) {
 		/**
@@ -231,11 +238,19 @@ class FocusManagerController {
 			focusElement( this.queried.at( index ) );
 		};
 
+		/**
+		 *
+		 * @param {'first' | 'last' | 'previous' | 'next'} position
+		 */
 		const focusPosition = ( position ) => {
 			if ( position === 'first' ) {
 				focusElement( this.queried.at( 0 ) );
 			} else if ( position === 'last' ) {
 				focusElement( this.queried.at( this.queried.length - 1 ) );
+			} else if ( position === 'previous' ) {
+				this.focusPrevious();
+			} else if ( position === 'next' ) {
+				this.focusNext();
 			}
 		};
 
@@ -297,12 +312,17 @@ class FocusManagerController {
 	};
 
 	_subscribe() {
-		logger.debug( 'focus management is on [', this.host.tag, ']' );
+		if ( ! this.focusOnType ) {
+			logger.debug( 'focus on type is disabled. will not listen to keyup events' );
+			return;
+		}
+
+		logger.debug( 'focus on type is on for ', this.host.tag );
 		this.host.addEventListener( 'keyup', this._handleKeyPress );
 	}
 
 	_unsubscribe() {
-		logger.debug( 'focus management is off[', this.host.tag, ']' );
+		logger.debug( 'focus on type is off for ', this.host.tag );
 		this.host.removeEventListener( 'keyup', this._handleKeyPress );
 	}
 
@@ -313,10 +333,6 @@ class FocusManagerController {
 	 */
 	_handleKeyPress = ( event ) => {
 		const { key } = event;
-
-		const isPrintableCharacter = ( str ) => {
-			return str.length === 1 && str.match( /\S/ );
-		};
 
 		if ( ! isPrintableCharacter( key ) ) {
 			return;
@@ -360,12 +376,9 @@ class FocusManagerController {
 
 		clearBufferAfterDelay();
 
-		// TODO: produce one single list
-		let nextMatch = findMatchInRange( searchIndex + 1, queried.length );
-
-		if ( ! nextMatch ) {
-			nextMatch = findMatchInRange( 0, searchIndex );
-		}
+		// try to find after the current index; if none found, try to find before the current index.
+		let nextMatch =
+			findMatchInRange( searchIndex + 1, queried.length ) || findMatchInRange( 0, searchIndex );
 
 		if ( nextMatch != null ) {
 			logger.debug( 'found next match for focus', nextMatch );
