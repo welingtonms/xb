@@ -7,7 +7,6 @@ export class DropdownMenu extends BaseMenu {
 	connectedCallback() {
 		super.connectedCallback();
 
-		this.setAttribute( 'role', 'menu' );
 		this.setAttribute( 'tabindex', -1 );
 	}
 }

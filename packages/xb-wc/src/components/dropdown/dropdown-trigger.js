@@ -2,12 +2,16 @@ import { html } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
 import { BaseButton } from '../button';
-import withID from '../../mixins/with-id';
+import WithID from '../../mixins/with-id';
 
 import styles from './dropdown-trigger.styles';
 
+/**
+ * @class
+ * @template WithID, BaseButton
+ */
 @customElement( 'xb-dropdown-trigger' )
-export class DropdownTrigger extends withID( BaseButton ) {
+export class DropdownTrigger extends WithID( BaseButton ) {
 	static styles = [ ...BaseButton.styles, styles() ];
 
 	constructor() {
