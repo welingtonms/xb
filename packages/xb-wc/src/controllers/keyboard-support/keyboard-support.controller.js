@@ -32,11 +32,26 @@ class KeyboardSupport {
 	keymap;
 
 	/**
+	 * Get the element to which the keyboard event listener should be attached.
+	 * This can useful when you want to prevent [retargetting](https://lit.dev/docs/components/events/#shadowdom), which happens for
+	 * events fired from the component's shadow DOM.
+	 *
+	 * By default, the target element will be the `host` element.
+	 *
+	 * @see {@link https://lit.dev/docs/components/events/#adding-event-listeners-to-the-component-or-its-shadow-root Lit, Adding event listeners to the component or its shadow root}
+	 * @type {(host: KeyboardSupportControllerHost) => HTMLElement}
+	 */
+	getEventTarget;
+
+	/**
 	 *
 	 * @param {ReactiveControllerHost} host
 	 * @param {KeyboardSupportProps['keymap']} keymap
+	 * @param {{
+	 * 	getEventTarget: (host: KeyboardSupportControllerHost) => HTMLElement
+	 * }} options
 	 */
-	constructor( host, keymap ) {
+	constructor( host, keymap, options = {} ) {
 		this.keymap = new Map(
 			toArray( keymap ).reduce( ( map, { shortcut, callback } ) => {
 				function createShortcut( shortcut ) {
@@ -46,27 +61,29 @@ class KeyboardSupport {
 				return map.concat( toArray( shortcut ).map( createShortcut ) );
 			}, [] )
 		);
+		this.getEventTarget = options.getEventTarget ?? ( ( host ) => host );
 
 		( this.host = host ).addController( this );
 	}
 
-	hostConnected() {
-		this.host.addEventListener( 'keyup', this._handleKeyPress );
+	async hostConnected() {
+		this.getEventTarget( this.host ).addEventListener( 'keyup', this._handleKeyUp );
 	}
 
 	hostDisconnected() {
-		this.host.removeEventListener( 'keyup', this._handleKeyPress );
+		this.getEventTarget( this.host ).removeEventListener( 'keyup', this._handleKeyUp );
 	}
 
 	/**
 	 * @param {KeyboardEvent} event
 	 */
-	_handleKeyPress = ( event ) => {
+	_handleKeyUp = ( event ) => {
 		const shortcut = getShortcutKey( {
 			key: event.key,
 			meta: event.metaKey,
 			shift: event.shiftKey,
 			ctrl: event.ctrlKey,
+			alt: event.altKey,
 		} );
 
 		if ( ! this.keymap.has( shortcut ) ) {
@@ -75,9 +92,8 @@ class KeyboardSupport {
 		}
 
 		const callback = this.keymap.get( shortcut );
-		callback( event );
 
-		return false;
+		callback( event );
 	};
 }
 
@@ -95,6 +111,7 @@ export default KeyboardSupport;
  * @property {boolean} meta - is the meta (Command for Mac, Windows for MS Windows) key pressed?
  * @property {boolean} shift - is the shift key pressed?
  * @property {boolean} ctrl - is the ctrl key pressed?
+ * @property {boolean} alt - is the alt key pressed?
  */
 
 /**
@@ -107,4 +124,8 @@ export default KeyboardSupport;
 /**
  * @typedef {Object} KeyboardSupportProps
  * @property {Keymap | Keymap[]} keymap
+ */
+
+/**
+ * @typedef {ReactiveControllerHost & XBElement} KeyboardSupportControllerHost
  */
