@@ -44,6 +44,7 @@ export const Playground = {
 	render: ( args ) => html`
 		<xb-listbox
 			aria-label="Life choices"
+			tabindex="0"
 			selection=${ args.selection }
 			?bordered=${ args.bordered }
 			?loading=${ args.loading }

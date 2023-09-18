@@ -11,6 +11,11 @@ function styles() {
 				--xb-icon-color: ${ token( 'color-blue-600' ) };
 
 				margin-left: auto;
+				visibility: hidden;
+			}
+
+			:host( [aria-selected='true'] ) .check {
+				visibility: visible;
 			}
 		`,
 	];

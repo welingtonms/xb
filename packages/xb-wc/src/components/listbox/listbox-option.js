@@ -1,7 +1,7 @@
-import { html, nothing } from 'lit';
+import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-import { MenuItem } from '../menu/menu-item';
+import { MenuItem } from '../menu';
 
 import styles from './listbox-option.styles';
 
@@ -61,11 +61,7 @@ export class Option extends MenuItem {
 		return html`
 			<slot name="leading"></slot>
 			<slot></slot>
-			${ this.selected
-				? html`
-						<xb-icon name="check" class="check"></xb-icon>
-				  `
-				: nothing }
+			<xb-icon name="check" class="check"></xb-icon>
 		`;
 	}
 }

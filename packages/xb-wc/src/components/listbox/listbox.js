@@ -1,15 +1,15 @@
 import { customElement } from 'lit/decorators.js';
 
-import { BaseMenu } from '../menu';
+import { BaseListbox } from './base-listbox';
 import WithSelection from '../../mixins/with-selection';
 import ListboxPatternController from '../../controllers/listbox-pattern';
 
 /**
  * @class
- * @template WithSelection, BaseMenu
+ * @template WithSelection, BaseListbox
  */
 @customElement( 'xb-listbox' )
-export class Listbox extends WithSelection( BaseMenu ) {
+export class Listbox extends WithSelection( BaseListbox ) {
 	/** @type {ListboxPatternController} */
 	_controller;
 
@@ -24,8 +24,7 @@ export class Listbox extends WithSelection( BaseMenu ) {
 	connectedCallback() {
 		super.connectedCallback();
 
-		this.setAttribute( 'role', 'listbox' );
-		this.setAttribute( 'tabindex', 0 );
+		this.setAttribute( 'tabindex', this.tabIndex ?? '0' );
 	}
 
 	/**
@@ -54,10 +53,10 @@ export class Listbox extends WithSelection( BaseMenu ) {
 }
 
 /**
- * @typedef {import('../menu').BaseMenuAttributes} BaseMenuAttributes
+ * @typedef {import('./base-listbox').BaseListboxAttributes} BaseListboxAttributes
  * @typedef {import('../../mixins/with-selection').WithSelectionAttributes} WithSelectionAttributes
  */
 
 /**
- * @typedef {BaseMenuAttributes & WithSelectionAttributes} ListboxAttributes
+ * @typedef {BaseListboxAttributes & WithSelectionAttributes} ListboxAttributes
  */
