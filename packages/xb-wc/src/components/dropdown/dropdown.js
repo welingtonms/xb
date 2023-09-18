@@ -74,12 +74,12 @@ export class Dropdown extends FloatingElement {
 
 	/**
 	 * Expand dropdown menu.
-	 * @param {Object} options
-	 * @param {boolean} options.emit - should emit `xb:dropdown-expand` event. Defaults to `true`.
-	 * @param {'first' | 'last'} options.position - should focus on first or last dropdown item.
+	 * @param {Object} args
+	 * @param {boolean} args.emit - should emit `xb:dropdown-expand` event. Defaults to `true`.
+	 * @param {'first' | 'last'} args.position - should focus on first or last dropdown item.
 	 */
-	async expand( options = { emit: true, position: 'first' } ) {
-		const { emit = true, position = 'first' } = options;
+	async expand( args = { emit: true, position: 'first' } ) {
+		const { emit = true, position = 'first' } = args;
 
 		this.show();
 		this._controller.boundary.activate();
@@ -101,8 +101,8 @@ export class Dropdown extends FloatingElement {
 
 	/**
 	 * Collapse dropdown menu.
-	 * @param {Object} options
-	 * @param {boolean} options.emit - should emit `xb:dropdown-collapse` event. Defaults to `true`.
+	 * @param {Object} args
+	 * @param {boolean} args.emit - should emit `xb:dropdown-collapse` event. Defaults to `true`.
 	 */
 	async collapse( { emit } = { emit: true } ) {
 		this.hide();
@@ -120,8 +120,8 @@ export class Dropdown extends FloatingElement {
 
 	/**
 	 * Toggle dropdown menu.
-	 * @param {Object} options
-	 * @param {boolean} options.emit - should emit `xb:dropdown-expand` or `xb-dropdown-collapse` event. Defaults to `true`.
+	 * @param {Object} args
+	 * @param {boolean} args.emit - should emit `xb:dropdown-expand` or `xb-dropdown-collapse` event. Defaults to `true`.
 	 */
 	toggle( { emit } = { emit: true } ) {
 		if ( this.open ) {

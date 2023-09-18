@@ -8,6 +8,10 @@ import styles from './base-menu.styles';
 
 import '../spinner';
 
+/**
+ * This class implements the base menu component, exposing necessary
+ * attributes and the rendered content; it does NOT uses the Menu Controller.
+ */
 export class BaseMenu extends withID( XBElement ) {
 	static styles = [ styles() ];
 
@@ -28,6 +32,12 @@ export class BaseMenu extends withID( XBElement ) {
 
 		this.bordered = false;
 		this.loading = false;
+	}
+
+	connectedCallback() {
+		super.connectedCallback();
+
+		this.setAttribute( 'role', 'menu' );
 	}
 
 	render() {
