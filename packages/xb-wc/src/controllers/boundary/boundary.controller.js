@@ -83,8 +83,6 @@ class BoundaryController {
 			// this.deactivate();
 			this.host.emit( 'xb:interact-out' );
 		} else if ( isInside ) {
-			logger.debug( 'event happened inside host.' );
-
 			// this.activate();
 			this.host.emit( 'xb:interact-in' );
 		}
