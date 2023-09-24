@@ -47,24 +47,18 @@ export const Playground = {
 	play: async ( { canvasElement } ) => {
 		const canvas = within( canvasElement );
 
-		await expect( canvas.getByText( 'Actions' ) ).toBeInTheDocument();
+		await expect( canvas.getByRole( 'button', { name: /actions/i } ) ).toBeInTheDocument();
 		await expect( canvas.queryByRole( 'menu' ) ).not.toBeInTheDocument();
 
 		await userEvent.click( canvas.getByText( 'Actions' ) );
 
 		await expect( canvas.getByRole( 'menu' ) ).toBeInTheDocument();
 
-		await expect(
-			canvas.getByRole( 'menuitem', { name: /accept/i } )
-		).toBeInTheDocument();
+		await expect( canvas.getByRole( 'menuitem', { name: /accept/i } ) ).toBeInTheDocument();
 
-		await expect(
-			canvas.getByRole( 'menuitem', { name: /change/i } )
-		).toBeInTheDocument();
+		await expect( canvas.getByRole( 'menuitem', { name: /change/i } ) ).toBeInTheDocument();
 
-		await expect(
-			canvas.getByRole( 'menuitem', { name: /leave/i } )
-		).toBeInTheDocument();
+		await expect( canvas.getByRole( 'menuitem', { name: /leave/i } ) ).toBeInTheDocument();
 
 		await userEvent.click( canvas.getByRole( 'menuitem', { name: /change/i } ) );
 

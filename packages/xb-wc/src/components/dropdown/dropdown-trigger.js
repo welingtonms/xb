@@ -23,6 +23,7 @@ export class DropdownTrigger extends WithID( BaseButton ) {
 	connectedCallback() {
 		super.connectedCallback();
 
+		this.setAttribute( 'role', 'button' );
 		this.setAttribute( 'aria-haspopup', 'true' );
 	}
 
@@ -32,10 +33,6 @@ export class DropdownTrigger extends WithID( BaseButton ) {
 			<slot></slot>
 			<xb-icon name="expand-more" size="16" class="indicator"></xb-icon>
 		`;
-	}
-
-	_handleClick() {
-		this.emit( 'xb:dropdown-toggle' );
 	}
 }
 
