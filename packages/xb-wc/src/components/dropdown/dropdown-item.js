@@ -11,7 +11,5 @@ export class DropdownItem extends MenuItem {
 
 			return;
 		}
-
-		this.emit( 'xb:dropdown-collapse' );
 	};
 }

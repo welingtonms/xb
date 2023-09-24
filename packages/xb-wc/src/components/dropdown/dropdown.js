@@ -1,10 +1,14 @@
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-import DropdownController from './dropdown.controller';
+import BoundaryController from '../../controllers/boundary';
 import FloatingElement from '../../common/floating-element';
+import FocusManagerController from '../../controllers/focus-manager';
+import KeyboardSupportController from '../../controllers/keyboard-support';
 
 import styles from './dropdown.styles';
+
+const ITEM_QUERY = '[role="menuitem"]';
 
 @customElement( 'xb-dropdown' )
 export class Dropdown extends FloatingElement {
@@ -16,8 +20,8 @@ export class Dropdown extends FloatingElement {
 	 */
 	@property( { type: Boolean, reflect: true } ) disabled;
 
-	/** @type {DropdownController} */
-	_controller;
+	/** @type {DropdownControllers} */
+	_controllers;
 
 	constructor() {
 		super();
@@ -26,10 +30,102 @@ export class Dropdown extends FloatingElement {
 		this.placement = 'bottom-start';
 		this.disabled = false;
 
-		this._controller = new DropdownController( this );
+		this._controllers = {
+			boundary: new BoundaryController( this ),
+			focus: new FocusManagerController( this, {
+				query: [ `${ ITEM_QUERY }:not([disabled])` ],
+				getInteractiveElement: ( host ) => {
+					return host.getFloatingElement();
+				},
+			} ),
+			keyboard: new KeyboardSupportController( this, [
+				{
+					shortcut: {
+						key: 'ArrowUp',
+					},
+					/**
+					 * @param {KeyboardEvent} event
+					 */
+					callback: ( event ) => {
+						if ( event.target.matches( 'xb-dropdown-trigger' ) ) {
+							this.expand( { position: 'last' } );
 
-		this.addEventListener( 'xb:dropdown-collapse', this._handleDropdownCollapse );
-		this.addEventListener( 'xb:dropdown-toggle', this._handleDropdownToggle );
+							return;
+						}
+
+						if ( event.target.matches( 'xb-dropdown-menu' ) ) {
+							this._controllers.focus.focusPrevious();
+
+							return;
+						}
+					},
+				},
+				{
+					shortcut: {
+						key: 'ArrowDown',
+					},
+					/**
+					 * @param {KeyboardEvent} event
+					 */
+					callback: ( event ) => {
+						if ( event.target.matches( 'xb-dropdown-trigger' ) ) {
+							this.expand( { emit: false, position: 'first' } );
+
+							return;
+						}
+
+						if ( event.target.matches( 'xb-dropdown-menu' ) ) {
+							this._controllers.focus.focusNext();
+
+							return;
+						}
+					},
+				},
+				{
+					shortcut: [
+						{
+							key: 'Enter',
+						},
+						{
+							key: ' ',
+						},
+					],
+					callback: ( event ) => {
+						if ( event.target.matches( 'xb-dropdown-trigger' ) ) {
+							this.toggle( { emit: false, position: 'first' } );
+
+							return;
+						}
+
+						if ( event.target.matches( 'xb-dropdown-menu' ) ) {
+							const item = this._controllers.focus.focused;
+							item.click();
+
+							return;
+						}
+					},
+				},
+				{
+					shortcut: [
+						{
+							key: 'Tab',
+						},
+						{
+							key: 'Tab',
+							shift: true,
+						},
+					],
+					callback: ( event ) => {
+						if ( event.target.matches( 'xb-dropdown-trigger' ) && this.open ) {
+							this._handleClickOutside();
+						}
+					},
+				},
+			] ),
+		};
+
+		this.addEventListener( 'click', this._handleClick );
+		this.addEventListener( 'xb:interact-out', this._handleClickOutside );
 	}
 
 	firstUpdated() {
@@ -75,47 +171,35 @@ export class Dropdown extends FloatingElement {
 	/**
 	 * Expand dropdown menu.
 	 * @param {Object} args
-	 * @param {boolean} args.emit - should emit `xb:dropdown-expand` event. Defaults to `true`.
 	 * @param {'first' | 'last'} args.position - should focus on first or last dropdown item.
 	 */
-	async expand( args = { emit: true, position: 'first' } ) {
-		const { emit = true, position = 'first' } = args;
+	async expand( args = { position: 'first' } ) {
+		const { position = 'first' } = args;
 
 		this.show();
-		this._controller.boundary.activate();
 
-		/**
-		 * this prevents that, when we expand the menu when the user presses <Enter> - the
-		 * focus applied to the floating element, which goes to the first dropdown item - from triggering
-		 * the action of that first dropdown item.
-		 */
-		window.setTimeout( () => {
-			this.floating.focus();
-			this._controller.focus.focus( position );
-		}, 150 );
+		await this.updateComplete;
 
-		if ( emit ) {
-			this.emit( 'xb:dropdown-expand' );
-		}
+		this.floating.focus();
+		this._controllers.focus.focus( position );
+		this._controllers.boundary.activate();
+
+		this.emit( 'xb:dropdown-expand' );
 	}
 
 	/**
 	 * Collapse dropdown menu.
-	 * @param {Object} args
-	 * @param {boolean} args.emit - should emit `xb:dropdown-collapse` event. Defaults to `true`.
 	 */
-	async collapse( { emit } = { emit: true } ) {
+	async collapse() {
 		this.hide();
-		this._controller.boundary.deactivate();
 
-		window.setTimeout( () => {
-			this.floating.blur(); // forcing clear focus
-			this.reference.focus();
-		}, 0 );
+		await this.updateComplete;
 
-		if ( emit ) {
-			this.emit( 'xb:dropdown-collapse' );
-		}
+		this._controllers.boundary.deactivate();
+		this._controllers.focus.clear();
+		this.reference.focus();
+
+		this.emit( 'xb:dropdown-collapse' );
 	}
 
 	/**
@@ -123,20 +207,39 @@ export class Dropdown extends FloatingElement {
 	 * @param {Object} args
 	 * @param {boolean} args.emit - should emit `xb:dropdown-expand` or `xb-dropdown-collapse` event. Defaults to `true`.
 	 */
-	toggle( { emit } = { emit: true } ) {
+	toggle( args ) {
 		if ( this.open ) {
-			this.collapse( { emit } );
+			this.collapse();
 		} else {
-			this.expand( { emit } );
+			this.expand( args );
 		}
 	}
 
-	_handleDropdownCollapse = () => {
-		this.collapse( { emit: false } );
+	/**
+	 * @param {Event} event
+	 */
+	_handleClick = ( event ) => {
+		const { target } = event;
+
+		// we are only interested in dropdown items
+		if ( target.matches( ITEM_QUERY ) ) {
+			/**
+			 * we set focus so we can trigger the item click event when the user
+			 * presses <Enter> or <Space>, through the KeyboardSupportController.
+			 */
+			this._controllers.focus.focus( target );
+
+			this.collapse();
+			return;
+		}
+
+		if ( event.target.matches( 'xb-dropdown-trigger' ) ) {
+			this.toggle();
+		}
 	};
 
-	_handleDropdownToggle = () => {
-		this.toggle( { emit: false } );
+	_handleClickOutside = () => {
+		this.collapse();
 	};
 }
 
@@ -154,5 +257,15 @@ export class Dropdown extends FloatingElement {
  */
 
 /**
- * @typedef {import('./interaction-boundary').InteractionBoundary} InteractionBoundary
+ * @typedef {import('../../controllers/focus-manager').default} FocusManagerController
+ * @typedef {import('../../controllers/keyboard-support').default} KeyboardSupportController
+ * @typedef {import('../../controllers/boundary').default} BoundaryController
+ */
+
+/**
+ * @typedef {{
+ *  boundary: BoundaryController;
+ * 	focus: FocusManagerController;
+ * 	keyboard: KeyboardSupportController;
+ * }} DropdownControllers
  */
