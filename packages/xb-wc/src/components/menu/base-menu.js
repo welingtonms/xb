@@ -10,7 +10,7 @@ import '../spinner';
 
 /**
  * This class implements the base menu component, exposing necessary
- * attributes and the rendered content; it does NOT uses the Menu Controller.
+ * attributes and the rendered content; it does NOT use the Menu Controller.
  */
 export class BaseMenu extends withID( XBElement ) {
 	static styles = [ styles() ];

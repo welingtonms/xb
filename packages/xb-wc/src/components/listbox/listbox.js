@@ -4,10 +4,6 @@ import { BaseListbox } from './base-listbox';
 import WithSelection from '../../mixins/with-selection';
 import ListboxPatternController from '../../controllers/listbox-pattern';
 
-/**
- * @class
- * @template WithSelection, BaseListbox
- */
 @customElement( 'xb-listbox' )
 export class Listbox extends WithSelection( BaseListbox ) {
 	/** @type {ListboxPatternController} */

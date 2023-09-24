@@ -2,8 +2,9 @@ import { property } from 'lit/decorators.js';
 
 /**
  * Mixin that adds the properties necessary for the `SelectionManagerController` to work.
- * @template {!Constructor} T
- * @param {T} BaseClass - The class to extend
+ * @mixin
+ * @param {import('../../common/prop-types').Constructor<XBElement>} BaseClass
+ * @returns {import('../../common/prop-types').Constructor<WithSelectionAttributes> & XBElement}
  */
 const WithSelectionMixin = ( BaseClass ) =>
 	class WithSelection extends BaseClass {
@@ -25,7 +26,7 @@ export default WithSelectionMixin;
 
 /**
  * @typedef {import('../../common/xb-element').default} XBElement
- * @typedef {import('../../common/prop-types').Constructor} Constructor
+ * @typedef {import('../../common/prop-types').Constructor<XBElement> & XBElement}
  */
 
 /**
