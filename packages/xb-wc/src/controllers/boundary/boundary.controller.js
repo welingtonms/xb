@@ -21,7 +21,7 @@ class BoundaryController {
 	 */
 	constructor( host, active ) {
 		this.host = host;
-		this.active = active ?? false;
+		this.active = Boolean( active ?? false );
 
 		this.host.addController( this );
 	}
@@ -64,14 +64,14 @@ class BoundaryController {
 		document.addEventListener( 'mousedown', this._handleEvent );
 		document.addEventListener( 'keyup', this._handleEvent );
 		document.addEventListener( 'touchend', this._handleEvent );
-		window.addEventListener( 'blur', this._handleBlurEvent );
+		window.addEventListener( 'blur', this._handleBlurEvent, true );
 	}
 
 	_unsubscribe() {
 		document.removeEventListener( 'mousedown', this._handleEvent );
 		document.removeEventListener( 'keyup', this._handleEvent );
 		document.removeEventListener( 'touchend', this._handleEvent );
-		window.removeEventListener( 'blur', this._handleBlurEvent );
+		window.removeEventListener( 'blur', this._handleBlurEvent, true );
 	}
 
 	_handleEvent = ( event ) => {
@@ -80,10 +80,8 @@ class BoundaryController {
 		if ( ! isInside || Keyboard( event ).is( 'ESC' ) ) {
 			logger.debug( 'event happened out host, or <esc> was pressed.' );
 
-			// this.deactivate();
 			this.host.emit( 'xb:interact-out' );
 		} else if ( isInside ) {
-			// this.activate();
 			this.host.emit( 'xb:interact-in' );
 		}
 	};
@@ -94,11 +92,6 @@ class BoundaryController {
 		if ( ! isInside ) {
 			logger.debug( 'host was blurred.' );
 
-			/**
-			 * if the blur event happened in the watched element and the boundary
-			 * watcher is activated, then we deactivate it
-			 */
-			// this.deactivate();
 			this.host.emit( 'xb:interact-out' );
 		}
 	};
