@@ -104,7 +104,7 @@ class ListboxPatternController {
 	};
 
 	_handleFocusOut = () => {
-		this.controllers.focus.clearFocus();
+		this.controllers.focus.clear();
 	};
 
 	/**
