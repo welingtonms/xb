@@ -92,9 +92,7 @@ class ToggleGroupController {
 
 	_handleFocusIn = () => {
 		// TODO: adjust to comply with https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#focusabilityofdisabledcontrols
-		const firstSelected = this.queried.find(
-			( item ) => item.checked && ! item.disabled
-		);
+		const firstSelected = this.queried.find( ( item ) => item.checked && ! item.disabled );
 
 		if ( ! firstSelected ) {
 			this.controllers.focus.focusFirst();
@@ -104,7 +102,7 @@ class ToggleGroupController {
 	};
 
 	_handleFocusOut = () => {
-		this.controllers.focus.clearFocus();
+		this.controllers.focus.clear();
 	};
 
 	/**

@@ -95,9 +95,7 @@ class MenuPatternController {
 	}
 
 	_handleFocusIn = () => {
-		const firstSelected = this.queried.find(
-			( item ) => item.selected && ! item.disabled
-		);
+		const firstSelected = this.queried.find( ( item ) => item.selected && ! item.disabled );
 
 		if ( ! firstSelected ) {
 			this.controllers.focus.focusFirst();
@@ -107,7 +105,7 @@ class MenuPatternController {
 	};
 
 	_handleFocusOut = () => {
-		this.controllers.focus.clearFocus();
+		this.controllers.focus.clear();
 	};
 
 	/**
