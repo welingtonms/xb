@@ -21,10 +21,10 @@ export function getShortcutKey( shortcut ) {
 }
 
 /**
- * Allow a component to be rendered as any HTML tag through the attribute `as`..
+ * Enable a component to implement behavior based on shortcuts.
  * @implements {ReactiveController}
  */
-class KeyboardSupport {
+class KeyboardSupportController {
 	/** @type {ReactiveControllerHost & XBElement} */
 	host;
 
@@ -47,9 +47,7 @@ class KeyboardSupport {
 	 *
 	 * @param {ReactiveControllerHost} host
 	 * @param {KeyboardSupportProps['keymap']} keymap
-	 * @param {{
-	 * 	getEventTarget: (host: KeyboardSupportControllerHost) => HTMLElement
-	 * }} options
+	 * @param {KeyboardSupportControllerOptions} options
 	 */
 	constructor( host, keymap, options = {} ) {
 		this.keymap = new Map(
@@ -97,7 +95,7 @@ class KeyboardSupport {
 	};
 }
 
-export default KeyboardSupport;
+export default KeyboardSupportController;
 
 /**
  * @typedef {import('lit').ReactiveController} ReactiveController
@@ -128,4 +126,10 @@ export default KeyboardSupport;
 
 /**
  * @typedef {ReactiveControllerHost & XBElement} KeyboardSupportControllerHost
+ */
+
+/**
+ * @typedef {{
+ * 	getEventTarget: (host: KeyboardSupportControllerHost) => HTMLElement
+ * }} KeyboardSupportControllerOptions
  */
