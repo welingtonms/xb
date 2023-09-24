@@ -155,6 +155,12 @@ export function TestingFactory( factory ) {
 	};
 }
 
+let count = 0;
+
+export function generateElementName() {
+	return `x-element-${ count++ }`;
+}
+
 /**
  * @typedef {Object} TestingFactoryArgs
  * @property {(scenario: string, fn: (...args: unknown[]) => void) => void} Given Used to describe the initial context of the tested scenario.
