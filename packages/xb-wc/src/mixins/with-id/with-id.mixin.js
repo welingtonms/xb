@@ -5,9 +5,9 @@ import generateID from '../../utils/id-generator';
 /**
  * Ensures the element has an id.
  * @mixin
- * @param {XBElement} superClass
+ * @param {import('../../common/prop-types').Constructor<XBElement>} superClass
  * @param {string} [prefix] - Prefix for the id.
- * @returns {WithIdElement & XBElement}
+ * @returns {T}
  */
 const WithIdElementMixin = ( superClass, prefix = 'xb-element' ) => {
 	class WithIdElement extends superClass {

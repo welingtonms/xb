@@ -7,8 +7,6 @@ import withID from '../../mixins/with-id';
 
 import styles from './menu-item.styles';
 
-import '../icon';
-
 @customElement( 'xb-item' )
 export class MenuItem extends withID( XBElement, 'xb-item' ) {
 	static styles = [ styles() ];

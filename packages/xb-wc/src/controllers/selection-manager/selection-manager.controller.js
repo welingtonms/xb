@@ -9,7 +9,7 @@ const logger = createLogger( 'selection-manager' );
  * @implements {ReactiveController}
  */
 class SelectionManagerController {
-	/** @type {ReactiveControllerHost & { selection: SelectionType, value: SelectionOption | SelectionOption[] | null }} */
+	/** @type {SelectionManagerControllerHost} */
 	host;
 
 	/**
@@ -30,7 +30,7 @@ class SelectionManagerController {
 	value;
 
 	/**
-	 * @param {XBElement & ReactiveControllerHost} host
+	 * @param {SelectionManagerControllerHost} host
 	 */
 	constructor( host ) {
 		this.selection = new Set();
@@ -42,9 +42,7 @@ class SelectionManagerController {
 	hostConnected() {
 		if ( this.strategy == null ) {
 			const value = Array.from( this.selection );
-
-			logger.debug( `creating strategy "${ this.host.selection }" with value ${ value }` );
-
+			logger.debug( `creating strategy "${ this.host.selection }" with value [${ value }]` );
 			this.strategy = createSelectionStrategy( { type: this.host.selection } );
 			this.init( toArray( this.host.value ) );
 		}
@@ -57,7 +55,7 @@ class SelectionManagerController {
 			const value = Array.from( this.selection );
 
 			logger.debug(
-				`re-creating strategy "${ this.host.selection }" with existing value ${ value }`
+				`re-creating strategy "${ this.host.selection }" with existing value [${ value }]`
 			);
 
 			this.strategy = createSelectionStrategy( { type: this.host.selection } );
@@ -67,7 +65,7 @@ class SelectionManagerController {
 		if ( this.host.value !== this.value ) {
 			const value = toArray( this.host.value );
 
-			logger.debug( `updating strategy "${ this.host.selection }" with new value ${ value }` );
+			logger.debug( `updating strategy "${ this.host.selection }" with new value [${ value }]` );
 
 			this.value = this.host.value;
 
@@ -79,16 +77,18 @@ class SelectionManagerController {
 	 * @param {string[]}
 	 */
 	init = ( values ) => {
-		logger.debug( `initializing strategy "${ this.strategy.type }" with value ${ values }` );
+		logger.debug( `initializing strategy "${ this.strategy.type }" with value [${ values }]` );
 
 		this.selection = this.strategy.init( values );
 	};
 
 	reset = ( values ) => {
-		logger.debug( `resetting strategy "${ this.strategy.type }" with value ${ values }` );
+		logger.debug( `resetting strategy "${ this.strategy.type }" with value [${ values }]` );
 
 		this.selection = this.strategy.init( values );
 
+		// TODO: remove host.requestUpdate
+		this.host.emit( 'xb:selection-change' );
 		this.host.requestUpdate();
 	};
 
@@ -97,10 +97,12 @@ class SelectionManagerController {
 	 * @param {string | string[] | null} values
 	 */
 	select = ( values ) => {
-		logger.debug( `selecting values ${ values } in strategy "${ this.strategy.type }"` );
+		logger.debug( `selecting values [${ values }] in strategy "${ this.strategy.type }"` );
 
 		this.selection = this.strategy.select( toArray( values ), this.selection );
 
+		// TODO: remove host.requestUpdate
+		this.host.emit( 'xb:selection-change' );
 		this.host.requestUpdate();
 	};
 
@@ -109,10 +111,12 @@ class SelectionManagerController {
 	 * @param {string | string[] | null} values
 	 */
 	unselect = ( values ) => {
-		logger.debug( `unselecting values ${ values } in strategy "${ this.strategy.type }"` );
+		logger.debug( `unselecting values [${ values }] in strategy "${ this.strategy.type }"` );
 
 		this.selection = this.strategy.unselect( toArray( values ), this.selection );
 
+		// TODO: remove host.requestUpdate
+		this.host.emit( 'xb:selection-change' );
 		this.host.requestUpdate();
 	};
 
@@ -121,10 +125,12 @@ class SelectionManagerController {
 	 * @param {string | string[] | null} values
 	 */
 	toggle = ( values ) => {
-		logger.debug( `toggling values ${ values } in strategy "${ this.strategy.type }"` );
+		logger.debug( `toggling values [${ values }] in strategy "${ this.strategy.type }"` );
 
 		this.selection = this.strategy.toggle( toArray( values ), this.selection );
 
+		// TODO: remove host.requestUpdate
+		this.host.emit( 'xb:selection-change' );
 		this.host.requestUpdate();
 	};
 
@@ -182,4 +188,11 @@ export default SelectionManagerController;
 
 /**
  * @typedef {string | GenericSelectionOption | CustomSelectionOption} SelectionOption
+ */
+
+/**
+ * @typedef {ReactiveControllerHost & XBElement & {
+ * 	selection: SelectionType;
+ * 	value: SelectionOption | SelectionOption[] | null
+ * }} SelectionManagerControllerHost
  */

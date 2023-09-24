@@ -7,7 +7,7 @@ import { attachContextRoot } from '../../utils/context';
 import { toggleGroupContext } from './toggle-group-context';
 import styles from './toggle-group.styles';
 import ToggleGroupController from './toggle-group.controller';
-import withSelection from '../../mixins/with-selection';
+import WithSelection from '../../mixins/with-selection';
 import XBElement from '../../common/xb-element';
 
 import '../layout/cluster';
@@ -28,8 +28,12 @@ function getToggleRole( type ) {
 	return [ 'single', 'single-strict' ].includes( type ) ? 'radio' : 'checkbox';
 }
 
+/**
+ * @class
+ * @template WithSelection, XBElement
+ */
 @customElement( 'xb-toggle-group' )
-export class ToggleGroup extends withSelection( XBElement ) {
+export class ToggleGroup extends WithSelection( XBElement ) {
 	static styles = [ styles() ];
 
 	/**
