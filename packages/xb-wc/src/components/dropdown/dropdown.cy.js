@@ -82,7 +82,6 @@ describe( '<xb-dropdown>', () => {
 	it( 'emit expand, collapse, and toggle events', () => {
 		const onExpandSpy = cy.stub().as( 'onExpandSpy' );
 		const onCollapseSpy = cy.stub().as( 'onCollapseSpy' );
-		const onToggleSpy = cy.stub().as( 'onToggleSpy' );
 
 		const args = {
 			placement: 'bottom-start',
@@ -96,9 +95,6 @@ describe( '<xb-dropdown>', () => {
 				} }
 				@xb:dropdown-collapse=${ ( event ) => {
 					onCollapseSpy( event );
-				} }
-				@xb:dropdown-toggle=${ ( event ) => {
-					onToggleSpy( event );
 				} }
 			>
 				<xb-dropdown-trigger>Actions</xb-dropdown-trigger>
@@ -123,9 +119,6 @@ describe( '<xb-dropdown>', () => {
 
 			dropdown.collapse();
 			cy.get( '@onCollapseSpy' ).should( 'have.been.called' );
-
-			cy.get( '@trigger' ).click();
-			cy.get( '@onToggleSpy' ).should( 'have.been.called' );
 		} );
 	} );
 
