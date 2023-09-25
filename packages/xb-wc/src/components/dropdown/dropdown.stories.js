@@ -50,7 +50,7 @@ export const Playground = {
 		await expect( canvas.getByRole( 'button', { name: /actions/i } ) ).toBeInTheDocument();
 		await expect( canvas.queryByRole( 'menu' ) ).not.toBeInTheDocument();
 
-		await userEvent.click( canvas.getByText( 'Actions' ) );
+		await userEvent.click( canvas.getByRole( 'button', { name: /actions/i } ) );
 
 		await expect( canvas.getByRole( 'menu' ) ).toBeInTheDocument();
 
