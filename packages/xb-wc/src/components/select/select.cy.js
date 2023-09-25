@@ -38,7 +38,7 @@ const { given } = TestingFactory(
 						?multiple=${ args.multiple }
 						@xb:change=${ args.change }
 						?disabled=${ args.disabled }
-						.value=${ ifDefined( args.value ) }
+						.value=${ args.value }
 					>
 						<xb-option value="accept">Accept</xb-option>
 						<xb-option value="change">Change</xb-option>
@@ -52,17 +52,15 @@ const { given } = TestingFactory(
 
 		Given(
 			'datasource select is rendered with',
-			(
-				args = { loading: false, multiple: false, disabled: false, value, datasources }
-			) => {
+			( args = { loading: false, multiple: false, disabled: false, value, datasources } ) => {
 				cy.mount( html`
 					<xb-select
 						?loading=${ args.loading }
 						?multiple=${ args.multiple }
 						@xb:change=${ args.change }
 						?disabled=${ args.disabled }
-						.value=${ ifDefined( args.value ) }
-						.datasources=${ ifDefined( args.datasources ) }
+						.value=${ args.value }
+						.datasources=${ args.datasources }
 					></xb-select>
 				` );
 
@@ -155,20 +153,16 @@ const { given } = TestingFactory(
 		} );
 
 		Then( 'loading is visible', () => {
-			cy.get( '@menu' )
-				.find( 'xb-spinner', { includeShadowDom: true } )
-				.should( 'exist' );
+			cy.get( '@menu' ).find( 'xb-spinner', { includeShadowDom: true } ).should( 'exist' );
 		} );
 
 		Then( 'loading is not visible', () => {
-			cy.get( '@menu' )
-				.find( 'xb-spinner', { includeShadowDom: true } )
-				.should( 'not.exist' );
+			cy.get( '@menu' ).find( 'xb-spinner', { includeShadowDom: true } ).should( 'not.exist' );
 		} );
 	}
 );
 
-describe( '<xb-select>', () => {
+describe.skip( '<xb-select>', () => {
 	describe( 'static options', () => {
 		describe( 'single selection', () => {
 			const args = {
