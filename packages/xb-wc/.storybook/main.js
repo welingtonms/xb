@@ -1,4 +1,5 @@
-module.exports = {
+/** @type {import('@storybook/web-components-webpack5').StorybookConfig} */
+const config = {
 	stories: [ '../src/**/*.@(stories|api).mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)' ],
 	addons: [
 		'@storybook/addon-links',
@@ -14,3 +15,5 @@ module.exports = {
 		autodocs: true,
 	},
 };
+
+export default config;
