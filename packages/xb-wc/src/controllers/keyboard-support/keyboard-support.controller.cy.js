@@ -34,15 +34,12 @@ const defineTestElement = ( getControllerConfig ) => {
 };
 
 describe( 'KeyboardSupportController', () => {
-	it( 'should support multiple shortcuts', () => {
+	it( 'should support a single shortcut', () => {
 		const [ tag, elementName ] = defineTestElement( ( host ) => ( {
 			shortcut: {
 				key: 'ArrowDown',
 			},
-			/**
-			 * @param {KeyboardEvent} event
-			 */
-			callback: () => {
+			handler: () => {
 				const output = host.renderRoot.querySelector( 'output' );
 				output.innerHTML = 'Pressed ArrowDown';
 			},
@@ -69,10 +66,7 @@ describe( 'KeyboardSupportController', () => {
 				shortcut: {
 					key: 'ArrowUp',
 				},
-				/**
-				 * @param {KeyboardEvent} event
-				 */
-				callback: () => {
+				handler: () => {
 					const output = host.renderRoot.querySelector( 'output' );
 					output.innerHTML = 'Pressed ArrowUp';
 				},
@@ -83,12 +77,7 @@ describe( 'KeyboardSupportController', () => {
 					alt: true,
 					shift: true,
 				},
-				/**
-				},
-				/**
-				 * @param {KeyboardEvent} event
-				 */
-				callback: () => {
+				handler: () => {
 					const output = host.renderRoot.querySelector( 'output' );
 					output.innerHTML = 'Pressed something weird';
 				},
@@ -110,6 +99,48 @@ describe( 'KeyboardSupportController', () => {
 		cy.get( '@output' ).should( 'have.text', 'Pressed ArrowUp' );
 		cy.get( '@element' ).type( '{shift+alt+b}' );
 		cy.get( '@output' ).should( 'have.text', 'Pressed something weird' );
+	} );
+
+	it( 'should support multiple shortcuts for the same handler', () => {
+		const [ tag, elementName ] = defineTestElement( ( host ) => [
+			{
+				shortcut: [
+					{
+						key: 'ArrowUp',
+					},
+					{ key: 'ArrowRight' },
+				],
+				handler: () => {
+					const output = host.renderRoot.querySelector( 'output' );
+					output.innerHTML = 'Moving forward';
+				},
+			},
+			{
+				shortcut: {
+					key: 'ArrowDown',
+				},
+				handler: () => {
+					const output = host.renderRoot.querySelector( 'output' );
+					output.innerHTML = '';
+				},
+			},
+		] );
+
+		cy.mount(
+			html`
+				<${ tag } tabindex="0" style="background: lightgray; display: block; width: 100px; height: 100px;"></${ tag }>
+			`
+		);
+
+		cy.get( elementName ).as( 'element' );
+		cy.get( '@element' ).find( 'output', { includeShadowDom: true } ).as( 'output' );
+
+		cy.get( '@element' ).type( '{upArrow}' );
+		cy.get( '@output' ).should( 'have.text', 'Moving forward' );
+		cy.get( '@element' ).type( '{downArrow}' );
+		cy.get( '@output' ).should( 'have.text', '' );
+		cy.get( '@element' ).type( '{rightArrow}' );
+		cy.get( '@output' ).should( 'have.text', 'Moving forward' );
 	} );
 } );
 

@@ -36,7 +36,7 @@ class ListboxPatternController {
 					shortcut: {
 						key: 'ArrowUp',
 					},
-					callback: () => {
+					handler: () => {
 						this.controllers.focus.focusPrevious();
 					},
 				},
@@ -44,7 +44,7 @@ class ListboxPatternController {
 					shortcut: {
 						key: 'ArrowDown',
 					},
-					callback: () => {
+					handler: () => {
 						this.controllers.focus.focusNext();
 					},
 				},
@@ -52,7 +52,7 @@ class ListboxPatternController {
 					shortcut: {
 						key: ' ',
 					},
-					callback: () => {
+					handler: () => {
 						const target = this.controllers.focus.focused;
 
 						this._toggleValue( target.value );

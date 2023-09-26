@@ -46,7 +46,7 @@ export class Dropdown extends FloatingElement {
 					/**
 					 * @param {KeyboardEvent} event
 					 */
-					callback: ( event ) => {
+					handler: ( event ) => {
 						if ( event.target.matches( 'xb-dropdown-trigger' ) ) {
 							this.expand( { position: 'last' } );
 
@@ -67,7 +67,7 @@ export class Dropdown extends FloatingElement {
 					/**
 					 * @param {KeyboardEvent} event
 					 */
-					callback: ( event ) => {
+					handler: ( event ) => {
 						if ( event.target.matches( 'xb-dropdown-trigger' ) ) {
 							this.expand( { emit: false, position: 'first' } );
 
@@ -90,7 +90,7 @@ export class Dropdown extends FloatingElement {
 							key: ' ',
 						},
 					],
-					callback: ( event ) => {
+					handler: ( event ) => {
 						if ( event.target.matches( 'xb-dropdown-trigger' ) ) {
 							this.toggle( { emit: false, position: 'first' } );
 
@@ -115,7 +115,7 @@ export class Dropdown extends FloatingElement {
 							shift: true,
 						},
 					],
-					callback: ( event ) => {
+					handler: ( event ) => {
 						if ( event.target.matches( 'xb-dropdown-trigger' ) && this.open ) {
 							this._handleClickOutside();
 						}

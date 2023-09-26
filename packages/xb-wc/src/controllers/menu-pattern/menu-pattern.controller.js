@@ -37,7 +37,7 @@ class MenuPatternController {
 					shortcut: {
 						key: 'ArrowUp',
 					},
-					callback: () => {
+					handler: () => {
 						this.controllers.focus.focusPrevious();
 					},
 				},
@@ -45,7 +45,7 @@ class MenuPatternController {
 					shortcut: {
 						key: 'ArrowDown',
 					},
-					callback: () => {
+					handler: () => {
 						this.controllers.focus.focusNext();
 					},
 				},
@@ -58,7 +58,7 @@ class MenuPatternController {
 							key: ' ',
 						},
 					],
-					callback: () => {
+					handler: () => {
 						const item = this.controllers.focus.focused;
 
 						item.click();

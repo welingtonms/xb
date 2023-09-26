@@ -18,7 +18,7 @@ class CheckboxController {
 				shortcut: {
 					key: ' ',
 				},
-				callback: ( event ) => {
+				handler: ( event ) => {
 					event.stopPropagation();
 					this.toggle();
 				},

@@ -32,7 +32,7 @@ class ToggleGroupController {
 							key: 'ArrowLeft',
 						},
 					],
-					callback: () => {
+					handler: () => {
 						this.controllers.focus.focusPrevious();
 					},
 				},
@@ -45,7 +45,7 @@ class ToggleGroupController {
 							key: 'ArrowRight',
 						},
 					],
-					callback: () => {
+					handler: () => {
 						this.controllers.focus.focusNext();
 					},
 				},
@@ -53,7 +53,7 @@ class ToggleGroupController {
 					shortcut: {
 						key: ' ',
 					},
-					callback: () => {
+					handler: () => {
 						const target = this.controllers.focus.focused;
 
 						this._toggleValue( target.value );

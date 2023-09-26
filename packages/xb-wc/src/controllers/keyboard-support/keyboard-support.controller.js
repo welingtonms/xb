@@ -51,9 +51,9 @@ class KeyboardSupportController {
 	 */
 	constructor( host, keymap, options = {} ) {
 		this.keymap = new Map(
-			toArray( keymap ).reduce( ( map, { shortcut, callback } ) => {
+			toArray( keymap ).reduce( ( map, { shortcut, handler } ) => {
 				function createShortcut( shortcut ) {
-					return [ getShortcutKey( shortcut ), callback ];
+					return [ getShortcutKey( shortcut ), handler ];
 				}
 
 				return map.concat( toArray( shortcut ).map( createShortcut ) );
@@ -89,9 +89,9 @@ class KeyboardSupportController {
 			return;
 		}
 
-		const callback = this.keymap.get( shortcut );
+		const handler = this.keymap.get( shortcut );
 
-		callback( event );
+		handler( event );
 	};
 }
 
@@ -115,7 +115,7 @@ export default KeyboardSupportController;
 /**
  * @typedef {{
  * 	shortcut: Shortcut | Shortcut[];
- * 	callback: (event: KeyboardEvent) => void
+ * 	handler: (event: KeyboardEvent) => void
  * }} Keymap
  */
 
