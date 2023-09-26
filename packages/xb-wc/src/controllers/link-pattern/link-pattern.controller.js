@@ -19,7 +19,7 @@ class LinkPatternController {
 					// TODO: should we support the space key too?
 					key: 'Enter',
 				},
-				callback: ( event ) => {
+				handler: ( event ) => {
 					this._clickAnchor( event );
 				},
 			} ),

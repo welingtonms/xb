@@ -23,7 +23,7 @@ class ButtonPatternController {
 						key: ' ',
 					},
 				],
-				callback: () => {
+				handler: () => {
 					this._dispatchClick();
 				},
 			} ),
