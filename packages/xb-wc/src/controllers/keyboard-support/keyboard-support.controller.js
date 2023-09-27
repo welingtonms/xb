@@ -59,7 +59,7 @@ class KeyboardSupportController {
 				return map.concat( toArray( shortcut ).map( createShortcut ) );
 			}, [] )
 		);
-		this.getEventTarget = options.getEventTarget ?? ( ( host ) => host );
+		this.getEventTarget = options?.getEventTarget ?? ( ( host ) => host );
 
 		( this.host = host ).addController( this );
 	}
