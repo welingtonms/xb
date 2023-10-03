@@ -8,8 +8,6 @@ import KeyboardSupportController from '../../controllers/keyboard-support';
 
 import styles from './dropdown.styles';
 
-const ITEM_QUERY = '[role="menuitem"]';
-
 @customElement( 'xb-dropdown' )
 export class Dropdown extends FloatingElement {
 	static styles = [ styles() ];
@@ -33,7 +31,7 @@ export class Dropdown extends FloatingElement {
 		this._controllers = {
 			boundary: new BoundaryController( this ),
 			focus: new FocusManagerController( this, {
-				query: [ `${ ITEM_QUERY }:not([disabled])` ],
+				query: [ '[role="menuitem"]' ],
 				getInteractiveElement: ( host ) => {
 					return host.getFloatingElement();
 				},
@@ -47,13 +45,13 @@ export class Dropdown extends FloatingElement {
 					 * @param {KeyboardEvent} event
 					 */
 					handler: ( event ) => {
-						if ( event.target.matches( 'xb-dropdown-trigger' ) ) {
+						if ( event.target.matches( '[aria-haspopup="true"]' ) ) {
 							this.expand( { position: 'last' } );
 
 							return;
 						}
 
-						if ( event.target.matches( 'xb-dropdown-menu' ) ) {
+						if ( event.target.matches( '[role="menu"]' ) ) {
 							this._controllers.focus.focusPrevious();
 
 							return;
@@ -68,13 +66,13 @@ export class Dropdown extends FloatingElement {
 					 * @param {KeyboardEvent} event
 					 */
 					handler: ( event ) => {
-						if ( event.target.matches( 'xb-dropdown-trigger' ) ) {
+						if ( event.target.matches( '[aria-haspopup="true"]' ) ) {
 							this.expand( { emit: false, position: 'first' } );
 
 							return;
 						}
 
-						if ( event.target.matches( 'xb-dropdown-menu' ) ) {
+						if ( event.target.matches( '[role="menu"]' ) ) {
 							this._controllers.focus.focusNext();
 
 							return;
@@ -91,17 +89,19 @@ export class Dropdown extends FloatingElement {
 						},
 					],
 					handler: ( event ) => {
-						if ( event.target.matches( 'xb-dropdown-trigger' ) ) {
+						if ( event.target.matches( '[aria-haspopup="true"]' ) ) {
 							this.toggle( { emit: false, position: 'first' } );
 
 							return;
 						}
 
-						if ( event.target.matches( 'xb-dropdown-menu' ) ) {
+						if ( event.target.matches( '[role="menu"]' ) ) {
 							const item = this._controllers.focus.focused;
-							item.click();
+							if ( item?.disabled ) {
+								return;
+							}
 
-							return;
+							item.click();
 						}
 					},
 				},
@@ -116,7 +116,7 @@ export class Dropdown extends FloatingElement {
 						},
 					],
 					handler: ( event ) => {
-						if ( event.target.matches( 'xb-dropdown-trigger' ) && this.open ) {
+						if ( event.target.matches( '[aria-haspopup="true"]' ) && this.open ) {
 							this._handleClickOutside();
 						}
 					},
@@ -140,7 +140,12 @@ export class Dropdown extends FloatingElement {
 		super.updated( changedProperties );
 
 		if ( changedProperties.has( 'open' ) ) {
-			this.reference.setBooleanAttribute( 'aria-expanded', this.open );
+			if ( this.open ) {
+				this.reference.setAttribute( 'aria-expanded', 'true' );
+			} else {
+				this.reference.removeAttribute( 'aria-expanded' );
+			}
+			// this.reference.setBooleanAttribute( 'aria-expanded', this.open );
 		}
 	}
 
@@ -222,7 +227,7 @@ export class Dropdown extends FloatingElement {
 		const { target } = event;
 
 		// we are only interested in dropdown items
-		if ( target.matches( ITEM_QUERY ) ) {
+		if ( target.matches( '[role="menuitem"]' ) ) {
 			/**
 			 * we set focus so we can trigger the item click event when the user
 			 * presses <Enter> or <Space>, through the KeyboardSupportController.
@@ -233,7 +238,18 @@ export class Dropdown extends FloatingElement {
 			return;
 		}
 
-		if ( event.target.matches( 'xb-dropdown-trigger' ) ) {
+		/**
+		 * <Enter> or <Space> keys also trigger the click event.
+		 * In that case, we do not want to respond to the key event, since
+		 * the keyboard shortcut will handle it for us.
+		 * To distinguish between a keypress event and click, we can use the `detail` property,
+		 * which determines how many times the element was clicked. For a keyboard event, this
+		 * should be 0; for a click event, it should be at least 1.
+		 * References:
+		 * - https://css-tricks.com/when-a-click-is-not-just-a-click/
+		 * - https://developer.mozilla.org/en-US/docs/Web/API/UIEvent/detail
+		 */
+		if ( event.target.matches( '[aria-haspopup="true"]' ) && event.detail > 0 ) {
 			this.toggle();
 		}
 	};
