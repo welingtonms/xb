@@ -21,6 +21,9 @@ export class MenuItem extends withID( XBElement, 'xb-item' ) {
 		super();
 
 		this.disabled = false;
+
+		this.addEventListener( 'click', this._handleClick );
+		this.addEventListener( 'keyup', this._handleKeyUp );
 	}
 
 	connectedCallback() {
@@ -28,15 +31,6 @@ export class MenuItem extends withID( XBElement, 'xb-item' ) {
 
 		this.setAttribute( 'role', 'menuitem' );
 		this.setAttribute( 'tabindex', -1 );
-
-		// TODO: investigat why moving this to the constructor is breaking the dropdown option click
-		this.addEventListener( 'click', this._handleClick );
-	}
-
-	disconnectedCallback() {
-		super.disconnectedCallback();
-
-		this.removeEventListener( 'click', this._handleClick );
 	}
 
 	updated( changedProperties ) {
@@ -68,6 +62,13 @@ export class MenuItem extends withID( XBElement, 'xb-item' ) {
 	}
 
 	_handleClick = ( event ) => {
+		if ( this.disabled ) {
+			event.stopPropagation();
+			event.preventDefault();
+		}
+	};
+
+	_handleKeyUp = ( event ) => {
 		if ( this.disabled ) {
 			event.stopPropagation();
 			event.preventDefault();
