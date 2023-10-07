@@ -1,9 +1,13 @@
 import { css } from 'lit';
 
+import { floatingStyles } from '../../common/floating-element';
 import token from '../../utils/get-token';
 
 function styles() {
 	return [
+		floatingStyles( {
+			floating: "[role='listbox']",
+		} ),
 		css`
 			.empty {
 				display: flex;
