@@ -3,7 +3,6 @@ import { customElement, property } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import withClassy from '@welingtonms/classy';
 
-import { convertDirectionFromAttribute } from '../../layout/layout.helpers';
 import { sided } from '../../../common/prop-toolset';
 import XBElement from '../../../common/xb-element';
 import styles from './text-input.styles';
@@ -52,14 +51,13 @@ export class TextInput extends XBElement {
 	 * Determine borders to be supressed.
 	 * @type {TextInputAttributes['borderless']}
 	 */
-	@property( { converter: { fromAttribute: convertDirectionFromAttribute } } ) borderless;
+	@property( { type: String } ) borderless;
 
 	/**
 	 * Determine paddings to be supressed.
 	 * @type {TextInputAttributes['paddingless']}
 	 */
-	@property( { converter: { fromAttribute: convertDirectionFromAttribute } } )
-	paddingless;
+	@property( { type: String } ) paddingless;
 
 	constructor() {
 		super();
@@ -133,7 +131,7 @@ export class TextInput extends XBElement {
 									 */
 									'is-visible': this.value,
 								} ) }
-								paddingless
+								paddingless="none"
 								emphasis="text"
 								size="extra-small"
 								@click=${ this._handleClear }

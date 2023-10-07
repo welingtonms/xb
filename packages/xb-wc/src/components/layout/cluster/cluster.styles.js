@@ -28,9 +28,7 @@ function styles() {
 				width: 100%;
 
 				${ m( token( 'spacing-0' ) ) };
-			}
 
-			.cluster {
 				${ px( 'var(--xb-cluster-padding-x)' ) };
 				${ py( 'var(--xb-cluster-padding-y)' ) };
 
@@ -41,22 +39,15 @@ function styles() {
 				gap: var( --xb-cluster-gap );
 				width: var( --xb-cluster-width );
 
-				border: var( --xb-cluster-border-width )
-					var( --xb-cluster-border-style ) var( --xb-cluster-border-color );
+				border: var( --xb-cluster-border-width ) var( --xb-cluster-border-style )
+					var( --xb-cluster-border-color );
 				border-radius: var( --xb-cluster-border-radius );
 				color: var( --xb-cluster-color );
 				background-color: var( --xb-cluster-background-color );
 			}
 
 			::slotted( * ) {
-				${ typography( 'body-1' ) };
-
 				margin-inline: 0;
-			}
-
-			::slotted( *:not( :first-child ) ) {
-				/** using flexbox gap */
-				/* margin-inline-start: var( --xb-cluster-gap ); */
 			}
 		`,
 	];

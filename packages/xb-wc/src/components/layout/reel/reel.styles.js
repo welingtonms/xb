@@ -20,15 +20,13 @@ function styles() {
 				--xb-reel-margin: var( --xb-spacing-4 );
 				--xb-reel-padding-x: ${ token( 'spacing-2' ) };
 				--xb-reel-padding-y: ${ token( 'spacing-2' ) };
-				--xb-reel-thumb-color: rgb( var( --xb-color-gray-700 ) );
-				--xb-reel-track-color: rgb( var( --xb-color-gray-500 ) );
+				--xb-reel-thumb-color: rgb( var( --xb-color-primary-700 ) );
+				--xb-reel-track-color: rgb( var( --xb-color-primary-500 ) );
 
 				width: 100%;
 
 				${ m( token( 'spacing-0' ) ) };
-			}
 
-			.reel {
 				${ px( 'var(--xb-reel-padding-x)' ) };
 				${ py( 'var(--xb-reel-padding-y)' ) };
 
@@ -36,8 +34,7 @@ function styles() {
 				block-size: auto;
 				overflow-x: auto;
 				overflow-y: hidden;
-				scrollbar-color: var( --xb-reel-thumb-color )
-					var( --xb-reel-track-color );
+				scrollbar-color: var( --xb-reel-thumb-color ) var( --xb-reel-track-color );
 
 				border: var( --xb-reel-border-width ) var( --xb-reel-border-style )
 					var( --xb-reel-border-color );
@@ -45,15 +42,15 @@ function styles() {
 				background-color: var( --xb-reel-background-color );
 			}
 
-			.xb-reel::-webkit-scrollbar {
+			:host::-webkit-scrollbar {
 				block-size: var( --xb-spacing-4 );
 			}
 
-			.xb-reel::-webkit-scrollbar-track {
+			:host::-webkit-scrollbar-track {
 				background-color: var( --xb-reel-track-color );
 			}
 
-			.xb-reel::-webkit-scrollbar-thumb {
+			:host::-webkit-scrollbar-thumb {
 				background-color: var( --xb-reel-track-color );
 				background-image: linear-gradient(
 					var( --xb-reel-track-color ) 0,
@@ -80,7 +77,7 @@ function styles() {
 				margin-inline-start: var( --xb-reel-margin );
 			}
 
-			.xb-reel.is-overflowing {
+			:host( .is-overflowing ) {
 				padding-block-end: var( --xb-reel-margin );
 			}
 		`,

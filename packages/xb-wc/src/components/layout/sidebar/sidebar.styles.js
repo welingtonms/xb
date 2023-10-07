@@ -26,9 +26,7 @@ function styles() {
 				width: 100%;
 
 				${ m( token( 'spacing-0' ) ) };
-			}
 
-			.sidebar {
 				${ px( 'var(--xb-sidebar-padding-x)' ) };
 				${ py( 'var(--xb-sidebar-padding-y)' ) };
 
@@ -36,8 +34,8 @@ function styles() {
 				flex-flow: row wrap;
 				gap: var( --xb-sidebar-gap );
 
-				border: var( --xb-sidebar-border-width )
-					var( --xb-sidebar-border-style ) var( --xb-sidebar-border-color );
+				border: var( --xb-sidebar-border-width ) var( --xb-sidebar-border-style )
+					var( --xb-sidebar-border-color );
 				color: var( --xb-sidebar-color );
 				background-color: var( --xb-sidebar-background-color );
 			}
@@ -46,24 +44,24 @@ function styles() {
 				${ typography( 'body-1' ) };
 			}
 
-			.xb-sidebar.-side-on-the-left ::slotted( :first-child ) {
+			:host( [side-position='left'] ) ::slotted( :first-child ) {
 				flex-basis: var( --xb-sidebar-side-width );
 				flex-grow: 1;
 			}
 
-			.xb-sidebar.-side-on-the-left ::slotted( :last-child ) {
+			:host( [side-position='left'] ) ::slotted( :last-child ) {
 				flex-basis: 0;
 				flex-grow: 999;
 				min-inline-size: var( --xb-sidebar-min-content-width );
 			}
 
-			.xb-sidebar.-side-on-the-right ::slotted( :first-child ) {
+			:host( [side-position='right'] ) ::slotted( :first-child ) {
 				flex-basis: 0;
 				flex-grow: 999;
 				min-inline-size: var( --xb-sidebar-min-content-width );
 			}
 
-			.xb-sidebar.-side-on-the-right ::slotted( :last-child ) {
+			:host( [side-position='right'] ) ::slotted( :last-child ) {
 				flex-basis: var( --xb-sidebar-side-width );
 				flex-grow: 1;
 			}

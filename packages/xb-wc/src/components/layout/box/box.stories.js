@@ -1,9 +1,10 @@
 import { html } from 'lit-html';
 
 import { BorderlessArg, PaddinglessArg } from '../../../common/arg-types';
+
 import './box';
 
-/** @type {import('../../../common/arg-types').Meta} */
+/** @type {Meta} */
 const meta = {
 	title: 'Foundation/Layouts/box',
 	component: 'xb-box',
@@ -19,39 +20,13 @@ const meta = {
 	parameters: {},
 };
 
-const style = '--xb-box-background-color: rgb(var(--xb-color-background));';
-
 export default meta;
 
-/** @type {import('../../../common/arg-types').StoryObj} */
+/** @type {BoxStory} */
 export const Playground = {
 	render: ( args ) => html`
-		<xb-box style=${ style } borderless paddingless>Content</xb-box>
 		<xb-box
-			style=${ style }
-			paddingless=${ args.paddingless }
-			borderless=${ args.borderless }
-		>
-			Content
-		</xb-box>
-		<xb-box
-			style=${ style }
-			paddingless=${ args.paddingless }
-			borderless=${ args.borderless }
-		>
-			<span slot="leading">&spades;</span>
-			Content
-		</xb-box>
-		<xb-box
-			style=${ style }
-			paddingless=${ args.paddingless }
-			borderless=${ args.borderless }
-		>
-			<span slot="trailing">&hearts;</span>
-			Content
-		</xb-box>
-		<xb-box
-			style=${ style }
+			style="--xb-box-background-color: rgb(var(--xb-color-background));"
 			paddingless=${ args.paddingless }
 			borderless=${ args.borderless }
 		>
@@ -66,3 +41,9 @@ export const Playground = {
 		borderless: 'none',
 	},
 };
+
+/**
+ * @typedef {import('./box').BoxLayout} Box
+ * @typedef {import('@storybook/web-components').StoryObj<Box>} BoxStory
+ * @typedef {import('@storybook/web-components').Meta} Meta
+ */

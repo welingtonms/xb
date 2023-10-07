@@ -1,16 +1,17 @@
 import { html } from 'lit-html';
 
-import { BorderlessArg, PaddinglessArg } from '../../../common/arg-types';
+import { BorderlessArg, PaddinglessArg, SpacingArg } from '../../../common/arg-types';
 import '../box';
 import './grid';
 
-/** @type {import('../../../common/arg-types').Meta} */
+/** @type {Meta} */
 const meta = {
 	title: 'Foundation/Layouts/grid',
 	component: 'xb-grid',
 	argTypes: {
 		paddingless: PaddinglessArg,
 		borderless: BorderlessArg,
+		gap: SpacingArg,
 		children: {
 			table: {
 				disable: true,
@@ -20,15 +21,13 @@ const meta = {
 	parameters: {},
 };
 
-const style = '--xb-grid-background-color: rgb(var(--xb-color-background));';
-
 export default meta;
 
-/** @type {import('../../../common/arg-types').StoryObj} */
+/** @type {GridStory} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-grid
-			style=${ style }
+			style=${ `--xb-grid-background-color: rgb(var(--xb-color-background)); --xb-grid-gap: ${ args.gap }` }
 			paddingless=${ args.paddingless }
 			borderless=${ args.borderless }
 		>
@@ -41,7 +40,14 @@ export const Playground = {
 	`,
 
 	args: {
+		gap: '8px',
 		paddingless: 'none',
 		borderless: 'none',
 	},
 };
+
+/**
+ * @typedef {import('./grid').GridLayout} Grid
+ * @typedef {import('@storybook/web-components').StoryObj<Grid>} GridStory
+ * @typedef {import('@storybook/web-components').Meta} Meta
+ */
