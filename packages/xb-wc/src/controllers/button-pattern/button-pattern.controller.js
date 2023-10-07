@@ -55,7 +55,7 @@ class ButtonPatternController {
 	};
 
 	_handleClick = ( event ) => {
-		if ( this.disabled ) {
+		if ( this.host.disabled ) {
 			event.stopPropagation();
 			event.preventDefault();
 			return;
@@ -67,7 +67,7 @@ class ButtonPatternController {
 	 * @returns
 	 */
 	_handleKeyDown = ( event ) => {
-		if ( this.disabled ) {
+		if ( this.host.disabled ) {
 			event.stopPropagation();
 			event.preventDefault();
 			return;
@@ -103,7 +103,6 @@ export default ButtonPatternController;
 
 /**
  * @typedef {ReactiveControllerHost & XBElement & {
- * checked: boolean;
- * indeterminate: boolean;
+ * disabled: boolean;
  * }} ButtonPatternControllerHost
  */
