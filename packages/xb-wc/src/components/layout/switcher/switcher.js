@@ -1,23 +1,15 @@
-import { html } from 'lit/static-html.js';
+import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import withClassy from '@welingtonms/classy';
-
-import { sided } from '../../../common/prop-toolset';
-import withPolymorphicTag from '../../../mixins/polymorphic';
 import BaseLayout from '../base-layout';
 
 import styles from './switcher.styles';
 
-/**
- * @class
- * @mixes withPolymorphicTag
- */
 @customElement( 'xb-switcher' )
 export class SwitcherLayout extends BaseLayout {
 	static styles = [ styles() ];
 
 	/**
-	 * Determine borders to be supressed.
+	 * The maximum number of elements allowed to appear in the horizontal configuration.
 	 * @type {SwitcherAttributes['limit']}
 	 */
 	@property( { type: Number } ) limit;
@@ -25,49 +17,31 @@ export class SwitcherLayout extends BaseLayout {
 	constructor() {
 		super();
 
-		/**
-		 * @type {SwitcherAttributes['limit']}
-		 */
 		this.limit = 4;
 	}
 
 	render() {
-		const { classy } = withClassy( {} );
-		const tag = this.tag;
-
 		return html`
 			<style>
-				::slotted( *:nth-last-child( n + ${ this.limit } ) ) {
+				::slotted( *:nth-last-child( n + ${ this.limit + 1 } ) ) {
 					flex-basis: 100%;
 				}
 
-				::slotted( *:nth-last-child( n + ${ this.limit } ) ~ * ) {
+				::slotted( *:nth-last-child( n + ${ this.limit + 1 } ) ~ * ) {
 					flex-basis: 100%;
 				}
 			</style>
-			<${ tag }
-				class=${ classy(
-					'switcher',
-					sided( 'border', this.borderless ),
-					sided( 'padding', this.paddingless )
-				) }
-			>
-				<slot></slot>
-			</${ tag }>
+			<slot></slot>
 		`;
 	}
 }
 
 /**
- * @typedef {import('../../../common/prop-types').BorderlessProp} BorderlessProp
- * @typedef {import('../../../common/prop-types').PaddinglessProp} PaddinglessProp
- * @typedef {import('../../../common/prop-types').HTMLTag} HTMLTag
+ * @typedef {import('../base-layout').BaseLayoutAttributes} BaseLayoutAttributes
  */
 
 /**
- * @typedef {Object} SwitcherAttributes
- * @property {BorderlessProp} borderless
- * @property {PaddinglessProp} paddingless
- * @property {HTMLTag} as
- * @property {number} limit
+ * @typedef {BaseLayoutAttributes & {
+ * 	limit: number
+ * }} SwitcherAttributes
  */

@@ -1,77 +1,39 @@
-import { html } from 'lit/static-html.js';
-import { customElement } from 'lit/decorators.js';
-import withClassy from '@welingtonms/classy';
-
-import { sided } from '../../../common/prop-toolset';
-import withPolymorphicTag from '../../../mixins/polymorphic';
+import { html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import BaseLayout from '../base-layout';
 
 import styles from './imposter.styles';
 
-/**
- * @class
- * @mixes withPolymorphicTag
- */
 @customElement( 'xb-imposter' )
 export class ImposterLayout extends BaseLayout {
 	static styles = [ styles() ];
 
-	static get properties() {
-		return {
-			/**
-			 * imposter positioning variant.
-			 * @type {ImposterAttributes['variant']}
-			 */
-			variant: { type: String },
+	/**
+	 * @type {ImposterAttributes['variant']}
+	 */
+	@property( { type: String, reflect: true } ) variant;
 
-			/**
-			 * Should the imposter breakout of the page content overflow.
-			 * @type {ImposterAttributes['breakout']}
-			 */
-			breakout: { type: Boolean },
-		};
-	}
+	/**
+	 * @type {ImposterAttributes['breakout']}
+	 */
+	@property( { type: Boolean, reflect: true } ) breakout;
 
 	constructor() {
 		super();
 
-		/** @type {ImposterAttributes['variant']} */
 		this.variant = 'absolute';
-
-		/** @type {ImposterAttributes['breakout']} */
 		this.breakout = false;
 	}
 
 	render() {
-		const { when, classy } = withClassy( {
-			variant: this.variant,
-			breakout: this.breakout,
-		} );
-		const tag = this.tag;
-
 		return html`
-			<${ tag }
-				class=${ classy(
-					'imposter',
-					{
-						'-absolute': when( { variant: 'absolute' } ),
-						'-fixed': when( { variant: 'fixed' } ),
-						'-breakout': when( { breakout: true } ),
-					},
-					sided( 'border', this.borderless ),
-					sided( 'padding', this.paddingless )
-				) }
-			>
-				<slot></slot>
-			</${ tag }>
+			<slot></slot>
 		`;
 	}
 }
 
 /**
- * @typedef {import('../../../common/prop-types').BorderlessProp} BorderlessProp
- * @typedef {import('../../../common/prop-types').PaddinglessProp} PaddinglessProp
- * @typedef {import('../../../common/prop-types').HTMLTag} HTMLTag
+ * @typedef {import('../base-layout').BaseLayoutAttributes} BaseLayoutAttributes
  */
 
 /**
@@ -79,10 +41,8 @@ export class ImposterLayout extends BaseLayout {
  */
 
 /**
- * @typedef {Object} ImposterAttributes
- * @property {BorderlessProp} borderless
- * @property {PaddinglessProp} paddingless
- * @property {HTMLTag} as
- * @property {ImposterVariant} variant
- * @property {boolean} breakout
+ * @typedef {BaseLayoutAttributes & {
+ * variant: ImposterVariant;
+ * breakout: boolean
+ * }} ImposterAttributes
  */

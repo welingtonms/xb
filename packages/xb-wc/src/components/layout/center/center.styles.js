@@ -12,6 +12,7 @@ function styles() {
 		layoutStyles(),
 		css`
 			:host {
+				--xb-center-display: block;
 				--xb-center-background-color: initial;
 				--xb-center-border-color: ${ token( 'color-gray-300' ) };
 				--xb-center-border-style: none;
@@ -22,12 +23,12 @@ function styles() {
 				--xb-center-padding-y: ${ token( 'spacing-2' ) };
 
 				width: 100%;
-			}
 
-			.center {
 				${ mx( 'auto' ) };
 				${ px( 'var(--xb-center-padding-x)' ) };
 				${ py( 'var(--xb-center-padding-y)' ) };
+
+				display: var( --xb-center-display );
 
 				box-sizing: content-box;
 				max-inline-size: var( --xb-center-max-width );

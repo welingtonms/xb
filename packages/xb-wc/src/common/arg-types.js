@@ -25,13 +25,36 @@ export const SizeArg = Object.freeze( {
 } );
 
 export const PaddinglessArg = Object.freeze( {
-	control: 'check',
-	options: [ 'none', 'horizontal', 'vertical', 'top', 'right', 'bottom', 'left' ],
+	control: 'select',
+	options: [
+		'none',
+		'all',
+		'right',
+		'left',
+		'top',
+		'bottom',
+		'vertical',
+		'horizontal',
+		'right,top',
+		'right,bottom',
+		'right,vertical',
+		'left,top',
+		'left,bottom',
+		'left,vertical',
+		'top,right',
+		'top,left',
+		'top,horizontal',
+		'bottom,right',
+		'bottom,left',
+		'bottom,horizontal',
+	],
 } );
 
-export const BorderlessArg = Object.freeze( {
-	control: 'check',
-	options: [ 'none', 'horizontal', 'vertical', 'top', 'right', 'bottom', 'left' ],
+export const BorderlessArg = PaddinglessArg;
+
+export const SpacingArg = Object.freeze( {
+	control: 'select',
+	options: [ '4px', '8px', '12px', '16px', '20px', '24px', '32px', '40px', '48px', '64px' ],
 } );
 
 export const SelectionArg = Object.freeze( {

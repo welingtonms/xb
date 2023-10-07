@@ -4,7 +4,7 @@ import { BorderlessArg, PaddinglessArg } from '../../../common/arg-types';
 import '../box';
 import './reel';
 
-/** @type {import('../../../common/arg-types').Meta} */
+/** @type {Meta} */
 const meta = {
 	title: 'Foundation/Layouts/reel',
 	component: 'xb-reel',
@@ -20,11 +20,9 @@ const meta = {
 	parameters: {},
 };
 
-const style = '--xb-reel-background-color: rgb(var(--xb-color-background));';
-
 export default meta;
 
-/** @type {import('../../../common/arg-types').StoryObj} */
+/** @type {ReelStory} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-reel>
@@ -60,3 +58,9 @@ export const Playground = {
 		borderless: 'none',
 	},
 };
+
+/**
+ * @typedef {import('./reel').ReelLayout} Reel
+ * @typedef {import('@storybook/web-components').StoryObj<Reel>} ReelStory
+ * @typedef {import('@storybook/web-components').Meta} Meta
+ */

@@ -24,9 +24,7 @@ function styles() {
 				width: 100%;
 
 				${ m( token( 'spacing-0' ) ) };
-			}
 
-			.frame {
 				${ px( 'var(--xb-frame-padding-x)' ) };
 				${ py( 'var(--xb-frame-padding-y)' ) };
 
@@ -39,8 +37,7 @@ function styles() {
 				color: var( --xb-frame-color );
 				background-color: var( --xb-frame-background-color );
 
-				aspect-ratio: var( --xb-frame-ratio-width ) /
-					var( --xb-frame-ratio-height );
+				aspect-ratio: var( --xb-frame-ratio-width ) / var( --xb-frame-ratio-height );
 				overflow: hidden;
 			}
 

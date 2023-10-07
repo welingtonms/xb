@@ -1,16 +1,17 @@
 import { html } from 'lit-html';
 
-import { BorderlessArg, PaddinglessArg } from '../../../common/arg-types';
+import { BorderlessArg, PaddinglessArg, SpacingArg } from '../../../common/arg-types';
 import '../box';
 import './cluster';
 
-/** @type {import('../../../common/arg-types').Meta} */
+/** @type {Meta} */
 const meta = {
 	title: 'Foundation/Layouts/cluster',
 	component: 'xb-cluster',
 	argTypes: {
-		paddingless: PaddinglessArg,
+		gap: SpacingArg,
 		borderless: BorderlessArg,
+		paddingless: PaddinglessArg,
 		children: {
 			table: {
 				disable: true,
@@ -20,15 +21,13 @@ const meta = {
 	parameters: {},
 };
 
-const style = '--xb-cluster-background-color: rgb(var(--xb-color-background));';
-
 export default meta;
 
-/** @type {import('../../../common/arg-types').StoryObj} */
+/** @type {ClusterStory} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-cluster
-			style=${ style }
+			style=${ `--xb-cluster-background-color: rgb(var(--xb-color-background)); --xb-cluster-gap: ${ args.gap }` }
 			paddingless=${ args.paddingless }
 			borderless=${ args.borderless }
 		>
@@ -39,7 +38,14 @@ export const Playground = {
 	`,
 
 	args: {
+		gap: '8px',
 		paddingless: 'none',
 		borderless: 'none',
 	},
 };
+
+/**
+ * @typedef {import('./cluster').ClusterLayout} Cluster
+ * @typedef {import('@storybook/web-components').StoryObj<Cluster>} ClusterStory
+ * @typedef {import('@storybook/web-components').Meta} Meta
+ */

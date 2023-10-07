@@ -3,7 +3,6 @@ import { css } from 'lit';
 import { px, py } from '../../../styles/padding.styles';
 import m from '../../../styles/margin.styles';
 import token from '../../../utils/get-token';
-import typography from '../../../styles/typography.styles';
 
 import layoutStyles from '../../../styles/layout.styles';
 
@@ -23,17 +22,11 @@ function styles() {
 				--xb-stack-justify: flex-start;
 				--xb-stack-padding-x: ${ token( 'spacing-2' ) };
 				--xb-stack-padding-y: ${ token( 'spacing-2' ) };
-				--xb-stack-min-width: initial;
-				--xb-stack-max-height: initial;
-				--xb-stack-overflow-y: initial;
 
 				${ m( token( 'spacing-0' ) ) };
 
-				min-width: var( --xb-stack-min-width );
 				width: 100%;
-			}
 
-			.stack {
 				${ m( 0 ) };
 				${ px( 'var(--xb-stack-padding-x)' ) };
 				${ py( 'var(--xb-stack-padding-y)' ) };
@@ -49,20 +42,11 @@ function styles() {
 				border-radius: var( --xb-stack-border-radius );
 				color: var( --xb-stack-color );
 				background-color: var( --xb-stack-background-color );
-
-				min-width: var( --xb-stack-min-width );
-
-				max-height: var( --xb-stack-max-height );
-				overflow-y: var( --xb-stack-overflow-y );
 			}
 
 			::slotted( * ) {
+				width: 100%;
 				margin-block: 0;
-			}
-
-			::slotted( *:not( :first-child ) ) {
-				/** using flexbox gap */
-				/* margin-block-start: var( --xb-stack-gap ); */
 			}
 		`,
 	];

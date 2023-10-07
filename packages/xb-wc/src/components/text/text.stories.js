@@ -2,7 +2,7 @@ import { html } from 'lit-html';
 
 import './text';
 
-/** @type {import('../../common/arg-types').Meta} */
+/** @type {Meta} */
 const meta = {
 	title: 'Components/text',
 	component: 'xb-text',
@@ -31,15 +31,19 @@ const meta = {
 
 export default meta;
 
-/** @type {import('../../common/arg-types').StoryObj} */
+/** @type {TextStory} */
 export const Playground = {
 	render: ( args ) => html`
-		<xb-text variant=${ args.variant }>
-			The quick brown fox jumps over the lazy dog
-		</xb-text>
+		<xb-text variant=${ args.variant }>The quick brown fox jumps over the lazy dog</xb-text>
 	`,
 
 	args: {
 		variant: 'body-1',
 	},
 };
+
+/**
+ * @typedef {import('./text').Text} Text
+ * @typedef {import('@storybook/web-components').StoryObj<Text>} TextStory
+ * @typedef {import('@storybook/web-components').Meta} Meta
+ */

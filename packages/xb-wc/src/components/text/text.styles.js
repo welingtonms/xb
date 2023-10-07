@@ -10,61 +10,7 @@ function styles() {
 		css`
 			:host {
 				--xb-text-color: ${ token( 'color-gray-700' ) };
-			}
 
-			.-h-1 {
-				${ typography( 'h-1' ) };
-			}
-
-			.-h-2 {
-				${ typography( 'h-2' ) };
-			}
-
-			.-h-3 {
-				${ typography( 'h-3' ) };
-			}
-
-			.-h-4 {
-				${ typography( 'h-4' ) };
-			}
-
-			.-h-5 {
-				${ typography( 'h-5' ) };
-			}
-
-			.-h-6 {
-				${ typography( 'h-6' ) };
-			}
-
-			.-subtitle-1 {
-				${ typography( 'subtitle-1' ) };
-			}
-
-			.-subtitle-2 {
-				${ typography( 'subtitle-2' ) };
-			}
-
-			.-body-1 {
-				${ typography( 'body-1' ) };
-			}
-
-			.-body-2 {
-				${ typography( 'body-2' ) };
-			}
-
-			.-button {
-				${ typography( 'button' ) };
-			}
-
-			.-caption {
-				${ typography( 'caption' ) };
-			}
-
-			.-overline {
-				${ typography( 'overline' ) };
-			}
-
-			.text {
 				${ transition( [ { property: 'color' } ] ) };
 
 				display: inline-block;
@@ -72,6 +18,58 @@ function styles() {
 				${ m( token( 'spacing-0' ) ) };
 
 				color: var( --xb-text-color );
+			}
+
+			:host( [variant='h-1'] ) {
+				${ typography( 'h-1' ) };
+			}
+
+			:host( [variant='h-2'] ) {
+				${ typography( 'h-2' ) };
+			}
+
+			:host( [variant='h-3'] ) {
+				${ typography( 'h-3' ) };
+			}
+
+			:host( [variant='h-4'] ) {
+				${ typography( 'h-4' ) };
+			}
+
+			:host( [variant='h-5'] ) {
+				${ typography( 'h-5' ) };
+			}
+
+			:host( [variant='h-6'] ) {
+				${ typography( 'h-6' ) };
+			}
+
+			:host( [variant='subtitle-1'] ) {
+				${ typography( 'subtitle-1' ) };
+			}
+
+			:host( [variant='subtitle-2'] ) {
+				${ typography( 'subtitle-2' ) };
+			}
+
+			:host( [variant='body-1'] ) {
+				${ typography( 'body-1' ) };
+			}
+
+			:host( [variant='body-2'] ) {
+				${ typography( 'body-2' ) };
+			}
+
+			:host( [variant='button'] ) {
+				${ typography( 'button' ) };
+			}
+
+			:host( [variant='caption'] ) {
+				${ typography( 'caption' ) };
+			}
+
+			:host( [variant='overline'] ) {
+				${ typography( 'overline' ) };
 			}
 		`,
 	];

@@ -13,6 +13,7 @@ function styles() {
 		layoutStyles(),
 		css`
 			:host {
+				--xb-box-display: block;
 				--xb-box-background-color: initial;
 				--xb-box-border-color: ${ token( 'color-gray-300' ) };
 				--xb-box-border-style: solid;
@@ -22,10 +23,6 @@ function styles() {
 				--xb-box-padding-x: ${ token( 'spacing-4' ) };
 				--xb-box-padding-y: ${ token( 'spacing-2' ) };
 
-				${ m( token( 'spacing-0' ) ) };
-			}
-
-			.box {
 				${ transition( [
 					{
 						property: 'background-color',
@@ -35,8 +32,12 @@ function styles() {
 					},
 				] ) };
 
+				${ m( token( 'spacing-0' ) ) };
+
 				${ px( 'var(--xb-box-padding-x)' ) };
 				${ py( 'var(--xb-box-padding-y)' ) };
+
+				display: var( --xb-box-display );
 
 				border: var( --xb-box-border-width ) var( --xb-box-border-style )
 					var( --xb-box-border-color );

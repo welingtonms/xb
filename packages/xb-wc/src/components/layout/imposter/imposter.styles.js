@@ -12,6 +12,7 @@ function styles() {
 		layoutStyles(),
 		css`
 			:host {
+				--xb-imposter-display: block;
 				--xb-imposter-background-color: initial;
 				--xb-imposter-border-color: ${ token( 'color-gray-300' ) };
 				--xb-imposter-border-style: none;
@@ -24,28 +25,30 @@ function styles() {
 				width: 100%;
 
 				${ m( token( 'spacing-0' ) ) };
-			}
 
-			.imposter {
 				${ px( 'var(--xb-imposter-padding-x)' ) };
 				${ py( 'var(--xb-imposter-padding-y)' ) };
 
-				position: absolute;
+				display: var( --xb-imposter-display );
 				inset-block-start: 50%;
 				inset-inline-start: 50%;
 				transform: translate( -50%, -50% );
 
-				border: var( --xb-imposter-border-width )
-					var( --xb-imposter-border-style ) var( --xb-imposter-border-color );
+				border: var( --xb-imposter-border-width ) var( --xb-imposter-border-style )
+					var( --xb-imposter-border-color );
 				color: var( --xb-imposter-color );
 				background-color: var( --xb-imposter-background-color );
 			}
 
-			.xb-imposter.-fixed {
+			:host( [variant='absolute'] ) {
+				position: absolute;
+			}
+
+			:host( [variant='fixed'] ) {
 				position: fixed;
 			}
 
-			.xb-imposter.-breakout {
+			:host( [breakout] ) {
 				overflow: auto;
 				max-inline-size: calc( 100% - ( var( --xb-imposter-margin ) * 2 ) );
 				max-block-size: calc( 100% - ( var( --xb-imposter-margin ) * 2 ) );

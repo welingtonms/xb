@@ -27,11 +27,7 @@ export default meta;
 /** @type {import('../../../common/arg-types').StoryObj} */
 export const Playground = {
 	render: ( args ) => html`
-		<xb-frame
-			style=${ style }
-			paddingless=${ args.paddingless }
-			borderless=${ args.borderless }
-		>
+		<xb-frame style=${ style } paddingless=${ args.paddingless } borderless=${ args.borderless }>
 			<img src="https://picsum.photos/200/300" />
 		</xb-frame>
 	`,
@@ -41,3 +37,9 @@ export const Playground = {
 		borderless: 'none',
 	},
 };
+
+/**
+ * @typedef {import('./frame').FrameLayout} Frame
+ * @typedef {import('@storybook/web-components').StoryObj<Frame>} FrameStory
+ * @typedef {import('@storybook/web-components').Meta} Meta
+ */

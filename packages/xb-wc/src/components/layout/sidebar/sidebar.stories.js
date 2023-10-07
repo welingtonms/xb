@@ -4,7 +4,7 @@ import { BorderlessArg, PaddinglessArg } from '../../../common/arg-types';
 import '../box';
 import './sidebar';
 
-/** @type {import('../../../common/arg-types').Meta} */
+/** @type {Meta} */
 const meta = {
 	title: 'Foundation/Layouts/sidebar',
 	component: 'sidebar',
@@ -30,7 +30,7 @@ const meta = {
 
 export default meta;
 
-/** @type {import('../../../common/arg-types').StoryObj} */
+/** @type {SidebarStory} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-sidebar
@@ -40,15 +40,11 @@ export const Playground = {
 			borderless=${ args.borderless }
 		>
 			<xb-box paddingless="none" borderless="none">
-				${ args.sidePosition === 'left'
-					? 'I am the side content.'
-					: 'I am the main content.' }
+				${ args.sidePosition === 'left' ? 'I am the side content.' : 'I am the main content.' }
 			</xb-box>
 
 			<xb-box paddingless="none" borderless="none">
-				${ args.sidePosition === 'left'
-					? 'I am the main content.'
-					: 'I am the side content.' }
+				${ args.sidePosition === 'left' ? 'I am the main content.' : 'I am the side content.' }
 			</xb-box>
 		</xb-sidebar>
 	`,
@@ -60,3 +56,9 @@ export const Playground = {
 		minContentWidth: '50%',
 	},
 };
+
+/**
+ * @typedef {import('./sidebar').SidebarLayout} Sidebar
+ * @typedef {import('@storybook/web-components').StoryObj<Sidebar>} SidebarStory
+ * @typedef {import('@storybook/web-components').Meta} Meta
+ */

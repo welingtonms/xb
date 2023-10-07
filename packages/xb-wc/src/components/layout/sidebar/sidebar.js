@@ -1,17 +1,9 @@
-import { html } from 'lit/static-html.js';
+import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import withClassy from '@welingtonms/classy';
-
-import { sided } from '../../../common/prop-toolset';
-import withPolymorphicTag from '../../../mixins/polymorphic';
 import BaseLayout from '../base-layout';
 
 import styles from './sidebar.styles';
 
-/**
- * @class
- * @mixes withPolymorphicTag
- */
 @customElement( 'xb-sidebar' )
 export class SidebarLayout extends BaseLayout {
 	static styles = [ styles() ];
@@ -20,51 +12,31 @@ export class SidebarLayout extends BaseLayout {
 	 * Where the side content should be positioned.
 	 * @type {SidebarAttributes['sidePosition']}
 	 */
-	@property( { attribute: 'side-position' } ) sidePosition;
+	@property( { attribute: 'side-position', reflect: true } ) sidePosition;
 
 	constructor() {
 		super();
 
-		/** @type {SidebarAttributes['sidePosition']} */
 		this.sidePosition = 'left';
 	}
 
 	render() {
-		const { when, classy } = withClassy( { sidePosition: this.sidePosition } );
-		const tag = this.tag;
-
 		return html`
-			<${ tag }
-				class=${ classy(
-					'sidebar',
-					{
-						'-side-on-the-left': when( { sidePosition: 'left' } ),
-						'-side-on-the-right': when( { sidePosition: 'right' } ),
-					},
-					sided( 'border', this.borderless ),
-					sided( 'padding', this.paddingless )
-				) }
-			>
-				<slot></slot>
-			</${ tag }>
+			<slot></slot>
 		`;
 	}
 }
+
+/**
+ * @typedef {import('../base-layout').BaseLayoutAttributes} BaseLayoutAttributes
+ */
 
 /**
  * @typedef {'left' | 'right'} SidePosition
  */
 
 /**
- * @typedef {import('../../../common/prop-types').BorderlessProp} BorderlessProp
- * @typedef {import('../../../common/prop-types').PaddinglessProp} PaddinglessProp
- * @typedef {import('../../../common/prop-types').HTMLTag} HTMLTag
- */
-
-/**
- * @typedef {Object} SidebarAttributes
- * @property {BorderlessProp} borderless
- * @property {PaddinglessProp} paddingless
- * @property {HTMLTag} as
- * @property {SidePosition} sidePosition
+ * @typedef {BaseLayoutAttributes & {
+ * 	sidePosition: SidePosition;
+ * }} SidebarAttributes
  */

@@ -1,16 +1,17 @@
 import { html } from 'lit-html';
 
-import { BorderlessArg, PaddinglessArg } from '../../../common/arg-types';
+import { BorderlessArg, PaddinglessArg, SpacingArg } from '../../../common/arg-types';
 import '../box';
 import './stack';
 
-/** @type {import('../../../common/arg-types').Meta} */
+/** @type {Meta} */
 const meta = {
 	title: 'Foundation/Layouts/stack',
 	component: 'xb-stack',
 	argTypes: {
-		paddingless: PaddinglessArg,
+		gap: SpacingArg,
 		borderless: BorderlessArg,
+		paddingless: PaddinglessArg,
 		children: {
 			table: {
 				disable: true,
@@ -20,16 +21,13 @@ const meta = {
 	parameters: {},
 };
 
-const style =
-	'--xb-stack-background-color: rgb(var(--xb-color-background)); width: 100%;';
-
 export default meta;
 
-/** @type {import('../../../common/arg-types').StoryObj} */
+/** @type {StackStory} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-stack
-			style=${ style }
+			style=${ `--xb-stack-background-color: rgb(var(--xb-color-background)); --xb-stack-gap: ${ args.gap }` }
 			paddingless=${ args.paddingless }
 			borderless=${ args.borderless }
 		>
@@ -40,7 +38,14 @@ export const Playground = {
 	`,
 
 	args: {
+		gap: '8px',
 		paddingless: 'none',
 		borderless: 'none',
 	},
 };
+
+/**
+ * @typedef {import('./stack').StackLayout} Stack
+ * @typedef {import('@storybook/web-components').StoryObj<Stack>} StackStory
+ * @typedef {import('@storybook/web-components').Meta} Meta
+ */

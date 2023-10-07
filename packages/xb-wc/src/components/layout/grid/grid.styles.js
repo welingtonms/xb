@@ -18,16 +18,14 @@ function styles() {
 				--xb-grid-border-width: 1px;
 				--xb-grid-color: unset;
 				--xb-grid-gap: ${ token( 'spacing-4' ) };
-				--xb-grid-min-column-width: 80ch;
+				--xb-grid-min-column-width: 250px;
 				--xb-grid-padding-x: ${ token( 'spacing-2' ) };
 				--xb-grid-padding-y: ${ token( 'spacing-2' ) };
 
 				width: 100%;
 
 				${ m( token( 'spacing-0' ) ) };
-			}
 
-			.grid {
 				${ px( 'var(--xb-grid-padding-x)' ) };
 				${ py( 'var(--xb-grid-padding-y)' ) };
 
@@ -41,7 +39,7 @@ function styles() {
 			}
 
 			@supports ( width: min( 250px, 100% ) ) {
-				.xb-grid {
+				:host {
 					grid-template-columns: repeat(
 						auto-fit,
 						minmax( min( var( --xb-grid-min-column-width ), 100% ), 1fr )

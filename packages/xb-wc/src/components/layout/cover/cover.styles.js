@@ -24,9 +24,7 @@ function styles() {
 				width: 100%;
 
 				${ m( token( 'spacing-0' ) ) };
-			}
 
-			.cover {
 				${ px( 'var(--xb-cover-padding-x)' ) };
 				${ py( 'var(--xb-cover-padding-y)' ) };
 
