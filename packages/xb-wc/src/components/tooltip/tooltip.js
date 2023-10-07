@@ -1,12 +1,14 @@
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import withClassy from '@welingtonms/classy';
 
 import { convertTriggerFromAttribute } from './tooltip.helpers';
-import Keyboard from '../../common/keyboard';
+import createLogger from '../../utils/logger';
 import FloatingElement from '../../common/floating-element';
+import Keyboard from '../../common/keyboard';
 
 import styles from './tooltip.styles';
+
+const logger = createLogger( 'tooltip' );
 
 @customElement( 'xb-tooltip' )
 export class Tooltip extends FloatingElement {
@@ -16,127 +18,132 @@ export class Tooltip extends FloatingElement {
 	 * Controls how the tooltip is activated. Possible options include `click`, `hover`, `focus`, and `manual`. Multiple
 	 * options can be passed by separating them with a space. When manual is used, the tooltip must be activated
 	 * programmatically.
-	 * @type {string}
+	 * @type {TooltipAttributes[ 'placement']}
 	 */
 	@property( { converter: { fromAttribute: convertTriggerFromAttribute } } ) trigger;
+
+	/**
+	 * Controls how the tooltip is activated. Possible options include `click`, `hover`, `focus`, and `manual`. Multiple
+	 * options can be passed by separating them with a space. When manual is used, the tooltip must be activated
+	 * programmatically.
+	 * @type {TooltipAttributes[ 'anchor']}
+	 */
+	@property( { type: String, reflect: true } ) anchor;
 
 	constructor() {
 		super();
 
-		/** @type {TooltipTrigger[]} */
 		this.trigger = [ 'hover' ];
-
-		this._handleBlur = this._handleBlur.bind( this );
-		this._handleClick = this._handleClick.bind( this );
-		this._handleFocus = this._handleFocus.bind( this );
-		this._handleKeyDown = this._handleKeyDown.bind( this );
-		this._handleMouseOut = this._handleMouseOut.bind( this );
-		this._handleMouseOver = this._handleMouseOver.bind( this );
 	}
 
 	connectedCallback() {
 		super.connectedCallback();
 
-		this.updateComplete.then( () => {
-			this.addEventListener( 'blur', this._handleBlur, true );
-			this.addEventListener( 'click', this._handleClick );
-			this.addEventListener( 'focus', this._handleFocus, true );
-			this.addEventListener( 'keydown', this._handleKeyDown );
-			this.addEventListener( 'mouseout', this._handleMouseOut );
-			this.addEventListener( 'mouseover', this._handleMouseOver );
-		} );
+		if ( ! this.reference ) {
+			logger.debug( 'no reference element provided' );
+			return;
+		}
+
+		console.log( 'connected', this.reference );
+		this.reference.addEventListener( 'blur', this._handleBlur, true );
+		this.reference.addEventListener( 'click', this._handleClick );
+		this.reference.addEventListener( 'focus', this._handleFocus, true );
+		this.reference.addEventListener( 'keydown', this._handleKeyDown );
+		this.reference.addEventListener( 'mouseout', this._handleMouseOut );
+		this.reference.addEventListener( 'mouseover', this._handleMouseOver );
 	}
 
 	disconnectedCallback() {
 		super.disconnectedCallback();
 
-		this.removeEventListener( 'blur', this.handleBlur, true );
-		this.removeEventListener( 'focus', this.handleFocus, true );
-		this.removeEventListener( 'click', this.handleClick );
-		this.removeEventListener( 'keydown', this.handleKeyDown );
-		this.removeEventListener( 'mouseover', this.handleMouseOver );
-		this.removeEventListener( 'mouseout', this.handleMouseOut );
+		if ( ! this.reference ) {
+			logger.debug( 'no reference element provided' );
+			return;
+		}
+
+		this.reference.removeEventListener( 'blur', this._handleBlur, true );
+		this.reference.removeEventListener( 'click', this._handleClick );
+		this.reference.removeEventListener( 'focus', this._handleFocus, true );
+		this.reference.removeEventListener( 'keydown', this._handleKeyDown );
+		this.reference.removeEventListener( 'mouseout', this._handleMouseOut );
+		this.reference.removeEventListener( 'mouseover', this._handleMouseOver );
 	}
 
 	/**
 	 * @returns {HTMLElement | null}
 	 */
 	getReferenceElement() {
-		const referenceSlot = this.shadowRoot.querySelector( 'slot[name="reference"]' );
-		const [ reference ] = referenceSlot?.assignedElements( { flatten: true } ) ?? [];
-
-		return reference;
+		return document.querySelector( `#${ this.anchor }` );
 	}
 
 	/**
 	 * @returns {HTMLElement | null}
 	 */
 	getFloatingElement() {
-		const floatingSlot = this.shadowRoot.querySelector( 'slot[name="floating"]' );
-		const [ floating ] = floatingSlot?.assignedElements( { flatten: true } ) ?? [];
-
-		return floating;
+		return this;
 	}
 
 	getArrowElement() {
 		return null;
 	}
 
+	// <slot name="reference" aria-describedby="floating"></slot>
+	// <slot
+	// 	name="floating"
+	// 	id="floating"
+	// 	role="tooltip"
+	// 	aria-live=${ this.open ? 'polite' : 'off' }
+	// ></slot>
+
 	render() {
 		return html`
-			<slot name="reference" aria-describedby="floating"></slot>
-			<slot
-				name="floating"
-				id="floating"
-				role="tooltip"
-				aria-live=${ this.open ? 'polite' : 'off' }
-			></slot>
+			<slot></slot>
 		`;
 	}
 
-	_handleFocus() {
+	_handleFocus = () => {
 		if ( this._hasTrigger( 'focus' ) ) {
 			this.show();
 		}
-	}
+	};
 
-	_handleBlur() {
+	_handleBlur = () => {
 		if ( this._hasTrigger( 'focus' ) ) {
 			this.hide();
 		}
-	}
+	};
 
-	_handleClick() {
+	_handleClick = () => {
 		if ( this._hasTrigger( 'click' ) ) {
 			this.toggle();
 		}
-	}
+	};
 
 	/**
 	 * @param {KeyboardEvent} event
 	 */
-	_handleKeyDown( event ) {
+	_handleKeyDown = ( event ) => {
 		if ( this.open && Keyboard( event ).is( [ 'ESC' ] ) ) {
 			event.stopPropagation();
 			this.hide();
 		}
-	}
+	};
 
-	_handleMouseOver() {
+	_handleMouseOver = () => {
 		if ( this._hasTrigger( 'hover' ) ) {
 			clearTimeout( this.hoverTimeout );
 
 			this.hoverTimeout = window.setTimeout( () => this.show(), 450 );
 		}
-	}
+	};
 
-	_handleMouseOut() {
+	_handleMouseOut = () => {
 		if ( this._hasTrigger( 'hover' ) ) {
 			clearTimeout( this.hoverTimeout );
 
 			this.hoverTimeout = window.setTimeout( () => this.hide(), 250 );
 		}
-	}
+	};
 
 	_hasTrigger( triggerType ) {
 		return this.trigger.includes( triggerType );
@@ -153,6 +160,7 @@ export class Tooltip extends FloatingElement {
  * @property {TooltipPlacement} [placement] - Tooltip placement.
  * @property {boolean} [open] - Should the dropdown menu be open.
  * @property {TooltipTrigger | TooltipTrigger[]} trigger
+ * @property {string} anchor - Element that triggers the tooltip.
  */
 
 /**

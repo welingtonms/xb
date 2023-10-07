@@ -7,7 +7,7 @@ import '../icon';
 import '../layout/box';
 import './tooltip';
 
-/** @type {import('../../common/arg-types').Meta} */
+/** @type {Meta} */
 const meta = {
 	title: 'Components/tooltip',
 	component: 'xb-tooltip',
@@ -25,19 +25,26 @@ const meta = {
 
 export default meta;
 
-/** @type {import('../../common/arg-types').StoryObj} */
+/** @type {TooltipStory} */
 export const Playground = {
 	render: ( args ) => html`
-		<xb-tooltip placement=${ args.placement } trigger=${ args.trigger }>
-			<xb-button slot="reference" emphasis="ghost">
-				<xb-icon name="favorite" slot="leading"></xb-icon>
-			</xb-button>
-			<xb-box borderless slot="floating">Lorem ipsum dolor sit amet.</xb-box>
+		<xb-button id="my-anchor" emphasis="ghost">
+			<xb-icon name="favorite"></xb-icon>
+		</xb-button>
+
+		<xb-tooltip anchor="my-anchor" placement=${ args.placement } .trigger=${ args.trigger }>
+			<xb-box borderless>Lorem ipsum dolor sit amet.</xb-box>
 		</xb-tooltip>
 	`,
 
 	args: {
 		placement: 'bottom-start',
-		trigger: 'click',
+		trigger: [ 'click' ],
 	},
 };
+
+/**
+ * @typedef {import('./tooltip').Tooltip} Tooltip
+ * @typedef {import('@storybook/web-components').StoryObj<Tooltip>} TooltipStory
+ * @typedef {import('@storybook/web-components').Meta} Meta
+ */
