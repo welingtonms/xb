@@ -1,3 +1,2 @@
-export { Accordion } from './steps';
-export { AccordionHeader } from './accordion-header';
-export { AccordionPanel } from './accordion-panel';
+export { Steps } from './steps';
+export { Step } from './steps-step';

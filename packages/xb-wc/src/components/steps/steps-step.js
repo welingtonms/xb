@@ -9,7 +9,7 @@ import '../text';
 import '../icon';
 
 @customElement( 'xb-step' )
-export class Steps extends XBElement {
+export class Step extends XBElement {
 	static styles = [ stepStyles() ];
 
 	/**
@@ -31,12 +31,14 @@ export class Steps extends XBElement {
 	 * @param {import('lit').PropertyValues<this>} changedProperties
 	 */
 	updated( changedProperties ) {
-		if (changedProperties.has('active')) {
-			if (this.active) {
-				this.setAttribute('aria-current', 'step');
+		if ( changedProperties.has( 'active' ) ) {
+			if ( this.active ) {
+				// tabindex based on https://mui.com/material-ui/react-stepper/
+				this.setAttribute( 'tabindex', '0' );
+				this.setAttribute( 'aria-current', 'step' );
 			} else {
-                this.removeAttribute('aria-current');
-            }
+				this.removeAttribute( 'aria-current' );
+			}
 		}
 	}
 
@@ -46,14 +48,10 @@ export class Steps extends XBElement {
 				<slot></slot>
 				<xb-icon name="check"></xb-icon>
 			</span>
-			<xb-text variant="caption">${ this.label }</xb-text>
+			<xb-text variant=${ this.active ? 'subtitle-2' : 'caption' }>${ this.label }</xb-text>
 		`;
 	}
 }
-
-/**
- * @typedef {'visited' | 'unvisited'} StepStatus
- */
 
 /**
  * @typedef {Object} StepAttributes
