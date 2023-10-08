@@ -19,6 +19,7 @@ function hasGroup( checkbox ) {
 
 /**
  * A checkbox that controls a group CANNOT be checked/unchecked imperatively.
+ * Based on // https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/examples/checkbox-mixed/
  */
 class CheckboxGroupController extends CheckboxController {
 	/**
@@ -115,8 +116,7 @@ class CheckboxGroupController extends CheckboxController {
 			} else {
 				switch ( value ) {
 					case 'previous':
-						checkbox.checked =
-							checkbox.getAttribute( 'data-previously-checked' ) === 'true';
+						checkbox.checked = checkbox.getAttribute( 'data-previously-checked' ) === 'true';
 						break;
 
 					case 'true':
@@ -213,7 +213,7 @@ export default CheckboxGroupController;
 /**
  * @typedef {import('lit').ReactiveControllerHost} ReactiveControllerHost
  * @typedef {import('lit').ReactiveController} ReactiveController
- * @typedef {import('../../common/xb-element').default} XBElement
+ * @typedef {import('../../../common/xb-element').default} XBElement
  */
 
 /**

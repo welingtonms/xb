@@ -1,5 +1,8 @@
-import KeyboardSupportController from '../keyboard-support';
+import KeyboardSupportController from '../../../controllers/keyboard-support';
 
+/**
+ * @implements {ReactiveController}
+ */
 class CheckboxController {
 	/** @type {CheckboxControllerHost} */
 	host;
@@ -18,8 +21,7 @@ class CheckboxController {
 				shortcut: {
 					key: ' ',
 				},
-				handler: ( event ) => {
-					event.stopPropagation();
+				handler: () => {
 					this.toggle();
 				},
 			} ),
@@ -65,11 +67,11 @@ export default CheckboxController;
 /**
  * @typedef {import('lit').ReactiveControllerHost} ReactiveControllerHost
  * @typedef {import('lit').ReactiveController} ReactiveController
- * @typedef {import('../../common/xb-element').default} XBElement
+ * @typedef {import('../../../common/xb-element').default} XBElement
  */
 
 /**
- * @typedef {import('../keyboard-support').default} KeyboardSupportController
+ * @typedef {import('../../../controllers/keyboard-support').default} KeyboardSupportController
  */
 
 /**

@@ -2,10 +2,8 @@ import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 import { getTextContent } from '../../../utils/slot';
-import {
-	CheckboxController,
-	CheckboxGroupController,
-} from '../../../controllers/checkbox-pattern';
+import CheckboxController from './checkbox.controller';
+import CheckboxGroupController from './checkbox-group.controller';
 import withID from '../../../mixins/with-id';
 import XBElement from '../../../common/xb-element';
 
@@ -39,18 +37,13 @@ export class Checkbox extends withID( XBElement ) {
 	 * Value this radio checkbox represents.
 	 * @type {CheckboxAttributes['size']}
 	 */
-	@property( { type: String } ) size;
+	@property( { type: String, reflect: true } ) size;
 
 	/**
 	 * Value this radio checkbox represents.
 	 * @type {CheckboxAttributes['value']}
 	 */
 	@property( { type: String } ) value;
-
-	/**
-	 * @type {Checkbox[]}
-	 */
-	_group;
 
 	/** @type {CheckboxPatternController} */
 	_controller;
@@ -97,8 +90,6 @@ export class Checkbox extends withID( XBElement ) {
 			changedProperties.get( 'checked' ) != null ||
 			changedProperties.get( 'indeterminate' ) != null
 		) {
-			// this.setAttribute( 'aria-checked', this.checked );
-
 			this.emit( 'xb:change', {
 				detail: {
 					value: this.value,
@@ -147,9 +138,9 @@ export class Checkbox extends withID( XBElement ) {
 
 /**
  * @typedef {Object} CheckboxAttributes
- * @property {boolean} disabled
- * @property {boolean} checked
- * @property {boolean} hasMixedState
+ * @property {boolean} [disabled]
+ * @property {boolean} [checked]
+ * @property {boolean} [indeterminate]
  * @property {string} value
- * @property {CheckboxSize} size
+ * @property {CheckboxSize} [size]
  */
