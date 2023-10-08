@@ -13,6 +13,8 @@ function styles() {
 		css`
 			:host {
 				--xb-checkbox-height: initial;
+				/** https://accessibilityinsights.io/info-examples/web/needs-review/color-contrast/ */
+				--xb-checkbox-background-color: ${ token( 'color-background' ) };
 				--xb-checkbox-outline-color: ${ token( 'color-white', 0 ) };
 
 				${ transition( [ { property: 'color' }, { property: 'opacity' } ] ) };
@@ -27,7 +29,7 @@ function styles() {
 				align-items: center;
 
 				border: none;
-				background: transparent;
+				background: var( --xb-checkbox-background-color );
 				height: var( --xb-checkbox-height );
 
 				${ p( token( 'spacing-0' ) ) };
@@ -36,7 +38,7 @@ function styles() {
 			}
 
 			:host( :is( [aria-checked='true'], [aria-checked='mixed'] ) ) .check {
-				--xb-icon-color: ${ token( 'color-white' ) };
+				--xb-global-color: ${ token( 'color-white' ) };
 
 				border-color: ${ token( 'color-primary-300' ) };
 				background-color: ${ token( 'color-primary-300' ) };
@@ -106,7 +108,7 @@ function styles() {
 
 				${ outline( '--xb-checkbox-outline-color' ) };
 
-				--xb-icon-color: ${ token( 'color-white', 0 ) };
+				--xb-global-color: ${ token( 'color-white', 0 ) };
 
 				flex-shrink: 0;
 				display: inline-flex;
