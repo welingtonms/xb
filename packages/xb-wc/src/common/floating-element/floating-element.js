@@ -1,10 +1,7 @@
 import { property } from 'lit/decorators.js';
-import { computePosition, flip, shift, offset } from '@floating-ui/dom';
 
-import createLogger from '../../utils/logger';
+import FloatingController from '../../controllers/floating';
 import XBElement from '../xb-element';
-
-const logger = createLogger( 'floating-element' );
 
 /**
  * Offer the basic wiring to `@floating-ui/dom` to render a floating element.
@@ -20,7 +17,7 @@ export default class FloatingElement extends XBElement {
 	 * FloatingElement placement.
 	 * @type {FloatingElementAttributes['placement']}
 	 */
-	@property( { type: String } ) placement;
+	@property( { type: String, reflect: true } ) placement;
 
 	/**
 	 * Should popover's floating be open.
@@ -28,126 +25,41 @@ export default class FloatingElement extends XBElement {
 	 */
 	@property( { type: Boolean, reflect: true } ) open;
 
+	/** @type {FloatingController} */
+	_controller;
+
 	constructor() {
 		super();
 
-		/** @type {FloatingElementAttributes['position']} */
 		this.position = 'fixed';
-
-		/** @type {FloatingElementAttributes['placement']} */
 		this.placement = 'top-end';
-
-		/** @type {FloatingElementAttributes['open']} */
 		this.open = false;
-	}
 
-	/**
-	 *
-	 * @param {import('lit').PropertyValueMap<FloatingElement>} changedProperties
-	 */
-	updated( changedProperties ) {
-		super.updated( changedProperties );
-
-		if ( changedProperties.has( 'position' ) || changedProperties.has( 'placement' ) ) {
-			this.reposition();
-		}
+		this._controller = new FloatingController( this );
 	}
 
 	get reference() {
-		return this.getReferenceElement();
+		return this._controller.reference;
 	}
 
 	get floating() {
-		return this.getFloatingElement();
+		return this._controller.floating;
 	}
 
 	get arrow() {
-		return this.getArrowElement();
-	}
-
-	/**
-	 * @returns {HTMLElement | null}
-	 */
-	getReferenceElement() {
-		throw new Error( 'Not implemented' );
-	}
-	/**
-	 * @returns {HTMLElement | null}
-	 */
-	getFloatingElement() {
-		throw new Error( 'Not implemented' );
-	}
-	/**
-	 * @returns {HTMLElement | null}
-	 */
-	getArrowElement() {
-		throw new Error( 'Not implemented' );
+		return this._controller.arrow;
 	}
 
 	show() {
-		if ( this.open ) {
-			return;
-		}
-
-		this.open = true;
-
-		this.reposition();
+		this._controller.show();
 	}
 
 	hide() {
-		if ( ! this.open ) {
-			return;
-		}
-
-		this.open = false;
+		this._controller.hide();
 	}
 
 	toggle() {
-		if ( this.open ) {
-			this.hide();
-		} else {
-			this.show();
-		}
-	}
-
-	reposition() {
-		if ( this.floating == null || this.reference == null ) {
-			logger.warn( 'both floating and reference elements should be available', {
-				reference: this.reference,
-				floating: this.floating,
-			} );
-
-			return;
-		}
-
-		const strategy = this.position || 'fixed';
-		const placement = this.placement || 'bottom-start';
-
-		computePosition( this.reference, this.floating, {
-			strategy,
-			placement,
-			middleware: [ offset( 4 ), flip(), shift() ],
-		} ).then( ( { x, y, placement } ) => {
-			this.floating.style.setProperty( '--xb-floating-left', `${ x }px` );
-			this.floating.style.setProperty( '--xb-floating-top', `${ y }px` );
-
-			this.floating.style.setProperty(
-				'--xb-floating-border-top-left-radius',
-				`${ [ 'bottom-start', 'right-start' ].includes( placement ) ? 0 : 4 }px`
-			);
-			this.floating.style.setProperty(
-				'--xb-floating-border-top-right-radius',
-				`${ [ 'bottom-end', 'left-start' ].includes( placement ) ? 0 : 4 }px`
-			);
-			this.floating.style.setProperty(
-				'--xb-floating-border-bottom-right-radius',
-				`${ [ 'left-end', 'top-end' ].includes( placement ) ? 0 : 4 }px`
-			);
-			this.floating.style.setProperty(
-				'--xb-floating-border-bottom-left-radius',
-				`${ [ 'top-start', 'right-end' ].includes( placement ) ? 0 : 4 }px`
-			);
-		} );
+		this._controller.toggle();
 	}
 }
 
