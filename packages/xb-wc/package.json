@@ -21,12 +21,13 @@
 		"lit"
 	],
 	"dependencies": {
-		"@floating-ui/dom": "1.2.7",
+		"@floating-ui/dom": "1.5.3",
 		"@lit-labs/context": "0.3.1",
 		"@welingtonms/classy": "1.2.0",
 		"@welingtonms/xb-icons": "workspace:*",
 		"@welingtonms/xb-tokens": "workspace:*",
 		"@welingtonms/xb-toolset": "workspace:*",
+		"composed-offset-position": "0.0.4",
 		"lit": "2.8.0"
 	},
 	"devDependencies": {

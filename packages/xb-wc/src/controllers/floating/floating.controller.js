@@ -1,44 +1,58 @@
-import { autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
+import { autoUpdate, computePosition, flip, offset, shift, hide, platform } from '@floating-ui/dom';
+import isFunction from '@welingtonms/xb-toolset/dist/is-function';
+import { offsetParent } from 'composed-offset-position';
 
+import { isPopover, isDialog } from './floating.controller.helpers';
+import topLayerMiddleware from './top-layer-middleware';
 import createLogger from '../../utils/logger';
 
 const logger = createLogger( 'floating' );
 
 /**
- * Allow a component to be rendered as any HTML tag through the attribute `as`..
  * @implements {ReactiveController}
  */
 class FloatingController {
-	/** @type {ReactiveControllerHost} */
+	/** @type {FloatingControllerHost} */
 	host;
-
-	/** @type {FloatingControllerOptions} */
-	options;
 
 	/** @type {boolean} */
 	open;
 
-	/** @type {() => void} */
+	/** @type {(() => void) | null} */
 	cleanup;
 
+	/** @type {FloatingElementPosition} */
+	position;
+
+	/** @type {FloatingElementPlacement} */
+	placement;
+
 	/**
-	 *
-	 * @param {ReactiveControllerHost} host
-	 * @param {FloatingControllerOptions} options
+	 * @param {FloatingControllerHost} host
 	 */
-	constructor( host, options ) {
-		this.options = options;
+	constructor( host ) {
+		this.open = host.open;
+		this.position = host.position;
+		this.placement = host.placement;
 
 		( this.host = host ).addController( this );
 	}
 
-	hostConnected() {
-		if ( this.open ) {
-			this.reposition( 'show' );
+	async hostConnected() {
+		await this.host.updateComplete;
+
+		if ( isPopover( this.floating ) ) {
+			logger.debug( 'popover support detected' );
+		} else {
+			logger.debug( 'popover support not detected' );
 		}
 
 		this.cleanup = autoUpdate( this.reference, this.floating, () => {
-			this.reposition( 'auto' );
+			if ( this.open ) {
+				logger.debug( 'auto update triggered reposition' );
+
+				this.reposition( 'auto' );
+			}
 		} );
 	}
 
@@ -46,21 +60,62 @@ class FloatingController {
 		this.cleanup?.();
 	}
 
-	hostUpdate() {}
+	hostUpdate() {
+		if ( this.open !== this.host.open ) {
+			if ( this.host.open ) {
+				this.show();
+			} else {
+				this.hide();
+			}
+		} else if (
+			this.open &&
+			( this.host.position !== this.position || this.host.placement !== this.placement )
+		) {
+			this.position = this.host.position;
+			this.placement = this.host.placement;
+
+			this.reposition();
+		}
+	}
 
 	get floating() {
-		return this.options.getFloatingElement();
+		if ( ! isFunction( this.host.getFloatingElement ) ) {
+			throw new Error( 'Not implemented' );
+		}
+
+		return this.host.getFloatingElement();
 	}
 
 	get reference() {
-		return this.options.getReferenceElement();
+		if ( ! isFunction( this.host.getReferenceElement ) ) {
+			throw new Error( 'Not implemented' );
+		}
+
+		return this.host.getReferenceElement();
+	}
+
+	get arrow() {
+		if ( ! isFunction( this.host.getArrowElement ) ) {
+			throw new Error( 'Not implemented' );
+		}
+
+		return this.host.getArrowElement();
 	}
 
 	show = () => {
 		if ( this.open ) {
 			return;
 		}
+
 		this.open = true;
+		this.host.open = true;
+
+		if ( isPopover( this.floating ) ) {
+			this.floating.showPopover();
+		} else if ( isDialog( this.floating ) ) {
+			this.floating.show();
+		}
+
 		this.reposition( 'show' );
 	};
 
@@ -68,7 +123,15 @@ class FloatingController {
 		if ( ! this.open ) {
 			return;
 		}
+
 		this.open = false;
+		this.host.open = false;
+
+		if ( isPopover( this.floating ) ) {
+			this.floating.hidePopover();
+		} else if ( isDialog( this.floating ) ) {
+			this.floating.close();
+		}
 	};
 
 	toggle = () => {
@@ -82,7 +145,7 @@ class FloatingController {
 	/**
 	 * @param {string} [reason]
 	 */
-	reposition = async ( reason ) => {
+	reposition = async ( reason = 'auto' ) => {
 		if ( this.floating == null || this.reference == null ) {
 			logger.warn( 'both floating and reference elements should be available', {
 				reference: this.reference,
@@ -92,25 +155,60 @@ class FloatingController {
 			return;
 		}
 
-		const { x, y } = await computePosition( this.reference, this.floating, {
-			strategy: this.options.getPosition() ?? 'fixed',
-			placement: this.options.getPlacement() ?? 'bottom-start',
+		const strategy = this.position || 'fixed';
+		const placement = this.placement || 'bottom-start';
+
+		computePosition( this.reference, this.floating, {
+			strategy,
+			placement,
+			// source: https://floating-ui.com/docs/platform#shadow-dom-fix
+			platform: {
+				...platform,
+				getOffsetParent: ( element ) => {
+					return platform.getOffsetParent( element, offsetParent );
+				},
+			},
 			middleware: [
-				// for adding distance between the reference and floating element
-				offset( this.options.getFloatingOffset() ),
-				// to prevent the floating element from overflowing on the main axis of its placement
+				offset( 4 ),
 				flip(),
-				// preventing overflow while maintaining the desired placement as best as possible.
 				shift(),
+				hide(),
+				isPopover( this.floating ) || isDialog( this.floating )
+					? topLayerMiddleware( this.host )
+					: null,
 			],
+		} ).then( ( { x, y, placement } ) => {
+			// logger.debug( 'positioning at ', placement, { x, y } );
+
+			this.floating.style.setProperty( '--xb-floating-left', `${ x }px` );
+			this.floating.style.setProperty( '--xb-floating-top', `${ y }px` );
+
+			this.floating.style.setProperty(
+				'--xb-floating-border-top-left-radius',
+				`${ [ 'bottom-start', 'right-start' ].includes( placement ) ? 0 : 4 }px`
+			);
+			this.floating.style.setProperty(
+				'--xb-floating-border-top-right-radius',
+				`${ [ 'bottom-end', 'left-start' ].includes( placement ) ? 0 : 4 }px`
+			);
+			this.floating.style.setProperty(
+				'--xb-floating-border-bottom-right-radius',
+				`${ [ 'left-end', 'top-end' ].includes( placement ) ? 0 : 4 }px`
+			);
+			this.floating.style.setProperty(
+				'--xb-floating-border-bottom-left-radius',
+				`${ [ 'top-start', 'right-end' ].includes( placement ) ? 0 : 4 }px`
+			);
 		} );
 
-		Object.assign( this.floating.style, {
-			top: `${ y }px`,
-			left: `${ x }px`,
+		const event = new CustomEvent( 'xb-floating:reposition', {
+			bubbles: true,
+			cancelable: true,
+			composed: true,
+			detail: { reason },
 		} );
 
-		this.emit( 'xb-floating:reposition', { detail: { reason } } );
+		this.host.dispatchEvent( event );
 	};
 }
 
@@ -123,9 +221,22 @@ export default FloatingController;
  */
 
 /**
+ * @typedef {ReactiveControllerHost & {
+ *  open: boolean;
+ * 	position: FloatingElementPosition;
+ *  placement: FloatingElementPlacement;
+ * 	getReferenceElement(): HTMLElement | null;
+ *  getFloatingElement(): HTMLElement | null;
+ * 	getArrowElement(): HTMLElement | null;
+ * }} FloatingControllerHost
+ */
+
+/**
  * @typedef {import('@floating-ui/dom').Strategy} FloatingElementPosition
  * @typedef {import('@floating-ui/dom').Placement} FloatingElementPlacement
  * @typedef {import('@floating-ui/dom').MiddlewareData} MiddlewareData
+ * @typedef {import('@floating-ui/dom').Middleware} Middleware
+ * @typedef {import('@floating-ui/dom').MiddlewareState} MiddlewareState
  */
 
 /**
@@ -138,14 +249,4 @@ export default FloatingController;
 /**
  * @typedef {Object} FloatingControllerProps
  * @property {[Shortcut, (event: KeyboardEvent) => void][]} keymap
- */
-
-/**
- * @typedef {{
- *  getFloatingElement: () => HTMLElement;
- *  getReferenceElement: () => HTMLElement;
- *  getFloatingOffset: () => number;
- *  getPosition: () => FloatingElementPosition;
- *  getPlacement: () => FloatingElementPlacement;
- * }} FloatingControllerOptions
  */
