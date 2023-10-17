@@ -1,16 +1,17 @@
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-import styles from './radio.styles';
 import { getTextContent } from '../../../utils/slot';
 import withID from '../../../mixins/with-id';
 import XBElement from '../../../common/xb-element';
+
+import { radioStyles } from './radio.styles';
 
 import '../../icon';
 
 @customElement( 'xb-radio' )
 export class Radio extends withID( XBElement ) {
-	static styles = [ styles() ];
+	static styles = [ radioStyles() ];
 
 	/**
 	 * Should the radio be disabled.
@@ -41,7 +42,7 @@ export class Radio extends withID( XBElement ) {
 
 		this.checked = false;
 		this.disabled = false;
-		this.size = 'small';
+		this.size = 'extra-small';
 
 		// Based on https://lit.dev/docs/components/events/#adding-event-listeners-to-the-component-or-its-shadow-root
 		this.addEventListener( 'click', this._handleClick );
