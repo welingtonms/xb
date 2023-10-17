@@ -53,7 +53,7 @@ export class Checkbox extends withID( XBElement ) {
 
 		this.checked = false;
 		this.disabled = false;
-		this.size = 'small';
+		this.size = 'extra-small';
 	}
 
 	connectedCallback() {
