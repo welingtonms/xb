@@ -1,4 +1,4 @@
-import { html } from 'lit';
+import { html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import Icons from '@welingtonms/xb-icons';
 
@@ -21,10 +21,10 @@ export class Icon extends XBElement {
 	 */
 	@property( { type: Number } ) size;
 
-	constructor() {
-		super();
+	connectedCallback() {
+		super.connectedCallback();
 
-		this.name = 'star';
+		this.setAttribute( 'aria-hidden', 'true' );
 	}
 
 	/**
@@ -41,7 +41,7 @@ export class Icon extends XBElement {
 
 	render() {
 		return html`
-			${ Icons[ this.name ] }
+			${ this.name in Icons ? Icons[ this.name ] : nothing }
 		`;
 	}
 }
