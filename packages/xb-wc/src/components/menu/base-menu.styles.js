@@ -27,8 +27,6 @@ function styles() {
 
 				min-width: 100%;
 
-				position: relative;
-
 				${ m( 0 ) };
 				${ px( 'var(--xb-menu-padding-x)' ) };
 				${ py( 'var(--xb-menu-padding-y)' ) };
