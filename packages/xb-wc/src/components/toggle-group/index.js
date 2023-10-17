@@ -1,5 +1,5 @@
 export { ToggleGroup } from './toggle-group';
-export { ToggleButton } from './toggle';
+export { Toggle } from './toggle';
 
 /**
  * @typedef {import('./toggle-group').ToggleGroupAttributes} ToggleGroupAttributes

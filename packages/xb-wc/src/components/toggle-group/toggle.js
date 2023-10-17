@@ -1,8 +1,6 @@
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { ContextConsumer } from '@lit-labs/context';
 
-import { toggleGroupContext } from './toggle-group-context';
 import withID from '../../mixins/with-id';
 import XBElement from '../../common/xb-element';
 import styles from './toggle.styles';
@@ -15,7 +13,7 @@ function getRole( type ) {
 }
 
 @customElement( 'xb-toggle' )
-export class ToggleButton extends withID( XBElement ) {
+export class Toggle extends withID( XBElement ) {
 	static styles = [ styles() ];
 
 	/**
@@ -41,11 +39,6 @@ export class ToggleButton extends withID( XBElement ) {
 
 		this.checked = false;
 		this.disabled = false;
-
-		this._consumer = new ContextConsumer( this, {
-			context: toggleGroupContext,
-			subscribe: true,
-		} );
 
 		// Based on https://lit.dev/docs/components/events/#adding-event-listeners-to-the-component-or-its-shadow-root
 		this.addEventListener( 'click', this._handleClick );
@@ -81,9 +74,6 @@ export class ToggleButton extends withID( XBElement ) {
 		if ( changedProperties.has( 'checked' ) ) {
 			this.setAttribute( 'aria-checked', this.checked );
 		}
-
-		// TODO: evaluate dropping the context and updating this in the toggle group.
-		this.setAttribute( 'role', getRole( this._consumer.value?.selection ) );
 	}
 
 	render() {
@@ -94,18 +84,12 @@ export class ToggleButton extends withID( XBElement ) {
 		`;
 	}
 
-	// _isDisabled = () => {
-	// 	return Boolean( this._consumer.value?.disabled ) || this.disabled;
-	// };
-
 	_handleClick = ( event ) => {
 		if ( this.disabled ) {
 			event.stopPropagation();
 			event.preventDefault();
 			return;
 		}
-
-		return false;
 	};
 }
 

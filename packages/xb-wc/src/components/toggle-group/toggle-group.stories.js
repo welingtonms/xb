@@ -7,7 +7,7 @@ import { SelectionArg, SizeArg } from '../../common/arg-types';
 import './toggle-group';
 import './toggle';
 
-/** @type {import('../../common/arg-types').Meta} */
+/** @type {Meta} */
 const meta = {
 	title: 'Components/toggle-group',
 	component: 'toggle-group',
@@ -30,7 +30,7 @@ const meta = {
 
 export default meta;
 
-/** @type {import('../../common/arg-types').StoryObj} */
+/** @type {ToggleGroupStory} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-toggle-group
@@ -105,3 +105,9 @@ export const Playground = {
 		disabled: false,
 	},
 };
+
+/**
+ * @typedef {import('./toggle-group').ToggleGroup} ToggleGroup
+ * @typedef {import('@storybook/web-components').StoryObj<ToggleGroup>} ToggleGroupStory
+ * @typedef {import('@storybook/web-components').Meta} Meta
+ */
