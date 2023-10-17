@@ -14,9 +14,8 @@ export default meta;
 
 /** @type {import('../../common/arg-types').StoryObj} */
 export const Playground = {
-	render: ( args ) =>
-		html`
-			<xb-spinner></xb-spinner>
-		`,
+	render: () => html`
+		<xb-spinner></xb-spinner>
+	`,
 	args: {},
 };

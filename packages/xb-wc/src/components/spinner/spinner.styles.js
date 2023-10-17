@@ -11,9 +11,7 @@ function styles() {
 
 				margin: 0 auto;
 				width: 100%;
-			}
 
-			.spinner {
 				${ px( token( 'spacing-2' ) ) };
 
 				position: relative;
