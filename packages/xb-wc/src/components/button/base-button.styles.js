@@ -1,6 +1,5 @@
 import { css } from 'lit';
 
-import { active, disabled, focused } from '../../styles/state.styles';
 import m from '../../styles/margin.styles';
 import outline from '../../styles/outline.styles';
 import p, { px, py } from '../../styles/padding.styles';
