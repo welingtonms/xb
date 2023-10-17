@@ -1,18 +1,13 @@
 import { html } from 'lit';
-import { ContextProvider } from '@lit-labs/context';
 import { customElement, property } from 'lit/decorators.js';
 import toArray from '@welingtonms/xb-toolset/dist/to-array';
 
-import { attachContextRoot } from '../../utils/context';
-import { toggleGroupContext } from './toggle-group-context';
 import styles from './toggle-group.styles';
 import ToggleGroupController from './toggle-group.controller';
 import WithSelection from '../../mixins/with-selection';
 import XBElement from '../../common/xb-element';
 
 import '../layout/cluster';
-
-attachContextRoot();
 
 /**
  * @param {ToggleGroupType} role
@@ -51,27 +46,14 @@ export class ToggleGroup extends WithSelection( XBElement ) {
 	/** @type {ToggleGroupController} */
 	_controller;
 
-	/** @type {ContextProvider<import('./toggle-group-context').ToggleGroupContext>} */
-	_provider;
-
 	constructor() {
 		super();
 
 		this.disabled = false;
-		this.role = getGroupRole( this.selection );
 		this.selection = 'single-strict';
 		this.size = 'extra-small';
 
 		this._controller = new ToggleGroupController( this );
-
-		this._provider = new ContextProvider( this, {
-			context: toggleGroupContext,
-			initialValue: {
-				disabled: this.disabled,
-				size: this.size,
-				selection: this.selection,
-			},
-		} );
 	}
 
 	connectedCallback() {
@@ -87,18 +69,6 @@ export class ToggleGroup extends WithSelection( XBElement ) {
 	update( changedProperties ) {
 		if ( changedProperties.has( 'value' ) ) {
 			this._controller.selection.init( toArray( this.value ) );
-		}
-
-		if (
-			changedProperties.has( 'disabled' ) ||
-			changedProperties.has( 'size' ) ||
-			changedProperties.has( 'selection' )
-		) {
-			this._provider.setValue( {
-				disabled: this.disabled,
-				size: this.size,
-				selection: this.selection,
-			} );
 		}
 
 		super.update( changedProperties );
@@ -123,19 +93,22 @@ export class ToggleGroup extends WithSelection( XBElement ) {
 		`;
 	}
 
-	_updateGroup() {
-		for ( const element of this._controller.focus.queried ) {
-			element.checked = this._controller.selection.selection.has( element.value );
-			// element.role = getToggleRole( this.selection );
+	_updateGroup = () => {
+		const toggles = Array.from( this.querySelectorAll( 'xb-toggle' ) );
 
+		for ( const element of toggles ) {
 			// TODO: handle when the toggle itself is disabled (has the disabled attribute)
 			element.disabled = this.disabled;
+			element.checked = this._controller.selection.selection.has( element.value );
+
+			// setting element.role do not work on Firefox
+			element.setAttribute( 'role', getToggleRole( this.selection ) );
 		}
-	}
+	};
 }
 
 /**
- * @typedef {import('./toggle').ToggleButton} ToggleButton
+ * @typedef {import('./toggle').Toggle} Toggle
  * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionType} ToggleGroupType
  * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionState} SelectionState
  * @typedef {import('../../styles/size.styles').ElementSize} ToggleSize
