@@ -2,15 +2,15 @@ import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 import BoundaryController from '../../controllers/boundary';
-import FloatingElement from '../../common/floating-element';
+import FloatingElement, { supportsPopover } from '../../common/floating-element';
 import FocusManagerController from '../../controllers/focus-manager';
 import KeyboardSupportController from '../../controllers/keyboard-support';
 
-import styles from './dropdown.styles';
+import { dropdownStyles } from './dropdown.styles';
 
 @customElement( 'xb-dropdown' )
 export class Dropdown extends FloatingElement {
-	static styles = [ styles() ];
+	static styles = [ dropdownStyles() ];
 
 	/**
 	 * Should the dropdown be disabled.
@@ -25,7 +25,7 @@ export class Dropdown extends FloatingElement {
 		super();
 
 		this.position = 'absolute';
-		this.placement = 'bottom-start';
+		this.placement = 'bottom-end';
 		this.disabled = false;
 
 		this._controllers = {
@@ -129,12 +129,17 @@ export class Dropdown extends FloatingElement {
 	}
 
 	firstUpdated() {
-		this.reference.setAttribute( 'aria-controls', this.floating.id );
 		this.floating.setAttribute( 'aria-labelledby', this.reference.id );
+
+		if ( supportsPopover() ) {
+			this.floating.setAttribute( 'popover', 'manual' );
+		}
+
+		this.reference.setAttribute( 'aria-controls', this.floating.id );
 	}
 
 	/**
-	 * @param {import('lit').PropertyValues<ToggleGroup>} changedProperties
+	 * @param {import('lit').PropertyValues<this>} changedProperties
 	 */
 	updated( changedProperties ) {
 		super.updated( changedProperties );
@@ -145,7 +150,6 @@ export class Dropdown extends FloatingElement {
 			} else {
 				this.reference.removeAttribute( 'aria-expanded' );
 			}
-			// this.reference.setBooleanAttribute( 'aria-expanded', this.open );
 		}
 	}
 

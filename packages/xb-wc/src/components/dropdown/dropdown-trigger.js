@@ -4,7 +4,7 @@ import { customElement } from 'lit/decorators.js';
 import { BaseButton } from '../button';
 import WithID from '../../mixins/with-id';
 
-import styles from './dropdown-trigger.styles';
+import { triggerStyles } from './dropdown.styles';
 
 /**
  * @class
@@ -12,7 +12,7 @@ import styles from './dropdown-trigger.styles';
  */
 @customElement( 'xb-dropdown-trigger' )
 export class DropdownTrigger extends WithID( BaseButton ) {
-	static styles = [ ...BaseButton.styles, styles() ];
+	static styles = [ ...BaseButton.styles, triggerStyles() ];
 
 	constructor() {
 		super();
