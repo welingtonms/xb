@@ -5,7 +5,7 @@ import { expect } from '@storybook/jest';
 import './radio-group';
 import './radio';
 
-/** @type {import('../../../common/arg-types').Meta} */
+/** @type {Meta} */
 const meta = {
 	title: 'Components/form/radio',
 	component: 'xb-radio',
@@ -20,16 +20,6 @@ const meta = {
 				type: 'boolean',
 			},
 		},
-		input: {
-			action: 'input',
-			table: {
-				disable: true,
-			},
-		},
-		size: {
-			control: 'select',
-			options: [ 'small', 'medium', 'large' ],
-		},
 		change: {
 			action: 'changed',
 			table: {
@@ -42,17 +32,13 @@ const meta = {
 
 export default meta;
 
-/** @type {import('../../../common/arg-types').StoryObj} */
+/** @type {RadioGroupStory} */
 export const Playground = {
 	render: ( args ) => html`
-		<xb-radio-group
-			size=${ args.size }
-			?disabled=${ args.disabled }
-			@xb:change=${ args.change }
-		>
-			<xb-radio value="accept" size=${ args.size }>Accept</xb-radio>
-			<xb-radio value="change" size=${ args.size }>Change</xb-radio>
-			<xb-radio value="leave" size=${ args.size }>Leave</xb-radio>
+		<xb-radio-group ?disabled=${ args.disabled } @xb:change=${ args.change }>
+			<xb-radio value="accept">Accept</xb-radio>
+			<xb-radio value="change">Change</xb-radio>
+			<xb-radio value="leave">Leave</xb-radio>
 		</xb-radio-group>
 	`,
 	play: async ( { canvasElement } ) => {
@@ -71,6 +57,11 @@ export const Playground = {
 
 	args: {
 		disabled: false,
-		size: 'extra-small',
 	},
 };
+
+/**
+ * @typedef {import('./radio-group').RadioGroup} RadioGroup
+ * @typedef {import('@storybook/web-components').StoryObj<RadioGroup>} RadioGroupStory
+ * @typedef {import('@storybook/web-components').Meta} Meta
+ */
