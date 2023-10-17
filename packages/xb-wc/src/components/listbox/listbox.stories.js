@@ -8,7 +8,7 @@ import '../text';
 import './listbox';
 import './listbox-option';
 
-/** @type {import('../../common/arg-types').Meta} */
+/** @type {Meta} */
 const meta = {
 	title: 'Components/listbox',
 	component: 'xb-listbox',
@@ -33,7 +33,7 @@ const meta = {
 
 export default meta;
 
-/** @type {import('../../common/arg-types').StoryObj} */
+/** @type {ListboxStory} */
 export const Playground = {
 	args: {
 		selection: 'single',
@@ -106,3 +106,9 @@ export const Playground = {
 		} );
 	},
 };
+
+/**
+ * @typedef {import('./listbox').Listbox} Listbox
+ * @typedef {import('@storybook/web-components').StoryObj<Listbox>} ListboxStory
+ * @typedef {import('@storybook/web-components').Meta} Meta
+ */
