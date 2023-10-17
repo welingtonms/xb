@@ -33,7 +33,7 @@ export const Playground = {
 		</xb-button>
 
 		<xb-tooltip anchor="my-anchor" placement=${ args.placement } .trigger=${ args.trigger }>
-			<xb-box borderless>Lorem ipsum dolor sit amet.</xb-box>
+			Lorem ipsum dolor sit amet.
 		</xb-tooltip>
 	`,
 

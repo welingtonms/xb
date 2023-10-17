@@ -3,7 +3,7 @@ import { customElement, property } from 'lit/decorators.js';
 
 import { convertTriggerFromAttribute } from './tooltip.helpers';
 import createLogger from '../../utils/logger';
-import FloatingElement from '../../common/floating-element';
+import FloatingElement, { supportsPopover } from '../../common/floating-element';
 import Keyboard from '../../common/keyboard';
 
 import styles from './tooltip.styles';
@@ -33,6 +33,7 @@ export class Tooltip extends FloatingElement {
 	constructor() {
 		super();
 
+		this.position = 'absolute';
 		this.trigger = [ 'hover' ];
 	}
 
@@ -44,13 +45,16 @@ export class Tooltip extends FloatingElement {
 			return;
 		}
 
-		console.log( 'connected', this.reference );
 		this.reference.addEventListener( 'blur', this._handleBlur, true );
 		this.reference.addEventListener( 'click', this._handleClick );
 		this.reference.addEventListener( 'focus', this._handleFocus, true );
 		this.reference.addEventListener( 'keydown', this._handleKeyDown );
 		this.reference.addEventListener( 'mouseout', this._handleMouseOut );
 		this.reference.addEventListener( 'mouseover', this._handleMouseOver );
+
+		if ( supportsPopover() ) {
+			this.setAttribute( 'popover', 'manual' );
+		}
 	}
 
 	disconnectedCallback() {
@@ -73,6 +77,7 @@ export class Tooltip extends FloatingElement {
 	 * @returns {HTMLElement | null}
 	 */
 	getReferenceElement() {
+		// this does not work when the tooltip is inside another element's shadow root.
 		return document.querySelector( `#${ this.anchor }` );
 	}
 

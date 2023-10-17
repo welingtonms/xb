@@ -3,7 +3,7 @@ import { css } from 'lit';
 import m from '../../styles/margin.styles';
 import p from '../../styles/padding.styles';
 import token from '../../utils/get-token';
-import transition from '../../styles/transition.styles';
+import typography from '../../styles/typography.styles';
 
 function styles() {
 	return [
@@ -13,25 +13,17 @@ function styles() {
 			* that's why we are not loading floatinStyles as we do for the other floating
 			* elements.
 		 	*/
-			:host {
+			:host,
+			[popover] {
 				--xb-floating-background-color: ${ token( 'color-gray-800' ) };
 				--xb-floating-color: ${ token( 'color-white' ) };
-
-				--xb-floating-z-index: ${ token( 'layer-popover' ) };
-
-				--xb-floating-border-top-left-radius: 8px;
-				--xb-floating-border-top-right-radius: 8px;
-				--xb-floating-border-bottom-right-radius: 8px;
-				--xb-floating-border-bottom-left-radius: 8px;
 
 				--xb-floating-top: 0;
 				--xb-floating-left: 0;
 
 				--xb-floating-box-shadow: none;
 
-				${ transition( [ { property: 'box-shadow' } ] ) };
-
-				${ p( token( 'spacing-0' ) ) };
+				${ p( token( 'spacing-2' ) ) };
 				${ m( token( 'spacing-0' ) ) };
 
 				display: none;
@@ -47,6 +39,7 @@ function styles() {
 				top: var( --xb-floating-top, 0 );
 				left: var( --xb-floating-left, 0 );
 
+				border: none;
 				border-top-left-radius: var( --xb-floating-border-top-left-radius );
 				border-top-right-radius: var( --xb-floating-border-top-right-radius );
 				border-bottom-right-radius: var( --xb-floating-border-bottom-right-radius );
@@ -62,9 +55,13 @@ function styles() {
 			:host( [open] ) {
 				display: inline-block;
 			}
+
+			::slotted( * ) {
+				${ typography( 'body-2' ) };
+				color: var( --xb-floating-color );
+			}
 		`,
 	];
 }
 
-console.log( styles() );
 export default styles;
