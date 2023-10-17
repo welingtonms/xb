@@ -2,11 +2,10 @@ import { html } from 'lit-html';
 
 import { SizeArg } from '../../common/arg-types';
 
-import '../text';
 import './menu';
 import './menu-item';
 
-/** @type {import('../../common/arg-types').Meta} */
+/** @type {Meta} */
 const meta = {
 	title: 'Components/menu',
 	component: 'xb-menu',
@@ -24,7 +23,7 @@ const meta = {
 
 export default meta;
 
-/** @type {import('../../common/arg-types').StoryObj} */
+/** @type {MenuStory} */
 export const Playground = {
 	render: ( args ) => html`
 		<xb-menu aria-label="Life choices" size=${ args.size } @click=${ args.click }>
@@ -38,3 +37,9 @@ export const Playground = {
 		size: 'small',
 	},
 };
+
+/**
+ * @typedef {import('./menu').Menu} Menu
+ * @typedef {import('@storybook/web-components').StoryObj<Menu>} MenuStory
+ * @typedef {import('@storybook/web-components').Meta} Meta
+ */
