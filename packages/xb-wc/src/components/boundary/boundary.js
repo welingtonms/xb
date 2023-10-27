@@ -14,7 +14,7 @@ export class InteractionBoundary extends XBElement {
 	 * Should the focus trap be active.
 	 * @type {boolean}
 	 */
-	@property( { type: Boolean, reflect: true } ) active;
+	@property( { type: Boolean, reflect: true } ) accessor active;
 
 	/** @type {BoundaryController} */
 	_controller;

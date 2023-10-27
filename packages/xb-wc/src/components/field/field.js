@@ -20,31 +20,31 @@ export class Field extends XBElement {
 	 * Field label string.
 	 * @type {FieldAttributes['label']}
 	 */
-	@property( { type: String } ) label;
+	@property( { type: String } ) accessor label;
 
 	/**
 	 * Auxiliary tooltip message.
 	 * @type {FieldAttributes['tip']}
 	 */
-	@property( { type: String } ) tip;
+	@property( { type: String } ) accessor tip;
 
 	/**
 	 * Auxiliary prompt to helper user about the field or the validation `status`.
 	 * @type {FieldAttributes['prompt']}
 	 */
-	@property( { type: String } ) prompt;
+	@property( { type: String } ) accessor prompt;
 
 	/**
 	 * Is field required?
 	 * @type {FieldAttributes['required']}
 	 */
-	@property( { type: Boolean } ) required;
+	@property( { type: Boolean } ) accessor required;
 
 	/**
 	 * Field validation status.
 	 * @type {FieldAttributes['status']}
 	 */
-	@property( { type: String } ) status;
+	@property( { type: String } ) accessor status;
 
 	/** @type {HTMLSlotElement} */
 	_defaultSlot;
@@ -135,17 +135,14 @@ export class Field extends XBElement {
 							<slot name="prompt"></slot>
 					  `
 					: html`
-							<xb-text class="prompt" variant="caption" as="small">
-								${ this.prompt }
-							</xb-text>
+							<xb-text class="prompt" variant="caption" as="small">${ this.prompt }</xb-text>
 					  ` }
 			</xb-stack>
 		`;
 	}
 
 	_getControls() {
-		this._defaultSlot =
-			this._defaultSlot ?? this.shadowRoot.querySelector( 'slot:not([name])' );
+		this._defaultSlot = this._defaultSlot ?? this.shadowRoot.querySelector( 'slot:not([name])' );
 
 		const batata = [ ...this._defaultSlot.assignedElements( { flatten: true } ) ];
 

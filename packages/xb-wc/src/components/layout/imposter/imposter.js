@@ -11,12 +11,12 @@ export class ImposterLayout extends BaseLayout {
 	/**
 	 * @type {ImposterAttributes['variant']}
 	 */
-	@property( { type: String, reflect: true } ) variant;
+	@property( { type: String, reflect: true } ) accessor variant;
 
 	/**
 	 * @type {ImposterAttributes['breakout']}
 	 */
-	@property( { type: Boolean, reflect: true } ) breakout;
+	@property( { type: Boolean, reflect: true } ) accessor breakout;
 
 	constructor() {
 		super();

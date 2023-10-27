@@ -12,14 +12,14 @@ const WithSelectionMixin = ( BaseClass ) =>
 		 * Selection strategy.
 		 * @type {WithSelectionAttributes['selection']}
 		 */
-		@property( { type: String } ) selection;
+		@property( { type: String } ) accessor selection;
 
 		/**
 		 * Selection value.
 		 * This should be typed in the subclass.
 		 * @type {WithSelectionAttributes['value']}
 		 */
-		@property() value;
+		@property() accessor value;
 	};
 
 export default WithSelectionMixin;

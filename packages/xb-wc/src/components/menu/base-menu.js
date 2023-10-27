@@ -19,13 +19,13 @@ export class BaseMenu extends withID( XBElement ) {
 	 * Is the menu options being loaded.
 	 * @type {BaseMenuAttributes['loading']}
 	 */
-	@property( { type: Boolean } ) loading;
+	@property( { type: Boolean } ) accessor loading;
 
 	/**
 	 * Should menu items be [bottom] bordered.
 	 * @type {BaseMenuAttributes['bordered']}
 	 */
-	@property( { type: Boolean } ) bordered;
+	@property( { type: Boolean } ) accessor bordered;
 
 	constructor() {
 		super();

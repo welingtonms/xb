@@ -16,25 +16,25 @@ export class BaseButton extends XBElement {
 	 * Determine borders to be supressed.
 	 * @type {BaseButtonAttributes['borderless']}
 	 */
-	@property( { type: String } ) borderless;
+	@property( { type: String } ) accessor borderless;
 
 	/**
 	 * Should the button be disabled.
 	 * @type {BaseButtonAttributes['disabled']}
 	 */
-	@property( { type: Boolean, reflect: true } ) disabled;
+	@property( { type: Boolean, reflect: true } ) accessor disabled;
 
 	/**
 	 * Determine paddings to be supressed.
 	 * @type {BaseButtonAttributes['paddingless']}
 	 */
-	@property( { type: String } ) paddingless;
+	@property( { type: String } ) accessor paddingless;
 
 	/**
 	 * Button size.
 	 * @type {BaseButtonAttributes['size']}
 	 */
-	@property( { type: String, reflect: true } ) size;
+	@property( { type: String, reflect: true } ) accessor size;
 
 	constructor() {
 		super();

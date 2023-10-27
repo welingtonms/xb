@@ -12,7 +12,7 @@ export class Dialog extends XBElement {
 	 * Should the dialog be open.
 	 * @type {DialogAttributes['open']}
 	 */
-	@property( { type: Boolean, reflect: true } ) open;
+	@property( { type: Boolean, reflect: true } ) accessor open;
 
 	constructor() {
 		super();

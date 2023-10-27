@@ -12,7 +12,7 @@ export class SwitcherLayout extends BaseLayout {
 	 * The maximum number of elements allowed to appear in the horizontal configuration.
 	 * @type {SwitcherAttributes['limit']}
 	 */
-	@property( { type: Number } ) limit;
+	@property( { type: Number } ) accessor limit;
 
 	constructor() {
 		super();

@@ -16,7 +16,7 @@ export class Dropdown extends FloatingElement {
 	 * Should the dropdown be disabled.
 	 * @type {DropdownAttributes['disabled']}
 	 */
-	@property( { type: Boolean, reflect: true } ) disabled;
+	@property( { type: Boolean, reflect: true } ) accessor disabled;
 
 	/** @type {DropdownControllers} */
 	_controllers;

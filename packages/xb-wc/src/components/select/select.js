@@ -48,43 +48,43 @@ function createOption( { value, label, type, disabled, selected } ) {
 export class Select extends SelectionBoundary {
 	static styles = [ styles() ];
 
-	@property( {} ) datasources;
+	@property( {} ) accessor datasources;
 
 	/**
 	 * Should the dropdown be disabled.
 	 * @type {SelectAttributes['disabled']}
 	 */
-	@property( { type: Boolean, reflect: true } ) disabled;
+	@property( { type: Boolean, reflect: true } ) accessor disabled;
 
 	/**
 	 * Select is loading options.
 	 * @type {SelectAttributes['loading']}
 	 */
-	@property( { type: Boolean, reflect: true } ) loading;
+	@property( { type: Boolean, reflect: true } ) accessor loading;
 
 	/**
 	 * Is this a multiple selection?
 	 * @type {SelectAttributes['multiple']}
 	 */
-	@property( { type: Boolean } ) multiple;
+	@property( { type: Boolean } ) accessor multiple;
 
 	/**
 	 * Should the dropdown menu be open.
 	 * @type {SelectAttributes['open']}
 	 */
-	@property( { type: Boolean, reflect: true } ) open;
+	@property( { type: Boolean, reflect: true } ) accessor open;
 
 	/**
 	 * Select placeholder.
 	 * @type {SelectAttributes['placeholder']}
 	 */
-	@property( { type: String } ) placeholder;
+	@property( { type: String } ) accessor placeholder;
 
 	/**
 	 * Select variant.
 	 * @type {SelectAttributes['placement']}
 	 */
-	@property( { type: String } ) placement;
+	@property( { type: String } ) accessor placement;
 
 	/** @type {DataController} */
 	_controller;
@@ -330,15 +330,13 @@ export class Select extends SelectionBoundary {
 		const changed = getChanged( this.selection, this._toSelectionValue( this.value ) );
 
 		let optionsToSync = [];
-		Array.from( new Set( [ ...changed, ...this.selection.keys() ] ) ).forEach(
-			( value ) => {
-				const node = this.querySelector( `xb-option[value="${ value }"]` );
+		Array.from( new Set( [ ...changed, ...this.selection.keys() ] ) ).forEach( ( value ) => {
+			const node = this.querySelector( `xb-option[value="${ value }"]` );
 
-				if ( node ) {
-					optionsToSync.push( node );
-				}
+			if ( node ) {
+				optionsToSync.push( node );
 			}
-		);
+		} );
 
 		this._syncOptions( optionsToSync );
 		this._updateTrigger();

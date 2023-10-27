@@ -15,49 +15,49 @@ export class TextInput extends XBElement {
 	 * Input type.
 	 * @type {TextInputAttributes['type']}
 	 */
-	@property( { type: String } ) type;
+	@property( { type: String } ) accessor type;
 
 	/**
 	 * Should the button be disabled.
 	 * @type {TextInputAttributes['disabled']}
 	 */
-	@property( { type: Boolean, reflect: true } ) disabled;
+	@property( { type: Boolean, reflect: true } ) accessor disabled;
 
 	/**
 	 * Should the button be clearable.
 	 * @type {TextInputAttributes['clearable']}
 	 */
-	@property( { type: Boolean, reflect: true } ) clearable;
+	@property( { type: Boolean, reflect: true } ) accessor clearable;
 
 	/**
 	 * Button size.
 	 * @type {TextInputAttributes['size']}
 	 */
-	@property( { type: String } ) size;
+	@property( { type: String } ) accessor size;
 
 	/**
 	 * Input value.
 	 * @type {TextInputAttributes['value']}
 	 */
-	@property( { type: String, reflect: true } ) value;
+	@property( { type: String, reflect: true } ) accessor value;
 
 	/**
 	 * Placeholder value.
 	 * @type {TextInputAttributes['placeholder']}
 	 */
-	@property( { type: String, reflect: true } ) placeholder;
+	@property( { type: String, reflect: true } ) accessor placeholder;
 
 	/**
 	 * Determine borders to be supressed.
 	 * @type {TextInputAttributes['borderless']}
 	 */
-	@property( { type: String } ) borderless;
+	@property( { type: String } ) accessor borderless;
 
 	/**
 	 * Determine paddings to be supressed.
 	 * @type {TextInputAttributes['paddingless']}
 	 */
-	@property( { type: String } ) paddingless;
+	@property( { type: String } ) accessor paddingless;
 
 	constructor() {
 		super();

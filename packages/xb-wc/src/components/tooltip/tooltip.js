@@ -20,7 +20,7 @@ export class Tooltip extends FloatingElement {
 	 * programmatically.
 	 * @type {TooltipAttributes[ 'placement']}
 	 */
-	@property( { converter: { fromAttribute: convertTriggerFromAttribute } } ) trigger;
+	@property( { converter: { fromAttribute: convertTriggerFromAttribute } } ) accessor trigger;
 
 	/**
 	 * Controls how the tooltip is activated. Possible options include `click`, `hover`, `focus`, and `manual`. Multiple
@@ -28,7 +28,7 @@ export class Tooltip extends FloatingElement {
 	 * programmatically.
 	 * @type {TooltipAttributes[ 'anchor']}
 	 */
-	@property( { type: String, reflect: true } ) anchor;
+	@property( { type: String, reflect: true } ) accessor anchor;
 
 	constructor() {
 		super();

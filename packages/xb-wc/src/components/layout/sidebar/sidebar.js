@@ -12,7 +12,7 @@ export class SidebarLayout extends BaseLayout {
 	 * Where the side content should be positioned.
 	 * @type {SidebarAttributes['sidePosition']}
 	 */
-	@property( { attribute: 'side-position', reflect: true } ) sidePosition;
+	@property( { attribute: 'side-position', reflect: true } ) accessor sidePosition;
 
 	constructor() {
 		super();

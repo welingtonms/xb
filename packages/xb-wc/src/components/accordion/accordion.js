@@ -13,7 +13,7 @@ export class Accordion extends XBElement {
 	 * Should accordion be open?
 	 * @type {boolean}
 	 */
-	@property( { type: Boolean, reflect: true } ) open;
+	@property( { type: Boolean, reflect: true } ) accessor open;
 
 	constructor() {
 		super();

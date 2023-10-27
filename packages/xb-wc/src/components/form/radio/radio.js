@@ -17,25 +17,25 @@ export class Radio extends withID( XBElement ) {
 	 * Should the radio be disabled.
 	 * @type {RadioAttributes['disabled']}
 	 */
-	@property( { type: Boolean, reflect: true } ) disabled;
+	@property( { type: Boolean, reflect: true } ) accessor disabled;
 
 	/**
 	 * Should the radio be checked.
 	 * @type {RadioAttributes['checked']}
 	 */
-	@property( { type: Boolean, reflect: true } ) checked;
+	@property( { type: Boolean, reflect: true } ) accessor checked;
 
 	/**
 	 * Value this radio checkbox represents.
 	 * @type {RadioAttributes['size']}
 	 */
-	@property( { type: String, reflect: true } ) size;
+	@property( { type: String, reflect: true } ) accessor size;
 
 	/**
 	 * Value this radio checkbox represents.
 	 * @type {RadioAttributes['value']}
 	 */
-	@property( { type: String, reflect: true } ) value;
+	@property( { type: String, reflect: true } ) accessor value;
 
 	constructor() {
 		super();

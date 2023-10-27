@@ -16,25 +16,25 @@ export class ListItem extends XBElement {
 	 * @type {HTMLTag}
 	 * @public
 	 */
-	@property( { type: String } ) as;
+	@property( { type: String } ) accessor as;
 
 	/**
 	 * Determine borders to be supressed.
 	 * @type {ListItemAttributes['borderless']}
 	 */
-	@property( {} ) borderless;
+	@property( {} ) accessor borderless;
 
 	/**
 	 * Determine paddings to be supressed.
 	 * @type {ListItemAttributes['hoverable']} paddingless
 	 */
-	@property( { type: Boolean } ) hoverable;
+	@property( { type: Boolean } ) accessor hoverable;
 
 	/**
 	 * Determine paddings to be supressed.
 	 * @type {ListItemAttributes['striped']} paddingless
 	 */
-	@property( { type: Boolean } ) striped;
+	@property( { type: Boolean } ) accessor striped;
 
 	constructor() {
 		super();

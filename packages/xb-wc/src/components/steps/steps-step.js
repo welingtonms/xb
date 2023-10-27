@@ -15,17 +15,17 @@ export class Step extends XBElement {
 	/**
 	 * @type {StepAttributes['label']}
 	 */
-	@property( { type: String } ) label;
+	@property( { type: String } ) accessor label;
 
 	/**
 	 * @type {StepAttributes['active']}
 	 */
-	@property( { type: Boolean } ) active;
+	@property( { type: Boolean } ) accessor active;
 
 	/**
 	 * @type {StepAttributes['completed']}
 	 */
-	@property( { type: Boolean } ) completed;
+	@property( { type: Boolean } ) accessor completed;
 
 	/**
 	 * @param {import('lit').PropertyValues<this>} changedProperties

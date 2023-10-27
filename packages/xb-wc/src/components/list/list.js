@@ -16,19 +16,19 @@ export class List extends XBElement {
 	 * Determine borders to be supressed.
 	 * @type {ListAttributes['borderless']}
 	 */
-	@property( {} ) borderless;
+	@property( {} ) accessor borderless;
 
 	/**
 	 * Determine paddings to be supressed.
 	 * @type {ListAttributes['hoverable']} paddingless
 	 */
-	@property( { type: Boolean } ) hoverable;
+	@property( { type: Boolean } ) accessor hoverable;
 
 	/**
 	 * Determine paddings to be supressed.
 	 * @type {ListAttributes['striped']} paddingless
 	 */
-	@property( { type: Boolean } ) striped;
+	@property( { type: Boolean } ) accessor striped;
 
 	constructor() {
 		super();

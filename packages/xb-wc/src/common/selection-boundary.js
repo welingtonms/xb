@@ -9,26 +9,26 @@ class SelectionBoundary extends XBElement {
 	 * Event triggered when a selection happens. Default = 'xb-selection-select'
 	 * @type {string}
 	 */
-	@property( { type: String, reflect: false, attribute: false } ) listen;
+	@property( { type: String, reflect: false, attribute: false } ) accessor listen;
 
 	/**
 	 * Selection strategy.
 	 * @type {SelectionType}
 	 */
-	@property( { type: String } ) type;
+	@property( { type: String } ) accessor type;
 
 	/**
 	 * Selection value.
 	 * This should be typed in the subclass.
 	 * @type {SelectionOption | SelectionOption[] | null}
 	 */
-	@property() value;
+	@property() accessor value;
 
 	/**
 	 * Internal selection state.
 	 * @type {SelectionState}
 	 */
-	@state() selection;
+	@state() accessor selection;
 
 	/**
 	 * Internal selection strategy management.
@@ -65,10 +65,7 @@ class SelectionBoundary extends XBElement {
 	 * @param {import('lit').PropertyValues<SelectionBoundary>} changedProperties
 	 */
 	update( changedProperties ) {
-		if (
-			this.strategy == null ||
-			( this.type != null && changedProperties.has( 'type' ) )
-		) {
+		if ( this.strategy == null || ( this.type != null && changedProperties.has( 'type' ) ) ) {
 			this.strategy = createSelectionStrategy( { type: this.type } );
 			this.selection = this.strategy.init( Array.from( this.selection ) );
 		}

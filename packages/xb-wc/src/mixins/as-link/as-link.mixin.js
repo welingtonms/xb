@@ -15,13 +15,13 @@ function AsLinkMixin( BaseClass ) {
 		 * When set, the underlying button will be rendered as an `<a>` with this `href` instead of a `<button>`.
 		 * @type {AsLinkAttributes['href']}
 		 */
-		@property( { type: String } ) href;
+		@property( { type: String } ) accessor href;
 
 		/**
 		 * Tells the browser where to open the link. Only used when `href` is set.
 		 * @type {AsLinkAttributes['target']}
 		 * */
-		@property( { type: String } ) target;
+		@property( { type: String } ) accessor target;
 
 		connectedCallback() {
 			super.connectedCallback();

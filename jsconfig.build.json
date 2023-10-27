@@ -1,8 +1,8 @@
 {
 	"compilerOptions": {
-		"module": "ESNext",
-		"moduleResolution": "Node",
-		"target": "es5"
+		"module": "ES2020",
+		"moduleResolution": "node",
+		"target": "ES2021"
 	},
 	"exclude": [ "node_modules", "**/node_modules/*", "dist" ]
 }

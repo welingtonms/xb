@@ -1,11 +1,10 @@
 import { customElement } from 'lit/decorators.js';
 
 import { BaseListbox } from './base-listbox';
-import WithSelection from '../../mixins/with-selection';
 import ListboxPatternController from '../../controllers/listbox-pattern';
 
 @customElement( 'xb-listbox' )
-export class Listbox extends WithSelection( BaseListbox ) {
+export class Listbox extends BaseListbox {
 	/** @type {ListboxPatternController} */
 	_controller;
 

@@ -13,7 +13,7 @@ export class Badge extends XBElement {
 	 * Badge variant.
 	 * @type {BadgeAttributes['variant']}
 	 */
-	@property( { type: String } ) variant;
+	@property( { type: String } ) accessor variant;
 
 	constructor() {
 		super();

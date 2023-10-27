@@ -12,7 +12,7 @@ export class Text extends XBElement {
 	 * Typography variant.
 	 * @type {TextAttributes['variant']}
 	 */
-	@property( { type: String, reflect: true } ) variant;
+	@property( { type: String, reflect: true } ) accessor variant;
 
 	constructor() {
 		super();

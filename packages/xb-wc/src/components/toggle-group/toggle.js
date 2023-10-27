@@ -20,19 +20,19 @@ export class Toggle extends withID( XBElement ) {
 	 * Should the toggle be disabled.
 	 * @type {boolean}
 	 */
-	@property( { type: Boolean, reflect: true } ) disabled;
+	@property( { type: Boolean, reflect: true } ) accessor disabled;
 
 	/**
 	 * Should the toggle be checked.
 	 * @type {boolean}
 	 */
-	@property( { type: Boolean, reflect: true } ) checked;
+	@property( { type: Boolean, reflect: true } ) accessor checked;
 
 	/**
 	 * Button emphasis variant.
 	 * @type {String}
 	 */
-	@property( { type: String } ) value;
+	@property( { type: String } ) accessor value;
 
 	constructor() {
 		super();

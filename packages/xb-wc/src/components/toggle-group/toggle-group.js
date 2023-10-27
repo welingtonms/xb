@@ -35,13 +35,13 @@ export class ToggleGroup extends WithSelection( XBElement ) {
 	 * Should the button be disabled.
 	 * @type {ToggleGroupAttributes['disabled']}
 	 */
-	@property( { type: Boolean, reflect: true } ) disabled;
+	@property( { type: Boolean, reflect: true } ) accessor disabled;
 
 	/**
 	 * Button size.
 	 * @type {ToggleGroupAttributes['size']}
 	 */
-	@property( { type: String, reflect: true } ) size;
+	@property( { type: String, reflect: true } ) accessor size;
 
 	/** @type {ToggleGroupController} */
 	_controller;

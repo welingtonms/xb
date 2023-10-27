@@ -16,19 +16,19 @@ export class Switch extends XBElement {
 	 * Should the button be disabled.
 	 * @type {SwitchAttributes['disabled']}
 	 */
-	@property( { type: Boolean, reflect: true } ) disabled;
+	@property( { type: Boolean, reflect: true } ) accessor disabled;
 
 	/**
 	 * Should the button be checked.
 	 * @type {SwitchAttributes['checked']}
 	 */
-	@property( { type: Boolean, reflect: true } ) checked;
+	@property( { type: Boolean, reflect: true } ) accessor checked;
 
 	/**
 	 * Value this radio checkbox represents.
 	 * @type {SwitchAttributes['size']}
 	 */
-	@property( { type: String, reflect: true } ) size;
+	@property( { type: String, reflect: true } ) accessor size;
 
 	constructor() {
 		super();

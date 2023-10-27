@@ -13,13 +13,13 @@ export class Icon extends XBElement {
 	 * Icon name.
 	 * @type {IconAttributes['name']}
 	 */
-	@property( { type: String } ) name;
+	@property( { type: String } ) accessor name;
 
 	/**
 	 * Size for the rendered icon.
 	 * @type {IconAttributes['size']}
 	 */
-	@property( { type: Number } ) size;
+	@property( { type: Number } ) accessor size;
 
 	connectedCallback() {
 		super.connectedCallback();

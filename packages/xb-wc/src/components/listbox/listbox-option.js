@@ -15,13 +15,13 @@ export class Option extends MenuItem {
 	 * Is this a selected option.
 	 * @type {OptionAttributes['selected']}
 	 */
-	@property( { type: Boolean, reflect: true } ) selected;
+	@property( { type: Boolean, reflect: true } ) accessor selected;
 
 	/**
 	 * Value that this option represents.
 	 * @type {OptionAttributes['value']}
 	 */
-	@property( { type: String, reflect: true } ) value;
+	@property( { type: String, reflect: true } ) accessor value;
 
 	constructor() {
 		super();

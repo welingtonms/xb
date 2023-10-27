@@ -20,14 +20,14 @@ export class Button extends AsLink( BaseButton ) {
 	 * Button emphasis variant.
 	 * @type {ButtonAttributes['emphasis']}
 	 */
-	@property( { type: String, reflect: true } ) emphasis;
+	@property( { type: String, reflect: true } ) accessor emphasis;
 
 	/**
 	 * The type of button. When the type is `submit`, the button will submit the surrounding form. Note that the default
 	 * value is `button` instead of `submit`, which is opposite of how native `<button>` elements behave.
 	 * @type {ButtonAttributes['type']}
 	 */
-	@property( { type: String } ) type;
+	@property( { type: String } ) accessor type;
 
 	constructor() {
 		super();

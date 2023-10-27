@@ -15,7 +15,7 @@ export class MenuItem extends withID( XBElement, 'xb-item' ) {
 	 * Should the button be disabled.
 	 * @type {MenuItemAttributes['disabled']}
 	 */
-	@property( { type: Boolean, reflect: true } ) disabled;
+	@property( { type: Boolean, reflect: true } ) accessor disabled;
 
 	constructor() {
 		super();

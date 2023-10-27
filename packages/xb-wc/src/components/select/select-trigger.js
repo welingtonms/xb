@@ -22,13 +22,13 @@ export class SelectTrigger extends XBElement {
 	 * This is updated by the dropdown.
 	 * @type {SelectTriggerAttributes['open']}
 	 */
-	@property( { type: Boolean, attribute: false } ) open;
+	@property( { type: Boolean, attribute: false } ) accessor open;
 
 	/**
 	 * Placeholder value.
 	 * @type {TextInputAttributes['placeholder']}
 	 */
-	@property( { type: String, reflect: true } ) placeholder;
+	@property( { type: String, reflect: true } ) accessor placeholder;
 
 	/** @type {import('../form/text-input/text-input').TextInput} */
 	_input;
@@ -109,7 +109,7 @@ export class SelectTrigger extends XBElement {
 					aria-expanded=${ this.open ? 'true' : 'false' }
 					aria-controls="menu"
 					slot="trailing"
-					paddingless
+					paddingless="all"
 					emphasis="text"
 					size="extra-small"
 					@click=${ this._handleTrailingClick }

@@ -19,31 +19,31 @@ export class Checkbox extends withID( XBElement ) {
 	 * Should the button be disabled.
 	 * @type {CheckboxAttributes['disabled']}
 	 */
-	@property( { type: Boolean, reflect: true } ) disabled;
+	@property( { type: Boolean, reflect: true } ) accessor disabled;
 
 	/**
 	 * Should the button be checked.
 	 * @type {CheckboxAttributes['checked']}
 	 */
-	@property( { type: Boolean, reflect: true } ) checked;
+	@property( { type: Boolean, reflect: true } ) accessor checked;
 
 	/**
 	 * Should the button be checked.
 	 * @type {CheckboxAttributes['indeterminate']}
 	 */
-	@property( { type: Boolean, reflect: true } ) indeterminate;
+	@property( { type: Boolean, reflect: true } ) accessor indeterminate;
 
 	/**
 	 * Value this radio checkbox represents.
 	 * @type {CheckboxAttributes['size']}
 	 */
-	@property( { type: String, reflect: true } ) size;
+	@property( { type: String, reflect: true } ) accessor size;
 
 	/**
 	 * Value this radio checkbox represents.
 	 * @type {CheckboxAttributes['value']}
 	 */
-	@property( { type: String } ) value;
+	@property( { type: String } ) accessor value;
 
 	/** @type {CheckboxPatternController} */
 	_controller;

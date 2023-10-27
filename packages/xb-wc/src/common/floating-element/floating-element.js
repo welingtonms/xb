@@ -11,19 +11,19 @@ export default class FloatingElement extends XBElement {
 	 * FloatingElement positioning strategy.
 	 * @type {FloatingElementAttributes['position']}
 	 */
-	@property( { type: String, reflect: true } ) position;
+	@property( { type: String, reflect: true } ) accessor position;
 
 	/**
 	 * FloatingElement placement.
 	 * @type {FloatingElementAttributes['placement']}
 	 */
-	@property( { type: String, reflect: true } ) placement;
+	@property( { type: String, reflect: true } ) accessor placement;
 
 	/**
 	 * Should popover's floating be open.
 	 * @type {FloatingElementAttributes['open']}
 	 */
-	@property( { type: Boolean, reflect: true } ) open;
+	@property( { type: Boolean, reflect: true } ) accessor open;
 
 	/** @type {FloatingController} */
 	_controller;

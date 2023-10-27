@@ -11,13 +11,6 @@ import generateID from '../../utils/id-generator';
  */
 const WithIdElementMixin = ( superClass, prefix = 'xb-element' ) => {
 	class WithIdElement extends superClass {
-		/**
-		 * Element id.
-		 * @type {String}
-		 * @public
-		 */
-		@property( { type: String, reflect: true } ) id;
-
 		connectedCallback() {
 			super.connectedCallback();
 
