@@ -1,145 +1,23 @@
-import { html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-
-import { getTextContent } from '../../../utils/slot';
-import withID from '../../../mixins/with-id';
-import XBElement from '../../../common/xb-element';
-
 import { radioStyles } from './radio.styles';
 
-import '../../icon';
+const style = document.createElement( 'style' );
+style.textContent = radioStyles().cssText;
 
-@customElement( 'xb-radio' )
-export class Radio extends withID( XBElement ) {
-	static styles = [ radioStyles() ];
+document.head.appendChild( style );
 
-	/**
-	 * Should the radio be disabled.
-	 * @type {RadioAttributes['disabled']}
-	 */
-	@property( { type: Boolean, reflect: true } ) accessor disabled;
-
-	/**
-	 * Should the radio be checked.
-	 * @type {RadioAttributes['checked']}
-	 */
-	@property( { type: Boolean, reflect: true } ) accessor checked;
-
-	/**
-	 * Value this radio checkbox represents.
-	 * @type {RadioAttributes['size']}
-	 */
-	@property( { type: String, reflect: true } ) accessor size;
-
-	/**
-	 * Value this radio checkbox represents.
-	 * @type {RadioAttributes['value']}
-	 */
-	@property( { type: String, reflect: true } ) accessor value;
-
+/**
+ * This class extends the HTMLInputElement class (built-in).
+ * For that reason, it required the polyfill for browsers that do not support
+ * this Custom Element feature.
+ * <!-- https://github.com/ungap/custom-elements#readme -->
+ * <script src="https://unpkg.com/@ungap/custom-elements"></script>
+ */
+export class Radio extends HTMLInputElement {
 	constructor() {
 		super();
 
-		this.checked = false;
-		this.disabled = false;
-		this.size = 'extra-small';
-
-		// Based on https://lit.dev/docs/components/events/#adding-event-listeners-to-the-component-or-its-shadow-root
-		this.addEventListener( 'click', this._handleClick );
+		this.type = 'radio';
 	}
-
-	connectedCallback() {
-		super.connectedCallback();
-
-		this.setAttribute( 'role', 'radio' );
-	}
-
-	/**
-	 * @param {import('lit').PropertyValues<this>} changedProperties
-	 */
-	firstUpdated( changedProperties ) {
-		super.firstUpdated( changedProperties );
-
-		if ( ! this.value ) {
-			this.value = this.text();
-		}
-	}
-
-	/**
-	 *
-	 * @param {import("lit").PropertyValues} changedProperties
-	 */
-	update( changedProperties ) {
-		super.update( changedProperties );
-
-		if ( changedProperties.has( 'disabled' ) ) {
-			this.setBooleanAttribute( 'aria-disabled', this.disabled );
-		}
-
-		if ( changedProperties.has( 'checked' ) ) {
-			this.setAttribute( 'aria-checked', this.checked );
-		}
-	}
-
-	/** Returns a text label based on the contents of the menu item's default slot. */
-	text() {
-		/** @type {HTMLSlotElement} */
-		const slot = this.shadowRoot.querySelector( 'slot:not([name])' );
-
-		/**
-		 * FIXME: the fallback is needed for when `slot` is still null,
-		 * but this might not be enough for all cases.
-		 */
-		return getTextContent( slot ) || String( this.textContent ?? '' ).trim();
-	}
-
-	render() {
-		return html`
-			<span class="check">
-				<xb-icon name="circle"></xb-icon>
-			</span>
-			<slot name="leading"></slot>
-			<slot></slot>
-			<slot name="trailing"></slot>
-		`;
-	}
-
-	_handleClick = ( event ) => {
-		if ( this.disabled ) {
-			event.stopPropagation();
-			event.preventDefault();
-			return;
-		}
-
-		return false;
-	};
 }
 
-/**
- * @typedef {import('../../../styles/size.styles').ElementSize} RadioSize
- */
-
-/**
- * @typedef {import('../../../controllers/keyboard-support').default} KeyboardSupportController
- */
-
-/**
- * @typedef {{
- * 	keyboard: KeyboardSupportController;
- * }} RadioPatternControllers
- */
-
-/**
- * @typedef {{
- * 	value: string;
- *   checked: boolean;
- * }} RadioEventDetail
- */
-
-/**
- * @typedef {Object} RadioAttributes
- * @property {boolean} disabled
- * @property {boolean} checked
- * @property {string} value
- * @property {RadioSize} size
- */
+customElements.define( 'xb-radio', Radio, { extends: 'input' } );

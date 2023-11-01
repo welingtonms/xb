@@ -35,10 +35,29 @@ export default meta;
 /** @type {RadioGroupStory} */
 export const Playground = {
 	render: ( args ) => html`
-		<xb-radio-group ?disabled=${ args.disabled } @xb:change=${ args.change }>
-			<xb-radio value="accept">Accept</xb-radio>
-			<xb-radio value="change">Change</xb-radio>
-			<xb-radio value="leave">Leave</xb-radio>
+		<style>
+			label {
+				display: flex;
+				align-items: center;
+				gap: var( --xb-spacing-2 );
+
+				cursor: pointer;
+			}
+		</style>
+
+		<xb-radio-group @change=${ args.change }>
+			<label>
+				<input is="xb-radio" name="life-choice" value="accept" ?disabled=${ args.disabled } />
+				Accept
+			</label>
+			<label>
+				<input is="xb-radio" name="life-choice" value="change" ?disabled=${ args.disabled } />
+				Change
+			</label>
+			<label>
+				<input is="xb-radio" name="life-choice" value="leave" ?disabled=${ args.disabled } />
+				Leave
+			</label>
 		</xb-radio-group>
 	`,
 	play: async ( { canvasElement } ) => {

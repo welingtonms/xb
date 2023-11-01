@@ -2,11 +2,11 @@ import { css } from 'lit';
 
 import m from '../../../styles/margin.styles';
 import outline from '../../../styles/outline.styles';
+import { disabled, focused, active, hovered } from '../../../styles/state.styles';
 import p, { px, py } from '../../../styles/padding.styles';
 import token from '../../../utils/get-token';
 import transition from '../../../styles/transition.styles';
 import typography from '../../../styles/typography.styles';
-import sizeStyles from '../../../styles/size.styles';
 
 export function groupStyles() {
 	return [
@@ -24,6 +24,8 @@ export function groupStyles() {
 				min-width: 100%;
 
 				position: relative;
+
+				${ typography( 'body-2' ) };
 
 				${ m( 0 ) };
 				${ px( 'var(--xb-radio-group-padding-x)' ) };
@@ -49,130 +51,93 @@ export function groupStyles() {
 }
 
 export function radioStyles() {
-	return [
-		css`
-			:host {
-				--xb-radio-height: initial;
-				/** https://accessibilityinsights.io/info-examples/web/needs-review/color-contrast/ */
-				--xb-radio-background-color: ${ token( 'color-background' ) };
-				--xb-radio-outline-color: ${ token( 'color-white', 0 ) };
+	return css`
+		input[type='radio'] {
+			--xb-radio-height: 18px;
+			/** https://accessibilityinsights.io/info-examples/web/needs-review/color-contrast/ */
+			--xb-radio-background-color: ${ token( 'color-background' ) };
+			--xb-radio-outline-color: ${ token( 'color-white', 0 ) };
 
-				${ transition( [ { property: 'color' }, { property: 'opacity' } ] ) };
+			box-sizing: border-box;
 
-				${ typography( 'body-2' ) };
+			border-radius: 50%;
+			appearance: none;
 
-				cursor: pointer;
+			${ transition( [
+				{ property: 'background-color' },
+				{ property: 'border-color' },
+				{ property: 'outline' },
+			] ) };
 
-				display: flex;
-				flex-flow: row nowrap;
-				gap: ${ token( 'spacing-2' ) };
-				align-items: center;
+			${ outline( '--xb-radio-outline-color' ) };
 
-				border: none;
-				background: var( --xb-radio-background-color );
-				height: var( --xb-radio-height );
+			--xb-icon-color: ${ token( 'color-white', 0 ) };
 
-				${ p( token( 'spacing-0' ) ) };
+			position: relative;
 
-				box-sizing: border-box;
-			}
+			flex-shrink: 0;
+			display: inline-flex;
+			justify-content: center;
+			align-items: center;
 
-			:host( :is( [aria-checked='true'], [aria-checked='mixed'] ) ) .check {
-				--xb-icon-color: ${ token( 'color-white' ) };
+			${ p( token( 'spacing-0' ) ) };
+			${ m( token( 'spacing-0' ) ) };
 
-				border-color: ${ token( 'color-primary-300' ) };
-				background-color: ${ token( 'color-primary-300' ) };
-			}
+			border: 1px solid ${ token( 'color-gray-400' ) };
+			background-color: ${ token( 'color-white' ) };
+			border-radius: calc( 0.5 * var( --xb-radio-height ) );
 
-			:host( [aria-checked='true'] ) xb-icon[name='circle'] {
-				--xb-icon-size: 12px;
-				display: inline-flex;
-			}
+			box-sizing: border-box;
+			block-size: calc( var( --xb-radio-height ) );
+			inline-size: calc( var( --xb-radio-height ) );
+		}
 
-			:host( [disabled] ) {
-				pointer-events: none;
-				user-select: none;
-				opacity: 0.25;
+		input[type='radio']::after {
+			content: '';
+			position: absolute;
+			display: inline-block;
+			border-radius: 50%;
+			pointer-events: none;
 
-				cursor: default;
-			}
+			height: 8px;
+			width: 8px;
 
-			:host( [disabled] ) ::slotted( * ) {
-				pointer-events: none;
-				user-select: none;
-			}
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			margin: auto;
 
-			:host( :is( :focus, :focus-within, :focus-visible, .is-focused ) ) {
-				outline: none;
-			}
+			background-color: ${ token( 'color-white' ) };
+		}
 
-			:host( :is( :focus, :focus-within, :focus-visible, .is-focused ) ) .check {
-				--xb-radio-outline-color: ${ token( 'color-primary-200', 0.2 ) };
-			}
+		input[type='radio']:checked {
+			border-color: ${ token( 'color-primary-300' ) };
+			background-color: ${ token( 'color-primary-300' ) };
+		}
 
-			slot[name='leading']::slotted( span ),
-			slot[name='trailing']::slotted( span ) {
-				display: inline-flex;
-				align-items: center;
-				justify-content: center;
+		${ focused( "input[type='radio']" ) } {
+			--xb-radio-outline-color: ${ token( 'color-primary-200', 0.2 ) };
+		}
 
-				${ p( token( 'spacing-0' ) ) };
-				${ m( token( 'spacing-0' ) ) };
-			}
+		${ disabled( "input[type='radio']" ) } {
+			pointer-events: none;
+			user-select: none;
+			opacity: 0.25;
 
-			:host( :hover ) .check {
-				border-color: ${ token( 'color-primary-500' ) };
-			}
+			cursor: default;
+		}
 
-			:host( [aria-checked='true']:hover ) .check {
-				border-color: ${ token( 'color-primary-500' ) };
-				background-color: ${ token( 'color-primary-500' ) };
-			}
+		${ hovered( "input[type='radio']" ) } {
+			border-color: ${ token( 'color-primary-500' ) };
+		}
 
-			:host( :active ) .check {
-				border-color: ${ token( 'color-primary-100' ) };
-			}
+		${ hovered( "input[type='radio']:checked" ) } {
+			background-color: ${ token( 'color-primary-500' ) };
+		}
 
-			:host( [aria-checked='true']:active ) .check {
-				border-color: ${ token( 'color-primary-100' ) };
-				background-color: ${ token( 'color-primary-100' ) };
-			}
-
-			.check {
-				${ transition( [
-					{ property: 'background-color' },
-					{ property: 'border-color' },
-					{ property: 'box-shadow' },
-					{ property: 'outline' },
-				] ) };
-
-				${ outline( '--xb-radio-outline-color' ) };
-
-				--xb-icon-color: ${ token( 'color-white', 0 ) };
-
-				flex-shrink: 0;
-				display: inline-flex;
-				justify-content: center;
-				align-items: center;
-
-				${ p( token( 'spacing-0' ) ) };
-				${ m( token( 'spacing-0' ) ) };
-
-				border: 1px solid ${ token( 'color-gray-400' ) };
-				background-color: ${ token( 'color-white' ) };
-				border-radius: calc( 0.5 * var( --xb-radio-height ) );
-
-				box-sizing: border-box;
-				block-size: calc( 0.75 * var( --xb-radio-height ) );
-				inline-size: calc( 0.75 * var( --xb-radio-height ) );
-			}
-
-			xb-icon[name='circle'] {
-				--xb-icon-size: 0;
-
-				display: none;
-			}
-		`,
-		sizeStyles( { property: '--xb-radio-height' } ),
-	];
+		${ active( "input[type='radio']" ) } {
+			border-color: ${ token( 'color-primary-100' ) };
+		}
+	`;
 }
