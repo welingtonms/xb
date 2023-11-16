@@ -1,6 +1,6 @@
 # xb
 
-Welcome to the XB component library. This is just a playground for practicing web components development.
+Welcome to the XB component library. This is a playground for practicing web components development.
 
 ## How to develop
 
