@@ -1,25 +1,29 @@
-import { html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { html, LitElement } from 'lit';
+import { property, query } from 'lit/decorators.js';
 
-import { getTextContent } from '../../../utils/slot';
-import CheckboxController from './checkbox.controller';
-import CheckboxGroupController from './checkbox-group.controller';
-import withID from '../../../mixins/with-id';
-import XBElement from '../../../common/xb-element';
+// import CheckboxController from './checkbox.controller';
+// import CheckboxGroupController from './checkbox-group.controller';
+import { WithIDMixin } from '../../../mixins/with-id';
+import { XBElement } from '../../../common/xb-element';
+import { FormElement } from '../../../common/form-element';
+import { WithAriaMixin } from '../../../mixins/with-aria';
 
-import '../../icon';
+// import '../../icon';
 
-import styles from './checkbox.styles';
+// import styles from './checkbox.styles';
 
-@customElement( 'xb-checkbox' )
-export class Checkbox extends withID( XBElement ) {
-	static styles = [ styles() ];
+/**
+ * @class
+ * @template WithAriaMixin, WithIDMixin, FormElement
+ */
+export class Checkbox extends WithAriaMixin( WithIDMixin( FormElement ) ) {
+	// static styles = [ styles() ];
 
-	/**
-	 * Should the button be disabled.
-	 * @type {CheckboxAttributes['disabled']}
-	 */
-	@property( { type: Boolean, reflect: true } ) accessor disabled;
+	static shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
+
+	/** @type {HTMLInputElement} */
+	@query( '#control' )
+	accessor #control;
 
 	/**
 	 * Should the button be checked.
@@ -28,16 +32,18 @@ export class Checkbox extends withID( XBElement ) {
 	@property( { type: Boolean, reflect: true } ) accessor checked;
 
 	/**
+	 * Should the checked be checked.
+	 * `reflect` added for React.
+	 * @type {boolean}
+	 */
+	@property( { type: Boolean, attribute: 'default-checked', reflect: true } )
+	accessor defaultChecked;
+
+	/**
 	 * Should the button be checked.
 	 * @type {CheckboxAttributes['indeterminate']}
 	 */
-	@property( { type: Boolean, reflect: true } ) accessor indeterminate;
-
-	/**
-	 * Value this radio checkbox represents.
-	 * @type {CheckboxAttributes['size']}
-	 */
-	@property( { type: String, reflect: true } ) accessor size;
+	@property( { type: Boolean } ) accessor indeterminate;
 
 	/**
 	 * Value this radio checkbox represents.
@@ -45,83 +51,198 @@ export class Checkbox extends withID( XBElement ) {
 	 */
 	@property( { type: String } ) accessor value;
 
-	/** @type {CheckboxPatternController} */
-	_controller;
+	/**
+	 * Checkbox readonly attribute.
+	 * @type {CheckboxAttributes['readonly']}
+	 */
+	@property( { type: Boolean } ) accessor readonly;
+
+	/**
+	 * @param {{
+	 *  name: string,
+	 *  registry: CustomElementRegistry,
+	 * }} config
+	 */
+	static define( config ) {
+		XBElement.define( { name: 'xb-checkbox', ...config, type: Checkbox } );
+	}
 
 	constructor() {
 		super();
 
-		this.checked = false;
-		this.disabled = false;
-		this.size = 'extra-small';
+		this.addEventListener( 'click', this.#onClick );
 	}
 
-	connectedCallback() {
-		this._controller = this.getAttribute( 'aria-controls' )
-			? new CheckboxGroupController( this )
-			: new CheckboxController( this );
+	createRenderRoot() {
+		const root = super.createRenderRoot();
 
-		this.setAttribute( 'role', 'checkbox' );
-		this.setAttribute( 'tabindex', 0 );
+		/**
+		 * We add the event listener to the shadow root because `change` event is not
+		 * composed, so it will not bubble to the host.
+		 */
+		root.addEventListener( 'change', this.#onChange );
 
+		return root;
+	}
+
+	async connectedCallback() {
 		super.connectedCallback();
-	}
 
-	firstUpdated( changedProperties ) {
-		super.firstUpdated( changedProperties );
+		await this.updateComplete;
 
-		if ( ! this.value ) {
-			this.value = this.text();
-		}
+		this.#initialize();
 	}
 
 	/**
-	 *
 	 * @param {import("lit").PropertyValues} changedProperties
 	 */
 	updated( changedProperties ) {
 		super.updated( changedProperties );
 
 		if ( changedProperties.has( 'disabled' ) ) {
-			this.setBooleanAttribute( 'aria-disabled', this.disabled );
+			this.#onDisabledChange( this.disabled );
 		}
 
-		if (
-			changedProperties.get( 'checked' ) != null ||
-			changedProperties.get( 'indeterminate' ) != null
-		) {
-			this.emit( 'xb:change', {
-				detail: {
-					value: this.value,
-					checked: Boolean( this.checked ),
-					indeterminate: Boolean( this.indeterminate ),
-				},
-			} );
+		if ( changedProperties.has( 'value' ) ) {
+			this.#onValueChange( this.value );
 		}
-	}
 
-	/** Returns a text label based on the contents of the menu item's default slot. */
-	text() {
-		/** @type {HTMLSlotElement} */
-		const slot = this.shadowRoot.querySelector( 'slot:not([name])' );
+		if ( changedProperties.has( 'checked' ) ) {
+			this.#onCheckedChange( this.checked );
+		}
 
-		/**
-		 * FIXME: the fallback is needed for when `slot` is still null,
-		 * but this might not be enough for all cases.
-		 */
-		return getTextContent( slot ) || String( this.textContent ?? '' ).trim();
+		if ( changedProperties.has( 'indeterminate' ) ) {
+			this.#onIndeterminateChange( this.indeterminate );
+		}
+
+		if ( changedProperties.has( 'readonly' ) ) {
+			this.#onReadOnlyChange( this.readonly );
+		}
 	}
 
 	render() {
 		return html`
-			<span class="check">
-				<xb-icon name="check"></xb-icon>
-				<xb-icon name="remove"></xb-icon>
-			</span>
-			<slot name="leading"></slot>
-			<slot></slot>
-			<slot name="trailing"></slot>
+			<label>
+				<input id="control" type="checkbox" name="${ this.name }" />
+				<slot name="leading"></slot>
+				<slot></slot>
+				<slot name="trailing"></slot>
+			</label>
 		`;
+	}
+
+	get input() {
+		return this.#control;
+	}
+
+	get checked() {
+		return Boolean( this.input?.checked );
+	}
+
+	set indeterminate( indeterminate ) {
+		// if ( this.input ) {
+		this.#onIndeterminateChange( indeterminate );
+		// }
+	}
+
+	get indeterminate() {
+		return Boolean( this.input?.indeterminate );
+	}
+
+	#initialize() {
+		this.#onCheckedChange( this.hasAttribute( 'default-checked' ) );
+
+		/**
+		 * The indeterminate state is only set via JavaScript
+		 * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#indeterminate_state_checkboxes
+		 */
+		this.#onIndeterminateChange( this.hasAttribute( 'indeterminate' ) );
+	}
+
+	/**
+	 * @param {boolean} disabled
+	 */
+	#onDisabledChange = ( disabled ) => {
+		this.input.disabled = disabled;
+	};
+
+	/**
+	 * @param {boolean} readOnly
+	 */
+	#onReadOnlyChange = ( readOnly ) => {
+		this.input.readOnly = readOnly;
+		this.internals.ariaReadOnly = readOnly ? 'true' : 'false';
+	};
+
+	/**
+	 * @param {boolean} checked
+	 */
+	#onCheckedChange = ( checked ) => {
+		this.input.checked = checked;
+		this.internals.ariaChecked = checked ? 'true' : 'false';
+
+		this.#onValueChange( this.value );
+	};
+
+	/**
+	 * @param {boolean} indeterminate
+	 */
+	#onIndeterminateChange = ( indeterminate ) => {
+		this.input.indeterminate = indeterminate;
+	};
+
+	/**
+	 * @param {string} value
+	 */
+	#onValueChange = ( value ) => {
+		/**
+		 * "If a checkbox is unchecked when its form is submitted, neither the name
+		 *  nor the value is submitted to the server.
+		 *  There is no HTML-only method of representing a checkbox's unchecked state
+		 *  (e.g. value=unchecked). If you wanted to submit a default value for the
+		 * checkbox when it is unchecked, you could include JavaScript to create a
+		 * <input type="hidden"> within the form with a value indicating an unchecked state."
+		 * @see {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#value|Checkbox value}
+		 */
+		this.internals.setFormValue( this.input.checked ? value ?? 'on' : null );
+	};
+
+	#onClick = ( event ) => {
+		if ( this.readonly ) {
+			event.preventDefault();
+			return;
+		}
+
+		this.#onValueChange( this.value );
+	};
+
+	#onChange = ( event ) => {
+		if ( this.readonly ) {
+			event.preventDefault();
+			return;
+		}
+
+		this.reemit( event );
+	};
+
+	formResetCallback() {
+		this.#initialize();
+	}
+
+	formStateRestoreCallback( state, mode ) {
+		if ( state ) {
+			this.checked = state != null;
+		}
+	}
+
+	formDisabledCallback( disabled ) {
+		super.formDisabledCallback( disabled );
+
+		if ( ! this.isConnected ) {
+			return;
+		}
+
+		this.#onDisabledChange( disabled );
 	}
 }
 
@@ -130,17 +251,11 @@ export class Checkbox extends withID( XBElement ) {
  */
 
 /**
- * @typedef {{
- * 	value: string;
- *   checked: boolean;
- * }} CheckboxEventDetail
- */
-
-/**
  * @typedef {Object} CheckboxAttributes
  * @property {boolean} [disabled]
  * @property {boolean} [checked]
  * @property {boolean} [indeterminate]
  * @property {string} value
- * @property {CheckboxSize} [size]
+ * @property {string} name
+ * @property {boolean} readonly
  */

@@ -1,17 +1,21 @@
 import { html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 
 import { convertTriggerFromAttribute } from './tooltip.helpers';
+import { FloatingElement } from '../../common/floating-element';
+import { WithIDMixin } from '../../mixins/with-id';
+import { XBElement } from '../../common/xb-element';
 import createLogger from '../../utils/logger';
-import FloatingElement, { supportsPopover } from '../../common/floating-element';
 import Keyboard from '../../common/keyboard';
 
 import styles from './tooltip.styles';
 
 const logger = createLogger( 'tooltip' );
 
-@customElement( 'xb-tooltip' )
-export class Tooltip extends FloatingElement {
+/**
+ * @template WithIDMixin, FloatingElement
+ */
+export class Tooltip extends WithIDMixin( FloatingElement ) {
 	static styles = [ styles() ];
 
 	/**
@@ -30,11 +34,29 @@ export class Tooltip extends FloatingElement {
 	 */
 	@property( { type: String, reflect: true } ) accessor anchor;
 
+	/** @type {TooltipControllers} */
+	#controllers;
+
+	/**
+	 * @param {{
+	 *  name: string,
+	 *  registry: CustomElementRegistry,
+	 * }} config
+	 */
+	static define( config ) {
+		XBElement.define( { name: 'xb-tooltip', ...config, type: Tooltip } );
+	}
+
 	constructor() {
 		super();
 
+		this.internals.role = 'tooltip';
 		this.position = 'absolute';
 		this.trigger = [ 'hover' ];
+
+		this.#controllers = {
+			abort: new AbortController(),
+		};
 	}
 
 	connectedCallback() {
@@ -45,32 +67,54 @@ export class Tooltip extends FloatingElement {
 			return;
 		}
 
-		this.reference.addEventListener( 'blur', this._handleBlur, true );
-		this.reference.addEventListener( 'click', this._handleClick );
-		this.reference.addEventListener( 'focus', this._handleFocus, true );
-		this.reference.addEventListener( 'keydown', this._handleKeyDown );
-		this.reference.addEventListener( 'mouseout', this._handleMouseOut );
-		this.reference.addEventListener( 'mouseover', this._handleMouseOver );
+		const signal = this.#controllers.abort.signal;
 
-		if ( supportsPopover() ) {
-			this.setAttribute( 'popover', 'manual' );
-		}
+		this.reference.addEventListener( 'click', this.#onClick, { signal } );
+		this.reference.addEventListener( 'focusin', this.#onFocusIn, { signal } );
+		this.reference.addEventListener( 'focusout', this.#onFocusOut, { signal } );
+		this.reference.addEventListener( 'keydown', this.#onKeyDown, { signal } );
+		this.reference.addEventListener( 'mouseout', this.#onMouseOut, { signal } );
+		this.reference.addEventListener( 'mouseover', this.#onMouseOver, { signal } );
 	}
 
 	disconnectedCallback() {
 		super.disconnectedCallback();
 
 		if ( ! this.reference ) {
-			logger.debug( 'no reference element provided' );
 			return;
 		}
 
-		this.reference.removeEventListener( 'blur', this._handleBlur, true );
-		this.reference.removeEventListener( 'click', this._handleClick );
-		this.reference.removeEventListener( 'focus', this._handleFocus, true );
-		this.reference.removeEventListener( 'keydown', this._handleKeyDown );
-		this.reference.removeEventListener( 'mouseout', this._handleMouseOut );
-		this.reference.removeEventListener( 'mouseover', this._handleMouseOver );
+		const controller = this.#controllers.abort;
+
+		// removes all listeners
+		controller.abort();
+
+		this.#controllers = {
+			abort: new AbortController(),
+		};
+	}
+
+	firstUpdated() {
+		super.firstUpdated();
+
+		if ( this.reference ) {
+			this.reference.setAttribute( 'aria-describedby', this.id );
+		}
+		// <slot name="reference" aria-describedby="floating"></slot>
+		// <slot
+		// 	name="floating"
+		// 	id="floating"
+		// 	role="tooltip"
+		// 	aria-live=${ this.open ? 'polite' : 'off' }
+		// ></slot>
+	}
+
+	update( changedProperties ) {
+		super.update( changedProperties );
+
+		if ( changedProperties.has( 'open' ) ) {
+			this.setAttribute( 'aria-live', this.open ? 'polite' : 'off' );
+		}
 	}
 
 	/**
@@ -78,7 +122,16 @@ export class Tooltip extends FloatingElement {
 	 */
 	getReferenceElement() {
 		// this does not work when the tooltip is inside another element's shadow root.
-		return document.querySelector( `#${ this.anchor }` );
+		// return document.querySelector( `#${ this.anchor }` );
+		// source: https://github.com/microsoft/fast/blob/master/packages/web-components/fast-foundation/src/tooltip/tooltip.ts#L350
+		// private getAnchorElement(id: string = ""): HTMLElement | null {
+		const rootNode = this.getRootNode();
+		if ( rootNode instanceof ShadowRoot ) {
+			return rootNode.getElementById( this.anchor );
+		}
+
+		return document.getElementById( this.anchor );
+		// }
 	}
 
 	/**
@@ -92,34 +145,26 @@ export class Tooltip extends FloatingElement {
 		return null;
 	}
 
-	// <slot name="reference" aria-describedby="floating"></slot>
-	// <slot
-	// 	name="floating"
-	// 	id="floating"
-	// 	role="tooltip"
-	// 	aria-live=${ this.open ? 'polite' : 'off' }
-	// ></slot>
-
 	render() {
 		return html`
 			<slot></slot>
 		`;
 	}
 
-	_handleFocus = () => {
-		if ( this._hasTrigger( 'focus' ) ) {
+	#onFocusIn = () => {
+		if ( this.#hasTrigger( 'focus' ) ) {
 			this.show();
 		}
 	};
 
-	_handleBlur = () => {
-		if ( this._hasTrigger( 'focus' ) ) {
+	#onFocusOut = () => {
+		if ( this.#hasTrigger( 'focus' ) ) {
 			this.hide();
 		}
 	};
 
-	_handleClick = () => {
-		if ( this._hasTrigger( 'click' ) ) {
+	#onClick = () => {
+		if ( this.#hasTrigger( 'click' ) ) {
 			this.toggle();
 		}
 	};
@@ -127,36 +172,36 @@ export class Tooltip extends FloatingElement {
 	/**
 	 * @param {KeyboardEvent} event
 	 */
-	_handleKeyDown = ( event ) => {
-		if ( this.open && Keyboard( event ).is( [ 'ESC' ] ) ) {
+	#onKeyDown = ( event ) => {
+		if ( this.open && Keyboard( event ).is( 'Escape' ) ) {
 			event.stopPropagation();
 			this.hide();
 		}
 	};
 
-	_handleMouseOver = () => {
-		if ( this._hasTrigger( 'hover' ) ) {
+	#onMouseOver = () => {
+		if ( this.#hasTrigger( 'hover' ) ) {
 			clearTimeout( this.hoverTimeout );
 
 			this.hoverTimeout = window.setTimeout( () => this.show(), 450 );
 		}
 	};
 
-	_handleMouseOut = () => {
-		if ( this._hasTrigger( 'hover' ) ) {
+	#onMouseOut = () => {
+		if ( this.#hasTrigger( 'hover' ) ) {
 			clearTimeout( this.hoverTimeout );
 
 			this.hoverTimeout = window.setTimeout( () => this.hide(), 250 );
 		}
 	};
 
-	_hasTrigger( triggerType ) {
+	#hasTrigger( triggerType ) {
 		return this.trigger.includes( triggerType );
 	}
 }
 
 /**
- * @typedef {import('../../common/floating-element').FloatingElementPlacement} DropdownPlacement
+ * @typedef {import('../../common/floating-element').FloatingElementPlacement} TooltipPlacement
  * @typedef {'hover' | 'focus' | 'click'} TooltipTrigger
  */
 
@@ -170,4 +215,10 @@ export class Tooltip extends FloatingElement {
 
 /**
  * @typedef {import('./interaction-boundary').InteractionBoundary} InteractionBoundary
+ */
+
+/**
+ * @typedef {{
+ * 	abort: AbortController;
+ * }} TooltipControllers
  */

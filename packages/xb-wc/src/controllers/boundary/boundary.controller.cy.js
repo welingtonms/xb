@@ -3,7 +3,7 @@ import { ReactiveControllerHost } from '@lit/reactive-element';
 
 import { generateElementName } from '../../utils/test-tools';
 import XBElement from '../../common/xb-element';
-import BoundaryController from './boundary.controller';
+import { BoundaryController } from './boundary.controller';
 
 /**
  * @param {(host: BoundaryControllerHost) => BoundaryControllerOptions} getControllerConfig

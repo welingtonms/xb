@@ -1,12 +1,21 @@
 import { html } from 'lit';
-import { customElement } from 'lit/decorators.js';
 
-import XBElement from '../../common/xb-element';
+import { XBElement } from '../../common/xb-element';
 import styles from './spinner.styles';
 
-@customElement( 'xb-spinner' )
 export class Spinner extends XBElement {
 	static styles = [ styles() ];
+
+	/**
+	 * @param {{
+	 *  name: string,
+	 *  registry: CustomElementRegistry,
+	 * }} config
+	 */
+	static define( config ) {
+		XBElement.define( { name: 'xb-spinner', ...config, type: Spinner } );
+	}
+
 	render() {
 		return html`
 			<span class="bar"></span>

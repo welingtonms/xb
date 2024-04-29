@@ -1,10 +1,9 @@
 import { html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 
-import XBElement from '../../common/xb-element';
+import { XBElement } from '../../common/xb-element';
 import styles from './text.styles';
 
-@customElement( 'xb-text' )
 export class Text extends XBElement {
 	static styles = [ styles() ];
 
@@ -13,6 +12,16 @@ export class Text extends XBElement {
 	 * @type {TextAttributes['variant']}
 	 */
 	@property( { type: String, reflect: true } ) accessor variant;
+
+	/**
+	 * @param {{
+	 *  name: string,
+	 *  registry: CustomElementRegistry,
+	 * }} config
+	 */
+	static define( config ) {
+		XBElement.define( { name: 'xb-text', ...config, type: Text } );
+	}
 
 	constructor() {
 		super();

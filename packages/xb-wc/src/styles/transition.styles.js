@@ -1,6 +1,6 @@
 import { unsafeCSS } from 'lit';
 
-import toArray from '@welingtonms/xb-toolset/dist/to-array';
+import toArray from '../utils/to-array';
 
 /** @type {TransitionConfig} */
 const DEFAULT_TRANSITION_CONFIG = {

@@ -1,4 +1,4 @@
-import toArray from '@welingtonms/xb-toolset/dist/to-array';
+import toArray from '../../utils/to-array';
 
 import createLogger from '../../utils/logger';
 import { isPrintableCharacter } from '../../utils/string';
@@ -7,10 +7,11 @@ const logger = createLogger( 'focus-manager' );
 
 export const SEARCH_BUFFER_TIMEOUT = 500;
 /**
- * Manages **virtual/visual** focus, for a11y purposes.
+ * Manages **virtual/visual** focus for non-natively focusable elements;
+ * created for a11y purposes.
  * @implements {ReactiveController}
  */
-class FocusManagerController {
+export class FocusManagerController {
 	/** @type {FocusManagerControllerHost} */
 	host;
 
@@ -43,7 +44,7 @@ class FocusManagerController {
 	 * ID of the currently focused descendant.
 	 * @type {string | null}
 	 */
-	_focused;
+	#focused;
 
 	/**
 	 * Get the element that will receive the `aria-activedescendant` attribute. This is necessary when the
@@ -53,7 +54,7 @@ class FocusManagerController {
 	 * @see {@link https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-activedescendant MDN, aria-activedescendant}
 	 * @type {(host: FocusManagerControllerHost) => HTMLElement}
 	 */
-	getInteractiveElement;
+	getControllerTarget;
 
 	/**
 	 * @param {FocusManagerControllerHost} host
@@ -62,7 +63,7 @@ class FocusManagerController {
 	constructor( host, options = {} ) {
 		this.query = toArray( options.query ).join( ',' );
 		this.searchable = Boolean( options.searchable ?? true );
-		this.getInteractiveElement = options.getInteractiveElement ?? ( ( host ) => host );
+		this.getControllerTarget = options.getControllerTarget ?? ( ( host ) => host );
 
 		this.search = {
 			buffer: '',
@@ -79,12 +80,12 @@ class FocusManagerController {
 		}
 
 		logger.debug( 'focus on type is on for ', this.host.tag );
-		this.host.addEventListener( 'keyup', this._handleKeyPress );
+		this.host.addEventListener( 'keyup', this.#onKeyPress );
 	}
 
 	hostDisconnected() {
 		logger.debug( 'focus on type is off for ', this.host.tag );
-		this.host.removeEventListener( 'keyup', this._handleKeyPress );
+		this.host.removeEventListener( 'keyup', this.#onKeyPress );
 	}
 
 	/**
@@ -100,50 +101,55 @@ class FocusManagerController {
 	 * @return {HTMLElement | null}
 	 */
 	get focused() {
-		if ( ! this._focused ) {
+		if ( ! this.#focused ) {
 			return null;
 		}
 
-		return this._findQueriedByID( this._focused );
+		return this.#findQueriedByID( this.#focused );
 	}
 
 	/**
 	 * If none of the options are selected, the first option receives focus; otherwise, the
 	 * focus moves to the next [enabled] option.
 	 * If we are at the end of the `queried` array, the focus moves to the first option.
+	 * @param {((element: HTMLElement) => void)} [callback] called when the element is focused
 	 */
-	focusNext() {
-		this.focus( 'next' );
+	focusNext( callback ) {
+		this.focus( 'next', callback );
 	}
 
 	/**
 	 * If none of the options are selected, the last option receives focus; otherwise, the
 	 * focus moves to the next [enabled] option.
 	 * If we are at the start of the `queried` array, the focus moves to the last option.
+	 * @param {((element: HTMLElement) => void)} [callback] called when the element is focused
 	 */
-	focusPrevious() {
-		this.focus( 'previous' );
+	focusPrevious( callback ) {
+		this.focus( 'previous', callback );
 	}
 
 	/**
 	 * Focus the first element in `queried`.
+	 * @param {((element: HTMLElement) => void)} [callback] called when the element is focused
 	 */
-	focusFirst() {
-		this.focus( 0 );
+	focusFirst( callback ) {
+		this.focus( 0, callback );
 	}
 
 	/**
 	 * Focus the last element in `queried`.
+	 * @param {((element: HTMLElement) => void)} [callback] called when the element is focused
 	 */
-	focusLast() {
-		this.focus( this.queried.length - 1 );
+	focusLast( callback ) {
+		this.focus( this.queried.length - 1, callback );
 	}
 
 	/**
 	 * Focus the given element or the element at the given index or position ('first', 'last'), based on `queried`.
 	 * @param {number | HTMLElement | ('first' | 'last' | 'previous' | 'next')} where
+	 * @param {((element: HTMLElement) => void)} [callback] called when the element is focused
 	 */
-	focus( where ) {
+	focus( where, callback ) {
 		/**
 		 * @param {HTMLElement} element
 		 */
@@ -162,11 +168,15 @@ class FocusManagerController {
 
 			this.clear();
 
-			this._focused = element.id;
+			this.#focused = element.id;
 
-			this.getInteractiveElement( this.host ).setAttribute( 'aria-activedescendant', element.id );
+			this.getControllerTarget( this.host ).setAttribute( 'aria-activedescendant', element.id );
+
 			element.classList.add( 'is-focused' );
+
 			element.scrollIntoView( { block: 'start', inline: 'nearest', behavior: 'smooth' } );
+
+			callback?.( element );
 		};
 
 		/**
@@ -181,7 +191,7 @@ class FocusManagerController {
 		 * @param {'first' | 'last' | 'previous' | 'next'} position
 		 */
 		const focusPosition = ( position ) => {
-			const currentFocusedIndex = this._getIndexOf( this.focused );
+			const currentFocusedIndex = this.#getIndexOf( this.focused );
 
 			switch ( position ) {
 				case 'first':
@@ -194,9 +204,9 @@ class FocusManagerController {
 					break;
 				case 'previous': {
 					if ( currentFocusedIndex === -1 ) {
-						logger.debug( 'focus previous, could not get current focused.' );
+						logger.debug( 'focus previous, could not get current focused. defaulting to last.' );
 
-						// focusIndex( this.queried.length - 1 );
+						focusIndex( this.queried.length - 1 );
 						return;
 					}
 
@@ -209,9 +219,9 @@ class FocusManagerController {
 				}
 				case 'next': {
 					if ( currentFocusedIndex === -1 ) {
-						logger.debug( 'focus next, could not get current focused.' );
+						logger.debug( 'focus next, could not get current focused; defaulting to first.' );
 
-						// focusIndex( 0 );
+						focusIndex( 0 );
 						return;
 					}
 
@@ -237,10 +247,10 @@ class FocusManagerController {
 	 * clear the `activeDescendant` attribute.
 	 */
 	clear() {
-		this.getInteractiveElement( this.host ).removeAttribute( 'aria-activedescendant' );
+		this.getControllerTarget( this.host ).removeAttribute( 'aria-activedescendant' );
 
 		const element = this.focused;
-		this._focused = null;
+		this.#focused = null;
 
 		if ( ! element ) {
 			return;
@@ -254,7 +264,7 @@ class FocusManagerController {
 	 * @param {HTMLElement | null | undefined} element
 	 * @returns {number}
 	 */
-	_getIndexOf = ( element ) => {
+	#getIndexOf = ( element ) => {
 		if ( ! element ) {
 			return -1;
 		}
@@ -267,7 +277,7 @@ class FocusManagerController {
 	 * @param {string} id
 	 * @returns {HTMLElement | undefined}
 	 */
-	_findQueriedByID = ( id ) => {
+	#findQueriedByID = ( id ) => {
 		return this.queried.find( ( element ) => {
 			return element.id === id;
 		} );
@@ -278,7 +288,7 @@ class FocusManagerController {
 	 * if such an menu item exists. Otherwise, focus does not move.
 	 * @param {KeyboardEvent} event
 	 */
-	_handleKeyPress = ( event ) => {
+	#onKeyPress = ( event ) => {
 		const { key } = event;
 
 		if ( ! isPrintableCharacter( key ) ) {
@@ -317,7 +327,7 @@ class FocusManagerController {
 			return null;
 		};
 
-		let searchIndex = this._getIndexOf( this.focused );
+		let searchIndex = this.#getIndexOf( this.focused );
 
 		this.search.buffer += key;
 
@@ -334,8 +344,6 @@ class FocusManagerController {
 	};
 }
 
-export default FocusManagerController;
-
 /**
  * @typedef {import('lit').ReactiveControllerHost} ReactiveControllerHost
  * @typedef {import('lit').ReactiveController} ReactiveController
@@ -349,7 +357,7 @@ export default FocusManagerController;
 /**
  * @typedef {{
  * 	query: string;
- * 	searchable: boolean;
- * 	getInteractiveElement: (host: FocusManagerControllerHost) => HTMLElement
+ * 	searchable?: boolean;
+ * 	getControllerTarget?: (host: FocusManagerControllerHost) => HTMLElement
  * }} FocusManagerControllerOptions
  */

@@ -1,5 +1,4 @@
-export { default } from './floating-element';
-export { supportsPopover } from '../../controllers/floating';
+export { FloatingElement } from './floating-element';
 export { default as floatingStyles } from './floating-element.styles';
 
 /**

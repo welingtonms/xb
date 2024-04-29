@@ -16,6 +16,11 @@
 	);
 }
 
+#wc-root {
+	outline: 1px dashed rgb(var(--xb-color-primary-200));
+	outline-offset: 2px;
+}
+
 @media (prefers-color-scheme: dark) {
 	#xb-root {
 		background-image: repeating-linear-gradient(

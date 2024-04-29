@@ -16,6 +16,8 @@ function log( fn, ...args ) {
  * @param {string} [prefix] kebab-case prefix to be added to the start of all log messages
  */
 function createLogger( prefix = 'xb' ) {
+	prefix = prefix.padStart( 20 );
+
 	const logger = Object.freeze( {
 		debug: ( ...args ) => {
 			log( console.debug, `[${ prefix }]`, ...args );
@@ -35,3 +37,11 @@ function createLogger( prefix = 'xb' ) {
 }
 
 export default createLogger;
+
+/**
+ * @typedef {Object} XBLogger
+ * @property {((...args: any[]) => void)} debug
+ * @property {((...args: any[]) => void)} info
+ * @property {((...args: any[]) => void)} warn
+ * @property {((...args: any[]) => void)} error
+ */

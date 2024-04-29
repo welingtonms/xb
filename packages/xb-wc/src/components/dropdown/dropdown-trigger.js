@@ -1,30 +1,64 @@
 import { html } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 
-import { BaseButton } from '../button';
-import WithID from '../../mixins/with-id';
+import { XBElement } from '../../common/xb-element';
+import { WithIDMixin } from '../../mixins/with-id';
+import { baseButtonStyles } from '../button';
 
 import { triggerStyles } from './dropdown.styles';
 
 /**
  * @class
- * @template WithID, BaseButton
+ * @template WithIDMixin, XBElement
  */
-@customElement( 'xb-dropdown-trigger' )
-export class DropdownTrigger extends WithID( BaseButton ) {
-	static styles = [ ...BaseButton.styles, triggerStyles() ];
+export class DropdownTrigger extends WithIDMixin(XBElement) {
+	static styles = [baseButtonStyles(), triggerStyles()];
+
+	/**
+	 * Should the button be disabled.
+	 * @type {boolean}
+	 */
+	@property({ type: Boolean, reflect: true }) accessor disabled;
+
+	/**
+	 * @param {{
+	 *  name: string,
+	 *  registry: CustomElementRegistry,
+	 * }} config
+	 */
+	static define(config) {
+		XBElement.define({ name: 'xb-dropdown-trigger', ...config, type: DropdownTrigger });
+	}
 
 	constructor() {
 		super();
 
-		this.addEventListener( 'click', this._handleClick );
+		this.disabled = false;
 	}
 
 	connectedCallback() {
 		super.connectedCallback();
 
-		this.setAttribute( 'role', 'button' );
-		this.setAttribute( 'aria-haspopup', 'true' );
+		// TODO: use internals
+		this.setAttribute('role', 'button');
+		this.setAttribute('aria-haspopup', 'true');
+	}
+
+	/**
+	 * @param {import('lit').PropertyValues<this>} changedProperties
+	 */
+	update(changedProperties) {
+		if (changedProperties.has('disabled')) {
+			this.setAttribute('aria-disabled', Boolean(this.disabled));
+
+			/**
+			 * FIXME: according to https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-disabled
+			 * "there can be instances where elements need to be exposed as disabled, but are still available for users to find when navigating via the Tab key"
+			 */
+			this.setAttribute('tabindex', this.disabled ? '-1' : '0');
+		}
+
+		super.update(changedProperties);
 	}
 
 	render() {

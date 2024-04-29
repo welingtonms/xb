@@ -1,6 +1,6 @@
 import { classy } from '@welingtonms/classy';
-import toArray from '@welingtonms/xb-toolset/dist/to-array';
-import isObject from '@welingtonms/xb-toolset/dist/is-object';
+import toArray from '../utils/to-array';
+import isObject from '../utils/is-object';
 
 /**
  * Returns an object containing either prop, if it is an object,
@@ -54,23 +54,13 @@ export function propify( prop, key ) {
 export function sided( prop, value ) {
 	const suppressAllSides = typeof value == 'boolean' && value;
 
-	const valueAsArray = suppressAllSides
-		? [ 'horizontal', 'vertical' ]
-		: toArray( value );
+	const valueAsArray = suppressAllSides ? [ 'horizontal', 'vertical' ] : toArray( value );
 
 	return classy( {
-		[ `-no-t-${ prop }` ]: valueAsArray.some( ( v ) =>
-			[ 'top', 'vertical' ].includes( v )
-		),
-		[ `-no-r-${ prop }` ]: valueAsArray.some( ( v ) =>
-			[ 'right', 'horizontal' ].includes( v )
-		),
-		[ `-no-b-${ prop }` ]: valueAsArray.some( ( v ) =>
-			[ 'bottom', 'vertical' ].includes( v )
-		),
-		[ `-no-l-${ prop }` ]: valueAsArray.some( ( v ) =>
-			[ 'left', 'horizontal' ].includes( v )
-		),
+		[ `-no-t-${ prop }` ]: valueAsArray.some( ( v ) => [ 'top', 'vertical' ].includes( v ) ),
+		[ `-no-r-${ prop }` ]: valueAsArray.some( ( v ) => [ 'right', 'horizontal' ].includes( v ) ),
+		[ `-no-b-${ prop }` ]: valueAsArray.some( ( v ) => [ 'bottom', 'vertical' ].includes( v ) ),
+		[ `-no-l-${ prop }` ]: valueAsArray.some( ( v ) => [ 'left', 'horizontal' ].includes( v ) ),
 	} );
 }
 

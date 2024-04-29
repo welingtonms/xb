@@ -1,5 +1,8 @@
 export { Button } from './button';
-export { BaseButton } from './base-button';
+// export { BaseButton } from './base-button';
+
+export { default as baseButtonStyles } from './base-button.styles';
+export { default as buttonStyles } from './button.styles';
 
 /**
  * @typedef {import('./button').ButtonAttributes} ButtonAttributes

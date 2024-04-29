@@ -9,11 +9,11 @@ import token from '../utils/get-token';
  */
 function outline( outlineProperty ) {
 	return unsafeCSS(
-		`outline: 0.2rem solid  ${
-			outlineProperty == null
-				? token( 'color-primary-200', 0.2 )
-				: `var( ${ outlineProperty } )`
-		};`
+		`outline: 3px solid  ${
+			outlineProperty == null ? token( 'color-primary-200', 0.2 ) : `var( ${ outlineProperty } )`
+		};
+		outline-offset: 0;
+		`
 	);
 }
 

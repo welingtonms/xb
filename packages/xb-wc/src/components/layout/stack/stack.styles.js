@@ -43,11 +43,6 @@ function styles() {
 				color: var( --xb-stack-color );
 				background-color: var( --xb-stack-background-color );
 			}
-
-			::slotted( * ) {
-				width: 100%;
-				margin-block: 0;
-			}
 		`,
 	];
 }

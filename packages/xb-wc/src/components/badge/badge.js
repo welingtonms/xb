@@ -1,19 +1,27 @@
 import { html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-import withClassy from '@welingtonms/classy';
+import { property } from 'lit/decorators.js';
 
-import XBElement from '../../common/xb-element';
+import { XBElement } from '../../common/xb-element';
 import styles from './badge.styles';
 
-@customElement( 'xb-badge' )
 export class Badge extends XBElement {
-	static styles = [ styles() ];
+	static styles = [styles()];
 
 	/**
 	 * Badge variant.
 	 * @type {BadgeAttributes['variant']}
 	 */
-	@property( { type: String } ) accessor variant;
+	@property({ type: String, reflect: true }) accessor variant;
+
+	/**
+	 * @param {{
+	 *  name: string,
+	 *  registry: CustomElementRegistry,
+	 * }} config
+	 */
+	static define(config) {
+		XBElement.define({ name: 'xb-badge', ...config, type: Badge });
+	}
 
 	constructor() {
 		super();
@@ -23,18 +31,8 @@ export class Badge extends XBElement {
 	}
 
 	render() {
-		const { when, classy } = withClassy( { variant: this.variant } );
-
 		return html`
-			<span
-				class=${ classy( 'badge', {
-					'-primary': when( { variant: 'primary' } ),
-					'-secondary': when( { variant: 'secondary' } ),
-					'-tertiary': when( { variant: 'tertiary' } ),
-				} ) }
-			>
-				<slot></slot>
-			</span>
+			<slot></slot>
 		`;
 	}
 }

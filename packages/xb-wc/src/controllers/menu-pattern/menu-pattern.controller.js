@@ -1,5 +1,5 @@
-import FocusManagerController from '../focus-manager';
-import KeyboardSupportController from '../keyboard-support';
+import { FocusManagerController } from '../focus-manager';
+import { KeyboardSupportController } from '../keyboard-support';
 
 const ITEM_QUERY = '[role="menuitem"]';
 
@@ -83,18 +83,18 @@ class MenuPatternController {
 	}
 
 	hostConnected() {
-		this.host.addEventListener( 'focusin', this._handleFocusIn );
-		this.host.addEventListener( 'focusout', this._handleFocusOut );
-		this.host.addEventListener( 'click', this._handleOptionClick );
+		this.host.addEventListener( 'focusin', this.#onFocusIn );
+		this.host.addEventListener( 'focusout', this.#onFocusOut );
+		this.host.addEventListener( 'click', this.#onOptionClick );
 	}
 
 	hostDisconnected() {
-		this.host.removeEventListener( 'focusin', this._handleFocusIn );
-		this.host.removeEventListener( 'focusout', this._handleFocusOut );
-		this.host.removeEventListener( 'click', this._handleOptionClick );
+		this.host.removeEventListener( 'focusin', this.#onFocusIn );
+		this.host.removeEventListener( 'focusout', this.#onFocusOut );
+		this.host.removeEventListener( 'click', this.#onOptionClick );
 	}
 
-	_handleFocusIn = () => {
+	#onFocusIn = () => {
 		const firstSelected = this.queried.find( ( item ) => item.selected && ! item.disabled );
 
 		if ( ! firstSelected ) {
@@ -104,7 +104,7 @@ class MenuPatternController {
 		}
 	};
 
-	_handleFocusOut = () => {
+	#onFocusOut = () => {
 		this.controllers.focus.clear();
 	};
 
@@ -113,7 +113,7 @@ class MenuPatternController {
 	 * @param {Event} event
 	 * @returns
 	 */
-	_handleOptionClick = ( event ) => {
+	#onOptionClick = ( event ) => {
 		const { target } = event;
 
 		if ( ! target.matches( ITEM_QUERY ) ) {

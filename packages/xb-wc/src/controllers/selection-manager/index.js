@@ -1,1 +1,1 @@
-export { default } from './selection-manager.controller';
+export { SelectionManagerController } from './selection-manager.controller';

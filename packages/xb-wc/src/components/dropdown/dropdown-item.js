@@ -1,10 +1,22 @@
-import { customElement } from 'lit/decorators.js';
+import { XBElement } from '../../common/xb-element';
 
 import { MenuItem } from '../menu';
 
-@customElement( 'xb-dropdown-item' )
 export class DropdownItem extends MenuItem {
-	_handleClick = ( event ) => {
+	/**
+	 * @param {{
+	 *  name: string,
+	 *  registry: CustomElementRegistry,
+	 * }} config
+	 */
+	static define( config ) {
+		XBElement.define( { name: 'xb-dropdown-item', ...config, type: DropdownItem } );
+	}
+
+	/**
+	 * @override
+	 */
+	#onClick = ( event ) => {
 		if ( this.disabled ) {
 			event.stopPropagation();
 			event.preventDefault();

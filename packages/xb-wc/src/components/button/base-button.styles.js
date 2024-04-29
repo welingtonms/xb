@@ -1,4 +1,4 @@
-import { css } from 'lit';
+import { css, unsafeCSS } from 'lit';
 
 import m from '../../styles/margin.styles';
 import outline from '../../styles/outline.styles';
@@ -6,116 +6,175 @@ import p, { px, py } from '../../styles/padding.styles';
 import token from '../../utils/get-token';
 import transition from '../../styles/transition.styles';
 import typography from '../../styles/typography.styles';
+import { disabled, focused, active } from '../../styles/state.styles';
 
 import layoutStyles from '../../styles/layout.styles';
-import sizeStyles from '../../styles/size.styles';
+import scaleStyles from '../../styles/scale.styles';
 
-function styles() {
-	return [
-		layoutStyles(),
-		css`
-			:host {
-				--xb-button-height: initial;
+// ${ layoutStyles() }
+// TODO: preparar as utilities de style para considerar o :host
+/**
+ * @param {string} [selector]
+ * @returns
+ */
+function styles( selector = 'button, :host' ) {
+	return css`
+		:host {
+			display: inline-flex;
+			contain: layout style;
+			box-sizing: border-box;
+			align-items: center;
+		}
 
-				--xb-button-background-color: ${ token( 'color-white', 0 ) };
-				--xb-button-color: ${ token( 'color-gray-600' ) };
-				--xb-button-border-color: ${ token( 'color-white', 0 ) };
-				--xb-button-outline-color: ${ token( 'color-white', 0 ) };
+		:host( [hidden] ) {
+			display: none;
+		}
 
-				--xb-button-padding-x: ${ token( 'spacing-2' ) };
-				--xb-button-padding-y: ${ token( 'spacing-1' ) };
+		:host( :disabled ) {
+			opacity: 0.25;
+		}
 
-				display: inline-flex;
+		${ layoutStyles() }
 
-				height: var( --xb-button-height );
-				min-width: var( --xb-button-height );
+		${ scaleStyles( { target: selector, property: '--xb-button-height' } ) }
 
-				${ transition( [
-					{ property: 'color' },
-					{ property: 'background-color' },
-					{ property: 'border-color' },
-					{ property: 'outline-color' },
-				] ) };
+		${ unsafeCSS( selector ) } {
+			--xb-button-background-color: ${ token( 'color-white', 0 ) };
+			--xb-button-color: ${ token( 'color-gray-600' ) };
+			--xb-button-border-color: ${ token( 'color-white', 0 ) };
+			--xb-button-outline-color: ${ token( 'color-white', 0 ) };
 
-				${ typography( 'button' ) };
+			--xb-button-padding-x: ${ token( 'spacing-2' ) };
+			--xb-button-padding-y: ${ token( 'spacing-1' ) };
 
-				cursor: pointer;
-				position: relative;
+			height: var( --xb-button-height );
+			min-width: var( --xb-button-height );
 
-				box-sizing: border-box;
+			${ transition( [
+				{ property: 'color' },
+				{ property: 'background-color' },
+				{ property: 'border-color' },
+				{ property: 'outline-color' },
+			] ) };
 
-				display: inline-flex;
-				align-items: center;
-				justify-content: center;
-				overflow: hidden;
-				text-decoration: none;
+			${ typography( 'button' ) };
 
-				gap: ${ token( 'spacing-2' ) };
+			cursor: pointer;
+			position: relative;
 
-				${ px( 'var(--xb-button-padding-x)' ) };
-				${ py( 'var(--xb-button-padding-y)' ) };
+			box-sizing: border-box;
 
-				background-color: var( --xb-button-background-color );
-				border: 1px solid var( --xb-button-border-color );
-				border-radius: 4px;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			overflow: hidden;
+			text-decoration: none;
 
-				color: var( --xb-button-color );
-				--xb-global-color: var( --xb-button-color );
+			gap: ${ token( 'spacing-2' ) };
 
-				${ outline( '--xb-button-outline-color' ) };
-			}
+			margin: 0;
+			padding: var( --xb-button-padding-y ) var( --xb-button-padding-x );
+			padding-block: var( --xb-button-padding-y );
+			padding-inline: var( --xb-button-padding-x );
 
-			:host( [disabled] ) {
-				opacity: 0.25;
+			background-color: var( --xb-button-background-color ) !important;
+			border: 1px solid var( --xb-button-border-color );
+			border-radius: 4px;
+			border-image: initial;
 
-				cursor: default;
-				pointer-events: none;
-			}
+			color: var( --xb-button-color );
+			--xb-global-color: var( --xb-button-color );
 
-			:host( [disabled] ) *,
+			${ outline( '--xb-button-outline-color' ) };
+		}
+
+		${ disabled( selector ) }, :host( [disabled] ) {
+			opacity: 0.25;
+
+			cursor: default;
+			pointer-events: none;
+		}
+
+		${ disabled( selector ) } *, :host( [disabled] ) *,
 			:host( [disabled] ) ::slotted( * ) {
-				pointer-events: none;
-				user-select: none;
-			}
+			pointer-events: none;
+			user-select: none;
+		}
 
-			:host( :is( :focus, :focus-within, :focus-visible, .is-focused ) ) {
-				--xb-button-outline-color: ${ token( 'color-primary-200', 0.2 ) };
-			}
+		${ focused( selector ) }, :host( :is(  :focus-visible, .is-focused ) ) {
+			--xb-button-outline-color: ${ token( 'color-primary-200', 0.2 ) };
+		}
 
-			:host( :active ) {
-				--xb-button-color: ${ token( 'color-gray-500' ) };
-			}
+		${ active( selector ) }, :host( :active ) {
+			--xb-button-color: ${ token( 'color-gray-500' ) };
+		}
 
-			slot[name='leading']::slotted( * ),
-			slot[name='trailing']::slotted( * ) {
-				display: inline-flex;
-				align-items: center;
-				justify-content: center;
+		${ unsafeCSS( selector ) } * {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
 
-				${ p( token( 'spacing-0' ) ) };
-				${ m( token( 'spacing-0' ) ) };
-			}
+			${ p( token( 'spacing-0' ) ) };
+			${ m( token( 'spacing-0' ) ) };
+		}
 
-			:host( [size='extra-small'] ) {
-				${ px( token( 'spacing-1' ) ) };
-
-				font-size: ${ token( 'font-size-xs' ) };
-			}
-
-			:host( [size='small'] ) {
-				font-size: ${ token( 'font-size-sm' ) };
-			}
-
-			:host( [size='medium'] ) {
-				font-size: ${ token( 'font-size-sm' ) };
-			}
-
-			:host( [size='large'] ) {
-				font-size: ${ token( 'font-size-base' ) };
-			}
-		`,
-		sizeStyles( '--xb-button-height' ),
-	];
+		${ unsafeCSS( selector ) }[scale='extra-small'] {
+			${ px( token( 'spacing-1' ) ) };
+		}
+	`;
 }
 
 export default styles;
+
+// :host( [disabled] ),
+// button[is='xb-button'][disabled] {
+// 	opacity: 0.25;
+
+// 	cursor: default;
+// 	pointer-events: none;
+// }
+
+// :host( [disabled] ) *,
+// :host( [disabled] ) ::slotted( * ),
+// button[is='xb-button'][disabled] * {
+// 	pointer-events: none;
+// 	user-select: none;
+// }
+
+// :host( :is( :focus, :focus-within, :focus-visible, .is-focused ) ) {
+// 	--xb-button-outline-color: ${ token( 'color-primary-200', 0.2 ) };
+// }
+
+// :host( :active ) {
+// 	--xb-button-color: ${ token( 'color-gray-500' ) };
+// }
+
+// slot[name='leading']::slotted( * ),
+// slot[name='trailing']::slotted( * ) {
+// 	display: inline-flex;
+// 	align-items: center;
+// 	justify-content: center;
+
+// 	${ p( token( 'spacing-0' ) ) };
+// 	${ m( token( 'spacing-0' ) ) };
+// }
+
+// :host( [size='extra-small'] ) {
+// 	${ px( token( 'spacing-1' ) ) };
+
+// 	font-size: ${ token( 'font-size-xs' ) };
+// }
+
+// :host( [size='small'] ) {
+// 	font-size: ${ token( 'font-size-sm' ) };
+// }
+
+// :host( [size='medium'] ) {
+// 	font-size: ${ token( 'font-size-sm' ) };
+// }
+
+// :host( [size='large'] ) {
+// 	font-size: ${ token( 'font-size-base' ) };
+// }
+
+// ${ sizeStyles( '--xb-button-height' ) }

@@ -1,1 +1,1 @@
-export { default } from './boundary.controller';
+export { BoundaryController } from './boundary.controller';

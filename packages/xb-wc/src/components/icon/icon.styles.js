@@ -15,6 +15,9 @@ function styles() {
 
 				inline-size: var( --xb-icon-size );
 				block-size: var( --xb-icon-size );
+
+				color: currentColor;
+				fill: currentColor;
 			}
 
 			svg {
@@ -31,8 +34,8 @@ function styles() {
 				inline-size: var( --xb-icon-size );
 				block-size: var( --xb-icon-size );
 
-				color: var( --xb-icon-color );
-				fill: var( --xb-icon-color );
+				/* color: var( --xb-icon-color );
+				fill: var( --xb-icon-color ); */
 			}
 		`,
 	];

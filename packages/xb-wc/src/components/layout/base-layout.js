@@ -1,6 +1,6 @@
 import { property } from 'lit/decorators.js';
 
-import XBElement from '../../common/xb-element';
+import { XBElement } from '../../common/xb-element';
 
 export default class BaseLayout extends XBElement {
 	/**

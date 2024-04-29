@@ -1,80 +1,225 @@
-import { html, nothing } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { html, LitElement } from 'lit';
+import { property } from 'lit/decorators.js';
+import { query } from 'lit/decorators/query.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
-import { BaseButton } from './base-button';
-import AsLink from '../../mixins/as-link';
-import ButtonPatternController from '../../controllers/button-pattern';
-import LinkPatternController from '../../controllers/link-pattern';
+import createLogger from '../../utils/logger';
+import { XBElement } from '../../common/xb-element';
+import { FormElement } from '../../common/form-element';
+import { WithAriaMixin } from '../../mixins/with-aria';
 
-import styles from './button.styles';
+// TODO: this should be done in the class connectedCallback
+// checking if the element's root is the document (in which case we'd append it to document.body)
+// another element. This is necessary because the element can be inside another shadow root.
+// const style = document.createElement( 'style' );
+// style.textContent = styles().cssText;
+
+// document.head.appendChild( style );
+
+const logger = createLogger( 'xb-button' );
 
 /**
  * @class
- * @template AsLink, BaseButton
+ * @template WithAriaMixin, FormElement
  */
-@customElement( 'xb-button' )
-export class Button extends AsLink( BaseButton ) {
-	static styles = [ BaseButton.styles, styles() ];
+export class Button extends WithAriaMixin( FormElement ) {
+	static shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
+
+	/** @type {HTMLButtonElement} */
+	@query( '#control' )
+	accessor #control;
+
+	/** @type {ButtonAttributes['type']} */
+	@property( { type: String, reflect: true } )
+	accessor type;
 
 	/**
-	 * Button emphasis variant.
-	 * @type {ButtonAttributes['emphasis']}
+	 * Button variant.
+	 * @type {ButtonAttributes['variant']}
 	 */
-	@property( { type: String, reflect: true } ) accessor emphasis;
+	@property( { type: String, reflect: true } ) accessor variant;
 
 	/**
-	 * The type of button. When the type is `submit`, the button will submit the surrounding form. Note that the default
-	 * value is `button` instead of `submit`, which is opposite of how native `<button>` elements behave.
-	 * @type {ButtonAttributes['type']}
+	 * Button size.
+	 * @type {ButtonAttributes['size']}
 	 */
-	@property( { type: String } ) accessor type;
+	@property( { type: String, reflect: true } ) accessor size;
 
+	/**
+	 * Button form action.
+	 * @type {ButtonAttributes['formaction']}
+	 */
+	@property( { type: String } ) accessor formaction;
+
+	/**
+	 * Button form enctype.
+	 * @type {ButtonAttributes['formenctype']}
+	 */
+	@property( { type: String } ) accessor formenctype;
+
+	/**
+	 * Button form method.
+	 * @type {ButtonAttributes['formmethod']}
+	 */
+	@property( { type: String } ) accessor formmethod;
+
+	/**
+	 * Button form novalidate attribute.
+	 * @type {ButtonAttributes['formnovalidate']}
+	 */
+	@property( { type: Boolean } ) accessor formnovalidate;
+
+	/**
+	 * Button form target attribute.
+	 * @type {ButtonAttributes['formtarget']}
+	 */
+	@property( { type: String } ) accessor formtarget;
+
+	/**
+	 * @param {{
+	 *  name: string,
+	 *  registry: CustomElementRegistry,
+	 * }} config
+	 */
+	static define( config ) {
+		XBElement.define( { name: 'xb-button', ...config, type: Button } );
+	}
 	constructor() {
 		super();
 
-		this.emphasis = 'ghost';
 		this.type = 'button';
+		this.disabled = false;
+		this.size = 'small';
+		this.variant = 'secondary';
+
+		this.addEventListener( 'click', this.#onClick );
 	}
 
-	connectedCallback() {
-		super.connectedCallback();
-
-		if ( this.href != null ) {
-			new LinkPatternController( this );
-		} else {
-			new ButtonPatternController( this );
+	firstUpdated() {
+		if ( this.disabled ) {
+			this.#onDisabledChange( this.disabled );
 		}
 	}
 
 	render() {
 		return html`
-			${ BaseButton.renderButton() }
-			${ this.href != null
-				? AsLink.renderLink( { href: this.href, target: this.target, download: this.download } )
-				: nothing }
+			<button
+				id="control"
+				part="control"
+				type=${ this.type }
+				formaction=${ ifDefined( this.formaction ) }
+				formenctype=${ ifDefined( this.formenctype ) }
+				formmethod=${ ifDefined( this.formmethod ) }
+				?formnovalidate=${ this.formnovalidate }
+				formtarget=${ ifDefined( this.formtarget ) }
+			>
+				<slot name="leading"></slot>
+				<slot></slot>
+				<slot name="trailing"></slot>
+			</button>
 		`;
+	}
+
+	get button() {
+		return this.#control;
+	}
+
+	getAriaTarget() {
+		return this.button;
+	}
+
+	#onClick = () => {
+		if ( this.disabled ) {
+			return;
+		}
+
+		if ( this.type === 'submit' ) {
+			this.#onSubmit();
+		} else if ( this.type === 'reset' ) {
+			this.#onReset();
+		}
+	};
+
+	#onSubmit = () => {
+		if ( ! this.form ) {
+			return;
+		}
+
+		if ( this.form.checkValidity() ) {
+			// based on https://github.dev/adobe/spectrum-web-components/blob/main/packages/button/src/Button.ts
+			const proxy = document.createElement( 'button' );
+			proxy.type = this.type;
+
+			this.appendChild( proxy );
+
+			/**
+			 * we CANNOT `proxy.click()` here; that would create very nasty infinite loop
+			 * and we do not want that. right?!
+			 */
+			this.form.requestSubmit( proxy );
+
+			proxy.remove();
+
+			this.focus();
+		} else {
+			this.form.reportValidity();
+		}
+	};
+
+	#onReset = () => {
+		this.form?.reset();
+	};
+
+	/**
+	 * @param {boolean} disabled
+	 */
+	#onDisabledChange = ( disabled ) => {
+		this.button.disabled = disabled;
+	};
+
+	formDisabledCallback( disabled ) {
+		super.formDisabledCallback( disabled );
+
+		if ( ! this.isConnected ) {
+			return;
+		}
+
+		this.#onDisabledChange( disabled );
 	}
 }
 
 /**
- * @typedef {('text' | 'ghost' | 'flat')} ButtonEmphasis
+ * @typedef {('tertiary' | 'secondary' | 'primary')} ButtonVariant
  * @typedef {import('../../styles/size.styles').ElementSize} ButtonSize
  * @typedef {import('../../common/prop-types').BorderlessProp} BorderlessProp
  * @typedef {import('../../common/prop-types').PaddinglessProp} PaddinglessProp
- * @typedef {import('../../common/prop-types').HTMLTag} HTMLTag
+ */
+
+/**
+ * @typedef {("application/x-www-form-urlencoded" | "multipart/form-data" | "text/plain")} FormEncType
+ * @typedef {("get" | "post")} FormMethod
+ * @typedef {("_self" | "_blank" | "_parent" | "_top")} FormTarget
  */
 
 /**
  * @typedef {import('../../mixins/as-link').AsLinkAttributes} AsLinkAttributes
- * @typedef {import('./base-button').BaseButtonAttributes} BaseButtonAttributes
  */
 
 /**
  * @typedef {Object} DefaultButtonAttributes
- * @property {ButtonEmphasis} emphasis
+ * @property {ButtonVariant} variant
  * @property {'button' | 'submit' | 'reset'} type
+ * @property {BorderlessProp} borderless
+ * @property {PaddinglessProp} paddingless
+ * @property {boolean} disabled
+ * @property {ElementSize} size
+ * @property {string}  formaction
+ *@property {FormEncType} formenctype
+ * @property {FormMethod} formmethod
+ * @property {boolean} formnovalidate
+ * @property {FormTarget} formtarget
  */
 
 /**
- * @typedef {AsLinkAttributes & BaseButtonAttributes & DefaultButtonAttributes} ButtonAttributes
+ * @typedef {AsLinkAttributes & DefaultButtonAttributes} ButtonAttributes
  */

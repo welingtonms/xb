@@ -1,32 +1,41 @@
 import { property } from 'lit/decorators.js';
+import toArray from '../../utils/to-array';
+
+import { fromAttribute, toAttribute } from './with-selection.helpers';
 
 /**
- * Mixin that adds the properties necessary for the `SelectionManagerController` to work.
- * @mixin
- * @param {import('../../common/prop-types').Constructor<XBElement>} BaseClass
- * @returns {import('../../common/prop-types').Constructor<WithSelectionAttributes> & XBElement}
+ * @template {!Constructable} T
+ * @param {T} BaseClass
  */
-const WithSelectionMixin = ( BaseClass ) =>
-	class WithSelection extends BaseClass {
+export const WithSelectionMixin = ( BaseClass ) => {
+	return class WithSelection extends BaseClass {
 		/**
 		 * Selection strategy.
-		 * @type {WithSelectionAttributes['selection']}
+		 * @type {WithSelectionAttributes['type']}
 		 */
-		@property( { type: String } ) accessor selection;
+		@property( { type: String } ) accessor type;
 
 		/**
 		 * Selection value.
 		 * This should be typed in the subclass.
 		 * @type {WithSelectionAttributes['value']}
 		 */
-		@property() accessor value;
-	};
+		@property()
+		accessor value;
 
-export default WithSelectionMixin;
+		getRawValue( value ) {
+			return toArray( fromAttribute( value ?? this.getAttribute( 'value' ) ) );
+		}
+
+		toRawValue( value ) {
+			this.setAttribute( 'value', toAttribute( value ?? this.value ) );
+		}
+	};
+};
 
 /**
- * @typedef {import('../../common/xb-element').default} XBElement
- * @typedef {import('../../common/prop-types').Constructor<XBElement> & XBElement}
+ * @typedef {import('../../common/xb-element').XBElement} XBElement
+ * @typedef {import('../../common/prop-types').Constructable} Constructable
  */
 
 /**
@@ -52,6 +61,6 @@ export default WithSelectionMixin;
 
 /**
  * @typedef {Object} WithSelectionAttributes
- * @property {SelectionType} selection - Selection strategy.
+ * @property {SelectionType} type - Selection strategy.
  * @property {SelectionOption | SelectionOption[] | null} value - Selection value.
  */

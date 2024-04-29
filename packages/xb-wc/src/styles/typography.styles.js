@@ -9,11 +9,15 @@ import rem from '../utils/rem';
  * @returns
  */
 function typography( variant = 'body-1' ) {
+	/**
+	 * Prefer unitless numbers for line-height: https://developer.mozilla.org/en-US/docs/Web/CSS/line-height#prefer_unitless_numbers_for_line-height_values
+	 */
 	const defaultStyle = unsafeCSS( `
 		font-family: ${ token( 'font-family-default' ) };
 		font-style: normal;
 		font-stretch: normal;
 		letter-spacing: normal;
+		line-height: 1.5;
 
 		font-synthesis: none;
 		text-rendering: optimizeLegibility;
@@ -94,8 +98,7 @@ function typography( variant = 'body-1' ) {
 				${ defaultStyle }
 				font-weight: ${ token( 'font-weight-regular' ) };
 				font-size: ${ rem( '15px' ) };
-				letter-spacing: 0.5px; /* 1.25px;*/
-				/*text-transform: uppercase*/
+				letter-spacing: 0.5px;
 			` );
 
 		case 'caption':

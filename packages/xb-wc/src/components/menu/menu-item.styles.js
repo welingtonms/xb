@@ -34,6 +34,8 @@ function styles() {
 				justify-content: flex-start;
 				text-decoration: none;
 
+				contain: layout style;
+
 				gap: ${ token( 'spacing-2' ) };
 
 				${ px( token( 'spacing-4' ) ) };
@@ -51,6 +53,10 @@ function styles() {
 				font-size: ${ token( 'font-size-sm' ) };
 			}
 
+			:host( [hidden] ) {
+				display: none;
+			}
+
 			slot[name='leading']::slotted( * ),
 			slot[name='trailing']::slotted( * ) {
 				--xb-global-color: var( --xb-item-color );
@@ -64,8 +70,8 @@ function styles() {
 			}
 
 			:host( :hover ),
-			:host( :is( :focus, :focus-within, :focus-visible, .is-focused ) ) {
-				--xb-item-background-color: ${ token( 'color-primary-100', 0.1 ) };
+			:host( :is( :focus-visible, .is-focused ) ) {
+				--xb-item-background-color: ${ token( 'color-primary-100', 0.2 ) };
 				--xb-item-color: ${ token( 'color-primary-600' ) };
 
 				outline: none;
@@ -86,24 +92,6 @@ function styles() {
 			:host( [disabled] ) ::slotted( * ) {
 				pointer-events: none;
 				user-select: none;
-			}
-		`,
-		// TODO: use sizeStyles( { property: '--xb-item-height' } ),
-		css`
-			:host-context( [size='extra-small'] ) {
-				--xb-item-height: 24px;
-			}
-
-			:host-context( [size='small'] ) {
-				--xb-item-height: 40px;
-			}
-
-			:host-context( [size='medium'] ) {
-				--xb-item-height: 56px;
-			}
-
-			:host-context( [size='large'] ) {
-				--xb-item-height: 72px;
 			}
 		`,
 	];

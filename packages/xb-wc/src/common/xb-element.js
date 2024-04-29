@@ -2,38 +2,49 @@ import { LitElement } from 'lit';
 
 import { redispatchEvent } from '../utils/events';
 
-export default class XBElement extends LitElement {
-	static get properties() {
-		return {
-			/**
-			 * Specifies the text direction of the element's content.
-			 * @type {import('../common/prop-types').DirProp}
-			 */
-			dir: {
-				type: String,
-			},
-			/**
-			 * Specifies the language of the element's content.
-			 * @see {[Language Codes](https://www.w3schools.com/tags/ref_language_codes.asp)}
-			 * @type {String}
-			 */
-			lang: {
-				type: String,
-			},
-		};
+export class XBElement extends LitElement {
+	/** @type {ElementInternals} */
+	#internals;
+
+	/**
+	 *
+	 * @param {{
+	 *  name: string,
+	 * 	type: CustomElementConstructor,
+	 *  registry: CustomElementRegistry,
+	 * }} config
+	 */
+	static define( config ) {
+		const { name, type, registry = customElements } = config;
+
+		registry.define( name, type );
+	}
+
+	constructor() {
+		super();
+
+		this.#internals = this.attachInternals();
 	}
 
 	get tag() {
-		return this.tagName.toLowerCase();
+		return this.localName;
+	}
+
+	get internals() {
+		return this.#internals;
 	}
 
 	/**
 	 * Emits a custom event with convenient defaults.
 	 * @param {string} name - event name.
 	 * @param {CustomEventInit} [options] - [Optional] Event additional options.
-	 * @returns {CustomEvent}
+	 * @returns {boolean}
 	 */
 	emit = ( name, options = {} ) => {
+		if ( ! this.isConnected ) {
+			return false;
+		}
+
 		const event = new CustomEvent( name, {
 			bubbles: true,
 			cancelable: true,
@@ -42,9 +53,7 @@ export default class XBElement extends LitElement {
 			...options,
 		} );
 
-		this.dispatchEvent( event );
-
-		return event;
+		return this.dispatchEvent( event );
 	};
 
 	/**
@@ -67,16 +76,21 @@ export default class XBElement extends LitElement {
 	};
 
 	/**
-	 * Sets the provided attribute on the element if `value` is `true`;
-	 * otherwise, removes the attribute.
-	 * @param {*} name
+	 * Sets the provided attribute to `true` is value is truthy, remove attribute otherwise.
+	 * @param {string} name
 	 * @param {*} value
 	 */
 	setBooleanAttribute( name, value ) {
-		if ( value === true ) {
-			this.setAttribute( name, true );
+		if ( Boolean( value ) ) {
+			this.setAttribute( name, 'true' );
 		} else {
 			this.removeAttribute( name );
 		}
 	}
 }
+/**
+ * @typedef {Object} XBElementDefinition
+ * @property {string} name
+ * @property {CustomElementConstructor} type
+ * @property {CustomElementRegistry} registry
+ */

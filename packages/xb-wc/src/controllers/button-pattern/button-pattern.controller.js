@@ -1,6 +1,6 @@
 import KeyboardSupportController from '../keyboard-support';
 
-class ButtonPatternController {
+export class ButtonPatternController {
 	/** @type {ButtonPatternControllerHost} */
 	host;
 
@@ -24,7 +24,7 @@ class ButtonPatternController {
 					},
 				],
 				handler: () => {
-					this._dispatchClick();
+					this.#dispatchClick();
 				},
 			} ),
 		};
@@ -33,28 +33,26 @@ class ButtonPatternController {
 	}
 
 	hostConnected() {
-		this.host.setAttribute( 'role', 'button' );
+		this.host.addEventListener( 'click', this.#onClick );
 
-		this.host.addEventListener( 'click', this._handleClick );
-
-		this.host.addEventListener( 'keydown', this._handleKeyDown );
-		this.host.addEventListener( 'keyup', this._handleKeyUp );
-		this.host.addEventListener( 'focusout', this._handleKeyUp );
+		this.host.addEventListener( 'keydown', this.#onKeyDown );
+		this.host.addEventListener( 'keyup', this.#onKeyUp );
+		this.host.addEventListener( 'focusout', this.#onKeyUp );
 	}
 
 	hostDisconnected() {
-		this.host.removeEventListener( 'click', this._handleClick );
+		this.host.removeEventListener( 'click', this.#onClick );
 
-		this.host.removeEventListener( 'keydown', this._handleKeyDown );
-		this.host.removeEventListener( 'keyup', this._handleKeyUp );
-		this.host.removeEventListener( 'focusout', this._handleKeyUp );
+		this.host.removeEventListener( 'keydown', this.#onKeyDown );
+		this.host.removeEventListener( 'keyup', this.#onKeyUp );
+		this.host.removeEventListener( 'focusout', this.#onKeyUp );
 	}
 
-	_dispatchClick = () => {
+	#dispatchClick = () => {
 		this.host.click();
 	};
 
-	_handleClick = ( event ) => {
+	#onClick = ( event ) => {
 		if ( this.host.disabled ) {
 			event.stopPropagation();
 			event.preventDefault();
@@ -66,7 +64,7 @@ class ButtonPatternController {
 	 * @param {KeyboardEvent} event
 	 * @returns
 	 */
-	_handleKeyDown = ( event ) => {
+	#onKeyDown = ( event ) => {
 		if ( this.host.disabled ) {
 			event.stopPropagation();
 			event.preventDefault();
@@ -78,12 +76,10 @@ class ButtonPatternController {
 		}
 	};
 
-	_handleKeyUp = () => {
+	#onKeyUp = () => {
 		this.host.classList.remove( 'is-active' );
 	};
 }
-
-export default ButtonPatternController;
 
 /**
  * @typedef {import('lit').ReactiveControllerHost} ReactiveControllerHost

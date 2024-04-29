@@ -1,6 +1,8 @@
 const ALPHABET = 'fkqan_eiodprgzxhstywlbjvucm-';
 // const MAX_LENGTH = 2;
 
+// alternative implementation function gen() { return `${Math.random().toString(36).substring(2)}`}
+
 /** @type {number} */
 let length = 1;
 /** @type {number[]} */

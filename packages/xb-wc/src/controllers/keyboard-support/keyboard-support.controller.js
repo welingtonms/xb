@@ -1,4 +1,4 @@
-import toArray from '@welingtonms/xb-toolset/dist/to-array';
+import toArray from '../../utils/to-array';
 
 import createLogger from '../../utils/logger';
 
@@ -22,9 +22,10 @@ export function getShortcutKey( shortcut ) {
 
 /**
  * Enable a component to implement behavior based on shortcuts.
+ * @class
  * @implements {ReactiveController}
  */
-class KeyboardSupportController {
+export class KeyboardSupportController {
 	/** @type {ReactiveControllerHost & XBElement} */
 	host;
 
@@ -41,7 +42,7 @@ class KeyboardSupportController {
 	 * @see {@link https://lit.dev/docs/components/events/#adding-event-listeners-to-the-component-or-its-shadow-root Lit, Adding event listeners to the component or its shadow root}
 	 * @type {(host: KeyboardSupportControllerHost) => HTMLElement}
 	 */
-	getEventTarget;
+	getControllerTarget;
 
 	/**
 	 *
@@ -59,23 +60,25 @@ class KeyboardSupportController {
 				return map.concat( toArray( shortcut ).map( createShortcut ) );
 			}, [] )
 		);
-		this.getEventTarget = options?.getEventTarget ?? ( ( host ) => host );
+		this.getControllerTarget = options?.getControllerTarget ?? ( ( host ) => host );
 
 		( this.host = host ).addController( this );
 	}
 
 	async hostConnected() {
-		this.getEventTarget( this.host ).addEventListener( 'keyup', this._handleKeyUp );
+		await this.host.updateComplete;
+
+		this.getControllerTarget( this.host ).addEventListener( 'keyup', this.#onKeyUp );
 	}
 
 	hostDisconnected() {
-		this.getEventTarget( this.host ).removeEventListener( 'keyup', this._handleKeyUp );
+		this.getControllerTarget( this.host ).removeEventListener( 'keyup', this.#onKeyUp );
 	}
 
 	/**
 	 * @param {KeyboardEvent} event
 	 */
-	_handleKeyUp = ( event ) => {
+	#onKeyUp = ( event ) => {
 		const shortcut = getShortcutKey( {
 			key: event.key,
 			meta: event.metaKey,
@@ -85,7 +88,7 @@ class KeyboardSupportController {
 		} );
 
 		if ( ! this.keymap.has( shortcut ) ) {
-			logger.debug( `[${ this.host.tag }]`, 'no calback for shortcut', shortcut );
+			// logger.debug( `[${ this.host.tag }]`, 'no calback for shortcut', shortcut );
 			return;
 		}
 
@@ -95,12 +98,10 @@ class KeyboardSupportController {
 	};
 }
 
-export default KeyboardSupportController;
-
 /**
  * @typedef {import('lit').ReactiveController} ReactiveController
  * @typedef {import('lit').ReactiveControllerHost} ReactiveControllerHost
- * @typedef {import('../../common/xb-element').default} XBElement
+ * @typedef {import('../../common/xb-element').XBElement} XBElement
  */
 
 /**
@@ -130,6 +131,6 @@ export default KeyboardSupportController;
 
 /**
  * @typedef {{
- * 	getEventTarget: (host: KeyboardSupportControllerHost) => HTMLElement
+ * 	getControllerTarget: (host: KeyboardSupportControllerHost) => HTMLElement
  * }} KeyboardSupportControllerOptions
  */

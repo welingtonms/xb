@@ -1,5 +1,5 @@
 import { unsafeCSS } from 'lit';
-import toArray from '@welingtonms/xb-toolset/dist/to-array';
+import toArray from '../utils/to-array';
 
 /**
  * @param {string | string[]} selectors
@@ -14,9 +14,7 @@ export function disabled( selectors ) {
 	 * @returns {string[]}
 	 */
 	function build( selectors ) {
-		return selectors.map(
-			( selector ) => `${ selector }:is(.is-disabled, :disabled)`
-		);
+		return selectors.map( ( selector ) => `${ selector }:is(.is-disabled, :disabled)` );
 	}
 
 	if ( safeSelectors.length === 1 ) {
@@ -39,9 +37,7 @@ export function enabled( selectors ) {
 	 * @returns {string[]}
 	 */
 	function build( selectors ) {
-		return selectors.map(
-			( selector ) => `${ selector }:not(.is-disabled, :disabled)`
-		);
+		return selectors.map( ( selector ) => `${ selector }:not(.is-disabled, :disabled)` );
 	}
 
 	if ( safeSelectors.length === 1 ) {
@@ -87,9 +83,7 @@ export function focused( selectors ) {
 	 * @returns {string[]}
 	 */
 	function build( selectors ) {
-		return selectors.map(
-			( selector ) => `${ selector }:is(:focus, :focus-within, .is-focused)`
-		);
+		return selectors.map( ( selector ) => `${ selector }:is(:focus, :focus-within, .is-focused)` );
 	}
 
 	if ( safeSelectors.length === 1 ) {

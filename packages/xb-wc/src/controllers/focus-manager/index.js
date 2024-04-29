@@ -1,1 +1,1 @@
-export { default } from './focus-manager.controller';
+export { FocusManagerController } from './focus-manager.controller';

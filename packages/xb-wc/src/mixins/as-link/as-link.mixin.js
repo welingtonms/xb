@@ -9,7 +9,7 @@ import { html } from 'lit';
  * @template {!Constructor} T
  * @param {T} BaseClass - The class to extend
  */
-function AsLinkMixin( BaseClass ) {
+export function AsLinkMixin( BaseClass ) {
 	return class AsLink extends BaseClass {
 		/**
 		 * When set, the underlying button will be rendered as an `<a>` with this `href` instead of a `<button>`.

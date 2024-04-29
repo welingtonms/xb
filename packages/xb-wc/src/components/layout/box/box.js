@@ -4,9 +4,9 @@ import BaseLayout from '../base-layout';
 
 import styles from './box.styles';
 
-@customElement( 'xb-box' )
+@customElement('xb-box')
 export class BoxLayout extends BaseLayout {
-	static styles = [ styles() ];
+	static styles = [styles()];
 
 	render() {
 		return html`

@@ -1,14 +1,13 @@
 import { html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 
-import { getTextContent } from '../../utils/slot';
-import XBElement from '../../common/xb-element';
-import withID from '../../mixins/with-id';
+import { WithIDMixin } from '../../mixins/with-id';
+import { XBElement } from '../../common/xb-element';
 
 import styles from './menu-item.styles';
+import { getTextContent } from '../../utils/slot';
 
-@customElement( 'xb-item' )
-export class MenuItem extends withID( XBElement, 'xb-item' ) {
+export class MenuItem extends WithIDMixin( XBElement, 'xb-item' ) {
 	static styles = [ styles() ];
 
 	/**
@@ -17,13 +16,23 @@ export class MenuItem extends withID( XBElement, 'xb-item' ) {
 	 */
 	@property( { type: Boolean, reflect: true } ) accessor disabled;
 
+	/**
+	 * @param {{
+	 *  name: string,
+	 *  registry: CustomElementRegistry,
+	 * }} config
+	 */
+	static define( config ) {
+		XBElement.define( { name: 'xb-item', ...config, type: MenuItem } );
+	}
+
 	constructor() {
 		super();
 
 		this.disabled = false;
 
-		this.addEventListener( 'click', this._handleClick );
-		this.addEventListener( 'keyup', this._handleKeyUp );
+		this.addEventListener( 'click', this.#onClick );
+		this.addEventListener( 'keyup', this.#onKeyUp );
 	}
 
 	connectedCallback() {
@@ -37,14 +46,14 @@ export class MenuItem extends withID( XBElement, 'xb-item' ) {
 		super.updated( changedProperties );
 
 		if ( changedProperties.has( 'disabled' ) ) {
-			this.setBooleanAttribute( 'aria-disabled', this.disabled );
+			this.setAttribute( 'aria-disabled', Boolean( this.disabled ) );
 		}
 	}
 
 	/** Returns a text label based on the contents of the menu item's default slot. */
 	text() {
 		/** @type {HTMLSlotElement} */
-		const slot = this.shadowRoot.querySelector( 'slot:not([name])' );
+		const slot = this.renderRoot.querySelector( 'slot:not([name])' );
 
 		/**
 		 * FIXME: the fallback is needed for when `slot` is still null,
@@ -61,17 +70,19 @@ export class MenuItem extends withID( XBElement, 'xb-item' ) {
 		`;
 	}
 
-	_handleClick = ( event ) => {
+	#onClick = ( event ) => {
 		if ( this.disabled ) {
 			event.stopPropagation();
-			event.preventDefault();
+
+			return;
 		}
 	};
 
-	_handleKeyUp = ( event ) => {
+	#onKeyUp = ( event ) => {
 		if ( this.disabled ) {
 			event.stopPropagation();
-			event.preventDefault();
+
+			return;
 		}
 	};
 }

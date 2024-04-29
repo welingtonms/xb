@@ -6,7 +6,7 @@ import XBElement from '../../common/xb-element';
 
 import styles from './field.styles';
 
-import '../toggle-group';
+import '../form/toggle-group';
 import '../text';
 
 import '../layout/stack';

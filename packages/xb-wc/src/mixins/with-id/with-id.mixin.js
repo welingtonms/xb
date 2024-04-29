@@ -1,16 +1,13 @@
-import { property } from 'lit/decorators.js';
-
 import generateID from '../../utils/id-generator';
 
 /**
  * Ensures the element has an id.
- * @mixin
- * @param {import('../../common/prop-types').Constructor<XBElement>} superClass
- * @param {string} [prefix] - Prefix for the id.
- * @returns {T}
+ * @template {!Constructable} T
+ * @param {T} BaseClass
+ * @param {string} [prefix='xb-element']
  */
-const WithIdElementMixin = ( superClass, prefix = 'xb-element' ) => {
-	class WithIdElement extends superClass {
+export function WithIDMixin( BaseClass, prefix = 'xb-element' ) {
+	return class WithID extends BaseClass {
 		connectedCallback() {
 			super.connectedCallback();
 
@@ -18,13 +15,10 @@ const WithIdElementMixin = ( superClass, prefix = 'xb-element' ) => {
 				this.id = `${ prefix }-${ generateID() }`;
 			}
 		}
-	}
-
-	return WithIdElement;
-};
-
-export default WithIdElementMixin;
+	};
+}
 
 /**
- * @typedef {import('../../common/xb-element').default} XBElement
+ * @typedef {import('../../common/xb-element').XBElement} XBElement
+ * @typedef {import('../../common/prop-types').Constructable} Constructable
  */

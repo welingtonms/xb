@@ -9,16 +9,14 @@ function styles() {
 	return [
 		css`
 			:host {
-				--xb-badge-color: ${ token( 'color-white' ) };
-				--xb-badge-background-color: ${ token( 'color-gray-600' ) };
-			}
+				--xb-badge-color: ${token('color-white')};
+				--xb-badge-background-color: ${token('color-gray-600')};
 
-			.badge {
-				${ transition( [ { property: 'background-color' }, { property: 'color' } ] ) };
+				${transition([{ property: 'background-color' }, { property: 'color' }])};
 
-				${ typography( 'caption' ) };
-				${ px( token( 'spacing-4' ) ) };
-				${ py( token( 'spacing-0' ) ) };
+				${typography('caption')};
+				${px(token('spacing-4'))};
+				${py(token('spacing-0'))};
 
 				display: inline-flex;
 				align-items: center;
@@ -28,21 +26,21 @@ function styles() {
 
 				border-radius: 12px;
 
-				color: var( --xb-badge-color );
-				background-color: var( --xb-badge-background-color );
+				color: var(--xb-badge-color);
+				background-color: var(--xb-badge-background-color);
 			}
 
-			.-primary {
-				--xb-badge-background-color: ${ token( 'color-primary-100' ) };
+			:host([variant='primary']) {
+				--xb-badge-background-color: ${token('color-primary-100')};
 			}
 
-			.-secondary {
-				--xb-badge-background-color: ${ token( 'color-secondary-500' ) };
+			:host([variant='secondary']) {
+				--xb-badge-background-color: ${token('color-secondary-500')};
 			}
 
-			.-tertiary {
-				--xb-badge-background-color: ${ token( 'color-tertiary-500' ) };
-				--xb-badge-color: ${ token( 'color-black' ) };
+			:host([variant='tertiary']) {
+				--xb-badge-background-color: ${token('color-tertiary-500')};
+				--xb-badge-color: ${token('color-black')};
 			}
 		`,
 	];

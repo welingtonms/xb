@@ -1,4 +1,4 @@
-import { SELECTION_TYPES } from '@welingtonms/xb-toolset/dist/selection';
+import { SELECTION_TYPES } from '../utils/selection';
 
 // keep here arg types for storybook stories
 export const PlacementArg = Object.freeze( {
@@ -19,10 +19,15 @@ export const PlacementArg = Object.freeze( {
 	],
 } );
 
-export const SizeArg = Object.freeze( {
+export const ScaleArg = Object.freeze( {
 	control: 'select',
-	options: [ 'extra-small', 'small', 'medium', 'large' ],
+	options: [ 'small', 'medium', 'large' ],
 } );
+
+/**
+ * @deprecated use `ScaleArg` instead.
+ */
+export const SizeArg = ScaleArg;
 
 export const PaddinglessArg = Object.freeze( {
 	control: 'select',

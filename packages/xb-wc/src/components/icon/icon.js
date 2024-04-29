@@ -1,11 +1,10 @@
 import { html, nothing } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import Icons from '@welingtonms/xb-icons';
 
 import styles from './icon.styles';
-import XBElement from '../../common/xb-element';
+import { XBElement } from '../../common/xb-element';
 
-@customElement( 'xb-icon' )
 export class Icon extends XBElement {
 	static styles = [ styles() ];
 
@@ -21,6 +20,16 @@ export class Icon extends XBElement {
 	 */
 	@property( { type: Number } ) accessor size;
 
+	/**
+	 * @param {{
+	 *  name: string,
+	 *  registry: CustomElementRegistry,
+	 * }} config
+	 */
+	static define( config ) {
+		XBElement.define( { name: 'xb-icon', ...config, type: Icon } );
+	}
+
 	connectedCallback() {
 		super.connectedCallback();
 
@@ -31,12 +40,12 @@ export class Icon extends XBElement {
 	 *
 	 * @param {import("lit").PropertyValues} changedProperties
 	 */
-	updated( changedProperties ) {
-		super.updated( changedProperties );
-
+	update( changedProperties ) {
 		if ( changedProperties.has( 'size' ) ) {
 			this.style.setProperty( '--xb-icon-size', `${ parseInt( this.size ) || 16 }px` );
 		}
+
+		super.update( changedProperties );
 	}
 
 	render() {

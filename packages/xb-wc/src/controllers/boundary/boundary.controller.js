@@ -3,9 +3,9 @@ import Keyboard from '../../common/keyboard';
 
 import createLogger from '../../utils/logger';
 
-const logger = createLogger( 'boundary' );
+const logger = createLogger( 'boundary-controller' );
 
-class BoundaryController {
+export class BoundaryController {
 	/** @type {BoundaryControllerHost} */
 	host;
 
@@ -28,15 +28,15 @@ class BoundaryController {
 
 	hostConnected() {
 		if ( this.active ) {
-			this._subscribe();
+			this.#subscribe();
 		} else {
-			this._unsubscribe();
+			this.#unsubscribe();
 		}
 	}
 
 	hostDisconnected() {
 		if ( this.active ) {
-			this._unsubscribe();
+			this.#unsubscribe();
 		}
 	}
 
@@ -46,7 +46,7 @@ class BoundaryController {
 		}
 
 		logger.debug( 'activating boundary.' );
-		this._subscribe();
+		this.#subscribe();
 		this.active = true;
 	};
 
@@ -56,28 +56,28 @@ class BoundaryController {
 		}
 
 		logger.debug( 'deactivating boundary.' );
-		this._unsubscribe();
+		this.#unsubscribe();
 		this.active = false;
 	};
 
-	_subscribe() {
-		document.addEventListener( 'mousedown', this._handleEvent );
-		document.addEventListener( 'keyup', this._handleEvent );
-		document.addEventListener( 'touchend', this._handleEvent );
-		window.addEventListener( 'blur', this._handleBlurEvent, true );
+	#subscribe() {
+		document.addEventListener( 'mousedown', this.#onEvent );
+		document.addEventListener( 'keyup', this.#onEvent );
+		document.addEventListener( 'touchend', this.#onEvent );
+		// window.addEventListener( 'blur', this.#onBlurEvent, true );
 	}
 
-	_unsubscribe() {
-		document.removeEventListener( 'mousedown', this._handleEvent );
-		document.removeEventListener( 'keyup', this._handleEvent );
-		document.removeEventListener( 'touchend', this._handleEvent );
-		window.removeEventListener( 'blur', this._handleBlurEvent, true );
+	#unsubscribe() {
+		document.removeEventListener( 'mousedown', this.#onEvent );
+		document.removeEventListener( 'keyup', this.#onEvent );
+		document.removeEventListener( 'touchend', this.#onEvent );
+		// window.removeEventListener( 'blur', this.#onBlurEvent, true );
 	}
 
-	_handleEvent = ( event ) => {
+	#onEvent = ( event ) => {
 		const isInside = isInsideElement( event, this.host );
 
-		if ( ! isInside || Keyboard( event ).is( 'ESC' ) ) {
+		if ( ! isInside || Keyboard( event ).is( 'Escape' ) ) {
 			logger.debug( 'event happened out host, or <esc> was pressed.' );
 
 			this.host.emit( 'xb:interact-out' );
@@ -86,7 +86,7 @@ class BoundaryController {
 		}
 	};
 
-	_handleBlurEvent = ( event ) => {
+	#onBlurEvent = ( event ) => {
 		const isInside = isInsideElement( event, this.host );
 
 		if ( ! isInside ) {
@@ -96,8 +96,6 @@ class BoundaryController {
 		}
 	};
 }
-
-export default BoundaryController;
 
 /**
  * @typedef {import('lit').ReactiveControllerHost} ReactiveControllerHost

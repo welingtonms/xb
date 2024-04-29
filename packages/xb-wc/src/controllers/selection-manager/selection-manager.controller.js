@@ -1,5 +1,5 @@
-import toArray from '@welingtonms/xb-toolset/dist/to-array';
-import createSelectionStrategy from '@welingtonms/xb-toolset/dist/selection';
+import toArray from '../../utils/to-array';
+import createSelectionStrategy from '../../utils/selection';
 
 import createLogger from '../../utils/logger';
 
@@ -8,8 +8,8 @@ const logger = createLogger( 'selection-manager' );
 /**
  * @implements {ReactiveController}
  */
-class SelectionManagerController {
-	/** @type {SelectionManagerControllerHost} */
+export class SelectionManagerController {
+	/** @template WithSelectionMixin, XBElement */
 	host;
 
 	/**
@@ -25,11 +25,6 @@ class SelectionManagerController {
 	selection;
 
 	/**
-	 * Value attribute from the host.
-	 */
-	value;
-
-	/**
 	 * @param {SelectionManagerControllerHost} host
 	 */
 	constructor( host ) {
@@ -40,98 +35,82 @@ class SelectionManagerController {
 	}
 
 	hostConnected() {
-		if ( this.strategy == null ) {
-			const value = Array.from( this.selection );
-			logger.debug( `creating strategy "${ this.host.selection }" with value [${ value }]` );
-			this.strategy = createSelectionStrategy( { type: this.host.selection } );
-			this.init( toArray( this.host.value ) );
-		}
-
-		this.value = this.host.value;
+		this.init( this.host.getRawValue() );
 	}
 
 	hostUpdate() {
-		if ( this.host.selection !== this.strategy.type ) {
+		if ( this.host.type !== this.strategy.type ) {
 			const value = Array.from( this.selection );
 
-			logger.debug(
-				`re-creating strategy "${ this.host.selection }" with existing value [${ value }]`
-			);
+			logger.debug( `re-creating strategy "${ this.host.type }" with existing value`, value );
 
-			this.strategy = createSelectionStrategy( { type: this.host.selection } );
+			this.strategy = createSelectionStrategy( { type: this.host.type } );
 			this.init( value );
-		}
-
-		if ( this.host.value !== this.value ) {
-			const value = toArray( this.host.value );
-
-			logger.debug( `updating strategy "${ this.host.selection }" with new value [${ value }]` );
-
-			this.value = this.host.value;
-
-			this.reset( toArray( this.host.value ) );
 		}
 	}
 
 	/**
 	 * @param {string[]}
+	 * @returns {string[]}
 	 */
 	init = ( values ) => {
-		logger.debug( `initializing strategy "${ this.strategy.type }" with value [${ values }]` );
+		if ( this.strategy == null ) {
+			logger.debug(
+				`creating strategy "${ this.host.type ?? 'multiple (default fallback)' }" with value`,
+				this.host.getRawValue()
+			);
+
+			this.strategy = createSelectionStrategy( { type: this.host.type ?? 'multiple' } );
+		}
+
+		logger.debug( `initializing strategy "${ this.strategy.type }" with value`, values );
 
 		this.selection = this.strategy.init( values );
-	};
 
-	reset = ( values ) => {
-		logger.debug( `resetting strategy "${ this.strategy.type }" with value [${ values }]` );
-
-		this.selection = this.strategy.init( values );
-
-		// TODO: remove host.requestUpdate
-		this.host.emit( 'xb:selection-change' );
-		this.host.requestUpdate();
+		return Array.from( this.selection );
 	};
 
 	/**
 	 * Select the given `values`.
 	 * @param {string | string[] | null} values
+	 * @returns {string[]}
 	 */
 	select = ( values ) => {
-		logger.debug( `selecting values [${ values }] in strategy "${ this.strategy.type }"` );
+		logger.debug( 'selecting values', toArray( values ), ` in strategy "${ this.strategy.type }"` );
 
 		this.selection = this.strategy.select( toArray( values ), this.selection );
 
-		// TODO: remove host.requestUpdate
-		this.host.emit( 'xb:selection-change' );
-		this.host.requestUpdate();
+		return Array.from( this.selection );
 	};
 
 	/**
 	 * Unselect the given `values`.
 	 * @param {string | string[] | null} values
+	 * @returns {string[]}
 	 */
 	unselect = ( values ) => {
-		logger.debug( `unselecting values [${ values }] in strategy "${ this.strategy.type }"` );
+		logger.debug(
+			'unselecting values',
+			toArray( values ),
+			` in strategy "${ this.strategy.type }"`
+		);
 
 		this.selection = this.strategy.unselect( toArray( values ), this.selection );
 
-		// TODO: remove host.requestUpdate
-		this.host.emit( 'xb:selection-change' );
-		this.host.requestUpdate();
+		return Array.from( this.selection );
 	};
 
 	/**
 	 * Toggle the given `values`.
 	 * @param {string | string[] | null} values
+	 * @returns {string[]}
 	 */
 	toggle = ( values ) => {
-		logger.debug( `toggling values [${ values }] in strategy "${ this.strategy.type }"` );
+		logger.debug( 'toggling values', toArray( values ), ` in strategy "${ this.strategy.type }"` );
 
 		this.selection = this.strategy.toggle( toArray( values ), this.selection );
 
-		// TODO: remove host.requestUpdate
-		this.host.emit( 'xb:selection-change' );
-		this.host.requestUpdate();
+		return Array.from( this.selection );
 	};
 
 	/**
@@ -139,13 +118,13 @@ class SelectionManagerController {
 	 * @param {string | string[] | null} values
 	 * @param {boolean} selected - `true` if should be selected, `false` if it should be unselected.
 	 */
-	handle = ( values, selected ) => {
-		if ( selected ) {
-			this.select( values );
-		} else {
-			this.unselect( values );
-		}
-	};
+	// handle = ( values, selected ) => {
+	// 	if ( selected ) {
+	// 		this.select( values );
+	// 	} else {
+	// 		this.unselect( values );
+	// 	}
+	// };
 
 	/**
 	 * Chech if the given `value` is selected.
@@ -155,17 +134,21 @@ class SelectionManagerController {
 		return this.selection.has( value );
 	};
 
+	value = () => {
+		return this.strategy.value( this.selection );
+	};
+
+	/**
+	 * @deprecated Use `value()` instead.
+	 */
 	toValue = () => {
 		return this.strategy.value( this.selection );
 	};
 }
 
-export default SelectionManagerController;
-
 /**
  * @typedef {import('lit').ReactiveControllerHost} ReactiveControllerHost
  * @typedef {import('lit').ReactiveController} ReactiveController
- * @typedef {import('../../common/xb-element').default} XBElement
  */
 
 /**
@@ -191,8 +174,6 @@ export default SelectionManagerController;
  */
 
 /**
- * @typedef {ReactiveControllerHost & XBElement & {
- * 	selection: SelectionType;
- * 	value: SelectionOption | SelectionOption[] | null
- * }} SelectionManagerControllerHost
+ * @typedef {import('../../common/xb-element').XBElement} XBElement
+ * @typedef {import('../../mixins/with-selection').WithSelectionMixin} WithSelectionMixin
  */

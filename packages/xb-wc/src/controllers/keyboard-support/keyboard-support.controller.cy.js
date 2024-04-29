@@ -165,8 +165,7 @@ describe( 'KeyboardSupportController', () => {
 				},
 			},
 			{
-				getEventTarget: ( host ) => {
-					console.log( host.querySelector( 'div' ) );
+				getControllerTarget: ( host ) => {
 					return host.querySelector( 'div' );
 				},
 			},

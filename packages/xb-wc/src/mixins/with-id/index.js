@@ -1,1 +1,1 @@
-export { default } from './with-id.mixin';
+export { WithIDMixin } from './with-id.mixin';
