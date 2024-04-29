@@ -1,4 +1,7 @@
-const rem = require( '@welingtonms/xb-toolset/dist/rem' );
+// TODO: consume from the toolset package
+function rem( value, base = 16 ) {
+	return `${ parseInt( String( value ), 10 ) / base }rem`;
+}
 
 module.exports = {
 	font: {

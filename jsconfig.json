@@ -1,6 +1,7 @@
 {
 	"extends": "./jsconfig.build.json",
 	"compilerOptions": {
+		"composite": true,
 		"baseUrl": "./packages",
 		"paths": {
 			"@welingtonms/icons": [ "icons/src" ],

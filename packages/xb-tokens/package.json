@@ -17,31 +17,11 @@
 	],
 	"author": "Welington Silva",
 	"license": "MIT",
-	"dependencies": {
-		"@welingtonms/xb-toolset": "workspace:*"
-	},
 	"devDependencies": {
 		"jest": "29.7.0",
-		"style-dictionary": "3.9.0"
+		"style-dictionary": "3.9.2"
 	},
 	"publishConfig": {
 		"access": "public"
-	},
-	"nx": {
-		"targets": {
-			"build": {
-				"inputs": [
-					"{projectRoot}/src/tokens/*",
-					"{projectRoot}/src/utils/*",
-					"^prod"
-				],
-				"dependsOn": [
-					"^build"
-				],
-				"outputs": [
-					"{projectRoot}/dist"
-				]
-			}
-		}
 	}
 }

@@ -1,4 +1,3 @@
-import { terser } from 'rollup-plugin-terser';
 import summary from 'rollup-plugin-summary';
 import resolve from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
@@ -15,7 +14,6 @@ module.exports = {
 		resolve( {
 			preferBuiltins: true,
 		} ),
-		terser(),
 		summary(),
 	],
 	output: [

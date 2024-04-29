@@ -11,17 +11,13 @@ function getStyleDictionaryConfig( brand, platform ) {
 
 						if ( options.outputReferences ) {
 							if ( dictionary.usesReference( token.original.value ) ) {
-								const [ ref ] = dictionary.getReferences(
-									token.original.value
-								);
+								const [ ref ] = dictionary.getReferences( token.original.value );
 
 								value = `var(--${ ref.name })`;
 							}
 						}
 
-						return `$${ token.name }: ${ value };${
-							comment ? ` /* ${ comment } */` : ''
-						}`;
+						return `$${ token.name }: ${ value };${ comment ? ` /* ${ comment } */` : '' }`;
 					} )
 					.join( `\n` );
 			},

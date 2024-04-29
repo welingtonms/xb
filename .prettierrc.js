@@ -5,7 +5,7 @@ module.exports = {
 	trailingComma: 'es5',
 	bracketSpacing: true,
 	parenSpacing: true,
-	jsxBracketSameLine: false,
+	bracketSameLine: false,
 	htmlWhitespaceSensitivity: 'ignore',
 	semi: true,
 	arrowParens: 'always',
