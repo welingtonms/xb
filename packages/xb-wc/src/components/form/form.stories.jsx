@@ -63,12 +63,11 @@ function WebComponent( { args } ) {
 										type="text"
 										name="xb-text-input"
 										placeholder="XB Greeting"
-										default-value="hello world"
 									></xb-text-input>
 								</xb-cluster>
 
 								<xb-cluster>
-									<xb-checkbox name="xb-checkbox" value="agree-tc" default-checked>
+									<xb-checkbox name="xb-checkbox" value="agree-tc">
 										Agree with T&C
 									</xb-checkbox>
 
@@ -80,20 +79,20 @@ function WebComponent( { args } ) {
 
 								<xb-cluster>
 									<xb-text>Accept cookies</xb-text>
-									<xb-radio-group name="xb-radio-group" default-value="no">
+									<xb-radio-group name="xb-radio-group">
 										<xb-radio value="yes">Yes</xb-radio>
 										<xb-radio value="no">No</xb-radio>
 									</xb-radio-group>
 								</xb-cluster>
 
 								<xb-cluster>
-									<xb-switch name="xb-switch" value="accept-life-options" default-checked>
+									<xb-switch name="xb-switch" value="accept-life-options">
 										Accept life options switch
 									</xb-switch>
 								</xb-cluster>
 
 								<xb-cluster>
-									<xb-toggle-group type="multiple" name="xb-toggle-group" default-value="change">
+									<xb-toggle-group type="multiple" name="xb-toggle-group">
 										<xb-toggle value="accept">
 											<span slot="leading">&diams;</span>
 											Accept
@@ -118,7 +117,7 @@ function WebComponent( { args } ) {
 										<option>Letter C</option>
 									</select> -->
 
-									<xb-select default-value="letter-b" name="xb-select">
+									<xb-select name="xb-select">
 										<xb-option value="letter-a">Letter A</xb-option>
 										<xb-option value="letter-b">Letter B</xb-option>
 										<xb-option value="letter-c">Letter C</xb-option>
@@ -188,12 +187,12 @@ function FormHook( { args } ) {
 									type="text"
 									{...register("xb-text-input")}
 									placeholder="XB Greeting"
-									defaultValue="hello world"
+
 								></TextInput>
 							</xb-cluster>
 
 							<xb-cluster>
-								<Checkbox  {...register("xb-checkbox")} value="agree-tc" defaultChecked>
+								<Checkbox  {...register("xb-checkbox")} value="agree-tc" >
 									Agree with T&C s
 								</Checkbox>
 
@@ -205,20 +204,20 @@ function FormHook( { args } ) {
 
 							<xb-cluster>
 								<xb-text>Accept cookies</xb-text>
-								<RadioGroup {...register("xb-radio-group")} default-value="no">
+								<RadioGroup {...register("xb-radio-group")}>
 									<Radio value="yes">Yes</Radio>
 									<Radio value="no">No</Radio>
 								</RadioGroup>
 							</xb-cluster>
 
 							<xb-cluster>
-								<Switch {...register("xb-switch")} value="accept-life-options" defaultChecked>
+								<Switch {...register("xb-switch")} value="accept-life-options">
 									Accept life options switch
 								</Switch>
 							</xb-cluster>
 
 							<xb-cluster>
-								<ToggleGroup type="multiple" {...register("xb-toggle-group")} defaultValue="change">
+								<ToggleGroup type="multiple" {...register("xb-toggle-group")} >
 									<Toggle value="accept">
 										<span slot="leading">&diams;</span>
 										Accept
@@ -243,7 +242,7 @@ function FormHook( { args } ) {
 									<option>Letter C</option>
 								</select> */ }
 
-								<Select defaultValue="letter-b" {...register("xb-select")} >
+								<Select {...register("xb-select")} >
 									<Option value="letter-a">Letter A</Option>
 									<Option value="letter-b">Letter B</Option>
 									<Option value="letter-c">Letter C</Option>
@@ -297,12 +296,12 @@ export const Playground = {
 									type="text"
 									name="xb-text-input"
 									placeholder="XB Greeting"
-									defaultValue="hello world"
+
 								></TextInput>
 							</xb-cluster>
 
 							<xb-cluster>
-								<Checkbox name="xb-checkbox" value="agree-tc" defaultChecked>
+								<Checkbox name="xb-checkbox" value="agree-tc" >
 									Agree with T&C s
 								</Checkbox>
 
@@ -314,20 +313,20 @@ export const Playground = {
 
 							<xb-cluster>
 								<xb-text>Accept cookies</xb-text>
-								<RadioGroup name="xb-radio-group" default-value="no">
+								<RadioGroup name="xb-radio-group" >
 									<Radio value="yes">Yes</Radio>
 									<Radio value="no">No</Radio>
 								</RadioGroup>
 							</xb-cluster>
 
 							<xb-cluster>
-								<Switch name="xb-switch" value="accept-life-options" defaultChecked>
+								<Switch name="xb-switch" value="accept-life-options" >
 									Accept life options switch
 								</Switch>
 							</xb-cluster>
 
 							<xb-cluster>
-								<ToggleGroup type="multiple" name="xb-toggle-group" defaultValue="change">
+								<ToggleGroup type="multiple" name="xb-toggle-group" >
 									<Toggle value="accept">
 										<span slot="leading">&diams;</span>
 										Accept
@@ -352,7 +351,7 @@ export const Playground = {
 									<option>Letter C</option>
 								</select> */ }
 
-								<Select defaultValue="letter-b" name="xb-select" onChange={ args.change }>
+								<Select name="xb-select" onChange={ args.change }>
 									<Option value="letter-a">Letter A</Option>
 									<Option value="letter-b">Letter B</Option>
 									<Option value="letter-c">Letter C</Option>
