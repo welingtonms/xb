@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { html, render } from 'lit';
+import { useForm } from "react-hook-form"
 
 import { Button } from '../button/button.stories';
 import { Checkbox } from './checkbox/checkbox.stories';
@@ -157,11 +158,125 @@ function WebComponent( { args } ) {
 	return <div id="wc-root" ref={ rootRef }></div>;
 }
 
+function FormHook( { args } ) {
+	const {
+		register,
+		handleSubmit,
+		watch,
+		formState: { errors },
+	  } = useForm()
+
+	return (
+		<form
+				action="http://www.foo.com"
+				method="post"
+				onSubmit={ ( event ) => {
+					event.preventDefault();
+
+					// onSubmit={handleSubmit(onSubmit)}
+
+					console.log( 'form submitted with', ...new FormData( event.target ) );
+				} }
+			>
+				<xb-stack>
+					<fieldset>
+						<xb-stack>
+							<xb-cluster>
+								{ /* <input type="text" name="input" placeholder="Greeting" value="hello world" /> */ }
+
+								<TextInput
+									type="text"
+									{...register("xb-text-input")}
+									placeholder="XB Greeting"
+									defaultValue="hello world"
+								></TextInput>
+							</xb-cluster>
+
+							<xb-cluster>
+								<Checkbox  {...register("xb-checkbox")} value="agree-tc" defaultChecked>
+									Agree with T&C s
+								</Checkbox>
+
+								{ /* <label>
+									<input type="checkbox" name="checkbox" value="agree-tc-native" />
+									Agree with T&C native
+								</label> */ }
+							</xb-cluster>
+
+							<xb-cluster>
+								<xb-text>Accept cookies</xb-text>
+								<RadioGroup {...register("xb-radio-group")} default-value="no">
+									<Radio value="yes">Yes</Radio>
+									<Radio value="no">No</Radio>
+								</RadioGroup>
+							</xb-cluster>
+
+							<xb-cluster>
+								<Switch {...register("xb-switch")} value="accept-life-options" defaultChecked>
+									Accept life options switch
+								</Switch>
+							</xb-cluster>
+
+							<xb-cluster>
+								<ToggleGroup type="multiple" {...register("xb-toggle-group")} defaultValue="change">
+									<Toggle value="accept">
+										<span slot="leading">&diams;</span>
+										Accept
+									</Toggle>
+
+									<Toggle value="change">
+										<span slot="leading">&hearts;</span>
+										Change
+									</Toggle>
+
+									<Toggle value="leave">
+										<span slot="leading">&clubs;</span>
+										Leave
+									</Toggle>
+								</ToggleGroup>
+							</xb-cluster>
+
+							<xb-cluster>
+								{ /* <select name="favorite-letter">
+									<option>Letter A</option>
+									<option>Letter B</option>
+									<option>Letter C</option>
+								</select> */ }
+
+								<Select defaultValue="letter-b" {...register("xb-select")} >
+									<Option value="letter-a">Letter A</Option>
+									<Option value="letter-b">Letter B</Option>
+									<Option value="letter-c">Letter C</Option>
+								</Select>
+							</xb-cluster>
+						</xb-stack>
+
+						<hr />
+
+						<xb-cluster>
+							<Button variant="text" size="small">
+								Cancel
+							</Button>
+							<Button type="reset" variant="ghost" size="small">
+								Reset
+							</Button>
+							<Button type="submit" variant="flat" size="small">
+								Submit
+							</Button>
+						</xb-cluster>
+					</fieldset>
+				</xb-stack>
+			</form>
+	)
+}
+
 /** @type {ButtonStory} */
 export const Playground = {
 	render: ( args ) => (
 		<xb-cluster>
 			<WebComponent args={ args } />
+
+			<FormHook args={ args } />
 
 			<form
 				action="http://www.foo.com"

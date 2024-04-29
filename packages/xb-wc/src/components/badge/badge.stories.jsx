@@ -59,8 +59,6 @@ function WebComponent({ args }) {
 /** @type {BadgeStory} */
 export const Playground = {
 	render: (args) => {
-		console.log(args);
-
 		return (
 			<xb-stack>
 				<WebComponent args={args} />
