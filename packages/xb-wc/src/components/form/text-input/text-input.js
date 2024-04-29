@@ -287,7 +287,7 @@ export class TextInput extends WithAriaMixin( FormElement ) {
 	}
 
 	formResetCallback() {
-		this.#onValueChange( this.getAttribute( 'default-value' ) );
+		this.#initialize();
 		// this.value = this.getAttribute('value');
 	}
 
