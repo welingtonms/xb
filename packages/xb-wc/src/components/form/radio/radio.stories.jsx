@@ -1,8 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import { html, render } from 'lit';
 
-import { userEvent } from '@storybook/testing-library';
-import { expect } from '@storybook/jest';
+import { userEvent } from '@storybook/test';
+import { expect } from '@storybook/test';
 
 import { within } from '../../../utils/test-tools';
 

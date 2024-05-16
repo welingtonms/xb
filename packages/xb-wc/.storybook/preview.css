@@ -19,6 +19,18 @@
 #wc-root {
 	outline: 1px dashed rgb(var(--xb-color-primary-200));
 	outline-offset: 2px;
+	position: relative;
+}
+
+#wc-root::before {
+	content: "wc";
+	position: absolute;
+	top: -100%;
+	left: 0;
+
+	font-family: var(--xb-font-family-default);
+	font-weight: var(--xb-font-weight-regular);
+	font-size: var(--xb-font-size-sm);
 }
 
 @media (prefers-color-scheme: dark) {

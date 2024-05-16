@@ -1,4 +1,4 @@
-import { within as genericWithin } from '@storybook/testing-library';
+import { within as genericWithin } from '@storybook/test';
 
 const A11Y_ROLE_EQUIVALENCE = {
 	'xb-radio': 'radio',
