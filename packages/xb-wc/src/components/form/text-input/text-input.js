@@ -225,7 +225,6 @@ export class TextInput extends WithAriaMixin( FormElement ) {
 				maxlength=${ ifDefined( this.maxlength ) }
 				min="${ ifDefined( this.min ) }"
 				minlength=${ ifDefined( this.minlength ) }
-				name="${ this.name }"
 				pattern="${ ifDefined( this.pattern ) }"
 				placeholder="${ ifDefined( this.placeholder ) }"
 				spellcheck="${ ifDefined( this.spellcheck ) }"

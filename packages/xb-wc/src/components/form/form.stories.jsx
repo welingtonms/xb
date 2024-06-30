@@ -1,8 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import { html, render } from 'lit';
-import { useForm } from "react-hook-form"
+import { useForm } from 'react-hook-form';
 
-import { Button } from '../button/button.stories';
+import { Button } from '../button/Button.jsx';
 import { Checkbox } from './checkbox/checkbox.stories';
 import { RadioGroup, Radio } from './radio/radio.stories';
 import { Select, Option } from './select/select.stories';
@@ -35,23 +35,23 @@ const meta = {
 
 export default meta;
 
-function WebComponent( { args } ) {
+function WebComponent({ args }) {
 	/** @type {React.MutableRefObject<HTMLDivElement>} */
 	const rootRef = useRef();
 	/** @type {React.MutableRefObject<HTMLElement>} */
 	const elementRef = useRef();
 
-	useEffect( () => {
+	useEffect(() => {
 		render(
 			html`
 				<form
 					action="http://www.foo.com"
 					method="post"
-					@submit=${ ( event ) => {
+					@submit=${(event) => {
 						event.preventDefault();
 
-						console.log( 'form submitted with', ...new FormData( event.target ) );
-					} }
+						console.log('form submitted with', ...new FormData(event.target));
+					}}
 				>
 					<xb-stack>
 						<fieldset>
@@ -67,9 +67,7 @@ function WebComponent( { args } ) {
 								</xb-cluster>
 
 								<xb-cluster>
-									<xb-checkbox name="xb-checkbox" value="agree-tc">
-										Agree with T&C
-									</xb-checkbox>
+									<xb-checkbox name="xb-checkbox" value="agree-tc">Agree with T&C</xb-checkbox>
 
 									<!-- <label>
 										<input type="checkbox" name="checkbox" value="agree-tc-native" />
@@ -139,7 +137,7 @@ function WebComponent( { args } ) {
 			rootRef.current
 		);
 
-		elementRef.current = rootRef.current.querySelector( meta.component );
+		elementRef.current = rootRef.current.querySelector(meta.component);
 
 		let currentArgs = args;
 
@@ -147,186 +145,180 @@ function WebComponent( { args } ) {
 		elementRef.current.loading = currentArgs.loading;
 		elementRef.current.multiple = currentArgs.multiple;
 
-		elementRef.current.addEventListener( 'change', currentArgs.change );
+		elementRef.current.addEventListener('change', currentArgs.change);
 
 		return () => {
-			elementRef.current.removeEventListener( 'change', currentArgs.change );
+			elementRef.current.removeEventListener('change', currentArgs.change);
 		};
-	}, [ args ] );
+	}, [args]);
 
-	return <div id="wc-root" ref={ rootRef }></div>;
+	return <div id="wc-root" ref={rootRef}></div>;
 }
 
-function FormHook( { args } ) {
+function FormHook({ args }) {
 	const {
 		register,
 		handleSubmit,
 		watch,
 		formState: { errors },
-	  } = useForm()
+	} = useForm();
 
 	return (
 		<form
-				action="http://www.foo.com"
-				method="post"
-				onSubmit={ ( event ) => {
-					event.preventDefault();
+			action="http://www.foo.com"
+			method="post"
+			onSubmit={(event) => {
+				event.preventDefault();
 
-					// onSubmit={handleSubmit(onSubmit)}
+				// onSubmit={handleSubmit(onSubmit)}
 
-					console.log( 'form submitted with', ...new FormData( event.target ) );
-				} }
-			>
-				<xb-stack>
-					<fieldset>
-						<xb-stack>
-							<xb-cluster>
-								{ /* <input type="text" name="input" placeholder="Greeting" value="hello world" /> */ }
+				console.log('form submitted with', ...new FormData(event.target));
+			}}
+		>
+			<xb-stack>
+				<fieldset>
+					<xb-stack>
+						<xb-cluster>
+							{/* <input type="text" name="input" placeholder="Greeting" value="hello world" /> */}
 
-								<TextInput
-									type="text"
-									{...register("xb-text-input")}
-									placeholder="XB Greeting"
+							<TextInput
+								type="text"
+								{...register('xb-text-input')}
+								placeholder="XB Greeting"
+							></TextInput>
+						</xb-cluster>
 
-								></TextInput>
-							</xb-cluster>
+						<xb-cluster>
+							<Checkbox {...register('xb-checkbox')} value="agree-tc">
+								Agree with T&C s
+							</Checkbox>
 
-							<xb-cluster>
-								<Checkbox  {...register("xb-checkbox")} value="agree-tc" >
-									Agree with T&C s
-								</Checkbox>
-
-								{ /* <label>
+							{/* <label>
 									<input type="checkbox" name="checkbox" value="agree-tc-native" />
 									Agree with T&C native
-								</label> */ }
-							</xb-cluster>
+								</label> */}
+						</xb-cluster>
 
-							<xb-cluster>
-								<xb-text>Accept cookies</xb-text>
-								<RadioGroup {...register("xb-radio-group")}>
-									<Radio value="yes">Yes</Radio>
-									<Radio value="no">No</Radio>
-								</RadioGroup>
-							</xb-cluster>
+						<xb-cluster>
+							<xb-text>Accept cookies</xb-text>
+							<RadioGroup {...register('xb-radio-group')}>
+								<Radio value="yes">Yes</Radio>
+								<Radio value="no">No</Radio>
+							</RadioGroup>
+						</xb-cluster>
 
-							<xb-cluster>
-								<Switch {...register("xb-switch")} value="accept-life-options">
-									Accept life options switch
-								</Switch>
-							</xb-cluster>
+						<xb-cluster>
+							<Switch {...register('xb-switch')} value="accept-life-options">
+								Accept life options switch
+							</Switch>
+						</xb-cluster>
 
-							<xb-cluster>
-								<ToggleGroup type="multiple" {...register("xb-toggle-group")} >
-									<Toggle value="accept">
-										<span slot="leading">&diams;</span>
-										Accept
-									</Toggle>
+						<xb-cluster>
+							<ToggleGroup type="multiple" {...register('xb-toggle-group')}>
+								<Toggle value="accept">
+									<span slot="leading">&diams;</span>
+									Accept
+								</Toggle>
 
-									<Toggle value="change">
-										<span slot="leading">&hearts;</span>
-										Change
-									</Toggle>
+								<Toggle value="change">
+									<span slot="leading">&hearts;</span>
+									Change
+								</Toggle>
 
-									<Toggle value="leave">
-										<span slot="leading">&clubs;</span>
-										Leave
-									</Toggle>
-								</ToggleGroup>
-							</xb-cluster>
+								<Toggle value="leave">
+									<span slot="leading">&clubs;</span>
+									Leave
+								</Toggle>
+							</ToggleGroup>
+						</xb-cluster>
 
-							<xb-cluster>
-								{ /* <select name="favorite-letter">
+						<xb-cluster>
+							{/* <select name="favorite-letter">
 									<option>Letter A</option>
 									<option>Letter B</option>
 									<option>Letter C</option>
-								</select> */ }
+								</select> */}
 
-								<Select {...register("xb-select")} >
-									<Option value="letter-a">Letter A</Option>
-									<Option value="letter-b">Letter B</Option>
-									<Option value="letter-c">Letter C</Option>
-								</Select>
-							</xb-cluster>
-						</xb-stack>
-
-						<hr />
-
-						<xb-cluster>
-							<Button variant="text" size="small">
-								Cancel
-							</Button>
-							<Button type="reset" variant="ghost" size="small">
-								Reset
-							</Button>
-							<Button type="submit" variant="flat" size="small">
-								Submit
-							</Button>
+							<Select {...register('xb-select')}>
+								<Option value="letter-a">Letter A</Option>
+								<Option value="letter-b">Letter B</Option>
+								<Option value="letter-c">Letter C</Option>
+							</Select>
 						</xb-cluster>
-					</fieldset>
-				</xb-stack>
-			</form>
-	)
+					</xb-stack>
+
+					<hr />
+
+					<xb-cluster>
+						<Button variant="text" size="small">
+							Cancel
+						</Button>
+						<Button type="reset" variant="ghost" size="small">
+							Reset
+						</Button>
+						<Button type="submit" variant="flat" size="small">
+							Submit
+						</Button>
+					</xb-cluster>
+				</fieldset>
+			</xb-stack>
+		</form>
+	);
 }
 
 /** @type {ButtonStory} */
 export const Playground = {
-	render: ( args ) => (
+	render: (args) => (
 		<xb-cluster>
-			<WebComponent args={ args } />
+			<WebComponent args={args} />
 
-			<FormHook args={ args } />
+			<FormHook args={args} />
 
 			<form
 				action="http://www.foo.com"
 				method="post"
-				onSubmit={ ( event ) => {
+				onSubmit={(event) => {
 					event.preventDefault();
 
-					console.log( 'form submitted with', ...new FormData( event.target ) );
-				} }
+					console.log('form submitted with', ...new FormData(event.target));
+				}}
 			>
 				<xb-stack>
 					<fieldset>
 						<xb-stack>
 							<xb-cluster>
-								{ /* <input type="text" name="input" placeholder="Greeting" value="hello world" /> */ }
+								{/* <input type="text" name="input" placeholder="Greeting" value="hello world" /> */}
 
-								<TextInput
-									type="text"
-									name="xb-text-input"
-									placeholder="XB Greeting"
-
-								></TextInput>
+								<TextInput type="text" name="xb-text-input" placeholder="XB Greeting"></TextInput>
 							</xb-cluster>
 
 							<xb-cluster>
-								<Checkbox name="xb-checkbox" value="agree-tc" >
+								<Checkbox name="xb-checkbox" value="agree-tc">
 									Agree with T&C s
 								</Checkbox>
 
-								{ /* <label>
+								{/* <label>
 									<input type="checkbox" name="checkbox" value="agree-tc-native" />
 									Agree with T&C native
-								</label> */ }
+								</label> */}
 							</xb-cluster>
 
 							<xb-cluster>
 								<xb-text>Accept cookies</xb-text>
-								<RadioGroup name="xb-radio-group" >
+								<RadioGroup name="xb-radio-group">
 									<Radio value="yes">Yes</Radio>
 									<Radio value="no">No</Radio>
 								</RadioGroup>
 							</xb-cluster>
 
 							<xb-cluster>
-								<Switch name="xb-switch" value="accept-life-options" >
+								<Switch name="xb-switch" value="accept-life-options">
 									Accept life options switch
 								</Switch>
 							</xb-cluster>
 
 							<xb-cluster>
-								<ToggleGroup type="multiple" name="xb-toggle-group" >
+								<ToggleGroup type="multiple" name="xb-toggle-group">
 									<Toggle value="accept">
 										<span slot="leading">&diams;</span>
 										Accept
@@ -345,13 +337,13 @@ export const Playground = {
 							</xb-cluster>
 
 							<xb-cluster>
-								{ /* <select name="favorite-letter">
+								{/* <select name="favorite-letter">
 									<option>Letter A</option>
 									<option>Letter B</option>
 									<option>Letter C</option>
-								</select> */ }
+								</select> */}
 
-								<Select name="xb-select" onChange={ args.change }>
+								<Select name="xb-select" onChange={args.change}>
 									<Option value="letter-a">Letter A</Option>
 									<Option value="letter-b">Letter B</Option>
 									<Option value="letter-c">Letter C</Option>

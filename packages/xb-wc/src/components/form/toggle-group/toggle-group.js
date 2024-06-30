@@ -221,7 +221,7 @@ export class ToggleGroup extends WithSelectionMixin( XBElement ) {
 	#onFocusIn = () => {
 		// TODO: adjust to comply with https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#focusabilityofdisabledcontrols
 		const firstSelected = this.#controllers.focus.queried.find(
-			( item ) => item.checked && ! item.disabled
+			( item ) => item.checked && ! item.hasAttribute( 'disabled' )
 		);
 
 		if ( ! firstSelected ) {
@@ -245,11 +245,9 @@ export class ToggleGroup extends WithSelectionMixin( XBElement ) {
 	#onToggleClick = ( event ) => {
 		const { target } = event;
 
-		if ( ! target.matches( ITEM_QUERY ) ) {
-			return;
+		if ( target.matches( ITEM_QUERY ) ) {
+			this.#toggleValue( target.value );
 		}
-
-		this.#toggleValue( target.value );
 	};
 
 	/**
@@ -268,9 +266,6 @@ export class ToggleGroup extends WithSelectionMixin( XBElement ) {
 	 * @param {string[]} value
 	 */
 	#onValueChange = ( value ) => {
-		/** @type {Toggle[]} */
-		const queried = toArray( this.#controllers.focus.queried );
-
 		this.#controllers.selection.init( value );
 
 		this.#updateToggles();

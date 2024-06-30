@@ -26,10 +26,6 @@ export const WithSelectionMixin = ( BaseClass ) => {
 		getRawValue( value ) {
 			return toArray( fromAttribute( value ?? this.getAttribute( 'value' ) ) );
 		}
-
-		toRawValue( value ) {
-			this.setAttribute( 'value', toAttribute( value ?? this.value ) );
-		}
 	};
 };
 

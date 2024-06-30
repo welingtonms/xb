@@ -152,9 +152,9 @@ export class SelectionManagerController {
  */
 
 /**
- * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionType} SelectionType
- * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionState} SelectionState
- * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionStrategy} SelectionStrategy
+ * @typedef {import('../../utils/selection').SelectionType} SelectionType
+ * @typedef {import('../../utils/selection').SelectionState} SelectionState
+ * @typedef {import('../../utils/selection').SelectionStrategy} SelectionStrategy
  * @typedef {'select' | 'unselect' | 'toggle'} SelectionOperation
  */
 

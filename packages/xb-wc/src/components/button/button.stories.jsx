@@ -3,17 +3,11 @@ import { html, render } from 'lit';
 import { userEvent } from '@storybook/test';
 import { expect } from '@storybook/test';
 
-import createComponent from '../../utils/create-component';
+import { within } from '../../utils/test-tools.js';
 
 import '../layout';
 import './button.define';
-import { Button as ButtonElement } from './button';
-
-export const Button = createComponent( {
-	tagName: 'xb-button',
-	elementClass: ButtonElement,
-	displayName: 'Button',
-} );
+import { Button } from './Button.jsx';
 
 /** @type {Meta} */
 const meta = {
@@ -51,9 +45,7 @@ function WebComponent( { args } ) {
 	useEffect( () => {
 		render(
 			html`
-				<xb-button type="submit" variant="ghost" size="small" onclick=${ args.click }>
-					Submit
-				</xb-button>
+				<xb-button type="submit" variant="ghost">Submit</xb-button>
 			`,
 			rootRef.current
 		);
@@ -63,6 +55,7 @@ function WebComponent( { args } ) {
 		let currentArgs = args;
 
 		elementRef.current.disabled = currentArgs.disabled;
+		elementRef.current.variant = currentArgs.variant;
 
 		elementRef.current.addEventListener( 'click', currentArgs.click );
 
@@ -76,40 +69,31 @@ function WebComponent( { args } ) {
 
 export const Playground = {
 	render: ( args ) => (
-		<form
-			action="http://www.foo.com"
-			method="post"
-			onSubmit={ ( event ) => {
-				event.preventDefault();
+		<xb-stack>
+			<WebComponent args={ args } />
 
-				console.log( 'form submitted with', ...new FormData( event.target ) );
-			} }
-		>
-			<fieldset>
-				<xb-stack>
-					<input type="text" name="greeting" placeholder="Greeting" />
-
-					<WebComponent args={ args } />
-
-					<Button type="submit" variant="ghost" size="small" onClick={ args.click }>
-						Submit React
-					</Button>
-				</xb-stack>
-			</fieldset>
-		</form>
+			<Button
+				type="submit"
+				disabled={ args.disabled }
+				variant={ args.variant }
+				size="small"
+				onClick={ args.click }
+			>
+				Submit
+			</Button>
+		</xb-stack>
 	),
 	play: async ( { canvasElement, args } ) => {
-		// const canvas = within(canvasElement);
-		// await expect(canvas.getByText('Submit')).not.toBeDisabled();
-		// await userEvent.click(canvas.getByText('Submit'));
-		// await expect(args.click).toHaveBeenCalled();
+		const canvas = within( canvasElement );
+
+		const button = await canvas.getAllByText( 'Submit' )[ 0 ];
+		await expect( button ).not.toBeDisabled();
+		await userEvent.click( button );
+		await expect( args.click ).toHaveBeenCalled();
 	},
 
 	args: {
-		borderless: 'none',
+		variant: 'ghost',
 		disabled: false,
-		emphasis: 'ghost',
-		paddingless: 'none',
-		scale: 'small',
 	},
 };

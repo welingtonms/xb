@@ -227,8 +227,9 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 		const root = super.createRenderRoot();
 
 		/**
-		 * We add the event listener to the shadow root because `change` event is not
-		 * composed, so it will not bubble to the host.
+		 * We add the event listener to the shadow root because we want
+		 * to avoid retargetting.
+		 * @see {@link https://lit.dev/docs/components/events/#adding-event-listeners-to-the-component-or-its-shadow-root|Lit Docs}
 		 */
 		root.addEventListener( 'click', this.#onClick );
 
@@ -337,15 +338,14 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 		return html`
 			<div id="picker">
 				<input
-					type="text"
-					id="trigger"
-					role="combobox"
-					aria-haspopup="true"
-					aria-controls="menu"
 					aria-autocomplete="list"
-					aria-expanded=${ this.open ? 'true' : 'false' }
 					aria-controls="menu"
+					aria-expanded=${ this.open ? 'true' : 'false' }
+					aria-haspopup="true"
+					id="trigger"
 					placeholder="${ this.placeholder }"
+					role="combobox"
+					type="text"
 					@change=${ this.#onTriggerChange }
 					@input=${ this.#onTriggerInput }
 					?disabled=${ this.disabled }
@@ -477,10 +477,11 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 		 */
 		const value = this.getRawValue( this.defaultValue );
 
-		this.#controllers.selection.init( value );
+		this.#onValueChange( value );
+		// this.#controllers.selection.init( value );
 
-		this.#updateOptions();
-		this.#updateTrigger();
+		// this.#updateOptions();
+		// this.#updateTrigger();
 	}
 
 	/**
@@ -490,17 +491,6 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 		// we are only interested in select options
 		if ( event.target.matches( ITEM_QUERY ) ) {
 			const { /** @type {Option} */ target } = event;
-
-			/**
-			 * // TODO: is this necessary?
-			 * we set focus so we can trigger the item click event when the user
-			 * presses <Enter> or <Space>, through the KeyboardSupportController.
-			 */
-			// this.#controllers.focus.focus( target );
-
-			// this.#controllers.selection.toggle( target.value );
-
-			// this.#controllers.focus.focus( target );
 
 			this.#toggleValue( target.value );
 
@@ -574,9 +564,6 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 	 * @param {string[]} value
 	 */
 	#onValueChange = ( value ) => {
-		/** @type {SelectOption[]} */
-		const queried = toArray( this.#controllers.focus.queried );
-
 		this.#controllers.selection.init( value );
 
 		this.#updateOptions();

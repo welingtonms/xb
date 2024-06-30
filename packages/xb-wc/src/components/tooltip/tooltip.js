@@ -121,8 +121,6 @@ export class Tooltip extends WithIDMixin( FloatingElement ) {
 	 * @returns {HTMLElement | null}
 	 */
 	getReferenceElement() {
-		// this does not work when the tooltip is inside another element's shadow root.
-		// return document.querySelector( `#${ this.anchor }` );
 		// source: https://github.com/microsoft/fast/blob/master/packages/web-components/fast-foundation/src/tooltip/tooltip.ts#L350
 		// private getAnchorElement(id: string = ""): HTMLElement | null {
 		const rootNode = this.getRootNode();

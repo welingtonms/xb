@@ -8,13 +8,7 @@ import { XBElement } from '../../common/xb-element';
 import { FormElement } from '../../common/form-element';
 import { WithAriaMixin } from '../../mixins/with-aria';
 
-// TODO: this should be done in the class connectedCallback
-// checking if the element's root is the document (in which case we'd append it to document.body)
-// another element. This is necessary because the element can be inside another shadow root.
-// const style = document.createElement( 'style' );
-// style.textContent = styles().cssText;
-
-// document.head.appendChild( style );
+import styles from './button.styles.js';
 
 const logger = createLogger( 'xb-button' );
 
@@ -24,6 +18,7 @@ const logger = createLogger( 'xb-button' );
  */
 export class Button extends WithAriaMixin( FormElement ) {
 	static shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
+	static styles = [ styles() ];
 
 	/** @type {HTMLButtonElement} */
 	@query( '#control' )
@@ -38,12 +33,6 @@ export class Button extends WithAriaMixin( FormElement ) {
 	 * @type {ButtonAttributes['variant']}
 	 */
 	@property( { type: String, reflect: true } ) accessor variant;
-
-	/**
-	 * Button size.
-	 * @type {ButtonAttributes['size']}
-	 */
-	@property( { type: String, reflect: true } ) accessor size;
 
 	/**
 	 * Button form action.
@@ -95,8 +84,13 @@ export class Button extends WithAriaMixin( FormElement ) {
 		this.addEventListener( 'click', this.#onClick );
 	}
 
-	firstUpdated() {
-		if ( this.disabled ) {
+	/**
+	 * @param {import("lit").PropertyValues} changedProperties
+	 */
+	updated( changedProperties ) {
+		super.updated( changedProperties );
+
+		if ( changedProperties.has( 'disabled' ) ) {
 			this.#onDisabledChange( this.disabled );
 		}
 	}
@@ -190,7 +184,6 @@ export class Button extends WithAriaMixin( FormElement ) {
 
 /**
  * @typedef {('tertiary' | 'secondary' | 'primary')} ButtonVariant
- * @typedef {import('../../styles/size.styles').ElementSize} ButtonSize
  * @typedef {import('../../common/prop-types').BorderlessProp} BorderlessProp
  * @typedef {import('../../common/prop-types').PaddinglessProp} PaddinglessProp
  */
@@ -209,12 +202,9 @@ export class Button extends WithAriaMixin( FormElement ) {
  * @typedef {Object} DefaultButtonAttributes
  * @property {ButtonVariant} variant
  * @property {'button' | 'submit' | 'reset'} type
- * @property {BorderlessProp} borderless
- * @property {PaddinglessProp} paddingless
  * @property {boolean} disabled
- * @property {ElementSize} size
  * @property {string}  formaction
- *@property {FormEncType} formenctype
+ * @property {FormEncType} formenctype
  * @property {FormMethod} formmethod
  * @property {boolean} formnovalidate
  * @property {FormTarget} formtarget

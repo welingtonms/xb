@@ -8,7 +8,7 @@ import token from '../../utils/get-token';
  * @param {string} [selector]
  * @returns
  */
-function styles( selector = 'button[is="xb-button"]' ) {
+function styles( selector = 'button' ) {
 	return css`
 		${ baseStyles( selector ) }
 

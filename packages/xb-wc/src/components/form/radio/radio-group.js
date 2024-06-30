@@ -215,6 +215,10 @@ export class RadioGroup extends WithSelectionMixin( XBElement ) {
 		this.#controllers.focus.clear();
 	};
 
+	#onFormReset = () => {
+		this.#initialize();
+	};
+
 	/**
 	 * @param {Event} event
 	 */
@@ -227,17 +231,10 @@ export class RadioGroup extends WithSelectionMixin( XBElement ) {
 		}
 	};
 
-	#onFormReset = () => {
-		this.#initialize();
-	};
-
 	/**
 	 * @param {string[]} value
 	 */
 	#onValueChange = ( value ) => {
-		/** @type {Radio[]} */
-		const queried = toArray( this.#controllers.focus.queried );
-
 		this.#controllers.selection.init( value );
 
 		this.#updateRadios();

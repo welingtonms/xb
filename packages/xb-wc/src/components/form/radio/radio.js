@@ -12,26 +12,26 @@ import '../../icon';
 
 import { radioStyles } from './radio.styles';
 
-const logger = createLogger('radio');
+const logger = createLogger( 'radio' );
 
 /**
  * @class
  * @template WithAriaMixin, WithIDMixin, FormElement
  */
-export class Radio extends WithAriaMixin(WithIDMixin(FormElement)) {
-	static styles = [radioStyles()];
+export class Radio extends WithAriaMixin( WithIDMixin( FormElement ) ) {
+	static styles = [ radioStyles() ];
 
 	/**
 	 * Should the button be checked.
 	 * @type {boolean}
 	 */
-	@property({ type: Boolean, reflect: true }) accessor checked;
+	@property( { type: Boolean, reflect: true } ) accessor checked;
 
 	/**
 	 * Value this radio checkbox represents.
 	 * @type {string}
 	 */
-	@property({ type: String }) accessor value;
+	@property( { type: String } ) accessor value;
 
 	/**
 	 * @param {{
@@ -39,8 +39,8 @@ export class Radio extends WithAriaMixin(WithIDMixin(FormElement)) {
 	 *  registry: CustomElementRegistry,
 	 * }} config
 	 */
-	static define(config) {
-		XBElement.define({ name: 'xb-radio', ...config, type: Radio });
+	static define( config ) {
+		XBElement.define( { name: 'xb-radio', ...config, type: Radio } );
 	}
 
 	constructor() {
@@ -48,22 +48,22 @@ export class Radio extends WithAriaMixin(WithIDMixin(FormElement)) {
 
 		this.internals.role = 'radio';
 
-		this.addEventListener('click', this.#onClick);
+		this.addEventListener( 'click', this.#onClick );
 	}
 
 	/**
 	 * @param {import("lit").PropertyValues} changedProperties
 	 */
-	update(changedProperties) {
-		if (changedProperties.has('disabled')) {
-			this.#onDisabledChange(this.disabled);
+	update( changedProperties ) {
+		if ( changedProperties.has( 'disabled' ) ) {
+			this.#onDisabledChange( this.disabled );
 		}
 
-		if (changedProperties.has('checked')) {
-			this.#onCheckedChange(this.checked);
+		if ( changedProperties.has( 'checked' ) ) {
+			this.#onCheckedChange( this.checked );
 		}
 
-		super.update(changedProperties);
+		super.update( changedProperties );
 	}
 
 	render() {
@@ -80,8 +80,8 @@ export class Radio extends WithAriaMixin(WithIDMixin(FormElement)) {
 	/**
 	 * @param {Event} event
 	 */
-	#onClick = (event) => {
-		if (this.disabled) {
+	#onClick = ( event ) => {
+		if ( this.disabled ) {
 			event.stopPropagation();
 			return;
 		}
@@ -90,25 +90,25 @@ export class Radio extends WithAriaMixin(WithIDMixin(FormElement)) {
 	/**
 	 * @param {boolean} checked
 	 */
-	#onCheckedChange = (checked) => {
-		if (!this.name) {
-			logger.warn('no name attribute set on the radio. Is it intentionally?');
+	#onCheckedChange = ( checked ) => {
+		if ( ! this.name ) {
+			logger.warn( 'no name attribute set on the radio. Is it intentionally?' );
 		}
 
-		this.internals.setFormValue(checked ? this.value : null);
-		this.setBooleanAttribute('aria-checked', checked);
+		this.internals.setFormValue( checked ? this.value : null );
+		this.setBooleanAttribute( 'aria-checked', checked );
 	};
 
 	/**
 	 * @param {boolean} disabled
 	 */
-	#onDisabledChange = (disabled) => {
-		this.setAttribute('aria-disabled', disabled);
+	#onDisabledChange = ( disabled ) => {
+		this.setAttribute( 'aria-disabled', disabled );
 
-		if (this.disabled) {
-			this.removeAttribute('tabindex');
+		if ( this.disabled ) {
+			this.removeAttribute( 'tabindex' );
 		} else {
-			this.setAttribute('tabindex', '-1');
+			this.setAttribute( 'tabindex', '-1' );
 		}
 	};
 
@@ -116,19 +116,20 @@ export class Radio extends WithAriaMixin(WithIDMixin(FormElement)) {
 		// radio-group will take care of this
 	}
 
-	formStateRestoreCallback(state) {
-		if (state) {
+	formStateRestoreCallback( state ) {
+		if ( state ) {
 			this.checked = state;
 		}
 	}
 
-	formDisabledCallback(disabled) {
-		super.formDisabledCallback(disabled);
+	formDisabledCallback( disabled ) {
+		super.formDisabledCallback( disabled );
 
-		if (!this.isConnected) {
+		if ( ! this.isConnected ) {
 			return;
 		}
 
-		this.#onDisabledChange(disabled);
+		this.disabled = disabled;
+		this.#onDisabledChange( disabled );
 	}
 }
