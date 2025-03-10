@@ -1,0 +1,102 @@
+import { html, nothing } from 'lit';
+import { classMap } from 'lit/directives/class-map.js';
+import { property, state } from 'lit/decorators.js';
+
+import createLogger from '../../utils/logger';
+import { matchesSlottedContent } from '../../utils/slot';
+import { XBElement } from '../xb-element';
+import { badgeGroupStyles } from './badge-group.styles';
+
+const logger = createLogger( 'badge-group' );
+
+export class BadgeGroup extends XBElement {
+	static styles = [ badgeGroupStyles() ];
+
+	/**
+	 * Badge color.
+	 * @type {BadgeGroupAttributes['color']}
+	 */
+	@property( { type: String, reflect: true } ) accessor color;
+
+	/** @type {BadgeGroupAttributes['scale']} */
+	@property( { type: String, reflect: true } ) accessor scale;
+
+	/** @type {boolean} */
+	@state() accessor hasSlottedLeadingBadge = false;
+
+	/** @type {boolean} */
+	@state() accessor hasSlottedTrailingBadge = false;
+
+	/**
+	 * @param {{
+	 *  name: string,
+	 *  registry: CustomElementRegistry,
+	 * }} config
+	 */
+	static define( config ) {
+		XBElement.define( { name: 'xb-badge-group', ...config, type: BadgeGroup } );
+	}
+
+	constructor() {
+		super();
+
+		/** @type {BadgeGroupAttributes['color']} */
+		this.color = 'blue';
+
+		/** @type {BadgeGroupAttributes['scale']} */
+		this.scale = 'sm';
+	}
+
+	updated( changedProperties ) {
+		super.updated( changedProperties );
+
+		if ( !this.hasSlottedLeadingBadge && !this.hasSlottedTrailingBadge ) {
+			logger.warn( 'No badges found in badge group' );
+		}
+	}
+
+	render() {
+
+
+		return html`
+			<span
+				class=${ classMap( {
+					'badge-group': true,
+					'has-slotted-leading-badge': this.hasSlottedLeadingBadge,
+					'has-slotted-trailing-badge': this.hasSlottedTrailingBadge,
+				} ) }
+			>
+				<slot name="leading" @slotchange=${ this.#updateHasSlottedLeadingBadge }></slot>
+				<slot></slot>
+				<slot name="trailing" @slotchange=${ this.#updateHasSlottedTrailingBadge }></slot>
+			</span>
+		`;
+	}
+
+	#updateHasSlottedLeadingBadge = () => {
+		this.hasSlottedLeadingBadge = matchesSlottedContent(
+			this.renderRoot,
+			'slot[name="leading"]',
+			'xb-badge'
+		);
+	};
+
+	#updateHasSlottedTrailingBadge = () => {
+		this.hasSlottedTrailingBadge = matchesSlottedContent(
+			this.renderRoot,
+			'slot[name="trailing"]',
+			'xb-badge'
+		);
+	};
+}
+
+/**
+ * @typedef {import('./badge').BadgeColor} BadgeGroupColor
+ * @typedef {('sm' | 'md' | 'lg')} BadgeGroupScale
+ */
+
+/**
+ * @typedef {Object} BadgeGroupAttributes
+ * @property {BadgeGroupColor} [color] - Badge group color.
+ * @property {BadgeGroupScale} [scale] - Badge group scale.
+ */

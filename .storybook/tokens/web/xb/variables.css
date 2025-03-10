@@ -1,0 +1,137 @@
+/**
+ * Do not edit directly, this file was auto-generated.
+ */
+
+:root {
+  --xb-brand-color-primary-100: 58, 127, 187; /* rgb(58, 127, 187) */
+  --xb-brand-color-primary-200: 53, 116, 172; /* rgb(53, 116, 172) */
+  --xb-brand-color-primary-300: 48, 106, 156; /* rgb(48, 106, 156) */
+  --xb-brand-color-primary-400: 43, 95, 140; /* rgb(43, 95, 140) */
+  --xb-brand-color-primary-500: 38, 84, 124; /* rgb(38, 84, 124) */
+  --xb-brand-color-primary-600: 34, 74, 109; /* rgb(34, 74, 109) */
+  --xb-brand-color-primary-700: 29, 63, 94; /* rgb(29, 63, 94) */
+  --xb-brand-color-primary-800: 24, 53, 78; /* rgb(24, 53, 78) */
+  --xb-brand-color-primary-900: 19, 42, 62; /* rgb(19, 42, 62) */
+  --xb-brand-color-secondary-100: 247, 161, 181; /* rgb(247, 161, 181) */
+  --xb-brand-color-secondary-200: 245, 142, 166; /* rgb(245, 142, 166) */
+  --xb-brand-color-secondary-300: 244, 124, 152; /* rgb(244, 124, 152) */
+  --xb-brand-color-secondary-400: 242, 105, 137; /* rgb(242, 105, 137) */
+  --xb-brand-color-secondary-500: 239, 71, 111; /* rgb(239, 71, 111) */
+  --xb-brand-color-secondary-600: 237, 49, 93; /* rgb(237, 49, 93) */
+  --xb-brand-color-secondary-700: 235, 30, 78; /* rgb(235, 30, 78) */
+  --xb-brand-color-secondary-800: 225, 20, 68; /* rgb(225, 20, 68) */
+  --xb-brand-color-secondary-900: 206, 18, 62; /* rgb(206, 18, 62) */
+  --xb-brand-color-tertiary-100: 255, 237, 194; /* rgb(255, 237, 194) */
+  --xb-brand-color-tertiary-200: 255, 231, 173; /* rgb(255, 231, 173) */
+  --xb-brand-color-tertiary-300: 255, 224, 153; /* rgb(255, 224, 153) */
+  --xb-brand-color-tertiary-400: 255, 218, 133; /* rgb(255, 218, 133) */
+  --xb-brand-color-tertiary-500: 255, 209, 102; /* rgb(255, 209, 102) */
+  --xb-brand-color-tertiary-600: 255, 200, 71; /* rgb(255, 200, 71) */
+  --xb-brand-color-tertiary-700: 255, 194, 51; /* rgb(255, 194, 51) */
+  --xb-brand-color-tertiary-800: 255, 188, 31; /* rgb(255, 188, 31) */
+  --xb-brand-color-tertiary-900: 255, 188, 10; /* rgb(255, 188, 10) */
+  --xb-color-white: 255, 255, 255; /* rgb(255, 255, 255) */
+  --xb-color-black: 91, 91, 91; /* rgb(91, 91, 91) */
+  --xb-color-background: 255, 252, 249; /* rgb(255, 252, 249) */
+  --xb-color-red-100: 255, 205, 210; /* rgb(255, 205, 210) */
+  --xb-color-red-200: 239, 154, 154; /* rgb(239, 154, 154) */
+  --xb-color-red-300: 229, 115, 115; /* rgb(229, 115, 115) */
+  --xb-color-red-400: 239, 83, 80; /* rgb(239, 83, 80) */
+  --xb-color-red-500: 244, 67, 54; /* rgb(244, 67, 54) */
+  --xb-color-red-600: 229, 57, 53; /* rgb(229, 57, 53) */
+  --xb-color-red-700: 211, 47, 47; /* rgb(211, 47, 47) */
+  --xb-color-red-800: 198, 40, 40; /* rgb(198, 40, 40) */
+  --xb-color-red-900: 183, 28, 28; /* rgb(183, 28, 28) */
+  --xb-color-blue-100: 179, 229, 252; /* rgb(179, 229, 252) */
+  --xb-color-blue-200: 129, 212, 250; /* rgb(129, 212, 250) */
+  --xb-color-blue-300: 79, 195, 247; /* rgb(79, 195, 247) */
+  --xb-color-blue-400: 41, 182, 246; /* rgb(41, 182, 246) */
+  --xb-color-blue-500: 3, 169, 244; /* rgb(3, 169, 244) */
+  --xb-color-blue-600: 3, 155, 229; /* rgb(3, 155, 229) */
+  --xb-color-blue-700: 2, 136, 209; /* rgb(2, 136, 209) */
+  --xb-color-blue-800: 2, 119, 189; /* rgb(2, 119, 189) */
+  --xb-color-blue-900: 1, 87, 155; /* rgb(1, 87, 155) */
+  --xb-color-green-100: 220, 237, 200; /* rgb(220, 237, 200) */
+  --xb-color-green-200: 197, 225, 165; /* rgb(197, 225, 165) */
+  --xb-color-green-300: 174, 213, 129; /* rgb(174, 213, 129) */
+  --xb-color-green-400: 156, 204, 101; /* rgb(156, 204, 101) */
+  --xb-color-green-500: 139, 195, 74; /* rgb(139, 195, 74) */
+  --xb-color-green-600: 124, 179, 66; /* rgb(124, 179, 66) */
+  --xb-color-green-700: 104, 159, 56; /* rgb(104, 159, 56) */
+  --xb-color-green-800: 85, 139, 47; /* rgb(85, 139, 47) */
+  --xb-color-green-900: 51, 105, 30; /* rgb(51, 105, 30) */
+  --xb-color-gray-100: 247, 250, 252; /* rgb(247, 250, 252) */
+  --xb-color-gray-200: 237, 242, 247; /* rgb(237, 242, 247) */
+  --xb-color-gray-300: 226, 232, 240; /* rgb(226, 232, 240) */
+  --xb-color-gray-400: 203, 213, 224; /* rgb(203, 213, 224) */
+  --xb-color-gray-500: 160, 174, 192; /* rgb(160, 174, 192) */
+  --xb-color-gray-600: 113, 128, 150; /* rgb(113, 128, 150) */
+  --xb-color-gray-700: 74, 85, 104; /* rgb(74, 85, 104) */
+  --xb-color-gray-800: 45, 55, 72; /* rgb(45, 55, 72) */
+  --xb-color-gray-900: 26, 32, 44; /* rgb(26, 32, 44) */
+  --xb-font-size-xs: 0.75rem; /* 12px */
+  --xb-font-size-sm: 0.875rem; /* 14px */
+  --xb-font-size-base: 1rem; /* 16px */
+  --xb-font-size-lg: 1.125rem; /* 18px */
+  --xb-font-size-xl: 1.25rem; /* 20px */
+  --xb-font-size-2xl: 1.5rem; /* 24px */
+  --xb-font-size-3xl: 1.875rem; /* 30px */
+  --xb-font-size-4xl: 2.25rem; /* 36px */
+  --xb-font-size-5xl: 2.625rem; /* 48px */
+  --xb-font-size-6xl: 2.5rem; /* 64px */
+  --xb-font-weight-light: 300;
+  --xb-font-weight-regular: 400;
+  --xb-font-weight-medium: 500;
+  --xb-font-weight-bold: 700;
+  --xb-line-height-tight: 1.25;
+  --xb-line-height-snug: 1.375;
+  --xb-line-height-default: 1.5;
+  --xb-line-height-relaxed: 1.62;
+  --xb-layer-default: 0;
+  --xb-layer-popover: 1;
+  --xb-spacing-0: 0;
+  --xb-spacing-1: 4px;
+  --xb-spacing-2: 8px;
+  --xb-spacing-3: 12px;
+  --xb-spacing-4: 16px;
+  --xb-spacing-5: 20px;
+  --xb-spacing-6: 24px;
+  --xb-spacing-8: 32px;
+  --xb-spacing-10: 40px;
+  --xb-spacing-12: 48px;
+  --xb-spacing-16: 64px;
+  --xb-platform-font-default: "Nunito Sans", sans-serif;
+  --xb-color-primary-100: var(--xb-brand-color-primary-100);
+  --xb-color-primary-200: var(--xb-brand-color-primary-200);
+  --xb-color-primary-300: var(--xb-brand-color-primary-300);
+  --xb-color-primary-400: var(--xb-brand-color-primary-400);
+  --xb-color-primary-500: var(--xb-brand-color-primary-500);
+  --xb-color-primary-600: var(--xb-brand-color-primary-600);
+  --xb-color-primary-700: var(--xb-brand-color-primary-700);
+  --xb-color-primary-800: var(--xb-brand-color-primary-800);
+  --xb-color-primary-900: var(--xb-brand-color-primary-900);
+  --xb-color-secondary-100: var(--xb-brand-color-secondary-100);
+  --xb-color-secondary-200: var(--xb-brand-color-secondary-200);
+  --xb-color-secondary-300: var(--xb-brand-color-secondary-300);
+  --xb-color-secondary-400: var(--xb-brand-color-secondary-400);
+  --xb-color-secondary-500: var(--xb-brand-color-secondary-500);
+  --xb-color-secondary-600: var(--xb-brand-color-secondary-600);
+  --xb-color-secondary-700: var(--xb-brand-color-secondary-700);
+  --xb-color-secondary-800: var(--xb-brand-color-secondary-800);
+  --xb-color-secondary-900: var(--xb-brand-color-secondary-900);
+  --xb-color-tertiary-100: var(--xb-brand-color-tertiary-100);
+  --xb-color-tertiary-200: var(--xb-brand-color-tertiary-200);
+  --xb-color-tertiary-300: var(--xb-brand-color-tertiary-300);
+  --xb-color-tertiary-400: var(--xb-brand-color-tertiary-400);
+  --xb-color-tertiary-500: var(--xb-brand-color-tertiary-500);
+  --xb-color-tertiary-600: var(--xb-brand-color-tertiary-600);
+  --xb-color-tertiary-700: var(--xb-brand-color-tertiary-700);
+  --xb-color-tertiary-800: var(--xb-brand-color-tertiary-800);
+  --xb-color-tertiary-900: var(--xb-brand-color-tertiary-900);
+  --xb-color-success: var(--xb-color-green-700);
+  --xb-color-danger: var(--xb-color-red-500);
+  --xb-color-info: var(--xb-color-blue-600);
+  --xb-font-family-default: var(--xb-platform-font-default);
+  --xb-color-warn: var(--xb-color-tertiary-700);
+  --xb-color-welington: var(--xb-color-info);
+}

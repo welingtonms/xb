@@ -1,0 +1,18 @@
+import { Meta, Title, IconGallery, IconItem } from '@storybook/blocks';
+
+import Icons from './icons';
+import './icon.define';
+
+<Meta title="Components/icon/Docs" />
+
+# Icon
+
+Here is the list of available icons:
+
+<IconGallery>
+	{ Object.keys( Icons ).map( ( icon ) => (
+		<IconItem key={ icon } name={ icon }>
+			<xb-icon name={ icon } size={32}></xb-icon>
+		</IconItem>
+	) ) }
+</IconGallery>

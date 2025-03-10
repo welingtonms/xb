@@ -1,0 +1,38 @@
+import { Meta, ColorPalette, ColorItem } from '@storybook/blocks';
+
+import { getThemeTokens } from './stories-utils.js';
+import getToken from '../src/utils/get-token';
+
+<Meta title="Design Tokens/Colors" />
+
+# Theme Colors
+
+<ColorPalette>
+	<ColorItem
+		title="color-primary"
+		subtitle="Primary/Brand colors"
+		colors={ getThemeTokens( 'color-primary' ).reduce( ( acc, token ) => {
+			return {
+				...acc,
+				[ token.replace( 'color-primary-', '' ) ]: `rgb(${ getToken( token ) })`,
+			};
+		}, {} ) }
+	/>
+
+	{
+		['gray', 'error', 'warning', 'success', 'blue-gray', 'blue-light', 'indigo', 'purple', 'pink', 'rose', 'orange'].map(color => (
+			<ColorItem
+				key={color}
+				title={`color-${color}`}
+				subtitle="Gray variantions"
+				colors={ getThemeTokens( `color-${color}` ).reduce( ( acc, token ) => {
+					return {
+						...acc,
+						[ token.replace( `color-${color}-`, '' ) ]: `rgb(${ getToken( token ) })`,
+					};
+				}, {} ) }
+			/>
+		))
+	}
+
+</ColorPalette>

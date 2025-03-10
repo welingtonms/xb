@@ -1,0 +1,100 @@
+import { optimize } from 'svgo';
+import { readFileSync, writeFileSync } from 'fs';
+import { glob } from 'glob';
+import path from 'path';
+
+function getFilename( fullPath ) {
+	return path.parse( fullPath ).name;
+}
+
+const date = new Date().toUTCString();
+
+console.log( '>>', process.cwd() );
+
+async function f() {
+	const files = await glob( 'src/components/icon/assets/*.svg' );
+
+	const svgs = files
+		.map( ( file ) => ( {
+			filename: getFilename( file ),
+			path: file,
+			buffer: readFileSync( file ),
+		} ) )
+		.map( ( data ) => ( {
+			filename: data.filename,
+			path: data.path,
+			svg: data.buffer.toString(),
+		} ) )
+		.map( ( data ) => ( {
+			filename: data.filename,
+			...optimize( data.svg, { multipass: true, path: data.path } ),
+		} ) );
+
+	writeFileSync(
+		`src/components/icon/icons.js`,
+		`
+/**
+ * Do not modify this file manually.
+ * You can re-generate it by running the convert-svg script.
+* Generated on ${ date }
+ */
+import { svg } from 'lit';
+
+const icons = {
+${ svgs
+	.map( ( svg ) => {
+		console.log( 'Processing icon', svg.filename + '.svg' );
+
+		const name = svg.filename
+			// .replace( 'ic_', '' )
+			// .replace( /_48(px|dp)/gi, '' )
+			// .replace( /_/g, '-' )
+			.toLowerCase();
+
+		return `'${ name }': svg\`${ svg.data }\`,`;
+	} )
+	.join( '\n' ) }
+};
+
+export default icons;
+`
+	);
+}
+
+f();
+
+// one icon per file
+
+// svgs.map( ( svg ) => {
+// 	console.log( "Processing icon '", svg.filename + ".svg'" );
+// 	writeFileSync(
+// 		`./src/icons/${ svg.filename }.js`,
+// 		`
+// 	/**
+//  	* Do not modify this file manually.
+//  	* You can re-generate it by running the convert-svg script.
+// 	* Generated on ${ date }
+//  	*/
+
+// 	import { svg } from 'lit';
+// 	const icon = svg\`${ svg.data }\`;
+// 	export default icon;
+// 	`
+// 	);
+// } );
+
+// one icon per const
+
+// ${ svgs
+// 	.map( ( svg ) => {
+// 		const name = svg.filename
+// 			.replace( 'ic_', '' )
+// 			.replace( '_48px', '' )
+// 			.toUpperCase();
+
+// 		return `
+// export const ${ name } = svg\`${ svg.data }\`;
+// `;
+// 	} )
+// 	.join( '' ) }`
+// );

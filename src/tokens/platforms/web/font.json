@@ -1,0 +1,9 @@
+{
+	"platform": {
+		"font": {
+			"default": {
+				"value": "'Nunito Sans', sans-serif"
+			}
+		}
+	}
+}
