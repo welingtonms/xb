@@ -36,7 +36,6 @@ export class TableRow extends XBElement {
 		subscribe: true,
 		callback: ( contextValue ) => {
 			this.#gridTemplate = contextValue?.gridTemplate || 'minmax(0, 1fr)';
-			console.log( 'gridTemplate', this.#gridTemplate );
 		},
 	} );
 
