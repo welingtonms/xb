@@ -198,26 +198,37 @@ export class Table extends WithSelectionMixin( XBElement ) {
 	 * @param {CustomEvent} event
 	 */
 	#handleRowToggle = ( event ) => {
-		if ( event.target.matches( 'xb-table-row' ) ) {
+		if ( event.target.matches( 'xb-table-control-select' ) ) {
 			event.stopPropagation();
 			const { /** @type {TableRow} */ target } = event;
 
-			this.#toggleValue( target.value );
+			this.#controllers.selection.toggle( target.value );
+			this.#updateContext();
+
+			this.emit( 'change' );
 		}
 	};
 
-	#handleSelectAllRows = () => {
-		this.#controllers.selection.selectAll( this.#getAvailableValues() );
-		this.#updateContext();
+	#handleSelectAllRows = ( event ) => {
+		if ( event.target.matches( 'xb-table-control-select' ) ) {
+			event.stopPropagation();
 
-		this.emit( 'change' );
+			this.#controllers.selection.selectAll( this.#getAvailableValues() );
+			this.#updateContext();
+
+			this.emit( 'change' );
+		}
 	};
 
-	#handleUnselectAllRows = () => {
-		this.#controllers.selection.unselectAll();
-		this.#updateContext();
+	#handleUnselectAllRows = ( event ) => {
+		if ( event.target.matches( 'xb-table-control-select' ) ) {
+			event.stopPropagation();
 
-		this.emit( 'change' );
+			this.#controllers.selection.unselectAll();
+			this.#updateContext();
+
+			this.emit( 'change' );
+		}
 	};
 
 	/**
@@ -271,17 +282,6 @@ export class Table extends WithSelectionMixin( XBElement ) {
 
 		return template;
 	}
-
-	/**
-	 * @param {string} value
-	 */
-	#toggleValue = ( value ) => {
-		this.#controllers.selection.toggle( value );
-
-		this.#updateContext();
-
-		this.emit( 'change' );
-	};
 }
 
 /**

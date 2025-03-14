@@ -1,16 +1,19 @@
 import { html, css, nothing } from 'lit';
-import { ContextConsumer } from '@lit/context';
+import { ContextProvider, ContextConsumer } from '@lit/context';
 import { property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 
 import { trackSlot } from '../../decorators/track-slot';
 import { areSetsEqual } from '../../utils/set';
 import { XBElement } from '../xb-element';
-import { tableContext } from './table.context';
+import { tableContext, tableRowContext } from './table.context';
 import { tableRowStyles } from './table.styles';
 
 import '../icon/icon.define';
 import '../form/checkbox/checkbox.define';
+
+import './table-control-select';
+import './table-control-expand';
 
 export class TableRow extends XBElement {
 	static styles = [ tableRowStyles() ];
@@ -39,6 +42,14 @@ export class TableRow extends XBElement {
 		},
 	} );
 
+	#provider = new ContextProvider( this, {
+		context: tableRowContext,
+		value: {
+			isExpanded: false,
+			isHeader: false,
+		},
+	} );
+
 	/**
 	 * @param {{
 	 *  name: string,
@@ -49,10 +60,21 @@ export class TableRow extends XBElement {
 		XBElement.define( { name: 'xb-table-row', ...config, type: TableRow } );
 	}
 
-	toggleExpand = () => {
-		this.expanded = ! this.expanded;
-		this.emit( 'expand' );
-	};
+	connectedCallback() {
+		super.connectedCallback();
+
+		this.addEventListener( 'expand', this.#toggleExpand );
+	}
+
+	disconnectedCallback() {
+		super.disconnectedCallback();
+
+		this.removeEventListener( 'expand', this.#toggleExpand );
+	}
+
+	firstUpdated() {
+		this.#updateContext();
+	}
 
 	render() {
 		const isSelectable = Boolean( this.#consumer.value?.selectable );
@@ -63,40 +85,24 @@ export class TableRow extends XBElement {
 				${ isSelectable || isExpandable
 					? html`
 							<div
-								class="checkbox-container"
-								style="display: flex; flex-flow: row nowrap; align-items: center; max-block-size: 72px; margin-inline-start: 24px; gap: 12px;"
+								class=${ classMap( {
+									'row-controls': true,
+									'-is-selectable': isSelectable,
+									'-is-expandable': isExpandable,
+								} ) }
 							>
 								${ isSelectable
 									? html`
-											<xb-checkbox
-												?indeterminate=${ this.indeterminate }
-												?checked=${ this.selected }
-												@change=${ () => {
-													if ( this.isHeader ) {
-														if ( this.selected ) {
-															this.emit( 'unselect-all' );
-														} else {
-															this.emit( 'select-all' );
-														}
-													} else {
-														this.emit( 'toggle' );
-													}
-												} }
-											></xb-checkbox>
+											<slot name="row-controls-select"></slot>
 									  `
 									: nothing }
 								${ isExpandable
 									? html`
-											<button
-												type="button"
-												class=${ classMap( {
-													'expand-button': true,
-													'-has-expansion': this.hasExpansionContent,
-												} ) }
-												@click=${ this.toggleExpand }
-											>
-												<xb-icon id="caret" name="caret-right"></xb-icon>
-											</button>
+											<slot name="row-controls-expand">
+												<xb-table-control-expand
+													?hidden=${ ! this.hasExpansionContent || this.isHeader }
+												></xb-table-control-expand>
+											</slot>
 									  `
 									: nothing }
 							</div>
@@ -138,4 +144,17 @@ export class TableRow extends XBElement {
 	get isHeader() {
 		return this.closest( 'xb-table-header' ) !== null;
 	}
+
+	#toggleExpand = ( event ) => {
+		this.expanded = ! this.expanded;
+
+		this.#updateContext();
+	};
+
+	#updateContext = () => {
+		this.#provider.value = {
+			isExpanded: this.expanded,
+			isHeader: this.isHeader,
+		};
+	};
 }

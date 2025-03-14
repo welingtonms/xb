@@ -36,6 +36,8 @@ export const Playground = {
 		>
 			<xb-table-header>
 				<xb-table-row>
+					<xb-table-control-select></xb-table-control-select>
+
 					<xb-table-cell width="100">Order</xb-table-cell>
 					<xb-table-cell>Name</xb-table-cell>
 					<xb-table-cell width="1fr">Role</xb-table-cell>
@@ -47,6 +49,9 @@ export const Playground = {
 			<xb-table-body>
 				{ /* Row with column spanning in details */ }
 				<xb-table-row value="001">
+					<xb-table-control-select></xb-table-control-select>
+					<xb-table-control-expand></xb-table-control-expand>
+
 					<xb-table-cell>001</xb-table-cell>
 					<xb-table-cell>
 						<xb-text ellipsize>John Doe</xb-text>
@@ -81,6 +86,9 @@ export const Playground = {
 
 				{ /* Row with full-width details */ }
 				<xb-table-row value="002">
+					<xb-table-control-select></xb-table-control-select>
+					<xb-table-control-expand></xb-table-control-expand>
+
 					<xb-table-cell>002</xb-table-cell>
 					<xb-table-cell colspan={ 2 }>
 						<xb-text ellipsize>Jane Smith (Engineering Lead)</xb-text>
@@ -118,6 +126,8 @@ export const Playground = {
 				</xb-table-row>
 
 				<xb-table-row value="003">
+					<xb-table-control-select></xb-table-control-select>
+
 					<xb-table-cell>003</xb-table-cell>
 					<xb-table-cell>
 						<xb-text ellipsize>Bob Johnson</xb-text>

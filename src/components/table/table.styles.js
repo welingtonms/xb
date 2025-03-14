@@ -122,9 +122,7 @@ export function tableCellStyles() {
 }
 
 export function tableRowStyles() {
-	const expandButton = select( '.expand-button' );
 	return [
-		baseButtonHostStyles(),
 		css`
 			:host {
 				display: block;
@@ -142,6 +140,15 @@ export function tableRowStyles() {
 				box-sizing: border-box;
 
 				border-bottom: 1px solid ${ toCSSResult( 'color-gray-200' ) };
+			}
+
+			.row-controls {
+				display: flex;
+				flex-flow: row nowrap;
+				align-items: center;
+				max-block-size: 72px;
+				margin-inline-start: 24px;
+				gap: 12px;
 			}
 
 			.content-container {
@@ -172,7 +179,15 @@ export function tableRowStyles() {
 
 				max-height: 500px;
 			}
+		`,
+	];
+}
 
+export function tableControlExpandStyles() {
+	const expandButton = select( '.expand-button' );
+	return [
+		baseButtonHostStyles(),
+		css`
 			${ baseButtonStyles( '.expand-button' ) }
 
 			${ expandButton.css() } {
@@ -180,19 +195,32 @@ export function tableRowStyles() {
 
 				${ transition( [ { property: 'color' }, { property: 'outline-color' } ] ) };
 
-				visibility: hidden;
+				visibility: visible;
 			}
 
 			${ expandButton.enabled.focused.css() } {
 				--xb-button-outline-color: ${ toCSSResult( 'color-gray-100' ) };
 			}
 
-			.expand-button.-has-expansion {
-				visibility: visible;
+			:host( [hidden] ),
+			:host( [hidden] ) ${ expandButton.css() } {
+				visibility: hidden;
 			}
 
-			:host( [expanded] ) #caret {
+			.expand-button.-is-expanded #caret {
 				transform: rotate( 90deg );
+			}
+		`,
+	];
+}
+
+export function tableControlSelectStyles() {
+	const checkbox = select( 'xb-checkbox' );
+	return [
+		css`
+			:host( [hidden] ),
+			:host( [hidden] ) ${ checkbox.css() } {
+				visibility: hidden;
 			}
 		`,
 	];
