@@ -1,4 +1,4 @@
-import { html, nothing } from 'lit';
+import { html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
@@ -8,6 +8,7 @@ import { FloatingElement } from '../../floating-element';
 import { FocusManagerController } from '../../../controllers/focus-manager';
 import { FormElement } from '../../form-element';
 import { KeyboardSupportController } from '../../../controllers/keyboard-support';
+import { RovingFocusController } from '../../../controllers/focus-manager';
 import { SelectionManagerController } from '../../../controllers/selection-manager';
 import { supportsPopover } from '../../../utils/top-layer';
 import { WithSelectionMixin } from '../../../mixins/with-selection';
@@ -107,7 +108,7 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 		this.#controllers = {
 			boundary: new BoundaryController( this ),
 			// data: new DataController( this, this.datasources ),
-			focus: new FocusManagerController( this, {
+			focus: new RovingFocusController( this, {
 				query: () => {
 					const selectors = 'xb-option:not([hidden])';
 
@@ -115,9 +116,6 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 				},
 				// search should happen via the input, not keyboard shortcuts.
 				searchable: false,
-				getControllerTarget: ( host ) => {
-					return host.getFloatingElement();
-				},
 			} ),
 			keyboard: new KeyboardSupportController(
 				this,
@@ -129,17 +127,20 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 						/**
 						 * @param {KeyboardEvent} event
 						 */
-						handler: () => {
+						handler: async () => {
 							if ( ! this.open ) {
 								this.expand();
+
+								await this.updateComplete;
 
 								const firstSelected = this.#getFirstSelected();
 								if ( firstSelected ) {
 									this.#controllers.focus.focus( firstSelected );
 								} else {
-									this.#controllers.focus.focusLast();
+									this.#controllers.focus.focusLast(); // ArrowUp focuses last on open
 								}
 							} else {
+								// Roving focus handles moving focus itself
 								this.#controllers.focus.focusPrevious();
 							}
 						},
@@ -151,17 +152,22 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 						/**
 						 * @param {KeyboardEvent} event
 						 */
-						handler: () => {
+						handler: async () => {
 							if ( ! this.open ) {
 								this.expand();
+								// Delay the initial focus call to allow rendering
+								await this.updateComplete;
 
 								const firstSelected = this.#getFirstSelected();
 								if ( firstSelected ) {
+									// Focus the element itself
 									this.#controllers.focus.focus( firstSelected );
 								} else {
-									this.#controllers.focus.focusFirst();
+									// Focus the first available option
+									this.#controllers.focus.focusFirst(); // ArrowDown focuses first on open
 								}
 							} else {
+								// Roving focus handles moving focus itself
 								this.#controllers.focus.focusNext();
 							}
 						},
@@ -178,31 +184,41 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 							/** @type {HTMLElement} */
 							const element = event.target;
 
+							console.log( 'enter', element );
+
 							/**
-							 * we are only intested when the event happens during the selection of an option,
-							 * in which case the trigger selector will be the target.
+							 * Intercept Enter keydown when focus is on the trigger input.
 							 */
-							if ( ! element.matches( '[aria-haspopup="true"]' ) ) {
-								return;
-							}
+							// if ( element.matches( '[aria-haspopup="true"]' ) ) {
+							// If the dropdown is open, Enter should select the focused option.
+							// If closed, Enter might submit a form or perform another default action.
+							if ( this.open ) {
+								/** @type {SelectOption | null} */
+								const option = this.#controllers.focus.focused;
 
-							/** @type {Option | null} */
-							const option = this.#controllers.focus.focused;
-							if ( ! option || option.disabled ) {
-								return;
-							}
+								if ( ! option || option.disabled ) {
+									return;
+								}
 
-							this.#controllers.focus.focus( option );
-							this.#toggleValue( option.value );
+								// Ensure the focus is visually on the option before toggling
+								// this.#controllers.focus.focus( option ); // Roving focus already did this
+								this.#toggleValue( option.value );
 
-							if ( ! this.multiple ) {
-								this.collapse();
+								if ( ! this.multiple ) {
+									this.collapse(); // Collapse after selection
+								}
 							}
+							// else {
+							// Optionally open the dropdown if Enter is pressed on the closed trigger
+							// this.expand();
+							// }
+							// }
 						},
 					},
 				],
 				{
-					getControllerTarget: () => this.renderRoot,
+					// Target the host component for keyboard events
+					getControllerTarget: () => this,
 				}
 			),
 			selection: new SelectionManagerController( this ),
@@ -391,19 +407,23 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 
 	/**
 	 * Collapse dropdown menu.
+	 * @param {Object} options
+	 * @param {boolean} options.focusOnTrigger - should focus on the trigger.
 	 */
-	collapse = async () => {
+	collapse = async ( options = { focusOnTrigger: true } ) => {
 		this.hide();
 
 		this.#controllers.boundary.deactivate();
 		this.#controllers.focus.clear();
 
-		this.reference.focus();
-
 		await this.#clearSearch();
 		this.#updateTrigger();
 
 		this.emit( 'collapse' );
+
+		if ( options.focusOnTrigger ) {
+			this.reference?.focus();
+		}
 	};
 
 	/**
@@ -447,6 +467,9 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 			logger.error( 'Error filtering options', error );
 		} finally {
 			this.loading = false;
+			// Re-initialize focus controller after filtering changes visible options
+			await this.updateComplete;
+			this.#controllers.focus.initialize();
 		}
 	};
 
@@ -464,6 +487,11 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 		}
 
 		this.filteredOptions = this.slottedOptions;
+
+		// Re-initialize focus controller after clearing search restores all options
+		requestAnimationFrame( () => {
+			this.#controllers.focus.initialize();
+		} );
 	};
 
 	#clearSearchDebounce = () => {
@@ -552,8 +580,8 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 		}
 	};
 
-	#onClickOutside = async () => {
-		this.collapse();
+	#onClickOutside = async ( event ) => {
+		this.collapse( { focusOnTrigger: false } );
 	};
 
 	/**
@@ -598,7 +626,8 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 					} );
 
 				this.slottedOptions = elements;
-				// this.filteredOptions = elements;
+				// Initialize focus controller now that options are slotted
+				this.#controllers.focus.initialize();
 			}
 		);
 	};
@@ -631,16 +660,19 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 		this.#clearSearchDebounce();
 
 		/**
-		 * we clear the focus manager when the user starts typing;
-		 * if we don't clear the focused option, we may reach a scenario
-		 * where a previously focused option is hidden due to a search,
-		 * but still keeping its virtual focus state (represented by the `is-focused` class).
+		 * Clear focus when typing starts. With roving tabindex, this means resetting tabindex.
+		 * We might want to keep focus on the input itself during typing.
 		 */
-		this.#controllers.focus.clear();
+		// this.#controllers.focus.clear(); // Clearing might not be needed if focus stays on input
 
 		this.#searchTimeout = setTimeout( () => {
-			this.expand();
+			if ( ! this.open ) {
+				this.expand();
+			}
 			this.search( this.#searchTerm );
+			// After searching and potentially expanding, we might want to ensure
+			// the focus controller initializes tabindex correctly, but not move focus yet.
+			// Or maybe focus the first result? Needs consideration.
 		}, 450 );
 	};
 
@@ -735,7 +767,7 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 
 /**
  * @typedef {{
- * 	focus: FocusManagerController;
+ * 	focus: RovingFocusController;
  * 	keyboard: KeyboardSupportController;
  *  boundary: BoundaryController;
  *  selection: SelectionManagerController;
