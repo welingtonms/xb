@@ -24,43 +24,75 @@ export class SelectionManagerController {
 	 */
 	selection;
 
+	/** @type {SelectionType | null} */
+	#providedType = null;
+
 	/**
 	 * @param {SelectionManagerControllerHost} host
+	 * @param {{ type?: SelectionType }} [options] - Optional configuration.
 	 */
-	constructor( host ) {
+	constructor( host, options ) {
 		this.selection = new Set();
 		this.strategy = null;
+		this.#providedType = options?.type ?? null;
 
 		( this.host = host ).addController( this );
 	}
 
 	hostConnected() {
+		// Ensure strategy is created on connect using the correct type
+		if ( ! this.strategy ) {
+			this.#createStrategy();
+		}
 		this.init( this.host.getRawValue() );
 	}
 
 	hostUpdate() {
-		if ( this.host.type !== this.strategy.type ) {
+		const currentType = this.#determineType();
+
+		// Only update strategy if the determined type has changed
+		if ( currentType !== this.strategy.type ) {
 			const value = Array.from( this.selection );
 
-			logger.debug( `re-creating strategy "${ this.host.type }" with existing value`, value );
+			logger.debug( `re-creating strategy "${ currentType }" with existing value`, value );
 
-			this.strategy = createSelectionStrategy( { type: this.host.type } );
-			this.init( value );
+			this.#createStrategy( currentType ); // Use the new type
+			this.init( value ); // Re-initialize with the current selection
 		}
 	}
 
 	/**
-	 * @param {string[]}
+	 * Determine the correct strategy type based on constructor options or host property.
+	 * @returns {SelectionType}
+	 */
+	#determineType = () => {
+		// Prioritize the type explicitly passed in the constructor
+		if ( this.#providedType ) {
+			return this.#providedType;
+		}
+
+		// Fall back to the host's type property
+		return this.host.type ?? 'multiple'; // Default to 'multiple' if host.type is undefined
+	};
+
+	/**
+	 * Creates the selection strategy instance.
+	 * @param {SelectionType} [type] - Optional type override.
+	 */
+	#createStrategy = ( type ) => {
+		const strategyType = type ?? this.#determineType();
+		logger.debug( `creating strategy "${ strategyType }"` );
+		this.strategy = createSelectionStrategy( { type: strategyType } );
+	};
+
+	/**
+	 * @param {string[]} values
 	 * @returns {string[]}
 	 */
 	init = ( values ) => {
+		// Ensure strategy exists before initializing
 		if ( this.strategy == null ) {
-			logger.debug(
-				`creating strategy "${ this.host.type ?? 'multiple (default fallback)' }" with value`,
-				this.host.getRawValue()
-			);
-
-			this.strategy = createSelectionStrategy( { type: this.host.type ?? 'multiple' } );
+			this.#createStrategy();
 		}
 
 		logger.debug( `initializing strategy "${ this.strategy.type }" with value`, values );
@@ -131,19 +163,6 @@ export class SelectionManagerController {
 
 		return Array.from( this.selection );
 	};
-
-	/**
-	 * Selects `values` if `selected` is `true`, unselects otherwise.
-	 * @param {string | string[] | null} values
-	 * @param {boolean} selected - `true` if should be selected, `false` if it should be unselected.
-	 */
-	// handle = ( values, selected ) => {
-	// 	if ( selected ) {
-	// 		this.select( values );
-	// 	} else {
-	// 		this.unselect( values );
-	// 	}
-	// };
 
 	/**
 	 * Chech if the given `value` is selected.
