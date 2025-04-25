@@ -9,7 +9,7 @@ import { tableControlExpandStyles } from './table.styles';
 
 import '../icon/icon.define';
 
-export class TableControlExpand extends XBElement {
+export class TableRowExpand extends XBElement {
 	static styles = [ tableControlExpandStyles() ];
 
 	@state()
@@ -30,7 +30,7 @@ export class TableControlExpand extends XBElement {
 	 * }} config
 	 */
 	static define( config ) {
-		XBElement.define( { name: 'xb-table-control-expand', ...config, type: TableControlExpand } );
+		XBElement.define( { name: 'xb-table-row-expand', ...config, type: TableRowExpand } );
 	}
 
 	connectedCallback() {
@@ -56,6 +56,10 @@ export class TableControlExpand extends XBElement {
 	}
 
 	#onClick = () => {
-		this.emit( 'expand' );
+		if ( this.#isRowExpanded ) {
+			this.emit( 'collapse' );
+		} else {
+			this.emit( 'expand' );
+		}
 	};
 }

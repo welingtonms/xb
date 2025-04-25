@@ -174,7 +174,7 @@ export function tableRowStyles() {
 				overflow: hidden;
 			}
 
-			:host( [expanded] ) .expansion-container {
+			.expansion-container.is-expanded {
 				${ transition( [ { property: 'max-height', easing: 'ease-in' } ] ) };
 
 				max-height: 500px;
@@ -190,21 +190,19 @@ export function tableControlExpandStyles() {
 		css`
 			${ baseButtonStyles( '.expand-button' ) }
 
+			:host( [hidden] ) {
+				display: unset;
+				visibility: hidden;
+			}
+
 			${ expandButton.css() } {
 				--xb-button-height: 36px;
 
 				${ transition( [ { property: 'color' }, { property: 'outline-color' } ] ) };
-
-				visibility: visible;
 			}
 
 			${ expandButton.enabled.focused.css() } {
 				--xb-button-outline-color: ${ toCSSResult( 'color-gray-100' ) };
-			}
-
-			:host( [hidden] ),
-			:host( [hidden] ) ${ expandButton.css() } {
-				visibility: hidden;
 			}
 
 			.expand-button.-is-expanded #caret {
@@ -218,8 +216,8 @@ export function tableControlSelectStyles() {
 	const checkbox = select( 'xb-checkbox' );
 	return [
 		css`
-			:host( [hidden] ),
-			:host( [hidden] ) ${ checkbox.css() } {
+			:host( [hidden] ) {
+				display: unset;
 				visibility: hidden;
 			}
 		`,

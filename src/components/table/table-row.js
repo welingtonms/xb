@@ -3,6 +3,7 @@ import { ContextProvider, ContextConsumer } from '@lit/context';
 import { property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 
+import { WithIDMixin } from '../../mixins/with-id';
 import { trackSlot } from '../../decorators/track-slot';
 import { areSetsEqual } from '../../utils/set';
 import { XBElement } from '../xb-element';
@@ -12,20 +13,17 @@ import { tableRowStyles } from './table.styles';
 import '../icon/icon.define';
 import '../form/checkbox/checkbox.define';
 
-import './table-control-select';
-import './table-control-expand';
+import './table-row-select';
+import './table-row-expand';
 
-export class TableRow extends XBElement {
+export class TableRow extends WithIDMixin( XBElement ) {
 	static styles = [ tableRowStyles() ];
-
-	@property( { type: Boolean, reflect: true } )
-	accessor expanded = false;
 
 	@property( { type: String, reflect: true } )
 	accessor value;
 
 	@state()
-	accessor #gridTemplate = 'minmax(0, 1fr)';
+	accessor #gridColumns = 'minmax(0, 1fr)';
 
 	/**
 	 * Whether the row has expansion content.
@@ -38,7 +36,9 @@ export class TableRow extends XBElement {
 		context: tableContext,
 		subscribe: true,
 		callback: ( contextValue ) => {
-			this.#gridTemplate = contextValue?.gridTemplate || 'minmax(0, 1fr)';
+			this.#gridColumns = contextValue?.gridColumns || 'minmax(0, 1fr)';
+
+			this.#updateContext();
 		},
 	} );
 
@@ -46,7 +46,7 @@ export class TableRow extends XBElement {
 		context: tableRowContext,
 		value: {
 			isExpanded: false,
-			isHeader: false,
+			isHeaderRow: false,
 		},
 	} );
 
@@ -58,18 +58,6 @@ export class TableRow extends XBElement {
 	 */
 	static define( config ) {
 		XBElement.define( { name: 'xb-table-row', ...config, type: TableRow } );
-	}
-
-	connectedCallback() {
-		super.connectedCallback();
-
-		this.addEventListener( 'expand', this.#toggleExpand );
-	}
-
-	disconnectedCallback() {
-		super.disconnectedCallback();
-
-		this.removeEventListener( 'expand', this.#toggleExpand );
 	}
 
 	firstUpdated() {
@@ -92,16 +80,28 @@ export class TableRow extends XBElement {
 								} ) }
 							>
 								${ isSelectable
-									? html`
-											<slot name="row-controls-select"></slot>
+									? /**
+									   * we hide the default slotted table-row-select for layout purposes so, it any
+									   * row is not selectable, it will not affect the layout of the row
+									   */
+									  html`
+											<slot name="row-controls-select">
+												<xb-table-row-select hidden></xb-table-row-select>
+											</slot>
 									  `
 									: nothing }
 								${ isExpandable
-									? html`
+									? /**
+									   * we hide the table-row-expand by default for two reasons:
+									   * 1) we didn't detect there is expansion content
+									   * 2) if it's a header, we don't want to render it (it's uncommon to have a header with expansion content)
+									   * in both cases, we render it as invisible for layout purposes
+									   */
+									  html`
 											<slot name="row-controls-expand">
-												<xb-table-control-expand
-													?hidden=${ ! this.hasExpansionContent || this.isHeader }
-												></xb-table-control-expand>
+												<xb-table-row-expand
+													?hidden=${ ! this.hasExpansionContent || this.isHeaderRow }
+												></xb-table-row-expand>
 											</slot>
 									  `
 									: nothing }
@@ -109,14 +109,17 @@ export class TableRow extends XBElement {
 					  `
 					: nothing }
 				<div class="content-container">
-					<div class="cells-container" style="grid-template-columns: ${ this.#gridTemplate }">
+					<div class="cells-container" style="grid-template-columns: ${ this.#gridColumns }">
 						<slot></slot>
 					</div>
 					<div
-						class="expansion-container"
 						role="row"
 						aria-hidden="${ ! this.expanded }"
-						style="grid-template-columns: ${ this.#gridTemplate }"
+						style="grid-template-columns: ${ this.#gridColumns }"
+						class=${ classMap( {
+							'expansion-container': true,
+							'is-expanded': this.expanded,
+						} ) }
 					>
 						<slot name="expansion"></slot>
 					</div>
@@ -127,34 +130,32 @@ export class TableRow extends XBElement {
 
 	get indeterminate() {
 		return (
-			this.isHeader &&
+			this.isHeaderRow &&
 			this.#consumer.value?.selectedValues.size > 0 &&
 			! areSetsEqual( this.#consumer.value?.allValues, this.#consumer.value?.selectedValues )
 		);
 	}
 
 	get selected() {
-		if ( this.isHeader ) {
+		if ( this.isHeaderRow ) {
 			return areSetsEqual( this.#consumer.value?.allValues, this.#consumer.value?.selectedValues );
 		}
 
 		return this.#consumer.value?.selectedValues.has( this.value );
 	}
 
-	get isHeader() {
-		return this.closest( 'xb-table-header' ) !== null;
+	get expanded() {
+		return this.#consumer.value?.expandedRows.has( this.id );
 	}
 
-	#toggleExpand = ( event ) => {
-		this.expanded = ! this.expanded;
-
-		this.#updateContext();
-	};
+	get isHeaderRow() {
+		return this.closest( 'xb-table-header' ) !== null;
+	}
 
 	#updateContext = () => {
 		this.#provider.value = {
 			isExpanded: this.expanded,
-			isHeader: this.isHeader,
+			isHeaderRow: this.isHeaderRow,
 		};
 	};
 }

@@ -1,11 +1,11 @@
 import React from 'react';
 
-import '../layout';
-import './table.define';
 import '../badge/badge.define';
-import '../icon/icon.define';
 import '../button/button.define';
+import '../icon/icon.define';
+import '../layout';
 import '../text/text.define';
+import './table.define';
 
 export default {
 	title: 'Components/Table',
@@ -36,9 +36,9 @@ export const Playground = {
 		>
 			<xb-table-header>
 				<xb-table-row>
-					<xb-table-control-select></xb-table-control-select>
+					<xb-table-row-select></xb-table-row-select>
 
-					<xb-table-cell width="100">Order</xb-table-cell>
+					<xb-table-cell width="10rem">Order</xb-table-cell>
 					<xb-table-cell>Name</xb-table-cell>
 					<xb-table-cell width="1fr">Role</xb-table-cell>
 					<xb-table-cell width="120">Status</xb-table-cell>
@@ -49,8 +49,8 @@ export const Playground = {
 			<xb-table-body>
 				{ /* Row with column spanning in details */ }
 				<xb-table-row value="001">
-					<xb-table-control-select></xb-table-control-select>
-					<xb-table-control-expand></xb-table-control-expand>
+					<xb-table-row-select></xb-table-row-select>
+					<xb-table-row-expand></xb-table-row-expand>
 
 					<xb-table-cell>001</xb-table-cell>
 					<xb-table-cell>
@@ -86,8 +86,8 @@ export const Playground = {
 
 				{ /* Row with full-width details */ }
 				<xb-table-row value="002">
-					<xb-table-control-select></xb-table-control-select>
-					<xb-table-control-expand></xb-table-control-expand>
+					<xb-table-row-select></xb-table-row-select>
+					<xb-table-row-expand></xb-table-row-expand>
 
 					<xb-table-cell>002</xb-table-cell>
 					<xb-table-cell colspan={ 2 }>
@@ -126,9 +126,10 @@ export const Playground = {
 				</xb-table-row>
 
 				<xb-table-row value="003">
-					<xb-table-control-select></xb-table-control-select>
+					<xb-table-row-select></xb-table-row-select>
 
 					<xb-table-cell>003</xb-table-cell>
+
 					<xb-table-cell>
 						<xb-text ellipsize>Bob Johnson</xb-text>
 					</xb-table-cell>
@@ -143,6 +144,25 @@ export const Playground = {
 						<xb-button variant="icon" icon="trash"></xb-button>
 						<xb-button variant="icon" icon="pencil"></xb-button>
 					</xb-table-cell>
+				</xb-table-row>
+
+				<xb-table-row value="004">
+					<xb-table-row-select></xb-table-row-select>
+					<xb-table-row-expand></xb-table-row-expand>
+
+					<xb-table-cell colspan={ 4 }>
+						This cell spans the entire width of the table.
+					</xb-table-cell>
+
+					<xb-table-cell>
+						<xb-button variant="icon" icon="trash"></xb-button>
+						<xb-button variant="icon" icon="pencil"></xb-button>
+					</xb-table-cell>
+
+					<xb-table-cell slot="expansion">004</xb-table-cell>
+					<xb-table-cell slot="expansion">Mary Poppins</xb-table-cell>
+					<xb-table-cell slot="expansion">Designer</xb-table-cell>
+					<xb-table-cell slot="expansion">Active</xb-table-cell>
 				</xb-table-row>
 			</xb-table-body>
 		</xb-table>
@@ -264,6 +284,18 @@ export const ScrollableTable = {
 								<xb-table-cell>Engineering</xb-table-cell>
 								<xb-table-cell>London</xb-table-cell>
 								<xb-table-cell>Active</xb-table-cell>
+							</xb-table-row>
+							<xb-table-row>
+								<xb-table-cell colspan={ 6 }>
+									This cell spans the entire width of the table.
+								</xb-table-cell>
+
+								<xb-table-cell slot="expansion">004</xb-table-cell>
+								<xb-table-cell slot="expansion">Mary Poppins</xb-table-cell>
+								<xb-table-cell slot="expansion">Designer</xb-table-cell>
+								<xb-table-cell slot="expansion">Product</xb-table-cell>
+								<xb-table-cell slot="expansion">San Francisco</xb-table-cell>
+								<xb-table-cell slot="expansion">Active</xb-table-cell>
 							</xb-table-row>
 						</xb-table-body>
 					</xb-table>

@@ -10,10 +10,6 @@ import { tableContext } from './table.context';
 
 import { tableStyles } from './table.styles';
 
-import './table-body';
-import './table-row';
-import './table-cell';
-
 export class Table extends WithSelectionMixin( XBElement ) {
 	static styles = [ tableStyles() ];
 
@@ -29,11 +25,13 @@ export class Table extends WithSelectionMixin( XBElement ) {
 	#provider = new ContextProvider( this, {
 		context: tableContext,
 		value: {
-			gridTemplate: '',
-			expandable: false,
-			selectable: false,
 			type: 'multiple',
-			selection: new Set(),
+			gridColumns: '',
+			selectable: false,
+			allValues: new Set(),
+			selectedValues: new Set(),
+			expandable: false,
+			expandedRows: new Set(),
 		},
 	} );
 
@@ -52,6 +50,7 @@ export class Table extends WithSelectionMixin( XBElement ) {
 
 		this.#controllers = {
 			selection: new SelectionManagerController( this ),
+			expansion: new SelectionManagerController( this, { type: 'multiple' } ),
 		};
 	}
 
@@ -61,18 +60,24 @@ export class Table extends WithSelectionMixin( XBElement ) {
 		this.type = 'multiple';
 
 		this.addEventListener( 'copy', this.#handleCopy );
-		this.addEventListener( 'toggle', this.#handleRowToggle );
+		this.addEventListener( 'select', this.#handleSelect );
+		this.addEventListener( 'unselect', this.#handleUnselect );
 		this.addEventListener( 'select-all', this.#handleSelectAllRows );
 		this.addEventListener( 'unselect-all', this.#handleUnselectAllRows );
+		this.addEventListener( 'expand', this.#handleExpand );
+		this.addEventListener( 'collapse', this.#handleCollapse );
 	}
 
 	disconnectedCallback() {
 		super.disconnectedCallback();
 
 		this.removeEventListener( 'copy', this.#handleCopy );
-		this.removeEventListener( 'toggle', this.#handleRowToggle );
+		this.removeEventListener( 'select', this.#handleSelect );
+		this.removeEventListener( 'unselect', this.#handleUnselect );
 		this.removeEventListener( 'select-all', this.#handleSelectAllRows );
 		this.removeEventListener( 'unselect-all', this.#handleUnselectAllRows );
+		this.removeEventListener( 'expand', this.#handleExpand );
+		this.removeEventListener( 'collapse', this.#handleCollapse );
 	}
 
 	updated( changedProperties ) {
@@ -120,10 +125,18 @@ export class Table extends WithSelectionMixin( XBElement ) {
 
 	/**
 	 * Handles copy event to preserve table structure
-	 * @param {ClipboardEvent} e
+	 * @param {ClipboardEvent} event
 	 */
-	#handleCopy = ( e ) => {
-		e.preventDefault();
+	#handleCopy = ( event ) => {
+		// We don't want to prevent default if the event originated from an input/textarea
+		if (
+			event.target instanceof HTMLElement &&
+			event.target.matches( 'input, textarea, xb-text-field, xb-text-area' )
+		) {
+			return;
+		}
+
+		event.preventDefault();
 
 		const selection = window.getSelection();
 		const rows = Array.from( this.querySelectorAll( 'xb-table-row' ) );
@@ -197,12 +210,24 @@ export class Table extends WithSelectionMixin( XBElement ) {
 	/**
 	 * @param {CustomEvent} event
 	 */
-	#handleRowToggle = ( event ) => {
-		if ( event.target.matches( 'xb-table-control-select' ) ) {
+	#handleSelect = ( event ) => {
+		if ( event.target.matches( 'xb-table-row-select' ) ) {
 			event.stopPropagation();
 			const { /** @type {TableRow} */ target } = event;
 
-			this.#controllers.selection.toggle( target.value );
+			this.#controllers.selection.select( target.value );
+			this.#updateContext();
+
+			this.emit( 'change' );
+		}
+	};
+
+	#handleUnselect = ( event ) => {
+		if ( event.target.matches( 'xb-table-row-select' ) ) {
+			event.stopPropagation();
+			const { /** @type {TableRow} */ target } = event;
+
+			this.#controllers.selection.unselect( target.value );
 			this.#updateContext();
 
 			this.emit( 'change' );
@@ -210,7 +235,7 @@ export class Table extends WithSelectionMixin( XBElement ) {
 	};
 
 	#handleSelectAllRows = ( event ) => {
-		if ( event.target.matches( 'xb-table-control-select' ) ) {
+		if ( event.target.matches( 'xb-table-row-select' ) ) {
 			event.stopPropagation();
 
 			this.#controllers.selection.selectAll( this.#getAvailableValues() );
@@ -221,13 +246,43 @@ export class Table extends WithSelectionMixin( XBElement ) {
 	};
 
 	#handleUnselectAllRows = ( event ) => {
-		if ( event.target.matches( 'xb-table-control-select' ) ) {
+		if ( event.target.matches( 'xb-table-row-select' ) ) {
 			event.stopPropagation();
 
 			this.#controllers.selection.unselectAll();
 			this.#updateContext();
 
 			this.emit( 'change' );
+		}
+	};
+
+	#handleExpand = ( event ) => {
+		if ( event.target.matches( 'xb-table-row-expand' ) ) {
+			event.stopPropagation();
+
+			const row = event.target.closest( 'xb-table-row' )?.id;
+
+			if ( ! row ) {
+				return;
+			}
+
+			this.#controllers.expansion.select( row );
+			this.#updateContext();
+		}
+	};
+
+	#handleCollapse = ( event ) => {
+		if ( event.target.matches( 'xb-table-row-expand' ) ) {
+			event.stopPropagation();
+
+			const row = event.target.closest( 'xb-table-row' )?.id;
+
+			if ( ! row ) {
+				return;
+			}
+
+			this.#controllers.expansion.unselect( row );
+			this.#updateContext();
 		}
 	};
 
@@ -241,26 +296,27 @@ export class Table extends WithSelectionMixin( XBElement ) {
 	};
 
 	#updateContext = () => {
-		const template = this.#extractGridTemplate();
+		const template = this.#extractGridColumns();
 
 		this.#provider.setValue( {
-			gridTemplate: template,
-			expandable: this.expandable,
+			type: this.type,
+			gridColumns: template,
 			selectable: this.selectable,
 			allValues: new Set( this.#getAvailableValues() ),
 			selectedValues: this.#controllers.selection.selection,
-			type: this.type,
+			expandable: this.expandable,
+			expandedRows: this.#controllers.expansion.selection,
 		} );
 	};
 
-	#extractGridTemplate() {
+	#extractGridColumns() {
 		const headerRow = this.querySelector( 'xb-table-row' );
 		if ( ! headerRow ) return [ '1fr' ];
 
 		const cells = Array.from(
 			headerRow.querySelectorAll( 'xb-table-cell:not([slot="expansion"])' )
 		);
-		const widths = Array( cells.length ).fill( '1fr' );
+		const widths = Array( this.columns || cells.length ).fill( '1fr' );
 
 		cells.forEach( ( cell, index ) => {
 			const width = cell.width || '1fr';
@@ -275,7 +331,9 @@ export class Table extends WithSelectionMixin( XBElement ) {
 
 		const template = widths
 			.map( ( width ) => {
+				// Add 'px' unit only if width is a number; typeof check prevents booleans (isNaN(true)==false).
 				const unit = ! isNaN( width ) && typeof width !== 'boolean' ? 'px' : '';
+
 				return `${ width }${ unit }`;
 			} )
 			.join( ' ' );
