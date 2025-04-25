@@ -3,122 +3,163 @@ import { css } from 'lit';
 import m from '../../../styles/margin.styles';
 import outline from '../../../styles/outline.styles';
 import p from '../../../styles/padding.styles';
-import token from '../../../utils/get-token';
+import toCSSResult from '../../../utils/to-css-result';
 import transition from '../../../styles/transition.styles';
 import typography from '../../../styles/typography.styles';
 import sizeStyles from '../../../styles/size.styles';
+import { select } from '../../../styles/selector';
 
-function styles() {
-	return [
-		css`
-			:host {
-				--xb-switch-height: initial;
-				--xb-switch-outline-color: ${ token( 'color-white', 0 ) };
+export function switchStyles() {
+	const $ = select( ':host' );
+	const input = select( '#control' );
+	const button = select( '#button' );
 
-				${ transition( [ { property: 'color' }, { property: 'opacity' } ] ) };
+	return css`
+		${ $.css() } {
+			${ typography( 'text-sm' ) };
+			${ transition( [
+				{
+					property: 'color',
+				},
+			] ) };
 
-				${ typography( 'body-2' ) };
+			contain: layout style;
 
-				cursor: pointer;
+			position: relative;
 
-				display: flex;
-				flex-flow: row nowrap;
-				gap: ${ token( 'spacing-2' ) };
-				align-items: center;
+			display: flex;
+			align-items: flex-start;
+			justify-content: flex-start;
+			gap: 0;
 
-				border: none;
-				background: transparent;
-				height: var( --xb-switch-height );
+			box-sizing: border-box;
+			min-block-size: 16px;
 
-				${ p( token( 'spacing-0' ) ) };
+			font-weight: ${ toCSSResult( 'font-weight-medium' ) };
 
-				box-sizing: border-box;
-			}
+			color: ${ toCSSResult( 'color-gray-700' ) };
+		}
 
-			:host( [aria-checked='true'] ) .switch {
-				--xb-icon-color: ${ token( 'color-white' ) };
+		${ $.hidden.css() } {
+			display: none;
+		}
 
-				justify-content: flex-end;
-				border-color: ${ token( 'color-primary-300' ) };
-			}
+		${ $.disabled.css() } {
+			color: ${ toCSSResult( 'color-gray-300' ) };
+		}
 
-			:host( [aria-checked='true'] ) #circle {
-				--xb-icon-color: ${ token( 'color-primary-500' ) };
-			}
+		${ input.css() } {
+			outline: none;
+			box-sizing: border-box;
+			opacity: 0.00001;
+			z-index: 1;
+			cursor: pointer;
+			block-size: 100%;
+			inline-size: 100%;
+			margin: 0;
+			padding: 0;
 
-			:host( [disabled] ) {
-				pointer-events: none;
-				user-select: none;
-				opacity: 0.25;
+			position: absolute;
+			overflow: visible;
+		}
 
-				cursor: default;
-			}
+		${ button.css() } {
+			--xb-switch-outline-color: transparent;
+			--xb-switch-outline-offset: 0;
+			--xb-switch-border-color: ${ toCSSResult( 'color-gray-100' ) };
+			--xb-switch-background-color: ${ toCSSResult( 'color-gray-100' ) };
+			--xb-switch-color: ${ toCSSResult( 'color-white' ) };
 
-			:host( [disabled] ) ::slotted( * ) {
-				pointer-events: none;
-				user-select: none;
-			}
+			${ transition( [
+				{
+					property: 'outline-color',
+				},
+				{
+					property: 'border-color',
+				},
+				{
+					property: 'background-color',
+				},
+			] ) };
 
-			:host( :is( :focus, :focus-within, :focus-visible, .is-focused ) ) {
-				outline: none;
-			}
+			display: flex;
+			align-items: center;
+			justify-content: center;
 
-			:host( :is( :focus, :focus-within, :focus-visible, .is-focused ) ) .switch {
-				--xb-switch-outline-color: ${ token( 'color-primary-200', 0.2 ) };
-			}
+			box-sizing: border-box;
+			inline-size: 36px;
+			block-size: 20px;
+			flex: 0 0 36px;
 
-			slot[name='leading']::slotted( span ),
-			slot[name='trailing']::slotted( span ) {
-				display: inline-flex;
-				align-items: center;
-				justify-content: center;
+			border-radius: 12px;
+			border: 1px solid var( --xb-switch-border-color );
+			background-color: var( --xb-switch-background-color );
 
-				${ p( token( 'spacing-0' ) ) };
-				${ m( token( 'spacing-0' ) ) };
-			}
+			${ outline( 'var( --xb-switch-outline-color )', 'var( --xb-switch-outline-offset )' ) };
+		}
 
-			:host( :hover ) .switch {
-				border-color: ${ token( 'color-primary-500' ) };
-			}
+		#label {
+			text-overflow: ellipsis;
+			overflow: hidden;
+			white-space: nowrap;
+		}
 
-			:host( :active ) .switch {
-				border-color: ${ token( 'color-primary-100' ) };
-			}
+		${ input.enabled.hovered.css() } ~ ${ button.css() } {
+			--xb-switch-border-color: ${ toCSSResult( 'color-primary-600' ) };
+			--xb-switch-background-color: ${ toCSSResult( 'color-primary-50' ) };
+		}
 
-			.switch {
-				${ transition( [
-					{ property: 'background-color' },
-					{ property: 'border-color' },
-					{ property: 'box-shadow' },
-					{ property: 'outline' },
-				] ) };
+		${ input.enabled.focused.css() } ~ ${ button.css() } {
+			--xb-switch-border-color: ${ toCSSResult( 'color-primary-300' ) };
+			--xb-switch-background-color: ${ toCSSResult( 'color-white' ) };
+			--xb-switch-outline-color: ${ toCSSResult( 'color-primary-100' ) };
+		}
 
-				${ outline( '--xb-switch-outline-color' ) };
+		${ input.enabled.checked.css() } ~ ${ button.css() } {
+			--xb-switch-border-color: ${ toCSSResult( 'color-primary-600' ) };
+			--xb-switch-background-color: ${ toCSSResult( 'color-primary-600' ) };
+			--xb-switch-color: ${ toCSSResult( 'color-white' ) };
+		}
 
-				flex-shrink: 0;
-				display: inline-flex;
-				justify-content: flex-start;
-				align-items: center;
+		${ input.checked.css() } ~ ${ button.css() } #check {
+			transform: translateX( 16px );
+		}
 
-				${ p( token( 'spacing-0' ) ) };
-				${ m( token( 'spacing-0' ) ) };
+		${ input.disabled.css() } {
+			cursor: default;
+		}
 
-				border: 1px solid ${ token( 'color-gray-400' ) };
-				background-color: ${ token( 'color-white' ) };
-				border-radius: calc( 0.5 * var( --xb-switch-height ) );
+		${ input.disabled.css() } ~ ${ button.css() } {
+			--xb-switch-border-color: ${ toCSSResult( 'color-gray-200' ) };
+			--xb-switch-background-color: ${ toCSSResult( 'color-gray-100' ) };
+			--xb-switch-color: ${ toCSSResult( 'color-gray-100' ) };
+		}
 
-				box-sizing: border-box;
-				block-size: calc( 0.75 * var( --xb-switch-height ) );
-				inline-size: calc( 1.5 * var( --xb-switch-height ) );
-			}
+		${ input.checked.disabled.css() } ~ ${ button.css() } {
+			--xb-switch-color: ${ toCSSResult( 'color-gray-200' ) };
+		}
 
-			#circle {
-				--xb-icon-color: ${ token( 'color-primary-200' ) };
-				--xb-icon-size: calc( 0.75 * var( --xb-switch-height ) );
-			}
-		`,
-		sizeStyles( { property: '--xb-switch-height' } ),
-	];
+		#check {
+			${ transition( [
+				{ property: 'background-color' },
+				{ property: 'box-shadow' },
+				{ property: 'transform' },
+			] ) };
+
+			position: absolute;
+
+			pointer-events: none;
+
+			border-radius: 50%;
+			left: 4px;
+			inline-size: 14px;
+			block-size: 14px;
+			background-color: var( --xb-switch-color );
+			box-shadow: ${ toCSSResult( 'shadow-sm' ) };
+		}
+
+		::slotted( [slot='description'] ) {
+			font-weight: ${ toCSSResult( 'font-weight-regular' ) };
+		}
+	`;
 }
-
-export default styles;

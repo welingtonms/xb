@@ -5,6 +5,7 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 // import CheckboxController from './checkbox.controller';
 // import CheckboxGroupController from './checkbox-group.controller';
 import { FormElement } from '../../form-element';
+import { hasSlottedContent } from '../../../utils/slot';
 import { trackSlot } from '../../../decorators/track-slot';
 import { WithAriaMixin } from '../../../mixins/with-aria';
 import { WithIDMixin } from '../../../mixins/with-id';
@@ -15,7 +16,6 @@ import { checkboxStyles } from './checkbox.styles';
 import '../../layout/stack/stack.define';
 import '../../layout/cluster/cluster.define';
 import '../../icon/icon.define';
-import { hasSlottedContent } from '../../../utils/slot';
 // import '../../icon';
 
 // import styles from './checkbox.styles';
@@ -81,12 +81,6 @@ export class Checkbox extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 		XBElement.define( { name: 'xb-checkbox', ...config, type: Checkbox } );
 	}
 
-	constructor() {
-		super();
-
-		this.addEventListener( 'click', this.#onClick );
-	}
-
 	createRenderRoot() {
 		const root = super.createRenderRoot();
 
@@ -125,6 +119,10 @@ export class Checkbox extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 			this.#onDisabledChange( this.disabled );
 		}
 
+		if ( changedProperties.has( 'checked' ) ) {
+			this.#onCheckedChange( this.checked );
+		}
+
 		if ( changedProperties.has( 'value' ) ) {
 			this.#onValueChange( this.value );
 		}
@@ -132,6 +130,10 @@ export class Checkbox extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 		if ( changedProperties.has( 'readonly' ) ) {
 			this.#onReadOnlyChange( this.readonly );
 		}
+	}
+
+	firstUpdated() {
+		this.queuedWorkManager.flush();
 	}
 
 	render() {
@@ -197,22 +199,31 @@ export class Checkbox extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 	#onDisabledChange = ( disabled ) => {
 		this.disabled = disabled;
 
-		if ( this.input ) {
-			this.input.disabled = disabled;
-		}
+		this.queuedWorkManager.push(
+			() => {
+				return Boolean( this.input );
+			},
+			() => {
+				this.input.disabled = disabled;
+			}
+		);
 	};
 
 	/**
 	 * @param {boolean} readOnly
 	 */
 	#onReadOnlyChange = ( readOnly ) => {
-		// this.readonly = readOnly;
+		this.readonly = readOnly;
 
-		if ( this.input ) {
-			this.input.readOnly = readOnly;
-		}
-
-		this.internals.ariaReadOnly = readOnly ? 'true' : 'false';
+		this.queuedWorkManager.push(
+			() => {
+				return Boolean( this.input );
+			},
+			() => {
+				this.input.readOnly = readOnly;
+				this.internals.ariaReadOnly = readOnly ? 'true' : 'false';
+			}
+		);
 	};
 
 	/**
@@ -221,12 +232,17 @@ export class Checkbox extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 	#onCheckedChange = ( checked ) => {
 		this.toggleAttribute( 'checked', checked );
 
-		if ( this.input ) {
-			this.input.checked = checked;
-			this.internals.ariaChecked = checked ? 'true' : 'false';
+		this.queuedWorkManager.push(
+			() => {
+				return Boolean( this.input );
+			},
+			() => {
+				this.input.checked = checked;
+				this.internals.ariaChecked = checked ? 'true' : 'false';
 
-			this.#onValueChange( this.value );
-		}
+				this.#onValueChange( this.value );
+			}
+		);
 	};
 
 	/**
@@ -235,9 +251,14 @@ export class Checkbox extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 	#onIndeterminateChange = ( indeterminate ) => {
 		this.toggleAttribute( 'indeterminate', indeterminate );
 
-		if ( this.input ) {
-			this.input.indeterminate = indeterminate;
-		}
+		this.queuedWorkManager.push(
+			() => {
+				return Boolean( this.input );
+			},
+			() => {
+				this.input.indeterminate = indeterminate;
+			}
+		);
 	};
 
 	/**
@@ -277,15 +298,6 @@ export class Checkbox extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 		 * @see {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#value|Checkbox value}
 		 */
 		this.internals.setFormValue( this.input.checked ? value ?? 'on' : null );
-	};
-
-	#onClick = ( event ) => {
-		if ( this.readonly ) {
-			event.preventDefault();
-			return;
-		}
-
-		this.#onValueChange( this.value );
 	};
 
 	#onChange = ( event ) => {

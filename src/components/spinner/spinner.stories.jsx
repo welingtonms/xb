@@ -1,21 +1,20 @@
-import { html } from 'lit-html';
+import React from 'react';
 
 import './spinner.define';
 
 /** @type {import('../../common/arg-types').Meta} */
-const meta = {
-	title: 'Components/spinner',
-	component: 'xb-spinner',
+export default {
+	title: 'Components/Spinner',
+	parameters: {
+		layout: 'padded',
+	},
 	argTypes: {},
-	parameters: {},
 };
-
-export default meta;
 
 /** @type {import('../../common/arg-types').StoryObj} */
 export const Playground = {
-	render: () => html`
-		<xb-spinner></xb-spinner>
-	`,
 	args: {},
+	render: () => {
+		return <xb-spinner></xb-spinner>;
+	},
 };
