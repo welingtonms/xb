@@ -11,12 +11,21 @@ import '../icon/icon.define.js';
 export default {
 	title: 'Components/Button',
 	parameters: {
-	  layout: 'padded',
+		layout: 'padded',
 	},
 	argTypes: {
 		variant: {
 			control: 'select',
-			options: [ 'primary', 'secondary-color', 'secondary-gray', 'tertiary-color', 'tertiary-gray', 'link-color', 'link-gray', 'icon' ],
+			options: [
+				'primary',
+				'secondary-color',
+				'secondary-gray',
+				'tertiary-color',
+				'tertiary-gray',
+				'link-color',
+				'link-gray',
+				'icon',
+			],
 		},
 		scale: {
 			control: 'select',
@@ -55,7 +64,7 @@ export const Playground = {
 				scale={ args.scale }
 				onClick={ args.click }
 			>
-				<xb-icon name="favorite"></xb-icon>
+				<xb-icon name="star"></xb-icon>
 			</xb-button>
 		</xb-stack>
 	),
