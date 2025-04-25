@@ -64,14 +64,14 @@ export class BoundaryController {
 		document.addEventListener( 'mousedown', this.#onEvent );
 		document.addEventListener( 'keyup', this.#onEvent );
 		document.addEventListener( 'touchend', this.#onEvent );
-		// window.addEventListener( 'blur', this.#onBlurEvent, true );
+		window.addEventListener( 'blur', this.#onBlurEvent, true );
 	}
 
 	#unsubscribe() {
 		document.removeEventListener( 'mousedown', this.#onEvent );
 		document.removeEventListener( 'keyup', this.#onEvent );
 		document.removeEventListener( 'touchend', this.#onEvent );
-		// window.removeEventListener( 'blur', this.#onBlurEvent, true );
+		window.removeEventListener( 'blur', this.#onBlurEvent, true );
 	}
 
 	#onEvent = ( event ) => {
