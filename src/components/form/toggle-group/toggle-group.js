@@ -53,6 +53,12 @@ export class ToggleGroup extends WithSelectionMixin( XBElement ) {
 	 */
 	@property( { type: String, attribute: 'default-value', reflect: true } ) accessor defaultValue;
 
+	/**
+	 * Selection strategy.
+	 * @type {SelectionType}
+	 */
+	@property( { type: String } ) accessor type;
+
 	/** @type {ToggleGroupControllers} */
 	#controllers;
 
@@ -120,7 +126,9 @@ export class ToggleGroup extends WithSelectionMixin( XBElement ) {
 					},
 				},
 			] ),
-			selection: new SelectionManagerController( this ),
+			selection: new SelectionManagerController( this, {
+				getSelectionType: () => this.type,
+			} ),
 		};
 
 		this.addEventListener( 'focusin', this.#onFocusIn );

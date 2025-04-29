@@ -9,12 +9,6 @@ import { fromAttribute, toAttribute, hasValueChanged } from './with-selection.he
  */
 export const WithSelectionMixin = ( BaseClass ) => {
 	return class WithSelection extends BaseClass {
-		/**
-		 * Selection strategy.
-		 * @type {WithSelectionAttributes['type']}
-		 */
-		@property( { type: String } ) accessor type;
-
 		connectedCallback() {
 			super.connectedCallback();
 

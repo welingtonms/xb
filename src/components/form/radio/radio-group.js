@@ -86,8 +86,6 @@ export class RadioGroup extends WithSelectionMixin( XBElement ) {
 
 		this.internals.role = 'radiogroup';
 
-		this.type = 'single-strict';
-
 		this.#controllers = {
 			focus: new FocusManagerController( this, {
 				query: [ ITEM_QUERY ],
@@ -124,7 +122,9 @@ export class RadioGroup extends WithSelectionMixin( XBElement ) {
 					},
 				},
 			] ),
-			selection: new SelectionManagerController( this ),
+			selection: new SelectionManagerController( this, {
+				getSelectionType: () => 'single-strict',
+			} ),
 		};
 	}
 

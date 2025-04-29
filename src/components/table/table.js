@@ -24,13 +24,14 @@ export class Table extends WithSelectionMixin( XBElement ) {
 
 	#provider = new ContextProvider( this, {
 		context: tableContext,
-		value: {
-			type: 'multiple',
+		initialValue: {
 			gridColumns: '',
 			selectable: false,
+			selectionType: 'multiple',
 			allValues: new Set(),
 			selectedValues: new Set(),
 			expandable: false,
+			expansionType: 'multiple',
 			expandedRows: new Set(),
 		},
 	} );
@@ -49,15 +50,17 @@ export class Table extends WithSelectionMixin( XBElement ) {
 		super();
 
 		this.#controllers = {
-			selection: new SelectionManagerController( this ),
-			expansion: new SelectionManagerController( this, { type: 'multiple' } ),
+			selection: new SelectionManagerController( this, {
+				getSelectionType: () => 'multiple',
+			} ),
+			expansion: new SelectionManagerController( this, {
+				getSelectionType: () => 'multiple',
+			} ),
 		};
 	}
 
 	connectedCallback() {
 		super.connectedCallback();
-
-		this.type = 'multiple';
 
 		this.addEventListener( 'copy', this.#handleCopy );
 		this.addEventListener( 'select', this.#handleSelect );
@@ -316,7 +319,7 @@ export class Table extends WithSelectionMixin( XBElement ) {
 		const cells = Array.from(
 			headerRow.querySelectorAll( 'xb-table-cell:not([slot="expansion"])' )
 		);
-		const widths = Array( this.columns || cells.length ).fill( '1fr' );
+		const widths = Array( cells.length ).fill( '1fr' );
 
 		cells.forEach( ( cell, index ) => {
 			const width = cell.width || '1fr';

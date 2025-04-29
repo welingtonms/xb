@@ -1,5 +1,6 @@
 import toArray from '../../utils/to-array';
 import createSelectionStrategy from '../../utils/selection';
+import isFunction from '../../utils/is-function';
 
 import createLogger from '../../utils/logger';
 
@@ -24,17 +25,22 @@ export class SelectionManagerController {
 	 */
 	selection;
 
-	/** @type {SelectionType | null} */
-	#providedType = null;
+	/**
+	 * @type {() => SelectionType}
+	 */
+	getSelectionType;
 
 	/**
 	 * @param {SelectionManagerControllerHost} host
-	 * @param {{ type?: SelectionType }} [options] - Optional configuration.
+	 * @param {{ getSelectionType: () => SelectionType }} [options] - Optional configuration.
 	 */
 	constructor( host, options ) {
 		this.selection = new Set();
 		this.strategy = null;
-		this.#providedType = options?.type ?? null;
+
+		this.getSelectionType = isFunction( options?.getSelectionType )
+			? options.getSelectionType
+			: () => 'multiple';
 
 		( this.host = host ).addController( this );
 	}
@@ -48,7 +54,7 @@ export class SelectionManagerController {
 	}
 
 	hostUpdate() {
-		const currentType = this.#determineType();
+		const currentType = this.getSelectionType();
 
 		// Only update strategy if the determined type has changed
 		if ( currentType !== this.strategy.type ) {
@@ -62,25 +68,12 @@ export class SelectionManagerController {
 	}
 
 	/**
-	 * Determine the correct strategy type based on constructor options or host property.
-	 * @returns {SelectionType}
-	 */
-	#determineType = () => {
-		// Prioritize the type explicitly passed in the constructor
-		if ( this.#providedType ) {
-			return this.#providedType;
-		}
-
-		// Fall back to the host's type property
-		return this.host.type ?? 'multiple'; // Default to 'multiple' if host.type is undefined
-	};
-
-	/**
 	 * Creates the selection strategy instance.
 	 * @param {SelectionType} [type] - Optional type override.
 	 */
 	#createStrategy = ( type ) => {
-		const strategyType = type ?? this.#determineType();
+		const strategyType = type ?? this.getSelectionType();
+
 		logger.debug( `creating strategy "${ strategyType }"` );
 		this.strategy = createSelectionStrategy( { type: strategyType } );
 	};

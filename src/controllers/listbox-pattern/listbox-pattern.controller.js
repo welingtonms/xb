@@ -59,7 +59,9 @@ class ListboxPatternController {
 					},
 				},
 			] ),
-			selection: new SelectionManagerController( host ),
+			selection: new SelectionManagerController( host, {
+				getSelectionType: () => 'multiple',
+			} ),
 		};
 
 		( this.host = host ).addController( this );

@@ -10,9 +10,6 @@ import { XBElement } from '../xb-element';
 import { tableContext, tableRowContext } from './table.context';
 import { tableRowStyles } from './table.styles';
 
-import '../icon/icon.define';
-import '../form/checkbox/checkbox.define';
-
 import './table-row-select';
 import './table-row-expand';
 
@@ -44,7 +41,7 @@ export class TableRow extends WithIDMixin( XBElement ) {
 
 	#provider = new ContextProvider( this, {
 		context: tableRowContext,
-		value: {
+		initialValue: {
 			isExpanded: false,
 			isHeaderRow: false,
 		},
@@ -126,22 +123,6 @@ export class TableRow extends WithIDMixin( XBElement ) {
 				</div>
 			</div>
 		`;
-	}
-
-	get indeterminate() {
-		return (
-			this.isHeaderRow &&
-			this.#consumer.value?.selectedValues.size > 0 &&
-			! areSetsEqual( this.#consumer.value?.allValues, this.#consumer.value?.selectedValues )
-		);
-	}
-
-	get selected() {
-		if ( this.isHeaderRow ) {
-			return areSetsEqual( this.#consumer.value?.allValues, this.#consumer.value?.selectedValues );
-		}
-
-		return this.#consumer.value?.selectedValues.has( this.value );
 	}
 
 	get expanded() {

@@ -41,6 +41,12 @@ export class TableRowExpand extends XBElement {
 		this.addEventListener( 'click', this.#onClick );
 	}
 
+	disconnectedCallback() {
+		super.disconnectedCallback();
+
+		this.removeEventListener( 'click', this.#onClick );
+	}
+
 	render() {
 		return html`
 			<button

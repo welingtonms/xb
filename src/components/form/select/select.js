@@ -5,7 +5,6 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { AsFormElementMixin } from '../../../mixins/as-form-element';
 import { BoundaryController } from '../../../controllers/boundary';
 import { FloatingElement } from '../../floating-element';
-import { FocusManagerController } from '../../../controllers/focus-manager';
 import { FormElement } from '../../form-element';
 import { KeyboardSupportController } from '../../../controllers/keyboard-support';
 import { RovingFocusController } from '../../../controllers/focus-manager';
@@ -61,6 +60,12 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 	 * @type {String | undefined}
 	 */
 	@property( { type: String, attribute: 'initial-value', reflect: true } ) accessor initialValue;
+
+	/**
+	 * Selection strategy.
+	 * @type {SelectionType}
+	 */
+	@property( { type: String } ) accessor type;
 
 	/** @type {SelectOption[]} */
 	@state() accessor slottedOptions;
@@ -184,7 +189,9 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 							/** @type {HTMLElement} */
 							const element = event.target;
 
-							console.log( 'enter', element );
+							if ( ! element.matches( 'xb-select-option' ) ) {
+								return;
+							}
 
 							/**
 							 * Intercept Enter keydown when focus is on the trigger input.
@@ -200,19 +207,12 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 									return;
 								}
 
-								// Ensure the focus is visually on the option before toggling
-								// this.#controllers.focus.focus( option ); // Roving focus already did this
 								this.#toggleValue( option.value );
 
 								if ( ! this.multiple ) {
 									this.collapse(); // Collapse after selection
 								}
 							}
-							// else {
-							// Optionally open the dropdown if Enter is pressed on the closed trigger
-							// this.expand();
-							// }
-							// }
 						},
 					},
 				],
@@ -221,7 +221,9 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 					getControllerTarget: () => this,
 				}
 			),
-			selection: new SelectionManagerController( this ),
+			selection: new SelectionManagerController( this, {
+				getSelectionType: () => this.type,
+			} ),
 		};
 	}
 
