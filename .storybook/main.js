@@ -8,9 +8,8 @@ const config = {
   ],
   addons: [
     "@storybook/addon-onboarding",
-    "@storybook/addon-essentials",
     "@chromatic-com/storybook",
-    "@storybook/addon-interactions",
+    '@storybook/addon-docs'
   ],
   framework: {
     name: "@storybook/react-webpack5",

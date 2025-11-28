@@ -1,4 +1,4 @@
-import { within as genericWithin } from '@storybook/test';
+import { within as genericWithin } from 'storybook/test';
 
 const A11Y_ROLE_EQUIVALENCE = {
 	'xb-radio': 'radio',
@@ -17,79 +17,79 @@ const A11Y_ROLE_EQUIVALENCE = {
  * - @see{@link https://github.com/testing-library/dom-testing-library/issues/413 | DOM Testing Library issue}
  * @param {HTMLElement} root
  */
-export function within(root) {
+export function within( root ) {
 	// query keys from `A11Y_ROLE_EQUIVALENCE` and assign the value of the key as the role to every element found
-	for (const key in A11Y_ROLE_EQUIVALENCE) {
-		const role = A11Y_ROLE_EQUIVALENCE[key];
-		root.querySelectorAll(key).forEach((element) => {
-			element.setAttribute('role', role);
-		});
+	for ( const key in A11Y_ROLE_EQUIVALENCE ) {
+		const role = A11Y_ROLE_EQUIVALENCE[ key ];
+		root.querySelectorAll( key ).forEach( ( element ) => {
+			element.setAttribute( 'role', role );
+		} );
 	}
 
-	return genericWithin(root);
+	return genericWithin( root );
 }
 
-function parser(input, template) {
-	template = template.replace(/[()]/g, '');
-	input = input.replace(/[()"]/g, '');
+function parser( input, template ) {
+	template = template.replace( /[()]/g, '' );
+	input = input.replace( /[()"]/g, '' );
 
-	const regex = new RegExp(template.replace(/\{(.+?)\}/g, '(.+)'));
-	const match = input.match(regex);
+	const regex = new RegExp( template.replace( /\{(.+?)\}/g, '(.+)' ) );
+	const match = input.match( regex );
 
-	if (!match) {
+	if ( ! match ) {
 		return null;
 	}
 
-	const variables = template.match(/\{(.+?)\}/g)?.map((v) => {
-		return v.slice(1, -1); // return removing the { and }
-	});
+	const variables = template.match( /\{(.+?)\}/g )?.map( ( v ) => {
+		return v.slice( 1, -1 ); // return removing the { and }
+	} );
 
-	const values = match.slice(1);
+	const values = match.slice( 1 );
 	return (
 		variables?.reduce(
-			(obj, variable, index) => ({
+			( obj, variable, index ) => ( {
 				...obj,
-				[variable]: values[index],
-			}),
+				[ variable ]: values[ index ],
+			} ),
 			{}
 		) ?? {}
 	);
 }
 
-function logger(template, params) {
-	const message = Object.entries(params).reduce((acc, [key, value]) => {
-		return acc.replace(`{${key}}`, `"${value}"`);
-	}, template);
+function logger( template, params ) {
+	const message = Object.entries( params ).reduce( ( acc, [ key, value ] ) => {
+		return acc.replace( `{${ key }}`, `"${ value }"` );
+	}, template );
 
-	cy.log(message);
+	cy.log( message );
 }
 
-function getMappedMatch(event, map) {
+function getMappedMatch( event, map ) {
 	// here we need to parse the action and compare with the existing actions
 	let i = 0;
 	let foundAt = -1;
 	let parsed;
-	const keys = Object.keys(map);
+	const keys = Object.keys( map );
 
-	while (i < keys.length && foundAt < 0) {
+	while ( i < keys.length && foundAt < 0 ) {
 		event;
-		keys[i];
-		parsed = parser(event, keys[i]);
+		keys[ i ];
+		parsed = parser( event, keys[ i ] );
 
-		if (parsed) {
+		if ( parsed ) {
 			foundAt = i;
 		}
 		i++;
 	}
 
-	return [map[keys[foundAt]], parsed, keys[foundAt]];
+	return [ map[ keys[ foundAt ] ], parsed, keys[ foundAt ] ];
 }
 
 /**
  *
  * @param {(args: TestingFactoryArgs) => void} fn
  */
-export function TestingFactory(factory) {
+export function TestingFactory( factory ) {
 	// Based on https://cucumber.io/docs/gherkin/reference/
 
 	/** @type {Record<string, Function>} */
@@ -104,8 +104,8 @@ export function TestingFactory(factory) {
 	 * @param {string} scenario
 	 * @param {(...args: unknown[]) => void} fn
 	 */
-	function Given(scenario, fn) {
-		scenarios[scenario] = fn;
+	function Given( scenario, fn ) {
+		scenarios[ scenario ] = fn;
 	}
 
 	/**
@@ -114,8 +114,8 @@ export function TestingFactory(factory) {
 	 * @param {string} action
 	 * @param {(...args: unknown[]) => void} fn
 	 */
-	function When(action, fn) {
-		actions[action] = fn;
+	function When( action, fn ) {
+		actions[ action ] = fn;
 	}
 
 	/**
@@ -126,21 +126,21 @@ export function TestingFactory(factory) {
 	 * @param {string} outcome
 	 * @param {(...args: unknown[]) => void} fn
 	 */
-	function Then(outcome, fn) {
-		outcomes[outcome] = fn;
+	function Then( outcome, fn ) {
+		outcomes[ outcome ] = fn;
 	}
 
-	factory({ Given, When, Then });
+	factory( { Given, When, Then } );
 
-	function then(expected) {
-		const [outcome, parsed, template] = getMappedMatch(expected, outcomes);
+	function then( expected ) {
+		const [ outcome, parsed, template ] = getMappedMatch( expected, outcomes );
 
-		if (outcome == null) {
-			throw new Error(`[then] Invalid outcome: "${expected}"`);
+		if ( outcome == null ) {
+			throw new Error( `[then] Invalid outcome: "${ expected }"` );
 		}
 
-		logger(template, parsed);
-		outcome(parsed);
+		logger( template, parsed );
+		outcome( parsed );
 
 		return {
 			and: then,
@@ -148,15 +148,15 @@ export function TestingFactory(factory) {
 		};
 	}
 
-	function when(event) {
-		const [action, parsed, template] = getMappedMatch(event, actions);
+	function when( event ) {
+		const [ action, parsed, template ] = getMappedMatch( event, actions );
 
-		if (action == null) {
-			throw new Error(`[then] Invalid action: "${action}"`);
+		if ( action == null ) {
+			throw new Error( `[then] Invalid action: "${ action }"` );
 		}
 
-		logger(template, parsed);
-		action(parsed);
+		logger( template, parsed );
+		action( parsed );
 
 		return {
 			and: when,
@@ -164,15 +164,15 @@ export function TestingFactory(factory) {
 		};
 	}
 
-	function given(scenario, args) {
-		const [context, parsed, template] = getMappedMatch(scenario, scenarios);
+	function given( scenario, args ) {
+		const [ context, parsed, template ] = getMappedMatch( scenario, scenarios );
 
-		if (context == null) {
-			throw new Error(`[then] Invalid scenario: "${context}"`);
+		if ( context == null ) {
+			throw new Error( `[then] Invalid scenario: "${ context }"` );
 		}
 
-		logger(template, parsed);
-		context(args);
+		logger( template, parsed );
+		context( args );
 
 		return {
 			and: given,
@@ -189,7 +189,7 @@ export function TestingFactory(factory) {
 let count = 0;
 
 export function generateElementName() {
-	return `x-element-${count++}`;
+	return `x-element-${ count++ }`;
 }
 
 /**

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { userEvent, expect } from '@storybook/test';
+import { userEvent, expect } from 'storybook/test';
 
 // import { within } from '../../../utils/test-tools';
 

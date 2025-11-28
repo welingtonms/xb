@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { userEvent, within } from '@storybook/test';
-import { expect } from '@storybook/test';
+import { userEvent, within } from 'storybook/test';
+import { expect } from 'storybook/test';
 
 import './switch.define';
+import '../../text/text.define';
 
 /** @type {Meta} */
 export default {
@@ -36,6 +37,13 @@ export const Playground = {
 			<xb-switch onChange={ args.change } checked={ args.checked } disabled={ args.disabled }>
 				Accept life options
 			</xb-switch>
+			<xb-switch onchange={ args.change } disabled={ args.disabled } value="accept">
+				Accept life options
+				<xb-text variant="text-sm" slot="description">
+					Save my login details for next time.
+				</xb-text>
+			</xb-switch>
+			<xb-switch onchange={ args.change } disabled={ args.disabled }></xb-switch>
 		</xb-stack>
 	),
 
