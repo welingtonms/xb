@@ -5,7 +5,6 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 // import CheckboxController from './checkbox.controller';
 // import CheckboxGroupController from './checkbox-group.controller';
 import { FormElement } from '../../form-element';
-import { hasSlottedContent } from '../../../utils/slot';
 import { trackSlot } from '../../../decorators/track-slot';
 import { WithAriaMixin } from '../../../mixins/with-aria';
 import { WithIDMixin } from '../../../mixins/with-id';

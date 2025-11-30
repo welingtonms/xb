@@ -65,7 +65,7 @@ export function checkboxStyles() {
 
 		${ button.css() } {
 			--xb-checkbox-outline-color: transparent;
-			--xb-checkbox-outline-offset: 0;
+			--xb-checkbox-outline-offset: 2px;
 			--xb-checkbox-border-color: ${ toCSSResult( 'color-gray-300' ) };
 			--xb-checkbox-background-color: ${ toCSSResult( 'color-white' ) };
 			--xb-checkbox-color: ${ toCSSResult( 'color-white' ) };

@@ -231,6 +231,8 @@ export class RadioGroup extends WithSelectionMixin( XBElement ) {
 			( item ) => item.checked && ! item.hasAttribute( 'disabled' )
 		);
 
+		this.#controllers.keyboard.activate();
+
 		if ( ! firstChecked ) {
 			this.#controllers.focus.focusFirst();
 		} else {
@@ -240,6 +242,7 @@ export class RadioGroup extends WithSelectionMixin( XBElement ) {
 
 	#onFocusOut = () => {
 		this.#controllers.focus.clear();
+		this.#controllers.keyboard.deactivate();
 	};
 
 	#onFormReset = () => {

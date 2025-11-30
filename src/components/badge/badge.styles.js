@@ -34,8 +34,8 @@ export function badgeStyles() {
 				gap: var( --xb-badge-gap );
 
 				box-sizing: border-box;
-				height: var( --xb-badge-height );
-				min-width: var( --xb-badge-height );
+				block-size: var( --xb-badge-height );
+				min-inline-size: var( --xb-badge-height );
 				padding-inline: var( --xb-badge-padding-inline );
 				padding-block: var( --xb-badge-padding-block );
 
@@ -58,8 +58,8 @@ export function badgeStyles() {
 
 			${ $.attr( '[scale="sm"]', '[variant="icon"]' ).css() } {
 				--xb-badge-height: 20px;
-				--xb-badge-padding-inline: 4px;
-				--xb-badge-padding-block: 4px;
+				--xb-badge-padding-inline: 2px;
+				--xb-badge-padding-block: 2px;
 			}
 
 			${ $.attr( '[scale="md"]' ).css() } {
@@ -72,8 +72,8 @@ export function badgeStyles() {
 
 			${ $.attr( '[scale="md"]', '[variant="icon"]' ).css() } {
 				--xb-badge-height: 24px;
-				--xb-badge-padding-inline: 6px;
-				--xb-badge-padding-block: 6px;
+				--xb-badge-padding-inline: 4px;
+				--xb-badge-padding-block: 4px;
 			}
 
 			${ $.attr( '[scale="lg"]' ).css() } {
@@ -86,8 +86,8 @@ export function badgeStyles() {
 
 			${ $.attr( '[scale="lg"]', '[variant="icon"]' ).css() } {
 				--xb-badge-height: 28px;
-				--xb-badge-padding-inline: 8px;
-				--xb-badge-padding-block: 8px;
+				--xb-badge-padding-inline: 6px;
+				--xb-badge-padding-block: 6px;
 			}
 
 			${ $.attr( '[color="gray"]' ).css() } {

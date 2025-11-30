@@ -1,11 +1,15 @@
 import { html, LitElement } from 'lit';
+import { classMap } from 'lit/directives/class-map.js';
 import { property } from 'lit/decorators.js';
 import { query } from 'lit/decorators/query.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
-import { XBElement } from '../../../common/xb-element';
-import { FormElement } from '../../../common/form-element';
+import { XBElement } from '../../xb-element';
+import { FormElement } from '../../form-element';
 import { WithAriaMixin } from '../../../mixins/with-aria';
+import { trackSlot } from '../../../decorators/track-slot';
+
+import { textInputStyles } from './text-input.styles';
 
 /**
  * @class
@@ -13,6 +17,7 @@ import { WithAriaMixin } from '../../../mixins/with-aria';
  */
 export class TextInput extends WithAriaMixin( FormElement ) {
 	static shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
+	static styles = [ textInputStyles() ];
 
 	/** @type {HTMLInputElement} */
 	@query( '#control' )
@@ -153,6 +158,22 @@ export class TextInput extends WithAriaMixin( FormElement ) {
 	 */
 	@property( { type: Boolean } ) accessor readonly;
 
+	/** @type {boolean} */
+	@trackSlot( 'leading' )
+	accessor hasSlottedLeading;
+
+	/** @type {boolean} */
+	@trackSlot( 'trailing' )
+	accessor hasSlottedTrailing;
+
+	/** @type {boolean} */
+	@trackSlot( 'addon-leading' )
+	accessor hasSlottedAddonLeading;
+
+	/** @type {boolean} */
+	@trackSlot( 'addon-trailing' )
+	accessor hasSlottedAddonTrailing;
+
 	/**
 	 * @param {{
 	 *  name: string,
@@ -210,28 +231,56 @@ export class TextInput extends WithAriaMixin( FormElement ) {
 
 	render() {
 		return html`
-			<input
-				id="control"
-				?disabled="${ this.disabled }"
-				?multiple=${ this.multiple }
-				?readonly=${ this.readonly }
-				?required=${ this.required }
-				accept="${ ifDefined( this.accept ) }"
-				alt="${ ifDefined( this.alt ) }"
-				autocomplete="${ ifDefined( this.autocomplete ) }"
-				capture="${ ifDefined( this.capture ) }"
-				dirname="${ ifDefined( this.dirname ) }"
-				max="${ ifDefined( this.max ) }"
-				maxlength=${ ifDefined( this.maxlength ) }
-				min="${ ifDefined( this.min ) }"
-				minlength=${ ifDefined( this.minlength ) }
-				pattern="${ ifDefined( this.pattern ) }"
-				placeholder="${ ifDefined( this.placeholder ) }"
-				spellcheck="${ ifDefined( this.spellcheck ) }"
-				src="${ ifDefined( this.src ) }"
-				step=${ ifDefined( this.step ) }
-				type="${ this.type }"
-			/>
+			<div
+				class="${ classMap( {
+					'outer-container': true,
+					'has-slotted-addon-leading': this.hasSlottedAddonLeading,
+					'has-slotted-addon-trailing': this.hasSlottedAddonTrailing,
+					'has-slotted-leading': this.hasSlottedLeading,
+					'has-slotted-trailing': this.hasSlottedTrailing,
+				} ) }"
+			>
+				<span class="addon-leading">
+					<slot name="addon-leading"></slot>
+				</span>
+				<div
+					class="${ classMap( {
+						'focus-container': true,
+					} ) }"
+				>
+					<span class="leading">
+						<slot name="leading"></slot>
+					</span>
+					<input
+						id="control"
+						?disabled="${ this.disabled }"
+						?multiple=${ this.multiple }
+						?readonly=${ this.readonly }
+						?required=${ this.required }
+						accept="${ ifDefined( this.accept ) }"
+						alt="${ ifDefined( this.alt ) }"
+						autocomplete="${ ifDefined( this.autocomplete ) }"
+						capture="${ ifDefined( this.capture ) }"
+						dirname="${ ifDefined( this.dirname ) }"
+						max="${ ifDefined( this.max ) }"
+						maxlength=${ ifDefined( this.maxlength ) }
+						min="${ ifDefined( this.min ) }"
+						minlength=${ ifDefined( this.minlength ) }
+						pattern="${ ifDefined( this.pattern ) }"
+						placeholder="${ ifDefined( this.placeholder ) }"
+						spellcheck="${ ifDefined( this.spellcheck ) }"
+						src="${ ifDefined( this.src ) }"
+						step=${ ifDefined( this.step ) }
+						type="${ this.type }"
+					/>
+					<span class="trailing">
+						<slot name="trailing"></slot>
+					</span>
+				</div>
+				<span class="addon-trailing">
+					<slot name="addon-trailing"></slot>
+				</span>
+			</div>
 		`;
 	}
 

@@ -65,7 +65,7 @@ export function switchStyles() {
 
 		${ button.css() } {
 			--xb-switch-outline-color: transparent;
-			--xb-switch-outline-offset: 0;
+			--xb-switch-outline-offset: 2px;
 			--xb-switch-border-color: ${ toCSSResult( 'color-gray-100' ) };
 			--xb-switch-background-color: ${ toCSSResult( 'color-gray-100' ) };
 			--xb-switch-color: ${ toCSSResult( 'color-white' ) };

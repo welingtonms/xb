@@ -147,7 +147,7 @@ export function radioStyles() {
 
 		${ button.css() } {
 			--xb-radio-outline-color: transparent;
-			--xb-radio-outline-offset: 0;
+			--xb-radio-outline-offset: 2px;
 			--xb-radio-border-color: ${ toCSSResult( 'color-gray-300' ) };
 			--xb-radio-background-color: ${ toCSSResult( 'color-white' ) };
 			--xb-radio-color: ${ toCSSResult( 'color-white' ) };

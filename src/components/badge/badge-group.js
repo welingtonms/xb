@@ -3,9 +3,10 @@ import { classMap } from 'lit/directives/class-map.js';
 import { property, state } from 'lit/decorators.js';
 
 import createLogger from '../../utils/logger';
-import { matchesSlottedContent } from '../../utils/slot';
-import { XBElement } from '../xb-element';
 import { badgeGroupStyles } from './badge-group.styles';
+import { matchesSlottedContent } from '../../utils/slot';
+import { trackSlot } from '../../decorators/track-slot';
+import { XBElement } from '../xb-element';
 
 const logger = createLogger( 'badge-group' );
 
@@ -22,10 +23,12 @@ export class BadgeGroup extends XBElement {
 	@property( { type: String, reflect: true } ) accessor scale;
 
 	/** @type {boolean} */
-	@state() accessor hasSlottedLeadingBadge = false;
+	@trackSlot( 'leading' )
+	accessor hasSlottedLeadingBadge;
 
 	/** @type {boolean} */
-	@state() accessor hasSlottedTrailingBadge = false;
+	@trackSlot( 'trailing' )
+	accessor hasSlottedTrailingBadge;
 
 	/**
 	 * @param {{
@@ -50,20 +53,18 @@ export class BadgeGroup extends XBElement {
 	updated( changedProperties ) {
 		super.updated( changedProperties );
 
-		if ( !this.hasSlottedLeadingBadge && !this.hasSlottedTrailingBadge ) {
+		if ( ! this.hasSlottedLeadingBadge && ! this.hasSlottedTrailingBadge ) {
 			logger.warn( 'No badges found in badge group' );
 		}
 	}
 
 	render() {
-
-
 		return html`
 			<span
 				class=${ classMap( {
 					'badge-group': true,
-					'has-slotted-leading-badge': this.hasSlottedLeadingBadge,
-					'has-slotted-trailing-badge': this.hasSlottedTrailingBadge,
+					'-has-slotted-leading-badge': this.hasSlottedLeadingBadge,
+					'-has-slotted-trailing-badge': this.hasSlottedTrailingBadge,
 				} ) }
 			>
 				<slot name="leading" @slotchange=${ this.#updateHasSlottedLeadingBadge }></slot>

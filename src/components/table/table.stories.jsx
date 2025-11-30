@@ -2,6 +2,7 @@ import React from 'react';
 
 import '../badge/badge.define';
 import '../button/button.define';
+import '../dropdown/dropdown.define';
 import '../icon/icon.define';
 import '../layout';
 import '../text/text.define';
@@ -42,7 +43,7 @@ export const Playground = {
 					<xb-table-cell>Name</xb-table-cell>
 					<xb-table-cell width="1fr">Role</xb-table-cell>
 					<xb-table-cell width="120">Status</xb-table-cell>
-					<xb-table-cell width="128"></xb-table-cell>
+					<xb-table-cell width="72"></xb-table-cell>
 				</xb-table-row>
 			</xb-table-header>
 
@@ -63,8 +64,20 @@ export const Playground = {
 						</xb-badge>
 					</xb-table-cell>
 					<xb-table-cell>
-						<xb-button variant="icon" icon="trash"></xb-button>
-						<xb-button variant="icon" icon="pencil"></xb-button>
+						<xb-dropdown>
+							<xb-button
+								variant="icon"
+								aria-haspopup="true"
+								aria-label="Row actions"
+							>
+								<xb-icon name="dots-three-vertical" size={ 16 }></xb-icon>
+							</xb-button>
+
+							<xb-dropdown-menu>
+								<xb-dropdown-item icon="trash">Remove</xb-dropdown-item>
+								<xb-dropdown-item icon="pencil">Edit</xb-dropdown-item>
+							</xb-dropdown-menu>
+						</xb-dropdown>
 					</xb-table-cell>
 
 					<xb-table-cell slot="expansion" colspan={ 3 }>
@@ -99,8 +112,20 @@ export const Playground = {
 						</xb-badge>
 					</xb-table-cell>
 					<xb-table-cell>
-						<xb-button variant="icon" icon="trash"></xb-button>
-						<xb-button variant="icon" icon="pencil"></xb-button>
+						<xb-dropdown>
+							<xb-button
+								variant="icon"
+								aria-haspopup="true"
+								aria-label="Row actions"
+							>
+								<xb-icon name="dots-three-vertical" size={ 16 }></xb-icon>
+							</xb-button>
+
+							<xb-dropdown-menu>
+								<xb-dropdown-item icon="trash">Remove</xb-dropdown-item>
+								<xb-dropdown-item icon="pencil">Edit</xb-dropdown-item>
+							</xb-dropdown-menu>
+						</xb-dropdown>
 					</xb-table-cell>
 
 					<xb-table-cell slot="expansion" colspan={ 5 }>
@@ -141,8 +166,20 @@ export const Playground = {
 					</xb-table-cell>
 
 					<xb-table-cell>
-						<xb-button variant="icon" icon="trash"></xb-button>
-						<xb-button variant="icon" icon="pencil"></xb-button>
+						<xb-dropdown>
+							<xb-button
+								variant="icon"
+								aria-haspopup="true"
+								aria-label="Row actions"
+							>
+								<xb-icon name="dots-three-vertical" size={ 16 }></xb-icon>
+							</xb-button>
+
+							<xb-dropdown-menu>
+								<xb-dropdown-item icon="trash">Remove</xb-dropdown-item>
+								<xb-dropdown-item icon="pencil">Edit</xb-dropdown-item>
+							</xb-dropdown-menu>
+						</xb-dropdown>
 					</xb-table-cell>
 				</xb-table-row>
 
@@ -155,8 +192,20 @@ export const Playground = {
 					</xb-table-cell>
 
 					<xb-table-cell>
-						<xb-button variant="icon" icon="trash"></xb-button>
-						<xb-button variant="icon" icon="pencil"></xb-button>
+						<xb-dropdown>
+							<xb-button
+								variant="icon"
+								aria-haspopup="true"
+								aria-label="Row actions"
+							>
+								<xb-icon name="dots-three-vertical" size={ 16 }></xb-icon>
+							</xb-button>
+
+							<xb-dropdown-menu>
+								<xb-dropdown-item icon="trash">Remove</xb-dropdown-item>
+								<xb-dropdown-item icon="pencil">Edit</xb-dropdown-item>
+							</xb-dropdown-menu>
+						</xb-dropdown>
 					</xb-table-cell>
 
 					<xb-table-cell slot="expansion">004</xb-table-cell>
@@ -217,16 +266,16 @@ export const ScrollableTable = {
 				style={ {
 					resize: 'horizontal',
 					overflow: 'auto',
-					minWidth: '300px',
-					maxWidth: '600px',
+					boxSizing: 'content-box',
+					minWidth: '600px',
+					maxWidth: 'calc(100% - 48px)',
 					border: '1px dashed #ccc',
 				} }
 			>
 				<m-stack>
 					<p>
-						This container is resizable (drag the bottom-right corner) and limited to 600px
-						max-width. The table has fixed-width columns that sum up to 800px, causing horizontal
-						scroll.
+						This container is resizable (drag the bottom-right corner). The table has fixed-width
+						columns that sum up to 800px, causing horizontal scroll.
 					</p>
 					<xb-table expandable>
 						<xb-table-header>
@@ -241,6 +290,8 @@ export const ScrollableTable = {
 						</xb-table-header>
 						<xb-table-body>
 							<xb-table-row>
+								<xb-table-row-expand></xb-table-row-expand>
+
 								<xb-table-cell>001</xb-table-cell>
 								<xb-table-cell>John Doe</xb-table-cell>
 								<xb-table-cell>Developer</xb-table-cell>
@@ -286,6 +337,7 @@ export const ScrollableTable = {
 								<xb-table-cell>Active</xb-table-cell>
 							</xb-table-row>
 							<xb-table-row>
+								<xb-table-row-expand></xb-table-row-expand>
 								<xb-table-cell colspan={ 6 }>
 									This cell spans the entire width of the table.
 								</xb-table-cell>

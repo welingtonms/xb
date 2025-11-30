@@ -6,8 +6,10 @@ import { classMap } from 'lit/directives/class-map.js';
 import { WithIDMixin } from '../../mixins/with-id';
 import { trackSlot } from '../../decorators/track-slot';
 import { areSetsEqual } from '../../utils/set';
+import { ExpandableController } from '../../controllers/expandable';
 import { XBElement } from '../xb-element';
 import { tableContext, tableRowContext } from './table.context';
+
 import { tableRowStyles } from './table.styles';
 
 import './table-row-select';
@@ -47,6 +49,9 @@ export class TableRow extends WithIDMixin( XBElement ) {
 		},
 	} );
 
+	/** @type {TableRowControllers} */
+	#controllers;
+
 	/**
 	 * @param {{
 	 *  name: string,
@@ -55,6 +60,19 @@ export class TableRow extends WithIDMixin( XBElement ) {
 	 */
 	static define( config ) {
 		XBElement.define( { name: 'xb-table-row', ...config, type: TableRow } );
+	}
+
+	constructor() {
+		super();
+
+		this.#controllers = {
+			expandable: new ExpandableController( this, {
+				getExpandableElement: () => {
+					return this.renderRoot.querySelector( '.expansion-container' );
+				},
+				isExpanded: () => Boolean( this.expanded ),
+			} ),
+		};
 	}
 
 	firstUpdated() {
@@ -78,7 +96,7 @@ export class TableRow extends WithIDMixin( XBElement ) {
 							>
 								${ isSelectable
 									? /**
-									   * we hide the default slotted table-row-select for layout purposes so, it any
+									   * we hide the default slotted table-row-select for layout purposes so, if any
 									   * row is not selectable, it will not affect the layout of the row
 									   */
 									  html`
@@ -140,3 +158,13 @@ export class TableRow extends WithIDMixin( XBElement ) {
 		};
 	};
 }
+
+/**
+ * @typedef {import('../../controllers/expandable').ExpandableController} ExpandableController
+ */
+
+/**
+ * @typedef {{
+ * 	expandable: ExpandableController;
+ * }} TableRowControllers
+ */
