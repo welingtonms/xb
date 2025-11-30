@@ -1,45 +1,14 @@
-import toArray from '../../utils/to-array';
-
 import createLogger from '../../utils/logger';
-import { isPrintableCharacter } from '../../utils/string';
+import { BaseFocusController } from './base-focus.controller.js';
 
 const logger = createLogger( 'focus-manager' );
 
-export const SEARCH_BUFFER_TIMEOUT = 500;
 /**
  * Manages **virtual/visual** focus for non-natively focusable elements;
  * created for a11y purposes.
  * @implements {ReactiveController}
  */
-export class FocusManagerController {
-	/** @type {FocusManagerControllerHost} */
-	host;
-
-	/**
-	 * Query to get focusable elements.
-	 * @type {((host: FocusManagerControllerHost) => HTMLElement[])}
-	 */
-	query;
-
-	/**
-	 * When the focus manager is active and the user types A-Z|a-z characters, the focus should
-	 * moves to the next `queried` item with a label that starts with the typed character, if such an item exists;
-	 * otherwise, focus does not move.
-	 * @type {boolean}
-	 */
-	searchable;
-
-	/**
-	 * `buffer`: Keys (printable characters) the user typed on the controlled host.
-	 * The expectation is that the user wants to select something.
-	 * `timeout`: Timeout to clear the buffer.
-	 * @type {{
-	 * 	buffer: string;
-	 * 	timeout: number | null;
-	 * }}
-	 */
-	search;
-
+export class FocusManagerController extends BaseFocusController {
 	/**
 	 * ID of the currently focused descendant.
 	 * @type {string | null}
@@ -61,42 +30,9 @@ export class FocusManagerController {
 	 * @param {FocusManagerControllerOptions} options
 	 */
 	constructor( host, options = {} ) {
-		this.query =
-			typeof options.query === 'function'
-				? options.query
-				: () => Array.from( this.host.querySelectorAll( toArray( options.query ).join( ',' ) ) );
-		this.searchable = Boolean( options.searchable ?? true );
+		super( host, options );
+
 		this.getControllerTarget = options.getControllerTarget ?? ( ( host ) => host );
-
-		this.search = {
-			buffer: '',
-			timeout: null,
-		};
-
-		( this.host = host ).addController( this );
-	}
-
-	hostConnected() {
-		if ( ! this.searchable ) {
-			logger.debug( 'focus on type is disabled. will not listen to keyup events' );
-			return;
-		}
-
-		logger.debug( 'focus on type is on for ', this.host.tag );
-		this.host.addEventListener( 'keyup', this.#onKeyPress );
-	}
-
-	hostDisconnected() {
-		logger.debug( 'focus on type is off for ', this.host.tag );
-		this.host.removeEventListener( 'keyup', this.#onKeyPress );
-	}
-
-	/**
-	 * Get the list of elements matching the given `options.query`.
-	 * @return {HTMLElement[]}
-	 */
-	get queried() {
-		return Array.from( this.query( this.host ) );
 	}
 
 	/**
@@ -109,42 +45,6 @@ export class FocusManagerController {
 		}
 
 		return this.#findQueriedByID( this.#focused );
-	}
-
-	/**
-	 * If none of the options are selected, the first option receives focus; otherwise, the
-	 * focus moves to the next [enabled] option.
-	 * If we are at the end of the `queried` array, the focus moves to the first option.
-	 * @param {((element: HTMLElement) => void)} [callback] called when the element is focused
-	 */
-	focusNext( callback ) {
-		this.focus( 'next', callback );
-	}
-
-	/**
-	 * If none of the options are selected, the last option receives focus; otherwise, the
-	 * focus moves to the next [enabled] option.
-	 * If we are at the start of the `queried` array, the focus moves to the last option.
-	 * @param {((element: HTMLElement) => void)} [callback] called when the element is focused
-	 */
-	focusPrevious( callback ) {
-		this.focus( 'previous', callback );
-	}
-
-	/**
-	 * Focus the first element in `queried`.
-	 * @param {((element: HTMLElement) => void)} [callback] called when the element is focused
-	 */
-	focusFirst( callback ) {
-		this.focus( 0, callback );
-	}
-
-	/**
-	 * Focus the last element in `queried`.
-	 * @param {((element: HTMLElement) => void)} [callback] called when the element is focused
-	 */
-	focusLast( callback ) {
-		this.focus( this.queried.length - 1, callback );
 	}
 
 	/**
@@ -194,7 +94,7 @@ export class FocusManagerController {
 		 * @param {'first' | 'last' | 'previous' | 'next'} position
 		 */
 		const focusPosition = ( position ) => {
-			const currentFocusedIndex = this.#getIndexOf( this.focused );
+			const currentFocusedIndex = this.getIndexOf( this.focused );
 
 			switch ( position ) {
 				case 'first':
@@ -263,19 +163,6 @@ export class FocusManagerController {
 	}
 
 	/**
-	 * Get the index of the given `element` in `queried`.
-	 * @param {HTMLElement | null | undefined} element
-	 * @returns {number}
-	 */
-	#getIndexOf = ( element ) => {
-		if ( ! element ) {
-			return -1;
-		}
-
-		return this.queried.indexOf( element );
-	};
-
-	/**
 	 * Find the given `id` in the `queried` array.
 	 * @param {string} id
 	 * @returns {HTMLElement | undefined}
@@ -285,72 +172,12 @@ export class FocusManagerController {
 			return element.id === id;
 		} );
 	};
-
-	/**
-	 * Moves focus to the next menu item with a label that starts with the typed character
-	 * if such an menu item exists. Otherwise, focus does not move.
-	 * @param {KeyboardEvent} event
-	 */
-	#onKeyPress = ( event ) => {
-		const { key } = event;
-
-		if ( ! isPrintableCharacter( key ) ) {
-			return;
-		}
-
-		const queried = this.queried;
-
-		const clearBufferAfterDelay = () => {
-			if ( this.search.timeout ) {
-				clearTimeout( this.search.timeout );
-				this.search.timeout = null;
-			}
-
-			this.search.timeout = setTimeout( () => {
-				this.search.buffer = '';
-				this.search.timeout = null;
-			}, SEARCH_BUFFER_TIMEOUT );
-		};
-
-		const findMatchInRange = ( startAt, endAt ) => {
-			for ( let i = startAt; i < endAt; i++ ) {
-				/**
-				 * [!] Be aware that `innerText` can be expensive as it takes CSS styles into account (it triggers a reflow to
-				 * ensure up-to-date computed styles).
-				 * Source: https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent#differences_from_innertext
-				 * // TODO: replace `innerText` with `textContent`?
-				 */
-				let label = queried[ i ].innerText.toLowerCase();
-
-				if ( label && label.indexOf( this.search.buffer ) === 0 ) {
-					return queried[ i ];
-				}
-			}
-
-			return null;
-		};
-
-		let searchIndex = this.#getIndexOf( this.focused );
-
-		this.search.buffer += key;
-
-		clearBufferAfterDelay();
-
-		// try to find after the current index; if none found, try to find before the current index.
-		let nextMatch =
-			findMatchInRange( searchIndex + 1, queried.length ) || findMatchInRange( 0, searchIndex );
-
-		if ( nextMatch != null ) {
-			logger.debug( 'found next match for focus', nextMatch );
-			this.focus( nextMatch );
-		}
-	};
 }
 
 /**
  * @typedef {import('lit').ReactiveControllerHost} ReactiveControllerHost
  * @typedef {import('lit').ReactiveController} ReactiveController
- * @typedef {import('../xb-element').default} XBElement
+ * @typedef {import('../../components/xb-element').XBElement} XBElement
  */
 
 /**
@@ -358,9 +185,15 @@ export class FocusManagerController {
  */
 
 /**
- * @typedef {{
- * 	query: string | ((host: FocusManagerControllerHost) => HTMLElement[]);
- * 	searchable?: boolean;
+ * @typedef {import('./base-focus.controller').BaseFocusControllerOptions & {
  * 	getControllerTarget?: (host: FocusManagerControllerHost) => HTMLElement
  * }} FocusManagerControllerOptions
+ */
+
+/**
+ * @typedef {Object} FocusManagerControllerPlugin
+ * @property {((controller: FocusManagerController) => void)} install
+ * @property {((controller: FocusManagerController) => void)} hostConnected
+ * @property {((controller: FocusManagerController) => void)} hostDisconnected
+ * @property {((event: string, data: any, controller: FocusManagerController) => void)} handleEvent
  */
