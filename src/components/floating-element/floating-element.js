@@ -1,17 +1,37 @@
 // @ts-check
 import { property } from 'lit/decorators.js';
-
-import { autoUpdate, computePosition, flip, offset, shift, hide, platform } from '@floating-ui/dom';
-import isFunction from '../../utils/is-function';
 import { offsetParent } from 'composed-offset-position';
 
+import { autoUpdate, computePosition, flip, offset, shift, hide, platform } from '@floating-ui/dom';
 import { supportsPopover, isPopover, isDialog } from '../../utils/top-layer';
-
-import createLogger from '../../utils/logger';
-// import { FloatingController } from '../../controllers/floating';
 import { XBElement } from '../xb-element';
+import createLogger from '../../utils/logger';
+import isFunction from '../../utils/is-function';
 
 const logger = createLogger( 'floating-element' );
+
+/**
+ * Get manually calculated offset because floating-ui's offset middleware fails
+ * to calculate the correct offset when the reference is small.
+ * @param {boolean} arrow
+ * @param {string} direction
+ * @param {number} offset
+ * @returns {string}
+ */
+export function getPositionOffset( arrow, direction, offset ) {
+	const size = 'var(--m-popover-arrow-size)';
+
+	switch ( direction ) {
+		case 'top':
+		case 'left':
+			return arrow ? `-1 * ${ size } - ${ offset }px` : `-1 * ${ offset }px`;
+		case 'bottom':
+		case 'right':
+			return arrow ? `${ size } + ${ offset }px` : `${ offset }px`;
+		default:
+			return '0px';
+	}
+}
 
 /**
  * Offer the basic wiring to `@floating-ui/dom` to render a floating element.
@@ -64,10 +84,11 @@ export class FloatingElement extends XBElement {
 		}
 	}
 
-	firstUpdated() {
-		// if ( supportsPopover() && this.floating ) {
-		// 	this.floating.setAttribute( 'popover', 'manual' );
-		// }
+	/**
+	 * @param {PropertyValues} changedProperties
+	 */
+	firstUpdated( changedProperties ) {
+		super.firstUpdated( changedProperties );
 
 		if ( this.open ) {
 			this.show();
@@ -77,8 +98,8 @@ export class FloatingElement extends XBElement {
 	/**
 	 * @param {PropertyValues} changedProperties
 	 */
-	updated( changedProperties ) {
-		super.updated( changedProperties );
+	willUpdate( changedProperties ) {
+		super.willUpdate( changedProperties );
 
 		if ( this.open && changedProperties.get( 'placement' ) != null && this.placement != null ) {
 			this.reposition( 'placement' );
@@ -131,6 +152,16 @@ export class FloatingElement extends XBElement {
 	getArrowElement() {
 		logger.warn( 'getReferenceElement is not implemented' );
 		return null;
+	}
+
+	/*
+	 * @returns {{ mainAxis: number; crossAxis: number }}
+	 */
+	getFloatingOffset() {
+		return {
+			mainAxis: 4,
+			crossAxis: 0,
+		};
 	}
 
 	show() {
@@ -188,39 +219,89 @@ export class FloatingElement extends XBElement {
 			return;
 		}
 
-		const { x, y, placement } = await computePosition( this.reference, this.floating, {
-			strategy: this.position || 'fixed',
-			placement: this.placement || 'bottom-start',
-			// source: https://floating-ui.com/docs/platform#shadow-dom-fix
-			platform: {
-				...platform,
-				getOffsetParent: ( element ) => {
-					return platform.getOffsetParent( element, offsetParent );
+		const { x, y, placement, middlewareData } = await computePosition(
+			this.reference,
+			this.floating,
+			{
+				strategy: this.position || 'fixed',
+				placement: this.placement || 'bottom-start',
+				// source: https://floating-ui.com/docs/platform#shadow-dom-fix
+				platform: {
+					...platform,
+					getOffsetParent: ( element ) => {
+						return platform.getOffsetParent( element, offsetParent );
+					},
 				},
-			},
-			middleware: [ offset( 4 ), flip(), shift(), hide() ],
-		} );
+				middleware: [
+					offset( this.getFloatingOffset() ),
+					// to prevent the floating element from overflowing on the main axis of its placement
+					flip(),
+					// preventing overflow while maintaining the desired placement as best as possible.
+					shift(),
+					// to hide the floating element in applicable situations.
+					hide(),
+				],
+			}
+		);
 		// logger.debug( 'positioning at ', placement, { x, y } );
 
-		this.floating.style.setProperty( '--xb-floating-left', `${ x }px` );
-		this.floating.style.setProperty( '--xb-floating-top', `${ y }px` );
+		if ( middlewareData.hide?.referenceHidden ) {
+			// we skip repositioning if the reference element is hidden
+			this.floating.style.setProperty( 'visibility', 'hidden' );
 
+			return;
+		}
+
+		const [ side ] = placement.split( '-' );
+		const hasArrow = this.arrow != null;
+
+		const floatingOffset = this.getFloatingOffset();
+		/** @type {Record<string, { x: string; y: string }>} */
+		const mainSideIncrement = {
+			top: {
+				x: '0px',
+				y: getPositionOffset( hasArrow, 'top', floatingOffset.mainAxis ),
+			},
+			bottom: {
+				x: '0px',
+				y: getPositionOffset( hasArrow, 'bottom', floatingOffset.mainAxis ),
+			},
+			right: {
+				x: getPositionOffset( hasArrow, 'right', floatingOffset.mainAxis ),
+				y: '0px',
+			},
+			left: {
+				x: getPositionOffset( hasArrow, 'left', floatingOffset.mainAxis ),
+				y: '0px',
+			},
+		};
+
+		this.floating.style.setProperty( 'visibility', 'visible' );
 		this.floating.style.setProperty(
-			'--xb-floating-border-top-left-radius',
-			`${ [ 'bottom-start', 'right-start' ].includes( placement ) ? 0 : 4 }px`
+			'--xb-floating-left',
+			`calc(${ x }px + ${ mainSideIncrement[ side ].x })`
 		);
 		this.floating.style.setProperty(
-			'--xb-floating-border-top-right-radius',
-			`${ [ 'bottom-end', 'left-start' ].includes( placement ) ? 0 : 4 }px`
+			'--xb-floating-top',
+			`calc(${ y }px + ${ mainSideIncrement[ side ].y })`
 		);
-		this.floating.style.setProperty(
-			'--xb-floating-border-bottom-right-radius',
-			`${ [ 'left-end', 'top-end' ].includes( placement ) ? 0 : 4 }px`
-		);
-		this.floating.style.setProperty(
-			'--xb-floating-border-bottom-left-radius',
-			`${ [ 'top-start', 'right-end' ].includes( placement ) ? 0 : 4 }px`
-		);
+
+		// this.floating.style.setProperty(
+		// 	'--xb-floating-border-top-left-radius',
+		// 	`${ [ 'bottom-start', 'right-start' ].includes( placement ) ? 0 : 4 }px`
+		// );
+		// this.floating.style.setProperty(
+		// 	'--xb-floating-border-top-right-radius',
+		// 	`${ [ 'bottom-end', 'left-start' ].includes( placement ) ? 0 : 4 }px`
+		// );
+		// this.floating.style.setProperty(
+		// 	'--xb-floating-border-bottom-right-radius',
+		// 	`${ [ 'left-end', 'top-end' ].includes( placement ) ? 0 : 4 }px`
+		// );
+		// this.floating.style.setProperty(
+		// 	'--xb-floating-border-bottom-left-radius',
+		// 	`${ [ 'top-start', 'right-end' ].includes( placement ) ? 0 : 4 }px`
+		// );
 
 		this.emit( 'xb-floating:reposition', {
 			detail: { reason },

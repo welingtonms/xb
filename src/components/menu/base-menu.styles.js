@@ -81,7 +81,7 @@ export function menuContentStyles( selector ) {
 				border-width: var( --xb-menu-border-width );
 				border-style: var( --xb-menu-border-style );
 				border-color: var( --xb-menu-border-color );
-				border-top-left-radius: var( --xb-floating-border-top-left-radius );
+				border-top-left-radius: var( --xb-menu-border-top-left-radius );
 				border-top-right-radius: var( --xb-menu-border-top-right-radius );
 				border-bottom-right-radius: var( --xb-menu-border-bottom-right-radius );
 				border-bottom-left-radius: var( --xb-menu-border-bottom-left-radius );

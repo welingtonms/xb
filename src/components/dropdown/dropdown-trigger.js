@@ -12,14 +12,19 @@ import '../icon/icon.define';
  * @class
  * @template WithIDMixin, XBElement
  */
-export class DropdownTrigger extends WithIDMixin(XBElement) {
-	static styles = [triggerStyles()];
+export class DropdownTrigger extends WithIDMixin( XBElement ) {
+	static styles = [ triggerStyles() ];
 
 	/**
 	 * Should the button be disabled.
-	 * @type {boolean}
+	 * @type {DropdownTriggerAttributes['disabled']}
 	 */
-	@property({ type: Boolean, reflect: true }) accessor disabled;
+	@property( { type: Boolean, reflect: true } ) accessor disabled;
+
+	/**
+	 * @type {DropdownTriggerAttributes['scale']}
+	 */
+	@property( { type: String, reflect: true } ) accessor scale;
 
 	/**
 	 * @param {{
@@ -27,39 +32,40 @@ export class DropdownTrigger extends WithIDMixin(XBElement) {
 	 *  registry: CustomElementRegistry,
 	 * }} config
 	 */
-	static define(config) {
-		XBElement.define({ name: 'xb-dropdown-trigger', ...config, type: DropdownTrigger });
+	static define( config ) {
+		XBElement.define( { name: 'xb-dropdown-trigger', ...config, type: DropdownTrigger } );
 	}
 
 	constructor() {
 		super();
 
 		this.disabled = false;
+		this.scale = 'sm';
 	}
 
 	connectedCallback() {
 		super.connectedCallback();
 
 		// TODO: use internals
-		this.setAttribute('role', 'button');
-		this.setAttribute('aria-haspopup', 'true');
+		this.setAttribute( 'role', 'button' );
+		this.setAttribute( 'aria-haspopup', 'true' );
 	}
 
 	/**
 	 * @param {import('lit').PropertyValues<this>} changedProperties
 	 */
-	update(changedProperties) {
-		if (changedProperties.has('disabled')) {
-			this.setAttribute('aria-disabled', Boolean(this.disabled));
+	update( changedProperties ) {
+		if ( changedProperties.has( 'disabled' ) ) {
+			this.setAttribute( 'aria-disabled', Boolean( this.disabled ) );
 
 			/**
 			 * FIXME: according to https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-disabled
 			 * "there can be instances where elements need to be exposed as disabled, but are still available for users to find when navigating via the Tab key"
 			 */
-			this.setAttribute('tabindex', this.disabled ? '-1' : '0');
+			this.setAttribute( 'tabindex', this.disabled ? '-1' : '0' );
 		}
 
-		super.update(changedProperties);
+		super.update( changedProperties );
 	}
 
 	render() {
@@ -72,6 +78,13 @@ export class DropdownTrigger extends WithIDMixin(XBElement) {
 }
 
 /**
+ * @typedef {import('../../utils/prop-types').BorderlessProp} BorderlessProp
+ * @typedef {import('../../utils/prop-types').PaddinglessProp} PaddinglessProp
+ * @typedef {import('../../utils/prop-types').SizeProp} SizeProp
+ */
+
+/**
  * @typedef {Object} DropdownTriggerAttributes
- * @property {boolean} [open] - Is the dropdown menu open.
+ * @property {boolean} [disabled] - Is the dropdown menu disabled.
+ * @property {SizeProp} [scale] - The scale of the button.
  */

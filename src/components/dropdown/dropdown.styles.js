@@ -1,7 +1,8 @@
 import { css } from 'lit';
 
 import { baseButtonHostStyles, baseButtonStyles } from '../button';
-import { floatingStyles } from '../floating-element';
+import { floatingHostStyles, floatingElementStyles } from '../floating-element';
+import { expandableHostStyles, expandableElementStyles } from '../../controllers/expandable';
 import { menuStyles as baseMenuStyles } from '../menu';
 import { select } from '../../styles/selector';
 import toCSSResult from '../../utils/to-css-result';
@@ -11,9 +12,8 @@ export function dropdownStyles() {
 	const $ = select( ':host' );
 
 	return [
-		floatingStyles( {
-			floating: '::slotted([role="menu"])',
-		} ),
+		floatingHostStyles(),
+		expandableHostStyles(),
 		css`
 			${ $.css() } {
 				--xb-dropdown-outline-color: transparent;
@@ -23,7 +23,7 @@ export function dropdownStyles() {
 				--xb-floating-min-width: 16ch;
 
 				display: inline-flex;
-				contain: layout style;
+
 				box-sizing: border-box;
 				align-items: center;
 			}
@@ -38,6 +38,12 @@ export function dropdownStyles() {
 export function menuStyles() {
 	return [
 		baseMenuStyles(),
+		floatingElementStyles( {
+			floatingSelector: ':host',
+		} ),
+		expandableElementStyles( {
+			expandableSelector: ':host',
+		} ),
 		css`
 			:host {
 				--xb-menu-max-height: 20rem;
@@ -63,6 +69,42 @@ export function triggerStyles() {
 				--xb-button-color: ${ toCSSResult( 'color-gray-700' ) };
 			}
 
+			${ $.attr( '[scale="sm"]' ).css() } {
+				--xb-button-height: 36px;
+
+				--xb-button-padding-x: 14px;
+				--xb-button-padding-y: 8px;
+			}
+
+			${ $.attr( '[scale="md"]' ).css() },
+			${ $.not( '[scale]' ).css() } {
+				--xb-button-height: 40px;
+
+				--xb-button-padding-x: 16px;
+				--xb-button-padding-y: 10px;
+			}
+
+			${ $.attr( '[scale="lg"]' ).css() } {
+				--xb-button-height: 44px;
+
+				--xb-button-padding-x: 18px;
+				--xb-button-padding-y: 10px;
+			}
+
+			${ $.attr( '[scale="xl"]' ).css() } {
+				--xb-button-height: 48px;
+
+				--xb-button-padding-x: 20px;
+				--xb-button-padding-y: 12px;
+			}
+
+			${ $.attr( '[scale="2xl"]' ).css() } {
+				--xb-button-height: 60px;
+
+				--xb-button-padding-x: 28px;
+				--xb-button-padding-y: 16px;
+			}
+
 			${ $.enabled.hovered.css() },
 			${ $.attr( '[aria-expanded="true"]' ).css() } {
 				--xb-button-background-color: ${ toCSSResult( 'color-gray-50' ) };
@@ -71,7 +113,7 @@ export function triggerStyles() {
 			}
 
 			${ $.enabled.focused.css() } {
-				--xb-button-outline-color: ${ toCSSResult( 'color-gray-100' ) };
+				--xb-button-outline-color: ${ toCSSResult( 'color-primary-100' ) };
 			}
 
 			${ $.disabled.css() } {

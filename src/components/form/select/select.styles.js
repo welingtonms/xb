@@ -1,32 +1,34 @@
 import { css } from 'lit';
 
-import { floatingStyles } from '../../floating-element';
-import toCSSResult from '../../../utils/to-css-result';
-import { menuHostStyles, menuContentStyles, menuItemStyles } from '../../menu';
 import { baseButtonStyles } from '../../button';
+import { expandableHostStyles, expandableElementStyles } from '../../../controllers/expandable';
+import { floatingHostStyles, floatingElementStyles } from '../../floating-element';
+import { menuHostStyles, menuContentStyles, menuItemStyles } from '../../menu';
+import { select } from '../../../styles/selector';
+import outline from '../../../styles/outline.styles';
+import toCSSResult from '../../../utils/to-css-result';
 import transition from '../../../styles/transition.styles';
 import typography from '../../../styles/typography.styles';
-import outline from '../../../styles/outline.styles';
-import { select } from '../../../styles/selector';
+import layoutStyles from '../../../styles/layout.styles';
 
 export function selectStyles() {
 	const $ = select( ':host' );
 
 	return [
-		floatingStyles({
-			floating: "[role='listbox']",
-		}),
+		layoutStyles(),
+		floatingHostStyles(),
+		expandableHostStyles(),
 		css`
 			${ $.css() } {
 				--xb-select-outline-color: transparent;
-				--xb-select-outline-offset: 0;
+				--xb-select-outline-offset: 2px;
 
 				--xb-select-picker-border-color: ${ toCSSResult( 'color-gray-300' ) };
 
 				${ transition( [
 					{
 						property: 'outline-color',
-					}
+					},
 				] ) };
 
 				display: inline-flex;
@@ -37,32 +39,30 @@ export function selectStyles() {
 				${ outline( 'var( --xb-select-outline-color )', 'var( --xb-select-outline-offset )' ) };
 			}
 
-			${ $.enabled.focused.css() }  {
+			${ $.enabled.focused.css() } {
 				--xb-select-picker-border-color: ${ toCSSResult( 'color-primary-300' ) };
 				--xb-select-outline-color: ${ toCSSResult( 'color-primary-100' ) };
 			}
 
 			#picker {
 				${ transition( [
-
 					{
 						property: 'border-color',
 					},
-
 				] ) };
 
 				display: flex;
 				align-items: center;
-				gap: 8px;
+				gap: ${ toCSSResult( 'spacing-1' ) };
 
 				box-sizing: border-box;
 
-				border: 1px solid var(--xb-select-picker-border-color);
+				border: 1px solid var( --xb-select-picker-border-color );
 				border-radius: 8px;
 				padding-inline: 14px 0;
 				padding-block: 0;
 
-				block-size: 44px;
+				block-size: 40px;
 			}
 
 			#trigger {
@@ -73,7 +73,8 @@ export function selectStyles() {
 
 				border: none;
 				height: 100%;
-				padding-block: 10px;
+				padding-block: ${ toCSSResult( 'spacing-2' ) };
+				padding-inline: 0;
 				outline: none;
 
 				color: ${ toCSSResult( 'color-gray-900' ) };
@@ -85,13 +86,14 @@ export function selectStyles() {
 				align-items: center;
 			}
 
-			${baseButtonStyles('#handle')}
+			#leading:empty {
+				display: none;
+			}
+
+			${ baseButtonStyles( '#handle' ) }
 
 			#handle {
-				${ transition( [
-					{ property: 'transform' },
-					{ property: 'color' },
-				] ) };
+				${ transition( [ { property: 'transform' }, { property: 'color' } ] ) };
 
 				box-sizing: border-box;
 
@@ -113,7 +115,13 @@ export function selectStyles() {
 export function menuStyles() {
 	return [
 		menuHostStyles(),
-		menuContentStyles('[role="listbox"]'),
+		menuContentStyles( '[role="listbox"]' ),
+		floatingElementStyles( {
+			floatingSelector: '[role="listbox"]',
+		} ),
+		expandableElementStyles( {
+			expandableSelector: '[role="listbox"]',
+		} ),
 		css`
 			#spinner {
 				visibility: hidden;
@@ -121,8 +129,13 @@ export function menuStyles() {
 		        --xb-floating-min-width: 16ch; */
 			}
 
-			:host([loading]) #spinner {
+			:host( [loading] ) #spinner {
 				visibility: visible;
+			}
+
+			/* Hide all options when collapsing to prevent visual glitch */
+			:host( [collapsing] ) ::slotted( xb-option ) {
+				display: none !important;
 			}
 		`,
 	];
@@ -138,14 +151,14 @@ export function optionStyles() {
 				color: ${ toCSSResult( 'color-primary-600' ) };
 			}
 
-			:host([selected]) {
-				--xb-item-background-color: ${toCSSResult('color-gray-50')};
+			:host( [selected] ) {
+				--xb-item-background-color: ${ toCSSResult( 'color-gray-50' ) };
 			}
 
-			:host([selected]) #check {
+			:host( [selected] ) #check {
 				visibility: visible;
 			}
 		`,
-		menuItemStyles()
+		menuItemStyles(),
 	];
 }

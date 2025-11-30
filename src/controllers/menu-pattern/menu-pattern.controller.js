@@ -1,4 +1,5 @@
 import { FocusManagerController } from '../focus-manager';
+import { isInsideElement } from '../../utils/events';
 import { KeyboardSupportController } from '../keyboard-support';
 
 const ITEM_QUERY = '[role="menuitem"]';
@@ -14,7 +15,7 @@ const ITEM_QUERY = '[role="menuitem"]';
  * @implements {ReactiveController}
  * @see {@link https://www.w3.org/WAI/ARIA/apg/patterns/menu-button ARIA APG, Menu Button Pattern}
  */
-class MenuPatternController {
+export class MenuPatternController {
 	/** @type {MenuPatternControllerHost} */
 	host;
 
@@ -25,8 +26,6 @@ class MenuPatternController {
 	 * @param {MenuPatternControllerHost} host
 	 */
 	constructor( host ) {
-		this.host = host;
-
 		this.controllers = {
 			focus: new FocusManagerController( host, {
 				// TODO: adjust to comply with https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#focusabilityofdisabledcontrols
@@ -67,7 +66,7 @@ class MenuPatternController {
 			] ),
 		};
 
-		this.host.addController( this );
+		(this.host = host).addController( this );
 	}
 
 	get focus() {
@@ -94,8 +93,15 @@ class MenuPatternController {
 		this.host.removeEventListener( 'click', this.#onOptionClick );
 	}
 
-	#onFocusIn = () => {
+	/**
+	 * @param {FocusEvent} event
+	 */
+	#onFocusIn = ( event ) => {
 		const firstSelected = this.queried.find( ( item ) => item.selected && ! item.disabled );
+
+		if (isInsideElement(event, this.host)) {
+			this.controllers.keyboard.activate();
+		}
 
 		if ( ! firstSelected ) {
 			this.controllers.focus.focusFirst();
@@ -106,6 +112,7 @@ class MenuPatternController {
 
 	#onFocusOut = () => {
 		this.controllers.focus.clear();
+		this.controllers.keyboard.deactivate();
 	};
 
 	/**

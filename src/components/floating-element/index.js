@@ -1,5 +1,9 @@
 export { FloatingElement } from './floating-element';
-export { default as floatingStyles } from './floating-element.styles';
+export {
+	default as floatingStyles,
+	floatingHostStyles,
+	floatingElementStyles,
+} from './floating-element.styles';
 
 /**
  * @typedef {import('./floating-element').FloatingElementAttributes} FloatingElementAttributes

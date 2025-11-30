@@ -1,23 +1,25 @@
 import { html } from 'lit';
 import { property } from 'lit/decorators.js';
 
-import { XBElement } from '../xb-element';
-import { FloatingElement } from '../floating-element';
 import { BoundaryController } from '../../controllers/boundary';
-import { FocusManagerController } from '../../controllers/focus-manager';
+import { ExpandableController } from '../../controllers/expandable';
+import { FloatingElement } from '../floating-element';
+import { FocusManagerController, TypeAheadPlugin } from '../../controllers/focus-manager';
+import { isInsideElement } from '../../utils/events';
 import { KeyboardSupportController } from '../../controllers/keyboard-support';
+import { supportsPopover } from '../../utils/top-layer';
+import { XBElement } from '../xb-element';
 
 import { dropdownStyles } from './dropdown.styles';
-import { supportsPopover } from '../../utils/top-layer';
 
 export class Dropdown extends FloatingElement {
-	static styles = [dropdownStyles()];
+	static styles = [ dropdownStyles() ];
 
 	/**
 	 * Should the dropdown be disabled.
 	 * @type {DropdownAttributes['disabled']}
 	 */
-	@property({ type: Boolean, reflect: true }) accessor disabled;
+	@property( { type: Boolean, reflect: true } ) accessor disabled;
 
 	/** @type {DropdownControllers} */
 	#controllers;
@@ -28,8 +30,8 @@ export class Dropdown extends FloatingElement {
 	 *  registry: CustomElementRegistry,
 	 * }} config
 	 */
-	static define(config) {
-		XBElement.define({ name: 'xb-dropdown', ...config, type: Dropdown });
+	static define( config ) {
+		XBElement.define( { name: 'xb-dropdown', ...config, type: Dropdown } );
 	}
 
 	constructor() {
@@ -40,14 +42,20 @@ export class Dropdown extends FloatingElement {
 		this.disabled = false;
 
 		this.#controllers = {
-			boundary: new BoundaryController(this),
-			focus: new FocusManagerController(this, {
+			boundary: new BoundaryController( this ),
+			expandable: new ExpandableController( this, {
+				getExpandableElement: () => {
+					return this.getFloatingElement();
+				},
+				isExpanded: () => Boolean( this.open ),
+			} ),
+			focus: new FocusManagerController( this, {
 				query: '[role="menuitem"]',
-				getControllerTarget: (host) => {
+				getControllerTarget: ( host ) => {
 					return host.getFloatingElement();
 				},
-			}),
-			keyboard: new KeyboardSupportController(this, [
+			} ).use( new TypeAheadPlugin() ),
+			keyboard: new KeyboardSupportController( this, [
 				{
 					shortcut: {
 						key: 'ArrowUp',
@@ -55,14 +63,20 @@ export class Dropdown extends FloatingElement {
 					/**
 					 * @param {KeyboardEvent} event
 					 */
-					handler: (event) => {
-						if (event.target.matches('[aria-haspopup="true"]')) {
-							this.expand({ position: 'last' });
+					handler: ( event ) => {
+						const { target } = event;
+
+						if (!target || this.disabled) {
+							return;
+						}
+
+						if ( target.matches( '[aria-haspopup="true"]' ) ) {
+							this.expand( { position: 'last' } );
 
 							return;
 						}
 
-						if (event.target.matches('[role="menu"]')) {
+						if ( event.target.matches( '[role="menu"]' ) ) {
 							this.#controllers.focus.focusPrevious();
 
 							return;
@@ -76,14 +90,20 @@ export class Dropdown extends FloatingElement {
 					/**
 					 * @param {KeyboardEvent} event
 					 */
-					handler: (event) => {
-						if (event.target.matches('[aria-haspopup="true"]')) {
-							this.expand({ emit: false, position: 'first' });
+					handler: ( event ) => {
+						const { target } = event;
+
+						if (!target || this.disabled) {
+							return;
+						}
+
+						if ( target.matches( '[aria-haspopup="true"]' ) ) {
+							this.expand( { emit: false, position: 'first' } );
 
 							return;
 						}
 
-						if (event.target.matches('[role="menu"]')) {
+						if ( event.target.matches( '[role="menu"]' ) ) {
 							this.#controllers.focus.focusNext();
 
 							return;
@@ -99,16 +119,25 @@ export class Dropdown extends FloatingElement {
 							key: ' ',
 						},
 					],
-					handler: (event) => {
-						if (event.target.matches('[aria-haspopup="true"]')) {
-							this.toggle({ emit: false, position: 'first' });
+					/**
+					 * @param {KeyboardEvent} event
+					 */
+					handler: ( event ) => {
+						const { target } = event;
+
+						if (!target || this.disabled) {
+							return;
+						}
+
+						if ( event.target.matches( '[aria-haspopup="true"]' ) ) {
+							this.toggle( { emit: false, position: 'first' } );
 
 							return;
 						}
 
-						if (event.target.matches('[role="menu"]')) {
+						if ( event.target.matches( '[role="menu"]' ) ) {
 							const item = this.#controllers.focus.focused;
-							if (item?.disabled) {
+							if ( item?.disabled ) {
 								return;
 							}
 
@@ -117,49 +146,76 @@ export class Dropdown extends FloatingElement {
 					},
 				},
 				{
-					shortcut: [
-						{
-							key: 'Tab',
-						},
-						{
-							key: 'Tab',
-							shift: true,
-						},
-					],
+					shortcut: {
+						key: 'Escape',
+					},
+					/**
+					 * @param {KeyboardEvent} event
+					 */
 					handler: (event) => {
-						if (event.target.matches('[aria-haspopup="true"]') && this.open) {
-							this.#onClickOutside();
+						const { target } = event;
+
+						if (!target) {
+							return;
+						}
+
+						if (this.open) {
+							this.collapse({ focusOnTrigger: true });
 						}
 					},
 				},
-			]),
+			] ),
 		};
-
-		this.addEventListener('click', this.#onClick);
-		this.addEventListener('xb:interact-out', this.#onClickOutside);
 	}
 
-	firstUpdated() {
-		// moved the initialization to the dropdown-menu as it was the last one being fulled ready to be queried
-		// this.floating.setAttribute('aria-labelledby', this.reference.id);
-		// if (supportsPopover()) {
-		// 	this.floating.setAttribute('popover', 'manual');
-		// }
-		// this.reference.setAttribute('aria-controls', this.floating.id);
+	connectedCallback() {
+		super.connectedCallback();
+
+		this.addEventListener( 'click', this.#onClick );
+		this.addEventListener('focusin', this.#onFocusIn);
+		this.addEventListener( 'xb:interact-out', this.#onClickOutside );
+	}
+
+	disconnectedCallback() {
+		super.disconnectedCallback();
+
+		this.removeEventListener( 'click', this.#onClick );
+		this.removeEventListener('focusin', this.#onFocusIn);
+		this.removeEventListener( 'xb:interact-out', this.#onClickOutside );
+	}
+
+	/**
+	 *
+	 * @param {import('lit').PropertyValues<this>} changedProperties
+	 */
+	firstUpdated(changedProperties) {
+		if (this.floating?.id) {
+			this.reference?.setAttribute('aria-controls', this.floating.id);
+		}
+
+		if (this.reference?.id) {
+			this.floating?.setAttribute('aria-labelledby', this.reference.id);
+		}
+
+		super.firstUpdated(changedProperties);
 	}
 
 	/**
 	 * @param {import('lit').PropertyValues<this>} changedProperties
 	 */
-	updated(changedProperties) {
-		super.updated(changedProperties);
+	updated( changedProperties ) {
+		super.updated( changedProperties );
 
-		if (changedProperties.has('open')) {
-			if (this.open) {
-				this.reference.setAttribute('aria-expanded', 'true');
+		if ( changedProperties.has( 'open' ) ) {
+			if ( this.open ) {
+				this.reference.setAttribute( 'aria-expanded', 'true' );
 			} else {
-				this.reference.removeAttribute('aria-expanded');
+				this.reference.removeAttribute( 'aria-expanded' );
 			}
+		}
+
+		if (changedProperties.has('disabled') && this.reference) {
+			this.reference.disabled = this.disabled;
 		}
 	}
 
@@ -167,14 +223,14 @@ export class Dropdown extends FloatingElement {
 	 * @returns {HTMLElement | null}
 	 */
 	getReferenceElement() {
-		return this.querySelector('[aria-haspopup="true"]');
+		return this.querySelector( '[aria-haspopup="true"]' );
 	}
 
 	/**
 	 * @returns {HTMLElement | null}
 	 */
 	getFloatingElement() {
-		return this.querySelector('[role="menu"]');
+		return this.querySelector( '[role="menu"]' );
 	}
 
 	getArrowElement() {
@@ -192,7 +248,7 @@ export class Dropdown extends FloatingElement {
 	 * @param {Object} args
 	 * @param {'first' | 'last'} args.position - should focus on first or last dropdown item.
 	 */
-	async expand(args = { position: 'first' }) {
+	async expand( args = { position: 'first' } ) {
 		const { position = 'first' } = args;
 
 		this.show();
@@ -200,54 +256,64 @@ export class Dropdown extends FloatingElement {
 		await this.updateComplete;
 
 		this.floating.focus();
-		this.#controllers.focus.focus(position);
-		this.#controllers.boundary.activate();
+		this.#controllers.focus.focus( position );
 
-		this.emit('xb:dropdown-expand');
+		this.emit( 'xb:dropdown-expand' );
 	}
 
 	/**
 	 * Collapse dropdown menu.
+	 * @param {Object} args
+	 * @param {boolean} args.focusOnTrigger - should focus on the trigger.
 	 */
-	async collapse() {
+	collapse = async ( args = { focusOnTrigger: false } ) => {
+		const { focusOnTrigger = false } = args;
+
 		this.hide();
+
 		await this.updateComplete;
 
-		this.#controllers.boundary.deactivate();
 		this.#controllers.focus.clear();
-		this.reference.focus();
+		if (focusOnTrigger) {
+			this.reference.focus();
+		}
 
-		this.emit('xb:dropdown-collapse');
+		this.emit( 'xb:dropdown-collapse' );
 	}
 
 	/**
 	 * Toggle dropdown menu.
 	 * @param {Object} args
 	 * @param {boolean} args.emit - should emit `xb:dropdown-expand` or `xb-dropdown-collapse` event. Defaults to `true`.
+	 * @param {boolean} args.focusOnTrigger - should focus on the trigger.
 	 */
-	toggle(args) {
-		if (this.open) {
-			this.collapse();
+	toggle( args ) {
+		if ( this.open ) {
+			this.collapse( args );
 		} else {
-			this.expand(args);
+			this.expand( args );
 		}
 	}
 
 	/**
 	 * @param {Event} event
 	 */
-	#onClick = (event) => {
+	#onClick = ( event ) => {
 		const { target } = event;
 
+		if (!target) {
+			return;
+		}
+
 		// we are only interested in dropdown items
-		if (target.matches('[role="menuitem"]')) {
+		if ( target.matches( '[role="menuitem"]' ) ) {
 			/**
 			 * we set focus so we can trigger the item click event when the user
 			 * presses <Enter> or <Space>, through the KeyboardSupportController.
 			 */
-			this.#controllers.focus.focus(target);
+			this.#controllers.focus.focus( target );
 
-			this.collapse();
+			this.collapse({ focusOnTrigger: true });
 			return;
 		}
 
@@ -262,13 +328,32 @@ export class Dropdown extends FloatingElement {
 		 * - https://css-tricks.com/when-a-click-is-not-just-a-click/
 		 * - https://developer.mozilla.org/en-US/docs/Web/API/UIEvent/detail
 		 */
-		if (event.target.matches('[aria-haspopup="true"]') && event.detail > 0) {
+		if ( event.target.matches( '[aria-haspopup="true"]' ) && event.detail > 0 ) {
 			this.toggle();
 		}
 	};
 
 	#onClickOutside = () => {
+		this.#controllers.boundary.deactivate();
+		this.#controllers.keyboard.deactivate();
+
+		/**
+		 * When collapsing, the floating element (which received focus in expand())
+		 * will be hidden. The browser's default behavior is to automatically restore
+		 * focus to the previously focused element (the trigger) when a focused element
+		 * is removed or hidden from the DOM.
+		 */
 		this.collapse();
+	};
+
+	/**
+	 * @param {FocusEvent} event
+	 */
+	#onFocusIn = (event) => {
+		if (isInsideElement(event, this)) {
+			this.#controllers.boundary.activate();
+			this.#controllers.keyboard.activate();
+		}
 	};
 }
 
@@ -289,6 +374,7 @@ export class Dropdown extends FloatingElement {
  * @typedef {import('../../controllers/focus-manager').default} FocusManagerController
  * @typedef {import('../../controllers/keyboard-support').default} KeyboardSupportController
  * @typedef {import('../../controllers/boundary').default} BoundaryController
+ * @typedef {import('../../controllers/expandable').ExpandableController} ExpandableController
  */
 
 /**
@@ -296,5 +382,6 @@ export class Dropdown extends FloatingElement {
  *  boundary: BoundaryController;
  * 	focus: FocusManagerController;
  * 	keyboard: KeyboardSupportController;
+ * 	expandable: ExpandableController;
  * }} DropdownControllers
  */

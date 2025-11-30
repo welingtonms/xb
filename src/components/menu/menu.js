@@ -1,5 +1,5 @@
 import { BaseMenu } from './base-menu';
-import MenuPatternController from '../../controllers/menu-pattern';
+import { MenuPatternController } from '../../controllers/menu-pattern';
 
 import { XBElement } from '../xb-element';
 

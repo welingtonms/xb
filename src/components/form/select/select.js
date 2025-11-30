@@ -5,6 +5,7 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { AsFormElementMixin } from '../../../mixins/as-form-element';
 import { BoundaryController } from '../../../controllers/boundary';
 import { FloatingElement } from '../../floating-element';
+import { ExpandableController } from '../../../controllers/expandable';
 import { FormElement } from '../../form-element';
 import { KeyboardSupportController } from '../../../controllers/keyboard-support';
 import { RovingFocusController } from '../../../controllers/focus-manager';
@@ -67,11 +68,16 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 	 */
 	@property( { type: String } ) accessor type;
 
+	@property( { type: String, attribute: true } ) accessor borderless;
+
 	/** @type {SelectOption[]} */
 	@state() accessor slottedOptions;
 
 	/** @type {SelectOption[]} */
 	@state() accessor filteredOptions;
+
+	/** @type {boolean} */
+	// @state() accessor isCollapsing = false;
 
 	/** @type {SelectControllers} */
 	#controllers;
@@ -103,15 +109,22 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 
 		// this.datasources = [];
 		this.type = 'single';
-		this.placeholder = 'Search & Select';
+		this.placeholder = '';
 		this.position = 'fixed';
 		this.placement = 'bottom-start';
+		this.borderless = 'none';
 
 		this.slottedOptions = [];
 		this.filteredOptions = [];
 
 		this.#controllers = {
 			boundary: new BoundaryController( this ),
+			expandable: new ExpandableController( this, {
+				getExpandableElement: () => {
+					return this.getFloatingElement();
+				},
+				isExpanded: () => Boolean( this.open ),
+			} ),
 			// data: new DataController( this, this.datasources ),
 			focus: new RovingFocusController( this, {
 				query: () => {
@@ -189,7 +202,7 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 							/** @type {HTMLElement} */
 							const element = event.target;
 
-							if ( ! element.matches( 'xb-select-option' ) ) {
+							if ( ! element.matches( 'xb-option' ) ) {
 								return;
 							}
 
@@ -209,9 +222,28 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 
 								this.#toggleValue( option.value );
 
-								if ( ! this.multiple ) {
-									this.collapse(); // Collapse after selection
+								if ( this.type !== 'multiple' ) {
+									this.collapse({ focusOnTrigger: true });
 								}
+							}
+						},
+					},
+					{
+						shortcut: {
+							key: 'Escape',
+						},
+						/**
+						 * @param {KeyboardEvent} event
+						 */
+						handler: (event) => {
+							const { target } = event;
+
+							if (!target) {
+								return;
+							}
+
+							if (this.open) {
+								this.collapse({ focusOnTrigger: true });
 							}
 						},
 					},
@@ -243,6 +275,7 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 	async connectedCallback() {
 		super.connectedCallback();
 
+		this.addEventListener('focusin', this.#onFocusIn);
 		this.addEventListener( 'xb:interact-out', this.#onClickOutside );
 		this.addEventListener( 'toggle', this.#onOptionToggle );
 
@@ -265,6 +298,7 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 			this.#form.removeEventListener( 'reset', this.#onFormReset );
 		}
 
+		this.removeEventListener('focusin', this.#onFocusIn);
 		this.removeEventListener( 'xb:interact-out', this.#onClickOutside );
 		this.removeEventListener( 'toggle', this.#onOptionToggle );
 	}
@@ -327,48 +361,51 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 
 	render() {
 		return html`
-			<div id="picker">
-				<span id="leading"></span>
+			<div>
+				<div id="picker">
+					<span id="leading"></span>
 
-				<input
-					aria-autocomplete="list"
-					aria-controls="menu"
-					aria-expanded=${ this.open ? 'true' : 'false' }
-					aria-haspopup="true"
-					id="trigger"
-					placeholder="${ this.placeholder }"
-					role="combobox"
-					type="text"
-					@change=${ this.#onTriggerChange }
-					@input=${ this.#onTriggerInput }
-					?disabled=${ this.disabled }
-				/>
-				<button
-					id="handle"
+					<input
+						aria-autocomplete="list"
+						aria-controls="menu"
+						aria-expanded=${ this.open ? 'true' : 'false' }
+						aria-haspopup="true"
+						autocomplete="off"
+						id="trigger"
+						placeholder="${ this.placeholder }"
+						role="combobox"
+						type="text"
+						@change=${ this.#onTriggerChange }
+						@input=${ this.#onTriggerInput }
+						?disabled=${ this.disabled }
+					/>
+					<button
+						id="handle"
+						tabindex="-1"
+						aria-controls="menu"
+						aria-expanded=${ this.open ? 'true' : 'false' }
+						?disabled=${ this.disabled }
+						@click=${ this.#onHandleClick }
+					>
+						<xb-icon aria-hidden="true" name="caret-down"></xb-icon>
+					</button>
+				</div>
+
+				<div
+					id="menu"
+					aria-labelledby="trigger"
+					role="listbox"
 					tabindex="-1"
-					aria-controls="menu"
-					aria-expanded=${ this.open ? 'true' : 'false' }
-					?disabled=${ this.disabled }
-					@click=${ this.#onHandleClick }
+					aria-multiselectable=${ this.type === 'multiple' ? 'true' : 'false' }
 				>
-					<xb-icon aria-hidden="true" name="caret-down"></xb-icon>
-				</button>
-			</div>
-
-			<div
-				id="menu"
-				aria-labelledby="trigger"
-				role="listbox"
-				tabindex="-1"
-				aria-multiselectable=${ this.multiple ? 'true' : 'false' }
-			>
-				<xb-spinner id="spinner"></xb-spinner>
-				<slot name="select-option" @slotchange=${ this.#onSlotChange }></slot>
-				${ this.filteredOptions.length === 0
-					? html`
-							<xb-box borderless="all">No options.</xb-box>
-					  `
-					: nothing }
+					<xb-spinner id="spinner"></xb-spinner>
+					<slot name="select-option" @slotchange=${ this.#onSlotChange }></slot>
+					${ this.filteredOptions.length === 0
+						? html`
+								<xb-box borderless="all">No options.</xb-box>
+						  `
+						: nothing }
+				</div>
 			</div>
 		`;
 	}
@@ -402,8 +439,6 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 
 		this.show();
 
-		this.#controllers.boundary.activate();
-
 		this.emit( 'expand' );
 	};
 
@@ -412,28 +447,33 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 	 * @param {Object} options
 	 * @param {boolean} options.focusOnTrigger - should focus on the trigger.
 	 */
-	collapse = async ( options = { focusOnTrigger: true } ) => {
+	collapse = async ( options = { focusOnTrigger: false } ) => {
 		this.hide();
 
-		this.#controllers.boundary.deactivate();
 		this.#controllers.focus.clear();
 
-		await this.#clearSearch();
 		this.#updateTrigger();
-
-		this.emit( 'collapse' );
 
 		if ( options.focusOnTrigger ) {
 			this.reference?.focus();
 		}
+
+		// Clear search after collapse is complete to avoid visual glitch
+		setTimeout( () => {
+			this.#clearSearch();
+		}, 300 ); // Slightly longer than the hide animation
+
+		this.emit( 'collapse' );
 	};
 
 	/**
 	 * Toggle select menu.
+	 * @param {Object} options
+	 * @param {boolean} options.focusOnTrigger - should focus on the trigger.
 	 */
-	toggle = async () => {
+	toggle = async ( optionSlot ) => {
 		if ( this.open ) {
-			await this.collapse();
+			await this.collapse( options );
 		} else {
 			this.expand();
 		}
@@ -554,18 +594,6 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 	 * @param {Event} event
 	 */
 	#onClick = ( event ) => {
-		// if ( event.target.matches( ITEM_QUERY ) ) {
-		// 	const { /** @type {Option} */ target } = event;
-
-		// 	this.#toggleValue( target.value );
-
-		// 	if ( ! this.multiple ) {
-		// 		this.collapse();
-		// 	}
-
-		// 	return;
-		// }
-
 		/**
 		 * <Enter> or <Space> keys also trigger the click event.
 		 * In that case, we do not want to respond to the key event, since
@@ -582,8 +610,18 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 		}
 	};
 
-	#onClickOutside = async ( event ) => {
-		this.collapse( { focusOnTrigger: false } );
+	#onFocusIn = (event) => {
+		if (event.target === this) {
+			this.#controllers.boundary.activate();
+			this.#controllers.keyboard.activate();
+		}
+	};
+
+	#onClickOutside = async ( ) => {
+		this.#controllers.boundary.deactivate();
+		this.#controllers.keyboard.deactivate();
+
+		this.collapse();
 	};
 
 	/**
@@ -645,8 +683,8 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 
 			this.#toggleValue( target.value );
 
-			if ( ! this.multiple ) {
-				this.collapse();
+			if ( this.type !== 'multiple' ) {
+				this.collapse({ focusOnTrigger: true });
 			}
 		}
 	};
@@ -660,12 +698,6 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 
 		this.#searchTerm = String( event.target.value ).trim();
 		this.#clearSearchDebounce();
-
-		/**
-		 * Clear focus when typing starts. With roving tabindex, this means resetting tabindex.
-		 * We might want to keep focus on the input itself during typing.
-		 */
-		// this.#controllers.focus.clear(); // Clearing might not be needed if focus stays on input
 
 		this.#searchTimeout = setTimeout( () => {
 			if ( ! this.open ) {

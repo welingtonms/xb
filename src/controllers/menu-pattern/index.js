@@ -1,6 +1,6 @@
-export { default } from './menu-pattern.controller';
+export { MenuPatternController } from './menu-pattern.controller';
 
 /**
- * @typedef {import('./menu-pattern.controller').default} ListboxController
- * @typedef {import('./menu-pattern.controller').ListboxControllerHost} ListboxControllerHost
+ * @typedef {import('./menu-pattern.controller').MenuPatternController} MenuPatternController
+ * @typedef {import('./menu-pattern.controller').MenuPatternControllerHost} MenuPatternControllerHost
  */
