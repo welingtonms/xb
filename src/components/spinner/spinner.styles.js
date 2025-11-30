@@ -37,18 +37,12 @@ function styles() {
 				width: 0;
 				height: var( --xb-spinner-height );
 
-				background-color: ${ toCSSResult( 'color-primary-100' ) };
-				background-image: linear-gradient(
-					90deg,
-					${ toCSSResult( 'color-primary-100' ) } 0%,
-					${ toCSSResult( 'color-rose-600' ) } 100%
-				);
+				background-color: rgb(var(--xb-color-rose-800));
+				background-image: linear-gradient( 90deg, rgb(var(--xb-color-rose-800)) 0%, rgb(var(--xb-color-rose-200)) 100% );
 
 				background-size: 400% 400%;
 
-				filter: progid:dximagetransform.microsoft.gradient(startColorstr="${ toCSSResult(
-					'color-primary-100'
-				) }",endColorstr="${ toCSSResult( 'color-rose-600' ) }",GradientType=1);
+				filter: progid:dximagetransform.microsoft.gradient(startColorstr="rgb(var(--xb-color-rose-800))",endColorstr="rgb(var(--xb-color-rose-200))",GradientType=1);
 				animation: borealis-bar 2s ease infinite;
 			}
 

@@ -21,6 +21,7 @@ export function separatorStyles() {
 			hr {
 				margin: 0;
 				border: none;
+				color: inherit;
 				border-top: 1px solid currentColor;
 			}
 		`,

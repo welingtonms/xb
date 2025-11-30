@@ -60,24 +60,49 @@ export const Playground = {
 					<xb-dropdown-item onclick={ args.click } icon="user">
 						View profile
 					</xb-dropdown-item>
-					<xb-dropdown-item onclick={ args.click } icon="gear">Settings</xb-dropdown-item>
-					<xb-dropdown-item onclick={ args.click } icon="keyboard">Keyboard shortcuts</xb-dropdown-item>
+					<xb-dropdown-item onclick={ args.click } icon="gear">
+						Settings
+					</xb-dropdown-item>
+					<xb-dropdown-item onclick={ args.click } icon="keyboard">
+						Keyboard shortcuts
+					</xb-dropdown-item>
 					<xb-separator />
-					<xb-dropdown-item onclick={ args.click } icon="building">Company profile</xb-dropdown-item>
-					<xb-dropdown-item onclick={ args.click } icon="users">Teams</xb-dropdown-item>
-					<xb-dropdown-item onclick={ args.click } icon="user-plus">Invite colleagues</xb-dropdown-item>
+					<xb-dropdown-item onclick={ args.click } icon="building">
+						Company profile
+					</xb-dropdown-item>
+					<xb-dropdown-item onclick={ args.click } icon="users">
+						Teams
+					</xb-dropdown-item>
+					<xb-dropdown-item onclick={ args.click } icon="user-plus">
+						Invite colleagues
+					</xb-dropdown-item>
 					<xb-separator />
-					<xb-dropdown-item onclick={ args.click } icon="stack-simple">Changelog</xb-dropdown-item>
-					<xb-dropdown-item onclick={ args.click } icon="slack-logo">Slack community</xb-dropdown-item>
-					<xb-dropdown-item onclick={ args.click } icon="question">Support</xb-dropdown-item>
-					<xb-dropdown-item onclick={ args.click } icon="code">API</xb-dropdown-item>
+					<xb-dropdown-item onclick={ args.click } icon="stack-simple">
+						Changelog
+					</xb-dropdown-item>
+					<xb-dropdown-item onclick={ args.click } icon="slack-logo">
+						Slack community
+					</xb-dropdown-item>
+					<xb-dropdown-item onclick={ args.click } icon="question">
+						Support
+					</xb-dropdown-item>
+					<xb-dropdown-item onclick={ args.click } icon="code">
+						API
+					</xb-dropdown-item>
 					<xb-separator />
-					<xb-dropdown-item onclick={ args.click } icon="sign-out">Logout</xb-dropdown-item>
+					<xb-dropdown-item onclick={ args.click } icon="sign-out">
+						Logout
+					</xb-dropdown-item>
 				</xb-dropdown-menu>
 			</xb-dropdown>
 
 			<xb-dropdown placement={ args.placement }>
-				<xb-button variant="icon" aria-haspopup="true" aria-label="Life Actions" disabled={ args.disabled }>
+				<xb-button
+					variant="icon"
+					aria-haspopup="true"
+					aria-label="Life Actions"
+					disabled={ args.disabled }
+				>
 					<xb-icon name="dots-three-vertical" size={ 16 }></xb-icon>
 				</xb-button>
 

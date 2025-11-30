@@ -24,6 +24,7 @@ function styles() {
 
 				inline-size: var( --xb-icon-size );
 				block-size: var( --xb-icon-size );
+				font-size: var( --xb-icon-size );
 
 				color: var( --xb-icon-color );
 				fill: var( --xb-icon-color );
@@ -38,6 +39,7 @@ function styles() {
 
 				inline-size: var( --xb-icon-size );
 				block-size: var( --xb-icon-size );
+				font-size: var( --xb-icon-size );
 
 				color: inherit !important;
 				fill: inherit !important;

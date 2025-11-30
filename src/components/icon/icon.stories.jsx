@@ -6,12 +6,12 @@ import './icon.define';
 export default {
 	title: 'Components/Icon',
 	parameters: {
-	  layout: 'padded',
+		layout: 'padded',
 	},
 	argTypes: {
 		name: {
 			control: 'select',
-			options: Object.keys( Icons ),
+			options: Object.keys( Icons ).sort(),
 		},
 		size: {
 			control: {

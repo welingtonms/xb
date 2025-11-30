@@ -277,6 +277,7 @@ function styles( selector = ':host' ) {
 			${ icon.css() } {
 				--xb-button-background-color: ${ toCSSResult( 'color-white' ) };
 				--xb-button-border-color: ${ toCSSResult( 'color-white' ) };
+				--xb-button-border-radius: 50%;
 				--xb-button-color: ${ toCSSResult( 'color-gray-600' ) };
 			}
 
@@ -291,7 +292,7 @@ function styles( selector = ':host' ) {
 				--xb-button-border-color: ${ toCSSResult( 'color-white' ) };
 				--xb-button-color: ${ toCSSResult( 'color-gray-600' ) };
 
-				--xb-button-outline-color: ${ toCSSResult( 'color-gray-100' ) };
+				--xb-button-outline-color: ${ toCSSResult( 'color-primary-100' ) };
 			}
 
 			${ icon.disabled.css() } {
@@ -304,16 +305,6 @@ function styles( selector = ':host' ) {
 			a {
 				position: absolute;
 				inset: 0;
-			}
-
-			/* Add pseudo-element for outline */
-			button:focus-visible::after {
-				content: '';
-				position: absolute;
-				inset: -4px; /* Adjust this value to control outline distance */
-				border-radius: calc( var( --xb-button-border-radius, 8px ) + 4px );
-				border: 2px solid var( --xb-button-outline-color, ${ toCSSResult( 'color-primary-100' ) } );
-				pointer-events: none;
 			}
 		`,
 	];

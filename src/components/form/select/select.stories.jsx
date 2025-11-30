@@ -32,10 +32,9 @@ export default {
 				type: 'boolean',
 			},
 		},
-		multiple: {
-			control: {
-				type: 'boolean',
-			},
+		type: {
+			control: 'radio',
+			options: [ 'single-strict', 'single', 'multiple' ],
 		},
 	},
 };
@@ -64,7 +63,7 @@ export const Playground = {
 				name="xb-select"
 				default-value="change"
 				loading={ args.loading }
-				multiple={ args.multiple }
+				type={ args.type }
 				onchange={ args.change }
 				disabled={ args.disabled }
 			>
@@ -77,7 +76,7 @@ export const Playground = {
 				name="xb-select"
 				default-value="change"
 				loading={ args.loading }
-				multiple={ args.multiple }
+				type={ args.type }
 				onchange={ args.change }
 				disabled={ args.disabled }
 			>
@@ -97,7 +96,7 @@ export const Playground = {
 	args: {
 		// placement: 'bottom-start',
 		loading: false,
-		multiple: false,
+		type: 'single',
 		disabled: false,
 	},
 };
@@ -113,7 +112,7 @@ export const Playground = {
 // 				<xb-select
 // 					@xb:change=${ args.change }
 // 					?disabled=${ args.disabled }
-// 					?multiple=${ args.multiple }
+// 					type=${ args.type }
 // 				>
 // 					<xb-option value="change">Change</xb-option>
 // 					<xb-option value="accept">Accept</xb-option>
@@ -126,7 +125,7 @@ export const Playground = {
 // 				<xb-select
 // 					@xb:change=${ args.change }
 // 					?disabled=${ args.disabled }
-// 					?multiple=${ args.multiple }
+// 					type=${ args.type }
 // 					.value=${ { label: 'Accept', value: 'accept' } }
 // 				>
 // 					<xb-option value="change">Change</xb-option>
@@ -138,7 +137,7 @@ export const Playground = {
 // 	`,
 
 // 	args: {
-// 		multiple: false,
+// 		type: 'single',
 // 	},
 // };
 
@@ -159,7 +158,7 @@ export const Playground = {
 // 				<xb-select
 // 					@xb:change=${ args.change }
 // 					?disabled=${ args.disabled }
-// 					?multiple=${ args.multiple }
+// 					type=${ args.type }
 // 					.datasources=${ [ useSyncFruits ] }
 // 				></xb-select>
 // 			</xb-stack>
@@ -169,7 +168,7 @@ export const Playground = {
 // 				<xb-select
 // 					@xb:change=${ args.change }
 // 					?disabled=${ args.disabled }
-// 					?multiple=${ args.multiple }
+// 					type=${ args.type }
 // 					.datasources=${ [ useSyncFruits ] }
 // 					.value=${ { label: 'Papaya', value: 'papaya' } }
 // 				></xb-select>
@@ -178,7 +177,7 @@ export const Playground = {
 // 	`,
 
 // 	args: {
-// 		multiple: false,
+// 		type: 'single',
 // 	},
 // };
 
@@ -192,7 +191,7 @@ export const Playground = {
 // 				<xb-select
 // 					@xb:change=${ args.change }
 // 					?disabled=${ args.disabled }
-// 					?multiple=${ args.multiple }
+// 					type=${ args.type }
 // 					.datasources=${ [ useAsyncFruits, useAsyncUsers ] }
 // 				></xb-select>
 // 			</xb-stack>
@@ -200,7 +199,7 @@ export const Playground = {
 // 			<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
 // 				<xb-text variant="subtitle-2">Async datasource with initial value</xb-text>
 // 				<xb-select
-// 					?multiple=${ args.multiple }
+// 					type=${ args.type }
 // 					@xb:change=${ args.change }
 // 					?disabled=${ args.disabled }
 // 					.datasources=${ [ useAsyncUsers, useAsyncFruits ] }
@@ -218,6 +217,6 @@ export const Playground = {
 // 	`,
 
 // 	args: {
-// 		multiple: false,
+// 		type: 'single',
 // 	},
 // };
