@@ -1,5 +1,5 @@
 import toArray from '../../utils/to-array';
-
+import { ToggleableController } from '../togglable.controller';
 import createLogger from '../../utils/logger';
 
 const logger = createLogger( 'keyboard-support' );
@@ -25,10 +25,7 @@ export function getShortcutKey( shortcut ) {
  * @class
  * @implements {ReactiveController}
  */
-export class KeyboardSupportController {
-	/** @type {ReactiveControllerHost & XBElement} */
-	host;
-
+export class KeyboardSupportController extends ToggleableController {
 	/** @type {Map<string, CallableFunction>} */
 	keymap;
 
@@ -51,6 +48,10 @@ export class KeyboardSupportController {
 	 * @param {KeyboardSupportControllerOptions} options
 	 */
 	constructor( host, keymap, options = {} ) {
+		super(host, {
+			controllerType: 'keyboard-support-controller',
+		});
+
 		this.keymap = new Map(
 			toArray( keymap ).reduce( ( map, { shortcut, handler } ) => {
 				function createShortcut( shortcut ) {
@@ -60,18 +61,25 @@ export class KeyboardSupportController {
 				return map.concat( toArray( shortcut ).map( createShortcut ) );
 			}, [] )
 		);
-		this.getControllerTarget = options?.getControllerTarget ?? ( ( host ) => host );
 
-		( this.host = host ).addController( this );
+		this.getControllerTarget = options?.getControllerTarget ?? ( ( host ) => host );
 	}
 
-	async hostConnected() {
-		await this.host.updateComplete;
+	activate() {
+		this.#subscribe();
+		super.activate();
+	}
 
+	deactivate() {
+		this.#unsubscribe();
+		super.deactivate();
+	}
+
+	#subscribe() {
 		this.getControllerTarget( this.host ).addEventListener( 'keyup', this.#onKeyUp );
 	}
 
-	hostDisconnected() {
+	#unsubscribe() {
 		this.getControllerTarget( this.host ).removeEventListener( 'keyup', this.#onKeyUp );
 	}
 
@@ -79,6 +87,10 @@ export class KeyboardSupportController {
 	 * @param {KeyboardEvent} event
 	 */
 	#onKeyUp = ( event ) => {
+		if (!this.active) {
+			return;
+		}
+
 		const shortcut = getShortcutKey( {
 			key: event.key,
 			meta: event.metaKey,
