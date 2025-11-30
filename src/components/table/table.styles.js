@@ -1,9 +1,9 @@
 import { css } from 'lit';
 
-import { px, py } from '../../styles/padding.styles';
 import toCSSResult from '../../utils/to-css-result';
 import transition from '../../styles/transition.styles';
 import typography from '../../styles/typography.styles';
+import { expandableStyles } from '../../controllers/expandable';
 import { baseButtonStyles, baseButtonHostStyles } from '../button';
 import { select } from '../../styles/selector';
 
@@ -123,6 +123,9 @@ export function tableCellStyles() {
 
 export function tableRowStyles() {
 	return [
+		expandableStyles( {
+			expandableSelector: '.expansion-container',
+		} ),
 		css`
 			:host {
 				display: block;
@@ -163,21 +166,9 @@ export function tableRowStyles() {
 			}
 
 			.expansion-container {
-				${ transition( [
-					{ property: 'max-height', easing: 'ease-out' },
-					{ property: 'color' },
-				] ) };
-
 				grid-column: 1 / -1;
 				display: grid;
-				max-height: 0;
 				overflow: hidden;
-			}
-
-			.expansion-container.is-expanded {
-				${ transition( [ { property: 'max-height', easing: 'ease-in' } ] ) };
-
-				max-height: 500px;
 			}
 		`,
 	];
@@ -185,6 +176,7 @@ export function tableRowStyles() {
 
 export function tableControlExpandStyles() {
 	const expandButton = select( '.expand-button' );
+
 	return [
 		baseButtonHostStyles(),
 		css`
@@ -202,7 +194,7 @@ export function tableControlExpandStyles() {
 			}
 
 			${ expandButton.enabled.focused.css() } {
-				--xb-button-outline-color: ${ toCSSResult( 'color-gray-100' ) };
+				--xb-button-outline-color: ${ toCSSResult( 'color-primary-100' ) };
 			}
 
 			.expand-button.-is-expanded #caret {
