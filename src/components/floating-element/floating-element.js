@@ -55,11 +55,27 @@ export class FloatingElement extends XBElement {
 	 */
 	@property( { type: Boolean, reflect: true } ) accessor open;
 
+	/**
+	 * Should the floating element be responsive.
+	 * @type {boolean}
+	 */
+	@property( { type: Boolean, reflect: true } ) accessor responsive;
+
 	/** @type {() => void} */
 	#cleanup;
 
-	constructor() {
+	/** @type {boolean} */
+	#usePopover;
+
+	/**
+	 * @param {Object} options
+	 * @param {boolean} [options.popover] - Should the floating element use the popover API. Defaults to `false`.
+	 */
+	constructor( options ) {
 		super();
+
+		const { popover = false } = options || {};
+		this.#usePopover = popover;
 	}
 
 	connectedCallback() {
@@ -68,8 +84,9 @@ export class FloatingElement extends XBElement {
 		this.position = this.position ?? 'fixed';
 		this.placement = this.placement ?? 'top-end';
 		this.open = this.open ?? false;
+		this.responsive = this.responsive ?? false;
 
-		if ( supportsPopover ) {
+		if ( this.#usePopover && supportsPopover() ) {
 			logger.debug( 'popover support detected' );
 		} else {
 			logger.debug( 'popover support not detected' );
@@ -82,6 +99,10 @@ export class FloatingElement extends XBElement {
 		if ( this.#cleanup ) {
 			this.#cleanup();
 		}
+
+		if ( this.#usePopover && this.floating && supportsPopover() ) {
+			this.floating.removeEventListener( 'toggle', this.#onPopoverToggle );
+		}
 	}
 
 	/**
@@ -89,6 +110,11 @@ export class FloatingElement extends XBElement {
 	 */
 	firstUpdated( changedProperties ) {
 		super.firstUpdated( changedProperties );
+
+		if ( this.#usePopover && this.floating && supportsPopover() ) {
+			this.floating.popover = 'auto';
+			this.floating.addEventListener( 'toggle', this.#onPopoverToggle );
+		}
 
 		if ( this.open ) {
 			this.show();
@@ -105,6 +131,15 @@ export class FloatingElement extends XBElement {
 			this.reposition( 'placement' );
 		}
 	}
+
+	/**
+	 * @param {ToggleEvent} event
+	 */
+	#onPopoverToggle = ( event ) => {
+		if ( event.newState === 'closed' && this.open ) {
+			this.handleExternalClose();
+		}
+	};
 
 	/**
 	 * @returns {HTMLElement | null}
@@ -204,6 +239,18 @@ export class FloatingElement extends XBElement {
 		} else {
 			this.show();
 		}
+	}
+
+	/**
+	 * Handle the event where the floating element is closed by an external
+	 * mechanism (e.g. browser light dismiss, ESC key on popover).
+	 *
+	 * Subclasses should override this if they need to perform state cleanup
+	 * beyond just hiding the element.
+	 * @protected
+	 */
+	handleExternalClose() {
+		this.hide();
 	}
 
 	/**

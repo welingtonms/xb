@@ -1,5 +1,7 @@
 import { css, unsafeCSS } from 'lit';
 
+import { select } from '../../styles/selector';
+
 export function floatingHostStyles() {
 	return [
 		css`
@@ -26,6 +28,10 @@ export function floatingHostStyles() {
  * @returns {import('lit').CSSResultArray}
  */
 export function floatingElementStyles( selectors ) {
+	const $ = select( ':host' ).attr( '[responsive]' );
+	const responsiveSelector =
+		selectors.floatingSelector === ':host' ? $ : $.descendant( selectors.floatingSelector );
+
 	return [
 		css`
 			${ unsafeCSS( selectors.floatingSelector ) } {
@@ -33,6 +39,24 @@ export function floatingElementStyles( selectors ) {
 				left: var( --xb-floating-left, 0 );
 
 				position: var( --xb-floating-position, initial );
+			}
+
+			@media ( max-width: 576px ) {
+				${ responsiveSelector.css() } {
+					position: fixed !important;
+					top: auto !important;
+					bottom: 0;
+					left: 0 !important;
+					right: 0;
+
+					width: 100%;
+					max-width: 100vw;
+
+					border-bottom-left-radius: 0;
+					border-bottom-right-radius: 0;
+
+					transform: none !important;
+				}
 			}
 		`,
 	];
