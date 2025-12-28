@@ -30,8 +30,6 @@ export class DropdownMenu extends BaseMenu {
 		this.setAttribute('aria-labelledby', trigger.id);
 		trigger.setAttribute('aria-controls', this.id);
 
-		if (supportsPopover()) {
-			this.setAttribute('popover', 'manual');
-		}
+
 	}
 }

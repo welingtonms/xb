@@ -35,7 +35,7 @@ export class Dropdown extends FloatingElement {
 	}
 
 	constructor() {
-		super();
+		super( { popover: true } );
 
 		this.position = 'absolute';
 		this.placement = 'bottom-end';
@@ -217,6 +217,10 @@ export class Dropdown extends FloatingElement {
 		if (changedProperties.has('disabled') && this.reference) {
 			this.reference.disabled = this.disabled;
 		}
+
+		if ( changedProperties.has( 'responsive' ) && this.floating && this.floating !== this ) {
+			this.floating.toggleAttribute( 'responsive', this.responsive );
+		}
 	}
 
 	/**
@@ -259,6 +263,13 @@ export class Dropdown extends FloatingElement {
 		this.#controllers.focus.focus( position );
 
 		this.emit( 'xb:dropdown-expand' );
+	}
+
+	/**
+	 * @see {@link FloatingElement.handleExternalClose}
+	 */
+	handleExternalClose() {
+		this.collapse();
 	}
 
 	/**

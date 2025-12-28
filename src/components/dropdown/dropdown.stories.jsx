@@ -25,6 +25,9 @@ export default {
 		disabled: {
 			control: 'boolean',
 		},
+		responsive: {
+			control: 'boolean',
+		},
 	},
 };
 
@@ -32,7 +35,7 @@ export default {
 export const Playground = {
 	render: ( args ) => (
 		<xb-cluster>
-			<xb-dropdown placement={ args.placement }>
+			<xb-dropdown placement={ args.placement } responsive={ args.responsive }>
 				<xb-dropdown-trigger disabled={ args.disabled }>Actions</xb-dropdown-trigger>
 
 				<xb-dropdown-menu>
@@ -53,7 +56,7 @@ export const Playground = {
 				</xb-dropdown-menu>
 			</xb-dropdown>
 
-			<xb-dropdown placement={ args.placement }>
+			<xb-dropdown placement={ args.placement } responsive={ args.responsive }>
 				<xb-dropdown-trigger disabled={ args.disabled }>Actions</xb-dropdown-trigger>
 
 				<xb-dropdown-menu>
@@ -96,7 +99,7 @@ export const Playground = {
 				</xb-dropdown-menu>
 			</xb-dropdown>
 
-			<xb-dropdown placement={ args.placement }>
+			<xb-dropdown placement={ args.placement } responsive={ args.responsive }>
 				<xb-button
 					variant="icon"
 					aria-haspopup="true"
@@ -130,5 +133,6 @@ export const Playground = {
 
 	args: {
 		placement: 'bottom-start',
+		responsive: true,
 	},
 };
