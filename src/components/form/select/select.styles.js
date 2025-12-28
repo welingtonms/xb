@@ -15,7 +15,7 @@ export function selectStyles() {
 	const $ = select( ':host' );
 
 	return [
-		layoutStyles(),
+		layoutStyles( { descendantSelector: '#picker' } ),
 		floatingHostStyles(),
 		expandableHostStyles(),
 		css`
@@ -68,11 +68,12 @@ export function selectStyles() {
 			#trigger {
 				${ typography( 'text-md' ) };
 
-				flex: 1;
+				field-sizing: content;
+				min-inline-size: 40px;
 				box-sizing: border-box;
 
 				border: none;
-				height: 100%;
+				height: calc( 100% - 2px );
 				padding-block: ${ toCSSResult( 'spacing-2' ) };
 				padding-inline: 0;
 				outline: none;
@@ -100,7 +101,7 @@ export function selectStyles() {
 				border: none;
 				height: 100%;
 				padding-block: 10px;
-				padding-inline: 14px;
+				padding-inline: 8px;
 
 				color: ${ toCSSResult( 'color-gray-500' ) };
 			}
@@ -131,11 +132,6 @@ export function menuStyles() {
 
 			:host( [loading] ) #spinner {
 				visibility: visible;
-			}
-
-			/* Hide all options when collapsing to prevent visual glitch */
-			:host( [collapsing] ) ::slotted( xb-option ) {
-				display: none !important;
 			}
 		`,
 	];
