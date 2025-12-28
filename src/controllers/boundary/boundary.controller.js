@@ -11,12 +11,11 @@ export class BoundaryController extends ToggleableController {
 	 * @param {boolean} [active] - Should the boundary check be active?
 	 */
 	constructor( host, active ) {
-		super(host, {
+		super( host, {
 			controllerType: 'boundary',
 			active,
-		});
+		} );
 	}
-
 
 	activate() {
 		this.#subscribe();
@@ -29,57 +28,54 @@ export class BoundaryController extends ToggleableController {
 	}
 
 	#subscribe() {
-		document.addEventListener('mousedown', this.#onEvent);
-		document.addEventListener('touchend', this.#onEvent);
-		document.addEventListener('focusout', this.#onFocusOutEvent);
+		document.addEventListener( 'mousedown', this.#onEvent );
+		document.addEventListener( 'touchend', this.#onEvent );
+		document.addEventListener( 'focusout', this.#onFocusOutEvent );
 
 		/** @type {ReactiveElement} */
 		const hostAsElement = this.host;
 		// eslint-disable-next-line prefer-destructuring
 		const renderRoot = hostAsElement.renderRoot;
-		if (renderRoot) {
-			renderRoot.addEventListener('focusout', this.#handleInnerFocusOutEvent);
+		if ( renderRoot ) {
+			renderRoot.addEventListener( 'focusout', this.#handleInnerFocusOutEvent );
 		}
 	}
 
 	#unsubscribe() {
-		document.removeEventListener('mousedown', this.#onEvent);
-		document.removeEventListener('touchend', this.#onEvent);
-		document.removeEventListener('focusout', this.#onFocusOutEvent);
+		document.removeEventListener( 'mousedown', this.#onEvent );
+		document.removeEventListener( 'touchend', this.#onEvent );
+		document.removeEventListener( 'focusout', this.#onFocusOutEvent );
 
 		/** @type {ReactiveElement} */
 		const hostAsElement = this.host;
 		// eslint-disable-next-line prefer-destructuring
 		const renderRoot = hostAsElement.renderRoot;
-		if (renderRoot) {
-			renderRoot.removeEventListener(
-				'focusout',
-				this.#handleInnerFocusOutEvent,
-			);
+		if ( renderRoot ) {
+			renderRoot.removeEventListener( 'focusout', this.#handleInnerFocusOutEvent );
 		}
 	}
 
 	/**
 	 * @param {MouseEvent | TouchEvent} event
 	 */
-	#onEvent = (event) => {
-		if (!this.active) {
+	#onEvent = ( event ) => {
+		if ( ! this.active ) {
 			return;
 		}
 
-		const isInside = isInsideElement(event, this.host);
+		const isInside = isInsideElement( event, this.host );
 
-		if (!isInside) {
+		if ( ! isInside ) {
 			event.stopPropagation();
-			this.host.dispatchEvent(new CustomEvent('xb:interact-out'));
+			this.host.dispatchEvent( new CustomEvent( 'xb:interact-out' ) );
 		}
 	};
 
 	/**
 	 * @param {FocusEvent} event
 	 */
-	#handleInnerFocusOutEvent = (event) => {
-		if (!this.active) {
+	#handleInnerFocusOutEvent = ( event ) => {
+		if ( ! this.active ) {
 			return;
 		}
 
@@ -96,25 +92,24 @@ export class BoundaryController extends ToggleableController {
 		 * why we check if the relatedTarget, which is the new element receiving focus, is
 		 * not null
 		 */
-		if (!relatedTarget || !this.host.shadowRoot) {
+		if ( ! relatedTarget || ! this.host.shadowRoot ) {
 			return;
 		}
 
 		const doesHostContainRelatedTarget =
-			this.host.shadowRoot.contains(relatedTarget) ||
-			this.host.contains(relatedTarget);
+			this.host.shadowRoot.contains( relatedTarget ) || this.host.contains( relatedTarget );
 
-		if (!doesHostContainRelatedTarget) {
+		if ( ! doesHostContainRelatedTarget ) {
 			event.stopPropagation();
-			this.host.dispatchEvent(new CustomEvent('xb:interact-out'));
+			this.host.dispatchEvent( new CustomEvent( 'xb:interact-out' ) );
 		}
 	};
 
 	/**
 	 * @param {FocusEvent} event
 	 */
-	#onFocusOutEvent = (event) => {
-		if (!this.active) {
+	#onFocusOutEvent = ( event ) => {
+		if ( ! this.active ) {
 			return;
 		}
 
@@ -128,13 +123,13 @@ export class BoundaryController extends ToggleableController {
 		 * why we check if the relatedTarget, which is the new element receiving focus, is
 		 * not null
 		 */
-		if (!relatedTarget) {
+		if ( ! relatedTarget ) {
 			return;
 		}
 
-		if (!this.host.contains(relatedTarget)) {
+		if ( ! this.host.contains( relatedTarget ) ) {
 			event.stopPropagation();
-			this.host.dispatchEvent(new CustomEvent('xb:interact-out'));
+			this.host.dispatchEvent( new CustomEvent( 'xb:interact-out' ) );
 		}
 	};
 }
