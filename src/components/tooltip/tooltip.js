@@ -2,11 +2,12 @@ import { html } from 'lit';
 import { property } from 'lit/decorators.js';
 
 import { convertTriggerFromAttribute } from './tooltip.helpers';
-import { FloatingElement } from '../../common/floating-element';
+import { FloatingElement } from '../floating-element';
+import { waitForAnimations } from '../../utils/wait-animations';
 import { WithIDMixin } from '../../mixins/with-id';
 import { XBElement } from '../xb-element';
 import createLogger from '../../utils/logger';
-import Keyboard from '../../common/keyboard';
+import Keyboard from '../../utils/keyboard';
 
 import styles from './tooltip.styles';
 
@@ -99,14 +100,14 @@ export class Tooltip extends WithIDMixin( FloatingElement ) {
 
 		if ( this.reference ) {
 			this.reference.setAttribute( 'aria-describedby', this.id );
+			// this.reference.style.setProperty( 'anchor-name', '--anchor' );
 		}
-		// <slot name="reference" aria-describedby="floating"></slot>
-		// <slot
-		// 	name="floating"
-		// 	id="floating"
-		// 	role="tooltip"
-		// 	aria-live=${ this.open ? 'polite' : 'off' }
-		// ></slot>
+
+		// this.style.setProperty( 'position-anchor', '--anchor' );
+
+		if ( ! this.open ) {
+			this.style.display = 'none';
+		}
 	}
 
 	update( changedProperties ) {
@@ -122,14 +123,12 @@ export class Tooltip extends WithIDMixin( FloatingElement ) {
 	 */
 	getReferenceElement() {
 		// source: https://github.com/microsoft/fast/blob/master/packages/web-components/fast-foundation/src/tooltip/tooltip.ts#L350
-		// private getAnchorElement(id: string = ""): HTMLElement | null {
 		const rootNode = this.getRootNode();
 		if ( rootNode instanceof ShadowRoot ) {
 			return rootNode.getElementById( this.anchor );
 		}
 
 		return document.getElementById( this.anchor );
-		// }
 	}
 
 	/**
@@ -145,8 +144,26 @@ export class Tooltip extends WithIDMixin( FloatingElement ) {
 
 	render() {
 		return html`
-			<slot></slot>
+			<span id="bubble">
+				<slot></slot>
+			</span>
 		`;
+	}
+
+	show() {
+		this.style.display = 'inline-flex';
+		super.show();
+	}
+
+	async hide() {
+		this.classList.add( 'is-closing' );
+
+		await waitForAnimations( this );
+
+		this.style.display = 'none';
+		this.classList.remove( 'is-closing' );
+
+		super.hide();
 	}
 
 	#onFocusIn = () => {
@@ -181,7 +198,7 @@ export class Tooltip extends WithIDMixin( FloatingElement ) {
 		if ( this.#hasTrigger( 'hover' ) ) {
 			clearTimeout( this.hoverTimeout );
 
-			this.hoverTimeout = window.setTimeout( () => this.show(), 450 );
+			this.hoverTimeout = window.setTimeout( () => this.show(), 250 );
 		}
 	};
 
@@ -189,7 +206,7 @@ export class Tooltip extends WithIDMixin( FloatingElement ) {
 		if ( this.#hasTrigger( 'hover' ) ) {
 			clearTimeout( this.hoverTimeout );
 
-			this.hoverTimeout = window.setTimeout( () => this.hide(), 250 );
+			this.hoverTimeout = window.setTimeout( () => this.hide(), 500 );
 		}
 	};
 

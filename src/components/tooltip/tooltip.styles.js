@@ -1,64 +1,130 @@
 import { css } from 'lit';
 
-import m from '../../styles/margin.styles';
-import p from '../../styles/padding.styles';
-import token from '../../utils/get-token';
+import { floatingStyles } from '../floating-element';
+import toCSSResult from '../../utils/to-css-result';
 import typography from '../../styles/typography.styles';
+import transition from '../../styles/transition.styles';
 
 function styles() {
 	return [
+		floatingStyles( {
+			floatingSelector: ':host',
+		} ),
 		css`
-			/**
-			* tooltip is a special case because the host itself is the floating part.
-			* that's why we are not loading floatinStyles as we do for the other floating
-			* elements.
-		 	*/
-			:host,
-			[popover] {
-				--xb-floating-background-color: ${ token( 'color-gray-800' ) };
-				--xb-floating-color: ${ token( 'color-white' ) };
+			:host {
+				--distance: 1em;
 
-				--xb-floating-top: 0;
-				--xb-floating-left: 0;
+				--m-tooltip-min-width: 80px;
+				--m-tooltip-max-width: 240px;
 
-				--xb-floating-box-shadow: none;
+				/* position: absolute; */
+				/* position-area: top; */
+				/* position-try-fallbacks: flip-block; */
+				/* bottom: var( --distance ); */
+			}
 
-				${ p( token( 'spacing-2' ) ) };
-				${ m( token( 'spacing-0' ) ) };
+			#bubble {
+				${ typography( 'text-sm' ) };
+				display: inline-flex;
+				background-color: ${ toCSSResult( 'color-gray-800' ) };
+				color: ${ toCSSResult( 'color-white' ) };
 
-				display: none;
-
-				position: fixed;
-
+				display: inline-block;
 				min-height: 24px;
 				width: max-content;
 				max-width: 40ch;
+				padding: ${ toCSSResult( 'spacing-2' ) };
 
-				overflow-x: hidden;
+				padding-inline: ${ toCSSResult( 'spacing-4' ) };
+				padding-block: ${ toCSSResult( 'spacing-2' ) };
+				margin: 0;
 
-				top: var( --xb-floating-top, 0 );
-				left: var( --xb-floating-left, 0 );
+				box-sizing: border-box;
+				inline-size: max-content;
+				min-inline-size: var( --m-tooltip-min-width );
+				max-inline-size: var( --m-tooltip-max-width );
+
+				overflow-x: visible;
+				overflow-y: visible;
 
 				border: none;
-				border-top-left-radius: var( --xb-floating-border-top-left-radius );
-				border-top-right-radius: var( --xb-floating-border-top-right-radius );
-				border-bottom-right-radius: var( --xb-floating-border-bottom-right-radius );
-				border-bottom-left-radius: var( --xb-floating-border-bottom-left-radius );
+				border-radius: ${ toCSSResult( 'radius-md' ) };
 
-				background-color: var( --xb-floating-background-color );
-				color: var( --xb-floating-color );
-
-				box-shadow: var( --xb-floating-box-shadow );
-				z-index: var( --xb-floating-z-index );
+				background-color: ${ toCSSResult( 'color-gray-800' ) };
+				color: ${ toCSSResult( 'color-white' ) };
 			}
 
-			:host( [open] ) {
-				display: inline-block;
+			@media ( prefers-reduced-motion: no-preference ) {
+				:host {
+					${ transition( [
+						{
+							property: 'opacity',
+							duration: '150ms',
+							easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+						},
+						{
+							property: 'transform',
+							duration: '150ms',
+							easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+						},
+					] ) };
+
+					animation: 150ms ease-in-out forwards;
+
+					will-change: transform, opacity, filter;
+				}
+
+				:host( [open] ) {
+					animation-name: pop-in;
+				}
+
+				:host( .is-closing ) {
+					animation-name: pop-out;
+				}
 			}
 
-			::slotted( * ) {
-				${ typography( 'body-2' ) };
-				color: var( --xb-floating-color );
+			:host( [placement^='top'] ) {
+				--xb-tooltip-initial-transform: translateY( 8px );
+			}
+
+			:host( [placement^='bottom'] ) {
+				--xb-tooltip-initial-transform: translateY( -8px );
+			}
+
+			:host( [placement^='left'] ) {
+				--xb-tooltip-initial-transform: translateX( 8px );
+			}
+
+			:host( [placement^='right'] ) {
+				--xb-tooltip-initial-transform: translateX( -8px );
+			}
+
+			@keyframes pop-in {
+				from {
+					filter: blur( 8px );
+					opacity: 0;
+					transform: var( --xb-tooltip-initial-transform, translateY( 8px ) );
+				}
+
+				to {
+					filter: blur( 0 );
+					opacity: 1;
+					transform: translate( 0 );
+				}
+			}
+
+			@keyframes pop-out {
+				from {
+					filter: blur( 0 );
+					opacity: 1;
+					transform: translate( 0 );
+				}
+
+				to {
+					filter: blur( 8px );
+					opacity: 0;
+					transform: var( --xb-tooltip-initial-transform, translateY( 8px ) );
+				}
 			}
 		`,
 	];
