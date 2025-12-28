@@ -31,8 +31,9 @@ const TooltipDemo = () => {
 		let isDragging = false;
 		let offsetX, offsetY;
 
-		anchor.addEventListener( 'mousedown', ( e ) => {
+		const onPointerDown = ( e ) => {
 			isDragging = true;
+			anchor.setPointerCapture( e.pointerId );
 
 			// Calculate offset between cursor and element's top-left corner
 			const rect = anchor.getBoundingClientRect();
@@ -40,35 +41,29 @@ const TooltipDemo = () => {
 			offsetY = e.clientY - rect.top;
 
 			anchor.style.cursor = 'grabbing';
-		} );
+		};
 
-		document.addEventListener( 'mousemove', ( e ) => {
+		const onPointerMove = ( e ) => {
 			if ( ! isDragging ) return;
 
 			anchor.style.left = e.clientX - offsetX + 'px';
 			anchor.style.top = e.clientY - offsetY + 'px';
-		} );
+		};
 
-		document.addEventListener( 'mouseup', () => {
+		const onPointerUp = ( e ) => {
 			isDragging = false;
+			anchor.releasePointerCapture( e.pointerId );
 			anchor.style.cursor = 'move';
-		} );
+		};
+
+		anchor.addEventListener( 'pointerdown', onPointerDown );
+		anchor.addEventListener( 'pointermove', onPointerMove );
+		anchor.addEventListener( 'pointerup', onPointerUp );
 
 		return () => {
-			anchor.removeEventListener( 'mousedown', ( e ) => {
-				isDragging = false;
-				anchor.style.cursor = 'default';
-			} );
-			document.removeEventListener( 'mousemove', ( e ) => {
-				if ( ! isDragging ) return;
-
-				anchor.style.left = e.clientX - offsetX + 'px';
-				anchor.style.top = e.clientY - offsetY + 'px';
-			} );
-			document.removeEventListener( 'mouseup', () => {
-				isDragging = false;
-				anchor.style.cursor = 'default';
-			} );
+			anchor.removeEventListener( 'pointerdown', onPointerDown );
+			anchor.removeEventListener( 'pointermove', onPointerMove );
+			anchor.removeEventListener( 'pointerup', onPointerUp );
 		};
 	}, [] );
 
