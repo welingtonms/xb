@@ -1,9 +1,7 @@
-import { html, LitElement } from 'lit';
+import { html, LitElement, nothing } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
-// import CheckboxController from './checkbox.controller';
-// import CheckboxGroupController from './checkbox-group.controller';
 import { FormElement } from '../../form-element';
 import { trackSlot } from '../../../decorators/track-slot';
 import { WithAriaMixin } from '../../../mixins/with-aria';
@@ -69,6 +67,12 @@ export class Checkbox extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 	 * @type {CheckboxAttributes['readonly']}
 	 */
 	@property( { type: Boolean } ) accessor readonly;
+
+	/**
+	 * Size of the checkbox.
+	 * @type {CheckboxAttributes['size']}
+	 */
+	@property( { type: String } ) accessor size;
 
 	/**
 	 * @param {{
@@ -147,18 +151,11 @@ export class Checkbox extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 				<xb-icon id="check" name="check"></xb-icon>
 				<xb-icon id="indeterminate" name="minus"></xb-icon>
 			</span>
-			<xb-stack
-				paddingless="all"
-				style="--xb-stack-gap: 2px; ${ ! this.hasDefaultContent && ! this.hasDescriptionContent
-					? 'display: none;'
-					: 'margin-inline-start: var(--xb-spacing-2);' }"
-			>
-				<label id="label" for="control">
-					<slot></slot>
-				</label>
-
-				<slot name="description"></slot>
-			</xb-stack>
+			<label id="label" for="control" style="display: ${ !this.hasDefaultContent ? 'none' : nothing }">
+				<slot></slot>
+			</label>
+			<span style="display: ${ !this.hasDescriptionContent ? 'none' : nothing }"></span>
+			<slot name="description"></slot>
 		`;
 	}
 
@@ -341,4 +338,5 @@ export class Checkbox extends WithAriaMixin( WithIDMixin( FormElement ) ) {
  * @property {string} value
  * @property {string} name
  * @property {boolean} readonly
+ * @property {CheckboxSize} [size]
  */

@@ -44,6 +44,7 @@ export const Playground = {
 						Save my login details for next time.
 					</xb-text>
 				</xb-radio>
+				<xb-radio value="na"></xb-radio>
 			</xb-radio-group>
 		</xb-stack>
 	),

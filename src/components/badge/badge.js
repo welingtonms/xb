@@ -17,8 +17,8 @@ export class Badge extends XBElement {
 	 */
 	@property( { type: String, reflect: true } ) accessor color;
 
-	/** @type {BadgeAttributes['scale']} */
-	@property( { type: String, reflect: true } ) accessor scale;
+	/** @type {BadgeAttributes['size']} */
+	@property( { type: String, reflect: true } ) accessor size;
 
 	/**
 	 * Badge icon.
@@ -42,8 +42,8 @@ export class Badge extends XBElement {
 		/** @type {BadgeAttributes['color']} */
 		this.color = 'blue';
 
-		/** @type {BadgeAttributes['scale']} */
-		this.scale = 'sm';
+		/** @type {BadgeAttributes['size']} */
+		this.size = 'sm';
 	}
 
 	render() {
@@ -74,12 +74,12 @@ export class Badge extends XBElement {
 /**
  * @typedef {('text' | 'icon')} BadgeVariant
  * @typedef {('gray' | 'primary' | 'error' | 'warning' | 'success' | 'blue-gray' | 'blue-light' | 'blue' | 'indigo' | 'purple' | 'pink' | 'rose' | 'orange')} BadgeColor
- * @typedef {('sm' | 'md' | 'lg')} BadgeScale
+ * @typedef {('sm' | 'md' | 'lg')} BadgeSize
  */
 
 /**
  * @typedef {Object} BadgeAttributes
  * @property {BadgeColor} [color] - Badge color.
- * @property {BadgeScale} [scale] - Badge scale.
+ * @property {BadgeSize} [size] - Badge size.
  * @property {IconName} [icon] - Icon to display in the badge leading slot.
  */

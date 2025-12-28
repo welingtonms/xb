@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { ScaleArg } from '../../utils/arg-types';
-
 import toCSSValue from '../../utils/to-css-value';
 
 import '../layout/layout.define';

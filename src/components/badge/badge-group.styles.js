@@ -43,7 +43,7 @@ export function badgeGroupStyles() {
 				background-color: var( --xb-badge-group-background-color );
 			}
 
-			${ $.attr( '[scale="sm"]' ).css() } {
+			${ $.attr( '[size="sm"]' ).css() } {
 				${ typography( 'text-xs' ) };
 
 				--xb-badge-group-gap: 8px;
@@ -52,11 +52,11 @@ export function badgeGroupStyles() {
 				--xb-badge-group-padding-block: 4px;
 			}
 
-			${ $.attr( '[scale="sm"]', '[scale="md"]' ).descendant( '::slotted(xb-badge)' ).css() } {
+			${ $.attr( '[size="sm"]', '[size="md"]' ).descendant( '::slotted(xb-badge)' ).css() } {
 				--xb-badge-height: 22px;
 			}
 
-			${ $.attr( '[scale="md"]' ).css() } {
+			${ $.attr( '[size="md"]' ).css() } {
 				${ typography( 'text-sm' ) };
 
 				--xb-badge-group-gap: 8px;
@@ -65,7 +65,7 @@ export function badgeGroupStyles() {
 				--xb-badge-group-padding-block: 4px;
 			}
 
-			${ $.attr( '[scale="lg"]' ).css() } {
+			${ $.attr( '[size="lg"]' ).css() } {
 				${ typography( 'text-sm' ) };
 
 				--xb-badge-group-gap: 12px;
@@ -74,7 +74,7 @@ export function badgeGroupStyles() {
 				--xb-badge-group-padding-block: 4px;
 			}
 
-			${ $.attr( '[scale="lg"]' ).descendant( '::slotted(xb-badge)' ).css() } {
+			${ $.attr( '[size="lg"]' ).descendant( '::slotted(xb-badge)' ).css() } {
 				--xb-badge-height: 24px;
 			}
 

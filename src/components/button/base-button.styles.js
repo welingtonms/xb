@@ -1,15 +1,12 @@
 import { css } from 'lit';
 
+import { select } from '../../styles/selector';
 import m from '../../styles/margin.styles';
 import outline from '../../styles/outline.styles';
-import p, { px, py } from '../../styles/padding.styles';
+import p from '../../styles/padding.styles';
 import toCSSResult from '../../utils/to-css-result';
 import transition from '../../styles/transition.styles';
 import typography from '../../styles/typography.styles';
-import { select } from '../../styles/selector';
-
-import layoutStyles from '../../styles/layout.styles';
-import scaleStyles from '../../styles/scale.styles';
 
 // ${ scaleStyles( { target: selector, property: '--xb-button-height' } ) }
 
@@ -32,6 +29,9 @@ export function baseButtonHostStyles() {
 
 			display: inline-block;
 			position: relative;
+
+			${ typography( 'text-sm' ) };
+			font-weight: ${ toCSSResult( 'font-weight-medium' ) };
 		}
 	`;
 }
@@ -62,8 +62,17 @@ export function baseButtonStyles( selector ) {
 				{ property: 'outline-color' },
 			] ) };
 
-			${ typography( 'text-sm' ) };
-			font-weight: ${ toCSSResult( 'font-weight-medium' ) };
+			font-family: inherit;
+			font-style: inherit;
+			font-stretch: inherit;
+			letter-spacing: inherit;
+
+			font-synthesis: inherit;
+			text-rendering: inherit;
+			-webkit-font-smoothing: inherit;
+			-moz-osx-font-smoothing: inherit;
+			-webkit-text-size-adjust: inherit;
+			font-weight: inherit;
 
 			cursor: pointer;
 			position: relative;
@@ -111,12 +120,6 @@ export function baseButtonStyles( selector ) {
 			${ p( toCSSResult( 'spacing-0' ) ) };
 			${ m( toCSSResult( 'spacing-0' ) ) };
 		}
-
-		${ $.attr( '[scale="extra-small"]' ).css() } {
-			${ px( toCSSResult( 'spacing-1' ) ) };
-		}
-
-
 	`;
 }
 

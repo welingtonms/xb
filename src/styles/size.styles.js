@@ -11,26 +11,38 @@ function styles( args ) {
 	const { property } = { ...DEFAULT_ARGS, ...( args || {} ) };
 
 	return css`
-		.-extra-small,
-		:host( [size='extra-small'] ) {
+		.-xs,
+		:host( [size='xs'] ) {
 			${ unsafeCSS( property ) }: 24px;
 			min-width: 24px;
 		}
 
-		.-small,
-		:host( [size='small'] ) {
+		.-sm,
+		:host( [size='sm'] ) {
 			${ unsafeCSS( property ) }: 40px;
 			min-width: 40px;
 		}
 
-		.-medium,
-		:host( [size='medium'] ) {
+		.-md,
+		:host( [size='md'] ) {
 			${ unsafeCSS( property ) }: 56px;
 			min-width: 56px;
 		}
 
-		.-large,
-		:host( [size='large'] ) {
+		.-lg,
+		:host( [size='lg'] ) {
+			${ unsafeCSS( property ) }: 72px;
+			min-width: 72px;
+		}
+
+		.-xl,
+		:host( [size='xl'] ) {
+			${ unsafeCSS( property ) }: 72px;
+			min-width: 72px;
+		}
+
+		.-2xl,
+		:host( [size='2xl'] ) {
 			${ unsafeCSS( property ) }: 72px;
 			min-width: 72px;
 		}
@@ -45,5 +57,5 @@ export default styles;
  */
 
 /**
- * @typedef {('extra-small' | 'small' | 'medium' | 'large')} ElementSize
+ * @typedef {import('../utils/arg-types').ElementSize} ElementSize
  */

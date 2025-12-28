@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { userEvent, expect } from 'storybook/test';
+import { SizeArg } from '../../../utils/arg-types';
 
 // import { within } from '../../../utils/test-tools';
 
@@ -27,6 +28,7 @@ export default {
 				type: 'boolean',
 			},
 		},
+		size: SizeArg,
 	},
 };
 
@@ -37,16 +39,16 @@ export const Playground = {
 	},
 	render: ( args ) => (
 		<xb-stack>
-			<xb-checkbox onchange={ args.change } disabled={ args.disabled } value="accept">
+			<xb-checkbox onchange={ args.change } disabled={ args.disabled } size={ args.size } value="accept">
 				Remember me
 			</xb-checkbox>
-			<xb-checkbox onchange={ args.change } disabled={ args.disabled } value="accept">
+			<xb-checkbox onchange={ args.change } disabled={ args.disabled } size={ args.size } value="accept">
 				Remember me
 				<xb-text variant="text-sm" slot="description">
 					Save my login details for next time.
 				</xb-text>
 			</xb-checkbox>
-			<xb-checkbox onchange={ args.change } disabled={ args.disabled }></xb-checkbox>
+			<xb-checkbox onchange={ args.change } disabled={ args.disabled } size={ args.size }></xb-checkbox>
 		</xb-stack>
 	),
 

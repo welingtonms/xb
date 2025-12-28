@@ -1,4 +1,4 @@
-import { html } from 'lit';
+import { html, nothing } from 'lit';
 import { ContextConsumer } from '@lit/context';
 import { property } from 'lit/decorators.js';
 
@@ -31,10 +31,17 @@ export class Radio extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 	@property( { type: Boolean, reflect: true } ) accessor checked = false;
 
 	/**
+	 * Size of the radio.
+	 * @type {RadioSize}
+	 */
+	@property( { type: String } ) accessor size;
+
+	/**
 	 * Value this radio checkbox represents.
 	 * @type {string}
 	 */
 	@property( { type: String } ) accessor value;
+
 
 	@trackSlot()
 	accessor hasDefaultContent;
@@ -105,18 +112,12 @@ export class Radio extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 			<span id="button" aria-hidden="true">
 				<xb-icon id="check" name="circle-fill"></xb-icon>
 			</span>
-			<xb-stack
-				paddingless="all"
-				style="--xb-stack-gap: 2px; ${ ! this.hasDefaultContent && ! this.hasDescriptionContent
-					? 'display: none;'
-					: 'margin-inline-start: var(--xb-spacing-2);' }"
-			>
-				<label id="label" for="control">
-					<slot></slot>
-				</label>
+			<label id="label" for="control" style="display: ${ !this.hasDefaultContent ? 'none' : nothing }">
+				<slot></slot>
+			</label>
 
-				<slot name="description"></slot>
-			</xb-stack>
+			<span style="display: ${ !this.hasDescriptionContent ? 'none' : nothing }"></span>
+			<slot name="description"></slot>
 		`;
 	}
 
@@ -180,3 +181,8 @@ export class Radio extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 		this.#onDisabledChange( disabled );
 	}
 }
+
+
+/**
+ * @typedef {import('../../../styles/size.styles').ElementSize} RadioSize
+ */

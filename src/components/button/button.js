@@ -31,8 +31,8 @@ export class Button extends WithAriaMixin( FormElement ) {
 	@property( { type: String, reflect: true } )
 	accessor type;
 
-	/** @type {ButtonAttributes['scale']} */
-	@property( { type: String, reflect: true } ) accessor scale;
+	/** @type {ButtonAttributes['size']} */
+	@property( { type: String, reflect: true } ) accessor size;
 
 	/**
 	 * Button variant.
@@ -91,7 +91,7 @@ export class Button extends WithAriaMixin( FormElement ) {
 
 		this.type = 'button';
 		this.disabled = false;
-		this.scale = 'sm';
+		this.size = 'sm';
 		this.variant = 'secondary';
 
 		this.addEventListener( 'click', this.#onClick );
@@ -250,7 +250,7 @@ export class Button extends WithAriaMixin( FormElement ) {
 /**
  * @typedef {Object} DefaultButtonAttributes
  * @property {ButtonVariant} variant
- * @property {SizeProp} scale
+ * @property {SizeProp} size
  * @property {IconName} icon
  * @property {'button' | 'submit' | 'reset'} type
  * @property {boolean} disabled

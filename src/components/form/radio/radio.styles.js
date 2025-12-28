@@ -98,6 +98,8 @@ export function radioStyles() {
 
 	return css`
 		${ $.css() } {
+			--xb-radio-size: 16px;
+
 			${ typography( 'text-sm' ) };
 			${ transition( [
 				{
@@ -109,13 +111,15 @@ export function radioStyles() {
 
 			position: relative;
 
-			display: flex;
-			align-items: flex-start;
-			justify-content: flex-start;
-			gap: 0;
+			display: grid;
+			align-items: center;
+			justify-content: center;
+			grid-template-columns: var( --xb-radio-size ) 1fr;
+			row-gap: ${ toCSSResult( 'spacing-1' ) };
+			column-gap: ${ toCSSResult( 'spacing-2' ) };
 
 			box-sizing: border-box;
-			min-block-size: 16px;
+			min-block-size: var( --xb-radio-size );
 
 			font-weight: ${ toCSSResult( 'font-weight-medium' ) };
 
@@ -128,6 +132,30 @@ export function radioStyles() {
 
 		${ $.attr( '[aria-disabled="true"]' ).css() } {
 			color: ${ toCSSResult( 'color-gray-300' ) };
+		}
+
+		${ $.attr( '[size="xs"]' ).css() } {
+			--xb-radio-size: 12px;
+		}
+
+		${ $.attr( '[size="sm"]' ).css() } {
+			--xb-radio-size: 14px;
+		}
+
+		${ $.attr( '[size="md"]', '[size]' ).css() } {
+			--xb-radio-size: 16px;
+		}
+
+		${ $.attr( '[size="lg"]' ).css() } {
+			--xb-radio-size: 18px;
+		}
+
+		${ $.attr( '[size="xl"]' ).css() } {
+			--xb-radio-size: 20px;
+		}
+
+		${ $.attr( '[size="2xl"]' ).css() } {
+			--xb-radio-size: 24px;
 		}
 
 		${ input.css() } {

@@ -16,6 +16,8 @@ export function checkboxStyles() {
 
 	return css`
 		${ $.css() } {
+			--xb-checkbox-size: 16px;
+
 			${ typography( 'text-sm' ) };
 			${ transition( [
 				{
@@ -27,13 +29,15 @@ export function checkboxStyles() {
 
 			position: relative;
 
-			display: flex;
-			align-items: flex-start;
-			justify-content: flex-start;
-			gap: 0;
+			display: grid;
+			align-items: center;
+			justify-content: center;
+			grid-template-columns: var( --xb-checkbox-size ) 1fr;
+			row-gap: ${ toCSSResult( 'spacing-1' ) };
+			column-gap: ${ toCSSResult( 'spacing-2' ) };
 
 			box-sizing: border-box;
-			min-block-size: 16px;
+			min-block-size: var( --xb-checkbox-size );
 
 			font-weight: ${ toCSSResult( 'font-weight-medium' ) };
 
@@ -46,6 +50,30 @@ export function checkboxStyles() {
 
 		${ $.disabled.css() } {
 			color: ${ toCSSResult( 'color-gray-300' ) };
+		}
+
+		${ $.attr( '[size="xs"]' ).css() } {
+			--xb-checkbox-size: 12px;
+		}
+
+		${ $.attr( '[size="sm"]' ).css() } {
+			--xb-checkbox-size: 14px;
+		}
+
+		${ $.attr( '[size="md"]', '[size]' ).css() } {
+			--xb-checkbox-size: 16px;
+		}
+
+		${ $.attr( '[size="lg"]' ).css() } {
+			--xb-checkbox-size: 18px;
+		}
+
+		${ $.attr( '[size="xl"]' ).css() } {
+			--xb-checkbox-size: 20px;
+		}
+
+		${ $.attr( '[size="2xl"]' ).css() } {
+			--xb-checkbox-size: 24px;
 		}
 
 		${ input.css() } {
@@ -87,9 +115,9 @@ export function checkboxStyles() {
 			justify-content: center;
 
 			box-sizing: border-box;
-			inline-size: 16px;
-			block-size: 16px;
-			flex: 0 0 16px;
+			inline-size: var( --xb-checkbox-size );
+			block-size: var( --xb-checkbox-size );
+			flex: 0 0 var( --xb-checkbox-size );
 
 			border-radius: 4px;
 			border: 1px solid var( --xb-checkbox-border-color );
@@ -122,8 +150,15 @@ export function checkboxStyles() {
 		${ input.enabled.checked.css() } ~ ${ button.css() },
 		${ input.enabled.indeterminate.css() } ~ ${ button.css() } {
 			--xb-checkbox-border-color: ${ toCSSResult( 'color-primary-600' ) };
-			--xb-checkbox-background-color: ${ toCSSResult( 'color-primary-50' ) };
-			--xb-checkbox-color: ${ toCSSResult( 'color-primary-600' ) };
+			--xb-checkbox-background-color: ${ toCSSResult( 'color-primary-600' ) };
+			--xb-checkbox-color: ${ toCSSResult( 'color-white' ) };
+		}
+
+		${ input.enabled.checked.hovered.css() } ~ ${ button.css() },
+		${ input.enabled.indeterminate.hovered.css() } ~ ${ button.css() } {
+			--xb-checkbox-border-color: ${ toCSSResult( 'color-primary-700' ) };
+			--xb-checkbox-background-color: ${ toCSSResult( 'color-primary-700' ) };
+			--xb-checkbox-color: ${ toCSSResult( 'color-white' ) };
 		}
 
 		${ input.disabled.css() } {

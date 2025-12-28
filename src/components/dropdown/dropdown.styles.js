@@ -69,36 +69,43 @@ export function triggerStyles() {
 				--xb-button-color: ${ toCSSResult( 'color-gray-700' ) };
 			}
 
-			${ $.attr( '[scale="sm"]' ).css() } {
+			${ $.attr( '[size="xs"]' ).css() } {
+				--xb-button-height: 24px;
+
+				--xb-button-padding-x: 8px;
+				--xb-button-padding-y: 6px;
+			}
+
+			${ $.attr( '[size="sm"]' ).css() } {
 				--xb-button-height: 36px;
 
 				--xb-button-padding-x: 14px;
 				--xb-button-padding-y: 8px;
 			}
 
-			${ $.attr( '[scale="md"]' ).css() },
-			${ $.not( '[scale]' ).css() } {
+			${ $.attr( '[size="md"]' ).css() },
+			${ $.not( '[size]' ).css() } {
 				--xb-button-height: 40px;
 
 				--xb-button-padding-x: 16px;
 				--xb-button-padding-y: 10px;
 			}
 
-			${ $.attr( '[scale="lg"]' ).css() } {
+			${ $.attr( '[size="lg"]' ).css() } {
 				--xb-button-height: 44px;
 
 				--xb-button-padding-x: 18px;
 				--xb-button-padding-y: 10px;
 			}
 
-			${ $.attr( '[scale="xl"]' ).css() } {
+			${ $.attr( '[size="xl"]' ).css() } {
 				--xb-button-height: 48px;
 
 				--xb-button-padding-x: 20px;
 				--xb-button-padding-y: 12px;
 			}
 
-			${ $.attr( '[scale="2xl"]' ).css() } {
+			${ $.attr( '[size="2xl"]' ).css() } {
 				--xb-button-height: 60px;
 
 				--xb-button-padding-x: 28px;

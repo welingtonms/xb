@@ -19,8 +19,8 @@ export class BadgeGroup extends XBElement {
 	 */
 	@property( { type: String, reflect: true } ) accessor color;
 
-	/** @type {BadgeGroupAttributes['scale']} */
-	@property( { type: String, reflect: true } ) accessor scale;
+	/** @type {BadgeGroupAttributes['size']} */
+	@property( { type: String, reflect: true } ) accessor size;
 
 	/** @type {boolean} */
 	@trackSlot( 'leading' )
@@ -46,8 +46,8 @@ export class BadgeGroup extends XBElement {
 		/** @type {BadgeGroupAttributes['color']} */
 		this.color = 'blue';
 
-		/** @type {BadgeGroupAttributes['scale']} */
-		this.scale = 'sm';
+		/** @type {BadgeGroupAttributes['size']} */
+		this.size = 'sm';
 	}
 
 	updated( changedProperties ) {
@@ -93,11 +93,11 @@ export class BadgeGroup extends XBElement {
 
 /**
  * @typedef {import('./badge').BadgeColor} BadgeGroupColor
- * @typedef {('sm' | 'md' | 'lg')} BadgeGroupScale
+ * @typedef {('sm' | 'md' | 'lg')} BadgeGroupSize
  */
 
 /**
  * @typedef {Object} BadgeGroupAttributes
  * @property {BadgeGroupColor} [color] - Badge group color.
- * @property {BadgeGroupScale} [scale] - Badge group scale.
+ * @property {BadgeGroupSize} [size] - Badge group size,
  */

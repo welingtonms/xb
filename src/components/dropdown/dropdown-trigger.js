@@ -22,9 +22,9 @@ export class DropdownTrigger extends WithIDMixin( XBElement ) {
 	@property( { type: Boolean, reflect: true } ) accessor disabled;
 
 	/**
-	 * @type {DropdownTriggerAttributes['scale']}
+	 * @type {DropdownTriggerAttributes['size']}
 	 */
-	@property( { type: String, reflect: true } ) accessor scale;
+	@property( { type: String, reflect: true } ) accessor size;
 
 	/**
 	 * @param {{
@@ -40,7 +40,7 @@ export class DropdownTrigger extends WithIDMixin( XBElement ) {
 		super();
 
 		this.disabled = false;
-		this.scale = 'sm';
+		this.size = 'sm';
 	}
 
 	connectedCallback() {
@@ -86,5 +86,5 @@ export class DropdownTrigger extends WithIDMixin( XBElement ) {
 /**
  * @typedef {Object} DropdownTriggerAttributes
  * @property {boolean} [disabled] - Is the dropdown menu disabled.
- * @property {SizeProp} [scale] - The scale of the button.
+ * @property {SizeProp} [size] - The size of the button.
  */

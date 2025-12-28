@@ -19,15 +19,14 @@ export const PlacementArg = Object.freeze( {
 	],
 } );
 
-export const ScaleArg = Object.freeze( {
+export const SizeArg = Object.freeze( {
 	control: 'select',
-	options: [ 'small', 'medium', 'large' ],
+	options: [ 'xs', 'sm', 'md', 'lg', 'xl', '2xl' ],
 } );
 
 /**
- * @deprecated use `ScaleArg` instead.
+ * @typedef {'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'} ElementSize
  */
-export const SizeArg = ScaleArg;
 
 export const PaddinglessArg = Object.freeze( {
 	control: 'select',

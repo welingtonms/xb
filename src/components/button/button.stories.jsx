@@ -3,6 +3,7 @@ import React from 'react';
 import { userEvent, expect, fn } from 'storybook/test';
 
 import { within } from '../../utils/test-tools.js';
+import { SizeArg } from '../../utils/arg-types';
 
 import '../layout';
 import './button.define.js';
@@ -27,10 +28,7 @@ export default {
 				'icon',
 			],
 		},
-		scale: {
-			control: 'select',
-			options: [ 'sm', 'md', 'lg', 'xl', '2xl' ],
-		},
+		size: SizeArg,
 		click: {
 			action: 'clicked',
 			table: {
@@ -52,7 +50,7 @@ export const Playground = {
 				type="button"
 				disabled={ args.disabled }
 				variant={ args.variant }
-				scale={ args.scale }
+				size={ args.size }
 				onClick={ args.click }
 			>
 				Submit
@@ -61,7 +59,7 @@ export const Playground = {
 			<xb-button
 				disabled={ args.disabled }
 				variant="icon"
-				scale={ args.scale }
+				size={ args.size }
 				onClick={ args.click }
 			>
 				<xb-icon name="star"></xb-icon>
@@ -80,7 +78,7 @@ export const Playground = {
 	args: {
 		click: fn(),
 		variant: 'primary',
-		scale: 'sm',
+		size: 'sm',
 		disabled: false,
 	},
 };

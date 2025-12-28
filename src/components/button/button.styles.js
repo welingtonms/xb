@@ -3,6 +3,7 @@ import { css } from 'lit';
 import { baseButtonHostStyles, baseButtonStyles } from './base-button.styles';
 import toCSSResult from '../../utils/to-css-result';
 import { select } from '../../styles/selector';
+import typography from '../../styles/typography.styles';
 
 /**
  * @param {string} [selector]
@@ -32,7 +33,26 @@ function styles( selector = ':host' ) {
 				display: none;
 			}
 
-			${ $.attr( '[scale="sm"]' ).css() } {
+			${ $.attr( '[size="xs"]' ).css() } {
+				${ typography( 'text-xs' ) };
+
+				--xb-button-height: 24px;
+				--xb-button-min-width: 24px;
+
+				--xb-button-padding-x: 8px;
+				--xb-button-padding-y: 6px;
+			}
+
+			${ $.attr( '[size="xs"]' ).descendant( '.has-slotted-content' ).css() } {
+				--xb-button-gap: 6px;
+			}
+
+			${ $.attr( '[size="xs"]', '[variant="icon"]' ).css() } {
+				--xb-button-padding-x: 6px;
+				--xb-button-padding-y: 6px;
+			}
+
+			${ $.attr( '[size="sm"]' ).css() } {
 				--xb-button-height: 36px;
 				--xb-button-min-width: 36px;
 
@@ -40,16 +60,16 @@ function styles( selector = ':host' ) {
 				--xb-button-padding-y: 8px;
 			}
 
-			${ $.attr( '[scale="sm"]' ).descendant( '.has-slotted-content' ).css() } {
+			${ $.attr( '[size="sm"]' ).descendant( '.has-slotted-content' ).css() } {
 				--xb-button-gap: 8px;
 			}
 
-			${ $.attr( '[scale="sm"]', '[variant="icon"]' ).css() } {
+			${ $.attr( '[size="sm"]', '[variant="icon"]' ).css() } {
 				--xb-button-padding-x: 8px;
 				--xb-button-padding-y: 8px;
 			}
 
-			${ $.attr( '[scale="md"]' ).css() } {
+			${ $.attr( '[size="md"]' ).css() } {
 				--xb-button-height: 40px;
 				--xb-button-min-width: 40px;
 
@@ -57,16 +77,16 @@ function styles( selector = ':host' ) {
 				--xb-button-padding-y: 10px;
 			}
 
-			${ $.attr( '[scale="md"]' ).descendant( '.has-slotted-content' ).css() } {
+			${ $.attr( '[size="md"]' ).descendant( '.has-slotted-content' ).css() } {
 				--xb-button-gap: 8px;
 			}
 
-			${ $.attr( '[scale="md"]', '[variant="icon"]' ).css() } {
+			${ $.attr( '[size="md"]', '[variant="icon"]' ).css() } {
 				--xb-button-padding-x: 10px;
 				--xb-button-padding-y: 10px;
 			}
 
-			${ $.attr( '[scale="lg"]' ).css() } {
+			${ $.attr( '[size="lg"]' ).css() } {
 				--xb-button-height: 44px;
 				--xb-button-min-width: 44px;
 
@@ -74,16 +94,16 @@ function styles( selector = ':host' ) {
 				--xb-button-padding-y: 10px;
 			}
 
-			${ $.attr( '[scale="lg"]' ).descendant( '.has-slotted-content' ).css() } {
+			${ $.attr( '[size="lg"]' ).descendant( '.has-slotted-content' ).css() } {
 				--xb-button-gap: 8px;
 			}
 
-			${ $.attr( '[scale="lg"]', '[variant="icon"]' ).css() } {
+			${ $.attr( '[size="lg"]', '[variant="icon"]' ).css() } {
 				--xb-button-padding-x: 12px;
 				--xb-button-padding-y: 12px;
 			}
 
-			${ $.attr( '[scale="xl"]' ).css() } {
+			${ $.attr( '[size="xl"]' ).css() } {
 				--xb-button-height: 48px;
 				--xb-button-min-width: 48px;
 
@@ -91,16 +111,16 @@ function styles( selector = ':host' ) {
 				--xb-button-padding-y: 12px;
 			}
 
-			${ $.attr( '[scale="xl"]' ).descendant( '.has-slotted-content' ).css() } {
+			${ $.attr( '[size="xl"]' ).descendant( '.has-slotted-content' ).css() } {
 				--xb-button-gap: 8px;
 			}
 
-			${ $.attr( '[scale="xl"]', '[variant="icon"]' ).css() } {
+			${ $.attr( '[size="xl"]', '[variant="icon"]' ).css() } {
 				--xb-button-padding-x: 14px;
 				--xb-button-padding-y: 14px;
 			}
 
-			${ $.attr( '[scale="2xl"]' ).css() } {
+			${ $.attr( '[size="2xl"]' ).css() } {
 				--xb-button-height: 60px;
 				--xb-button-min-width: 60px;
 
@@ -108,11 +128,11 @@ function styles( selector = ':host' ) {
 				--xb-button-padding-y: 16px;
 			}
 
-			${ $.attr( '[scale="2xl"]' ).descendant( '.has-slotted-content' ).css() } {
+			${ $.attr( '[size="2xl"]' ).descendant( '.has-slotted-content' ).css() } {
 				--xb-button-gap: 12px;
 			}
 
-			${ $.attr( '[scale="2xl"]', '[variant="icon"]' ).css() } {
+			${ $.attr( '[size="2xl"]', '[variant="icon"]' ).css() } {
 				--xb-button-padding-x: 16px;
 				--xb-button-padding-y: 16px;
 			}

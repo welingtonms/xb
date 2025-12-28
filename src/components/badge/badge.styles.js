@@ -48,7 +48,7 @@ export function badgeStyles() {
 				border-color: var( --xb-badge-border-color );
 			}
 
-			${ $.attr( '[scale="sm"]' ).css() } {
+			${ $.attr( '[size="sm"]' ).css() } {
 				${ typography( 'text-xs' ) };
 
 				--xb-badge-height: 22px;
@@ -56,13 +56,13 @@ export function badgeStyles() {
 				--xb-badge-padding-block: 2px;
 			}
 
-			${ $.attr( '[scale="sm"]', '[variant="icon"]' ).css() } {
+			${ $.attr( '[size="sm"]', '[variant="icon"]' ).css() } {
 				--xb-badge-height: 20px;
 				--xb-badge-padding-inline: 2px;
 				--xb-badge-padding-block: 2px;
 			}
 
-			${ $.attr( '[scale="md"]' ).css() } {
+			${ $.attr( '[size="md"]' ).css() } {
 				${ typography( 'text-sm' ) };
 
 				--xb-badge-height: 24px;
@@ -70,13 +70,13 @@ export function badgeStyles() {
 				--xb-badge-padding-block: 2px;
 			}
 
-			${ $.attr( '[scale="md"]', '[variant="icon"]' ).css() } {
+			${ $.attr( '[size="md"]', '[variant="icon"]' ).css() } {
 				--xb-badge-height: 24px;
 				--xb-badge-padding-inline: 4px;
 				--xb-badge-padding-block: 4px;
 			}
 
-			${ $.attr( '[scale="lg"]' ).css() } {
+			${ $.attr( '[size="lg"]' ).css() } {
 				${ typography( 'text-sm' ) };
 
 				--xb-badge-height: 28px;
@@ -84,7 +84,7 @@ export function badgeStyles() {
 				--xb-badge-padding-block: 4px;
 			}
 
-			${ $.attr( '[scale="lg"]', '[variant="icon"]' ).css() } {
+			${ $.attr( '[size="lg"]', '[variant="icon"]' ).css() } {
 				--xb-badge-height: 28px;
 				--xb-badge-padding-inline: 6px;
 				--xb-badge-padding-block: 6px;
