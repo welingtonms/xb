@@ -33,7 +33,7 @@ export const Playground = {
 			<xb-stack>
 				<xb-menu aria-label="Life choices" loading={ args.loading } size={ args.size } onclick={ args.click }>
 					<xb-item>Accept</xb-item>
-					<xb-item>Change</xb-item>
+					<xb-item selected>Change</xb-item>
 					<xb-item>Leave</xb-item>
 				</xb-menu>
 				<xb-menu aria-label="Life choices" loading={ args.loading } size={ args.size } onclick={ args.click }>

@@ -6,6 +6,7 @@ import p, { px, py } from '../../styles/padding.styles';
 import toCSSResult from '../../utils/to-css-result';
 import transition from '../../styles/transition.styles';
 import typography from '../../styles/typography.styles';
+import outline from '../../styles/outline.styles';
 
 import sizeStyles from '../../styles/size.styles';
 
@@ -13,15 +14,18 @@ function styles() {
 	return [
 		css`
 			:host {
-				${ transition( [ { property: 'color' }, { property: 'background-color' } ] ) };
+				${ transition( [ { property: 'color' }, { property: 'background-color' }, { property: 'outline-color' } ] ) };
 				${ typography( 'text-sm' ) };
 
 				--xb-item-background-color: ${ toCSSResult( 'color-white', 0 ) };
 				--xb-item-border-color: ${ toCSSResult( 'color-gray-200' ) };
 				--xb-item-border-style: none;
 				--xb-item-border-width: 1px;
-				--xb-item-color: ${ toCSSResult( 'color-gray-900' ) };
+				--xb-item-border-radius: ${ toCSSResult( 'radius-xxs' ) };
+				--xb-item-color: ${ toCSSResult( 'color-gray-700' ) };
 				--xb-item-height: initial;
+				--xb-item-outline-color: transparent;
+				--xb-item-outline-offset: 2px;
 
 				cursor: pointer;
 				position: relative;
@@ -51,6 +55,11 @@ function styles() {
 				border-bottom-width: var( --xb-item-border-width );
 				border-bottom-style: var( --xb-item-border-style );
 				border-bottom-color: var( --xb-item-border-color );
+				border-radius: var( --xb-item-border-radius );
+
+				z-index: 0;
+
+				${ outline( 'var( --xb-item-outline-color )', 'var( --xb-item-outline-offset )' ) };
 			}
 
 			:host( [hidden] ) {
@@ -69,16 +78,24 @@ function styles() {
 				${ m( toCSSResult( 'spacing-0' ) ) };
 			}
 
-			:host( :hover ),
-			:host( :is( :focus-visible, .is-focused ) ) {
+			:host( :hover:not([selected], [disabled]) ) {
 				--xb-item-background-color: ${ toCSSResult( 'color-gray-50' ) };
-				--xb-item-color: ${ toCSSResult( 'color-gray-700' ) };
-
-				outline: none;
+				--xb-item-color: ${ toCSSResult( 'color-gray-900' ) };
 			}
 
-			:host( :active ) {
-				--xb-item-color: ${ toCSSResult( 'color-gray-500' ) };
+			:host( [selected] ) {
+				--xb-item-background-color: ${ toCSSResult( 'color-gray-50' ) };
+				--xb-item-color: ${ toCSSResult( 'color-gray-900' ) };
+			}
+
+			:host( [selected]:not([disabled]):hover ) {
+				--xb-item-background-color: ${ toCSSResult( 'color-gray-100' ) };
+				--xb-item-color: ${ toCSSResult( 'color-gray-900' ) };
+			}
+
+			:host( :is( :focus-visible, .is-focused ) ) {
+				--xb-item-outline-color: ${ toCSSResult( 'color-primary-100' ) };
+				z-index: 1;
 			}
 
 			:host( [disabled] ) {

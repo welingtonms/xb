@@ -35,8 +35,8 @@ export function menuHostStyles() {
 				--xb-menu-color: unset;
 				--xb-menu-gap: 0;
 				--xb-menu-justify: flex-start;
-				--xb-menu-padding-x: 0;
-				--xb-menu-padding-y: 0;
+				--xb-menu-padding-x: 6px;
+				--xb-menu-padding-y: 6px;
 
 				--xb-menu-overflow-y: auto;
 				--xb-menu-outline-color: ${ toCSSResult( 'color-white', 0 ) };

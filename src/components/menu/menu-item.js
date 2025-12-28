@@ -25,6 +25,12 @@ export class MenuItem extends WithIDMixin( XBElement, 'xb-item' ) {
 	@property( { type: String, reflect: true } ) accessor icon;
 
 	/**
+	 * Should the menu item be selected.
+	 * @type {MenuItemAttributes['selected']}
+	 */
+	@property( { type: Boolean, reflect: true } ) accessor selected;
+
+	/**
 	 * @param {{
 	 *  name: string,
 	 *  registry: CustomElementRegistry,
@@ -104,6 +110,7 @@ export class MenuItem extends WithIDMixin( XBElement, 'xb-item' ) {
 /**
  * @typedef {Object} MenuItemAttributes
  * @property {boolean} disabled Should the button be disabled.
+ * @property {boolean} selected Should the button be selected.
  * @property {IconName} [icon] Icon to display in the menu item leading slot.
  */
 
