@@ -36,6 +36,9 @@ export default {
 			control: 'radio',
 			options: [ 'single-strict', 'single', 'multiple' ],
 		},
+		responsive: {
+			control: 'boolean',
+		},
 	},
 };
 
@@ -66,6 +69,7 @@ export const Playground = {
 				type={ args.type }
 				onchange={ args.change }
 				disabled={ args.disabled }
+				responsive={ args.responsive }
 			>
 				<xb-option value="accept">Accept</xb-option>
 				<xb-option value="change">Change</xb-option>
@@ -79,6 +83,7 @@ export const Playground = {
 				type={ args.type }
 				onchange={ args.change }
 				disabled={ args.disabled }
+				responsive={ args.responsive }
 			>
 				<xb-option value="accept" icon="user">
 					Phoenix Baker
@@ -98,6 +103,7 @@ export const Playground = {
 		loading: false,
 		type: 'single',
 		disabled: false,
+		responsive: true,
 	},
 };
 

@@ -68,7 +68,7 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 	 */
 	@property( { type: String } ) accessor type;
 
-	@property( { type: String, attribute: true } ) accessor borderless;
+	@property( { type: String, reflect: true } ) accessor borderless;
 
 	/** @type {SelectOption[]} */
 	@state() accessor slottedOptions;
@@ -105,7 +105,7 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 	}
 
 	constructor() {
-		super();
+		super( { popover: true } );
 
 		// this.datasources = [];
 		this.type = 'single';
@@ -223,7 +223,7 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 								this.#toggleValue( option.value );
 
 								if ( this.type !== 'multiple' ) {
-									this.collapse({ focusOnTrigger: true });
+									this.collapse( { focusOnTrigger: true } );
 								}
 							}
 						},
@@ -235,15 +235,15 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 						/**
 						 * @param {KeyboardEvent} event
 						 */
-						handler: (event) => {
+						handler: ( event ) => {
 							const { target } = event;
 
-							if (!target) {
+							if ( ! target ) {
 								return;
 							}
 
-							if (this.open) {
-								this.collapse({ focusOnTrigger: true });
+							if ( this.open ) {
+								this.collapse( { focusOnTrigger: true } );
 							}
 						},
 					},
@@ -275,7 +275,7 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 	async connectedCallback() {
 		super.connectedCallback();
 
-		this.addEventListener('focusin', this.#onFocusIn);
+		this.addEventListener( 'focusin', this.#onFocusIn );
 		this.addEventListener( 'xb:interact-out', this.#onClickOutside );
 		this.addEventListener( 'toggle', this.#onOptionToggle );
 
@@ -298,7 +298,7 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 			this.#form.removeEventListener( 'reset', this.#onFormReset );
 		}
 
-		this.removeEventListener('focusin', this.#onFocusIn);
+		this.removeEventListener( 'focusin', this.#onFocusIn );
 		this.removeEventListener( 'xb:interact-out', this.#onClickOutside );
 		this.removeEventListener( 'toggle', this.#onOptionToggle );
 	}
@@ -361,7 +361,7 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 
 	render() {
 		return html`
-			<div>
+			<div id="outer-container">
 				<div id="picker">
 					<span id="leading"></span>
 
@@ -443,6 +443,13 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 	};
 
 	/**
+	 * @see {@link FloatingElement.handleExternalClose}
+	 */
+	handleExternalClose() {
+		this.collapse();
+	}
+
+	/**
 	 * Collapse dropdown menu.
 	 * @param {Object} options
 	 * @param {boolean} options.focusOnTrigger - should focus on the trigger.
@@ -471,7 +478,7 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 	 * @param {Object} options
 	 * @param {boolean} options.focusOnTrigger - should focus on the trigger.
 	 */
-	toggle = async ( optionSlot ) => {
+	toggle = async ( options ) => {
 		if ( this.open ) {
 			await this.collapse( options );
 		} else {
@@ -610,14 +617,15 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 		}
 	};
 
-	#onFocusIn = (event) => {
-		if (event.target === this) {
+	#onFocusIn = ( event ) => {
+		if ( event.target === this ) {
 			this.#controllers.boundary.activate();
 			this.#controllers.keyboard.activate();
 		}
 	};
 
-	#onClickOutside = async ( ) => {
+	#onClickOutside = async () => {
+		console.log( 'onClickOutside' );
 		this.#controllers.boundary.deactivate();
 		this.#controllers.keyboard.deactivate();
 
@@ -684,7 +692,7 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 			this.#toggleValue( target.value );
 
 			if ( this.type !== 'multiple' ) {
-				this.collapse({ focusOnTrigger: true });
+				this.collapse( { focusOnTrigger: true } );
 			}
 		}
 	};
