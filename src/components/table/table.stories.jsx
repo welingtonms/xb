@@ -65,11 +65,7 @@ export const Playground = {
 					</xb-table-cell>
 					<xb-table-cell>
 						<xb-dropdown>
-							<xb-button
-								variant="icon"
-								aria-haspopup="true"
-								aria-label="Row actions"
-							>
+							<xb-button variant="icon" aria-haspopup="true" aria-label="Row actions">
 								<xb-icon name="dots-three-vertical" size={ 16 }></xb-icon>
 							</xb-button>
 
@@ -113,11 +109,7 @@ export const Playground = {
 					</xb-table-cell>
 					<xb-table-cell>
 						<xb-dropdown>
-							<xb-button
-								variant="icon"
-								aria-haspopup="true"
-								aria-label="Row actions"
-							>
+							<xb-button variant="icon" aria-haspopup="true" aria-label="Row actions">
 								<xb-icon name="dots-three-vertical" size={ 16 }></xb-icon>
 							</xb-button>
 
@@ -167,11 +159,7 @@ export const Playground = {
 
 					<xb-table-cell>
 						<xb-dropdown>
-							<xb-button
-								variant="icon"
-								aria-haspopup="true"
-								aria-label="Row actions"
-							>
+							<xb-button variant="icon" aria-haspopup="true" aria-label="Row actions">
 								<xb-icon name="dots-three-vertical" size={ 16 }></xb-icon>
 							</xb-button>
 
@@ -193,11 +181,7 @@ export const Playground = {
 
 					<xb-table-cell>
 						<xb-dropdown>
-							<xb-button
-								variant="icon"
-								aria-haspopup="true"
-								aria-label="Row actions"
-							>
+							<xb-button variant="icon" aria-haspopup="true" aria-label="Row actions">
 								<xb-icon name="dots-three-vertical" size={ 16 }></xb-icon>
 							</xb-button>
 
@@ -272,7 +256,7 @@ export const ScrollableTable = {
 					border: '1px dashed #ccc',
 				} }
 			>
-				<m-stack>
+				<xb-stack>
 					<p>
 						This container is resizable (drag the bottom-right corner). The table has fixed-width
 						columns that sum up to 800px, causing horizontal scroll.
@@ -351,7 +335,7 @@ export const ScrollableTable = {
 							</xb-table-row>
 						</xb-table-body>
 					</xb-table>
-				</m-stack>
+				</xb-stack>
 			</xb-box>
 
 			<h3>Fixed Container with Horizontal Scroll</h3>
