@@ -4,13 +4,13 @@ import { property } from 'lit/decorators.js';
 import { WithIDMixin } from '../../mixins/with-id';
 import { XBElement } from '../xb-element';
 
-import styles from './menu-item.styles';
+import { menuItemStyles } from './base-menu.styles';
 import { getTextContent } from '../../utils/slot';
 
 import '../icon/icon.define';
 
 export class MenuItem extends WithIDMixin( XBElement, 'xb-item' ) {
-	static styles = [ styles() ];
+	static styles = [ menuItemStyles() ];
 
 	/**
 	 * Should the button be disabled.
@@ -79,7 +79,11 @@ export class MenuItem extends WithIDMixin( XBElement, 'xb-item' ) {
 	render() {
 		return html`
 			<slot name="leading">
-				${ this.icon ? html`<xb-icon name="${ this.icon }"></xb-icon>` : nothing }
+				${ this.icon
+					? html`
+							<xb-icon name="${ this.icon }"></xb-icon>
+					  `
+					: nothing }
 			</slot>
 			<slot></slot>
 			<slot name="trailing"></slot>

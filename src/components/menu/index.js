@@ -2,8 +2,12 @@ export { Menu } from './menu';
 export { MenuItem } from './menu-item';
 export { BaseMenu } from './base-menu';
 
-export { default as menuStyles, menuHostStyles, menuContentStyles } from './base-menu.styles';
-export { default as menuItemStyles } from './menu-item.styles';
+export {
+	default as menuStyles,
+	menuHostStyles,
+	menuContentStyles,
+	menuItemStyles,
+} from './base-menu.styles';
 
 /**
  * @typedef {import('./menu').MenuAttributes} MenuAttributes

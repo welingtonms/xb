@@ -12,20 +12,20 @@ import '../spinner';
  * This class implements the base menu component, exposing necessary
  * attributes and the rendered content; it does NOT use the Menu Controller.
  */
-export class BaseMenu extends WithIDMixin(XBElement) {
-	static styles = [styles()];
+export class BaseMenu extends WithIDMixin( XBElement ) {
+	static styles = [ styles() ];
 
 	/**
 	 * Is the menu options being loaded.
 	 * @type {BaseMenuAttributes['loading']}
 	 */
-	@property({ type: Boolean }) accessor loading;
+	@property( { type: Boolean } ) accessor loading;
 
 	/**
 	 * Should menu items be [bottom] bordered.
 	 * @type {BaseMenuAttributes['bordered']}
 	 */
-	@property({ type: Boolean }) accessor bordered;
+	@property( { type: Boolean } ) accessor bordered;
 
 	constructor() {
 		super();
@@ -37,16 +37,16 @@ export class BaseMenu extends WithIDMixin(XBElement) {
 	connectedCallback() {
 		super.connectedCallback();
 
-		this.setAttribute('role', 'menu');
+		this.setAttribute( 'role', 'menu' );
 	}
 
 	render() {
 		return html`
-			${this.loading
+			${ this.loading
 				? html`
 						<xb-spinner class="spinner"></xb-spinner>
-					`
-				: nothing}
+				  `
+				: nothing }
 			<slot></slot>
 			<slot name="internal"></slot>
 		`;
