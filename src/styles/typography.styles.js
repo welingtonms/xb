@@ -8,7 +8,7 @@ import rem from '../utils/rem';
  * @param {TypographyVariant} [variant=body-1]
  * @returns
  */
-function typography( variant = 'text-md' ) {
+export function typography( variant = 'text-md' ) {
 	/**
 	 * Prefer unitless numbers for line-height: https://developer.mozilla.org/en-US/docs/Web/CSS/line-height#prefer_unitless_numbers_for_line-height_values
 	 */

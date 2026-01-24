@@ -22,6 +22,12 @@ import toCSSVariable from './to-css-variable';
 // 	token: ExceptColorToken | ColorToken,
 // 	alpha?: number
 // ): string {
+/**
+ *
+ * @param {import('./get-token').Token} token
+ * @param {number} [alpha]
+ * @returns {string}
+ */
 function toCSSValue( token, alpha ) {
 	if ( getToken( token ) == null ) {
 		return token;

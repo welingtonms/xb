@@ -1,4 +1,4 @@
-import theme from '../themes/xb.theme';
+import Theme from '../themes/xb.theme.js';
 // import type { Token, TokenValue } from '../types';
 
 /**
@@ -9,12 +9,16 @@ import theme from '../themes/xb.theme';
  * getToken('color-primary')
  * ```
  *
- * @param token - Token whose value should be retrieved.
+ * @param {Token} token - Token whose value should be retrieved.
  * @returns {TokenValue} Token value or '/**TOKEN ${token} NOT FOUND **\/' otherwise.
  */
 // function getToken( token: Token ): TokenValue {
 function getToken( token ) {
-	return theme[ token ];
+	return Theme[ token ];
 }
 
 export default getToken;
+
+/**
+ * @typedef {keyof typeof Theme} Token
+ */

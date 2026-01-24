@@ -21,6 +21,6 @@ function toCSSResult( token, alpha ) {
 export default toCSSResult;
 
 /**
- * @typedef {import('./prop-types').Token} Token
+ * @typedef {import('./get-token').Token} Token
  * @typedef {import('lit').CSSResult} CSSResult
  */

@@ -77,7 +77,7 @@ export class FocusManagerController extends BaseFocusController {
 
 			element.classList.add( 'is-focused' );
 
-			element.scrollIntoView( { block: 'start', inline: 'nearest', behavior: 'smooth' } );
+			element.scrollIntoView( { block: 'nearest', inline: 'nearest', behavior: 'smooth' } );
 
 			callback?.( element );
 		};

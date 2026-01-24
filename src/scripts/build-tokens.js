@@ -3,31 +3,45 @@
 import StyleDictionary from 'style-dictionary';
 import { usesReferences, getReferences } from 'style-dictionary/utils';
 
-
-StyleDictionary.registerFormat({
+StyleDictionary.registerFormat( {
 	name: 'sass-with-css-variables',
-	format: ({ dictionary, options }) => {
+	format: ( { dictionary, options } ) => {
 		return dictionary.allTokens
-			.map((token) => {
-				let value = `var(--${token.name})`;
+			.map( ( token ) => {
+				let value = `var(--${ token.name })`;
 				const comment = token.original.comment || '';
 
-				if (options.outputReferences) {
-					if (usesReferences(token.original.value, dictionary.tokens)) {
-						const [ref] = getReferences(
-							token.original.value,
-							dictionary.tokens,
-						);
+				if ( options.outputReferences ) {
+					if ( usesReferences( token.original.value, dictionary.tokens ) ) {
+						const [ ref ] = getReferences( token.original.value, dictionary.tokens );
 
-						value = `var(--${ref.name})`;
+						value = `var(--${ ref.name })`;
 					}
 				}
 
-				return `$${token.name}: ${value};${comment ? ` /* ${comment} */` : ''}`;
-			})
-			.join('\n');
+				return `$${ token.name }: ${ value };${ comment ? ` /* ${ comment } */` : '' }`;
+			} )
+			.join( '\n' );
 	},
-});
+} );
+
+StyleDictionary.registerFormat( {
+	name: 'js-flat',
+	format: async ( { dictionary, file, options } ) => {
+		return (
+			'export default {\n' +
+			dictionary.allTokens
+				.map( function ( token ) {
+					return `  "${ token.name }": ${ JSON.stringify(
+						options.usesDtcg ? token.$value : token.value
+					) }`;
+				} )
+				.join( ',\n' ) +
+			'\n}' +
+			'\n'
+		);
+	},
+} );
 
 function getStyleDictionaryConfig( brand, platform ) {
 	return {
@@ -67,7 +81,7 @@ console.log( 'Build started...' );
 
 console.log( `\nProcessing canonical theme` );
 
-const canonicalDictionary = new StyleDictionary({
+const canonicalDictionary = new StyleDictionary( {
 	source: [
 		`src/tokens/brands/xb/**/*.{js,json}`,
 		'src/tokens/globals/**/*.{js,json}',
@@ -80,8 +94,8 @@ const canonicalDictionary = new StyleDictionary({
 			transforms: [ 'attribute/cti', 'name/kebab', 'size/px' ],
 			files: [
 				{
-					destination: 'xb.theme.json',
-					format: 'json/flat',
+					destination: 'xb.theme.js',
+					format: 'js-flat',
 				},
 			],
 		},
@@ -98,22 +112,18 @@ async function buildTokens() {
 		for ( const platform of platforms ) {
 			console.log( `\nProcessing: [${ platform }] [${ brand }]` );
 
-			const config = new StyleDictionary(
-				getStyleDictionaryConfig(brand, platform),
-			);
+			const config = new StyleDictionary( getStyleDictionaryConfig( brand, platform ) );
 
-			await config.buildPlatform(platform);
+			await config.buildPlatform( platform );
 
 			console.log( '\nEnd processing' );
 		}
 	}
 }
 
-
 try {
 	await buildTokens();
-} catch (error) {
-	console.error('Error building tokens:', error);
-	process.exit(1);
+} catch ( error ) {
+	console.error( 'Error building tokens:', error );
+	process.exit( 1 );
 }
-

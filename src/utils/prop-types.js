@@ -36,7 +36,7 @@ import Theme from '../themes/xb.theme';
  */
 
 /**
- * @typedef {import('../themes/xb.theme.json')} Theme
+ * @typedef {import('../themes/xb.theme.js')} Theme
  */
 
 /**

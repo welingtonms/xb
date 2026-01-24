@@ -1,1 +1,1 @@
-export { default as BaseTheme } from './xb.theme.json';
+export { default as BaseTheme } from './xb.theme.js';
