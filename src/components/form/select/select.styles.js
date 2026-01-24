@@ -34,7 +34,7 @@ export function selectStyles() {
 				display: inline-flex;
 				min-width: 0;
 
-				border-radius: 8px;
+				border-radius: ${ toCSSResult( 'radius-md' ) };
 
 				${ outline( 'var( --xb-select-outline-color )', 'var( --xb-select-outline-offset )' ) };
 			}
@@ -58,18 +58,19 @@ export function selectStyles() {
 				box-sizing: border-box;
 
 				border: 1px solid var( --xb-select-picker-border-color );
-				border-radius: 8px;
-				padding-inline: 14px 0;
+				border-radius: ${ toCSSResult( 'radius-md' ) };
+				padding-inline: ${ toCSSResult( 'spacing-3' ) } calc( ${ toCSSResult( 'spacing-3' ) } / 2 );
 				padding-block: 0;
 
 				block-size: 40px;
 			}
 
 			#trigger {
-				${ typography( 'text-md' ) };
+				${ typography( 'text-sm' ) };
 
 				field-sizing: content;
-				min-inline-size: 40px;
+				min-width: 40px;
+				width: fit-content;
 				box-sizing: border-box;
 
 				border: none;
@@ -91,22 +92,7 @@ export function selectStyles() {
 				display: none;
 			}
 
-			${ baseButtonStyles( '#handle' ) }
-
-			#handle {
-				${ transition( [ { property: 'transform' }, { property: 'color' } ] ) };
-
-				box-sizing: border-box;
-
-				border: none;
-				height: 100%;
-				padding-block: 10px;
-				padding-inline: 8px;
-
-				color: ${ toCSSResult( 'color-gray-500' ) };
-			}
-
-			:host( [open] ) #handle {
+			:host( [open] ) #handle xb-icon {
 				transform: rotate( 180deg );
 			}
 		`,
@@ -123,17 +109,7 @@ export function menuStyles() {
 		expandableElementStyles( {
 			expandableSelector: '[role="listbox"]',
 		} ),
-		css`
-			#spinner {
-				visibility: hidden;
-				/* --xb-floating-width: max-content;
-		        --xb-floating-min-width: 16ch; */
-			}
-
-			:host( [loading] ) #spinner {
-				visibility: visible;
-			}
-		`,
+		css``,
 	];
 }
 

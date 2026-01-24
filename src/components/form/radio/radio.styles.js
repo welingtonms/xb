@@ -43,7 +43,6 @@ export function radioGroupStyles() {
 
 			::slotted( * ) {
 				margin-block: 0;
-				width: 100%;
 			}
 		`,
 	];

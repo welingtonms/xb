@@ -42,7 +42,6 @@ export class Radio extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 	 */
 	@property( { type: String } ) accessor value;
 
-
 	@trackSlot()
 	accessor hasDefaultContent;
 
@@ -112,11 +111,15 @@ export class Radio extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 			<span id="button" aria-hidden="true">
 				<xb-icon id="check" name="circle-fill"></xb-icon>
 			</span>
-			<label id="label" for="control" style="display: ${ !this.hasDefaultContent ? 'none' : nothing }">
+			<label
+				id="label"
+				for="control"
+				style="display: ${ ! this.hasDefaultContent ? 'none' : nothing }"
+			>
 				<slot></slot>
 			</label>
 
-			<span style="display: ${ !this.hasDescriptionContent ? 'none' : nothing }"></span>
+			<span style="display: ${ ! this.hasDescriptionContent ? 'none' : nothing }"></span>
 			<slot name="description"></slot>
 		`;
 	}
@@ -138,7 +141,7 @@ export class Radio extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 	 */
 	#onCheckedChange = ( checked ) => {
 		if ( ! this.name ) {
-			const group = this.closest( 'm-radio-group' );
+			const group = this.closest( 'xb-radio-group' );
 
 			this.name = group?.name ?? group?.getAttribute( 'name' ) ?? '';
 		}
@@ -181,7 +184,6 @@ export class Radio extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 		this.#onDisabledChange( disabled );
 	}
 }
-
 
 /**
  * @typedef {import('../../../styles/size.styles').ElementSize} RadioSize

@@ -24,6 +24,11 @@ function styles( selector = ':host' ) {
 		baseButtonHostStyles(),
 		baseButtonStyles( 'button' ),
 		css`
+			button {
+				justify-content: center;
+			}
+		`,
+		css`
 			${ $.css() } {
 				display: inline-block;
 				position: relative;
@@ -48,8 +53,8 @@ function styles( selector = ':host' ) {
 			}
 
 			${ $.attr( '[size="xs"]', '[variant="icon"]' ).css() } {
-				--xb-button-padding-x: 6px;
-				--xb-button-padding-y: 6px;
+				--xb-button-padding-x: 2px;
+				--xb-button-padding-y: 2px;
 			}
 
 			${ $.attr( '[size="sm"]' ).css() } {
@@ -329,6 +334,8 @@ function styles( selector = ':host' ) {
 		`,
 	];
 }
+
+console.log( styles() );
 
 export default styles;
 

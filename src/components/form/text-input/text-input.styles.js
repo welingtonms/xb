@@ -117,7 +117,7 @@ export function textInputStyles() {
 			input {
 				${ transition( [ { property: 'color' } ] ) };
 
-				${ typography( 'text-md' ) };
+				${ typography( 'text-sm' ) };
 
 				box-sizing: border-box;
 				border: none;

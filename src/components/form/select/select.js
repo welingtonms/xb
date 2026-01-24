@@ -379,7 +379,11 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 						@input=${ this.#onTriggerInput }
 						?disabled=${ this.disabled }
 					/>
-					<button
+
+					<xb-button
+						size="xs"
+						variant="icon"
+						aria-label="Toggle menu"
 						id="handle"
 						tabindex="-1"
 						aria-controls="menu"
@@ -388,7 +392,7 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 						@click=${ this.#onHandleClick }
 					>
 						<xb-icon aria-hidden="true" name="caret-down"></xb-icon>
-					</button>
+					</xb-button>
 				</div>
 
 				<div
@@ -625,7 +629,6 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 	};
 
 	#onClickOutside = async () => {
-		console.log( 'onClickOutside' );
 		this.#controllers.boundary.deactivate();
 		this.#controllers.keyboard.deactivate();
 

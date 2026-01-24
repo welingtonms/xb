@@ -123,6 +123,7 @@ export function switchStyles() {
 
 		${ input.checked.css() } ~ ${ button.css() } #check {
 			transform: translateX( 16px );
+			box-shadow: ${ toCSSResult( 'shadow-md' ) };
 		}
 
 		${ input.disabled.css() } {

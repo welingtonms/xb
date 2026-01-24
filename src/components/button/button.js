@@ -8,6 +8,7 @@ import createLogger from '../../utils/logger';
 import { XBElement } from '../xb-element';
 import { FormElement } from '../form-element';
 import { WithAriaMixin } from '../../mixins/with-aria';
+import { trackSlot } from '../../decorators/track-slot';
 
 import '../icon/icon.define';
 
@@ -76,6 +77,14 @@ export class Button extends WithAriaMixin( FormElement ) {
 	 */
 	@property( { type: String } ) accessor icon;
 
+	/** @type {boolean} */
+	@trackSlot( 'leading' )
+	accessor hasSlottedLeading;
+
+	/** @type {boolean} */
+	@trackSlot( 'trailing' )
+	accessor hasSlottedTrailing;
+
 	/**
 	 * @param {{
 	 *  name: string,
@@ -118,7 +127,7 @@ export class Button extends WithAriaMixin( FormElement ) {
 				id="control"
 				part="control"
 				class=${ classMap( {
-					'has-slotted-content': this.#hasSlottedContent(),
+					'has-slotted-content': this.hasSlottedLeading || this.hasSlottedTrailing,
 				} ) }
 				type=${ this.type }
 				formaction=${ ifDefined( this.formaction ) }
@@ -147,16 +156,6 @@ export class Button extends WithAriaMixin( FormElement ) {
 	getAriaTarget() {
 		return this.button;
 	}
-
-	#hasSlottedContent = () => {
-		const leading = this.renderRoot?.querySelector( '[slot="leading"]' );
-		const trailing = this.renderRoot?.querySelector( '[slot="trailing"]' );
-
-		const leadingContent = leading?.assignedNodes() ?? [];
-		const trailingContent = trailing?.assignedNodes() ?? [];
-
-		return leadingContent.length > 0 || trailingContent.length > 0;
-	};
 
 	#onClick = () => {
 		if ( this.disabled ) {

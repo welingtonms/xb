@@ -58,6 +58,26 @@ export const Playground = {
 
 			<xb-button
 				disabled={ args.disabled }
+				variant={ args.variant }
+				size={ args.size }
+				onClick={ args.click }
+			>
+				<xb-icon slot="leading" name="star"></xb-icon>
+				Submit
+			</xb-button>
+
+			<xb-button
+				disabled={ args.disabled }
+				variant={ args.variant }
+				size={ args.size }
+				onClick={ args.click }
+			>
+				<xb-icon slot="trailing" name="star"></xb-icon>
+				Submit
+			</xb-button>
+
+			<xb-button
+				disabled={ args.disabled }
 				variant="icon"
 				size={ args.size }
 				onClick={ args.click }

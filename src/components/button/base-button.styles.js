@@ -26,6 +26,7 @@ export function baseButtonHostStyles() {
 			--xb-button-min-width: unset;
 			--xb-button-gap: unset;
 
+			--xb-button-text-align: center;
 
 			display: inline-block;
 			position: relative;
@@ -45,15 +46,8 @@ export function baseButtonStyles( selector ) {
 
 	return css`
 		${ $.css() } {
-			display: inline-flex;
-			contain: content style;
-			box-sizing: border-box;
-			align-items: center;
-		}
-
-		${ $.css() } {
-			height: var( --xb-button-height );
-			min-width: var( --xb-button-height );
+			block-size: var( --xb-button-height );
+			min-inline-size: var( --xb-button-height );
 
 			${ transition( [
 				{ property: 'color' },
@@ -77,14 +71,16 @@ export function baseButtonStyles( selector ) {
 			cursor: pointer;
 			position: relative;
 
+			contain: content;
 			box-sizing: border-box;
+			inline-size: 100%;
 
 			display: inline-flex;
 			align-items: center;
-			justify-content: center;
 			text-decoration: none;
 
 			gap: var( --xb-button-gap );
+			text-align: var( --xb-button-text-align );
 
 			margin: 0;
 			padding: var( --xb-button-padding-y ) var( --xb-button-padding-x );
@@ -124,14 +120,14 @@ export function baseButtonStyles( selector ) {
 }
 
 /* Add pseudo-element for outline */
-		// ${ $.focused.css() }::after {
-		// 	content: '';
-		// 	position: absolute;
-		// 	inset: -4px; /* Adjust this value to control outline distance */
-		// 	border-radius: calc( var( --xb-button-border-radius, 8px ) + 4px );
-		// 	border: 2px solid var( --xb-button-outline-color, ${ toCSSResult( 'color-primary-100' ) } );
-		// 	pointer-events: none;
-		// }
+// ${ $.focused.css() }::after {
+// 	content: '';
+// 	position: absolute;
+// 	inset: -4px; /* Adjust this value to control outline distance */
+// 	border-radius: calc( var( --xb-button-border-radius, 8px ) + 4px );
+// 	border: 2px solid var( --xb-button-outline-color, ${ toCSSResult( 'color-primary-100' ) } );
+// 	pointer-events: none;
+// }
 
 // :host( [disabled] ),
 // button[is='xb-button'][disabled] {
