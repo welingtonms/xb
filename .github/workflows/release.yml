@@ -19,8 +19,8 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "25"
-          cache: "yarn"
+          node-version: '25'
+          cache: 'yarn'
 
       - name: Install dependencies
         run: yarn install --immutable
@@ -35,7 +35,6 @@ jobs:
         id: version-before
         run: echo "version=$(node -e 'console.log(JSON.parse(require("fs").readFileSync("package.json","utf8")).version)')" >> $GITHUB_OUTPUT
 
-      # NPM_TOKEN: add a repo secret with an npm automation token (https://www.npmjs.com/settings/~/tokens) for publishing to npm.
       - name: Release (npm)
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
