@@ -10,6 +10,11 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+      id-token: write # to enable use of OIDC for trusted publishing and npm provenance
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,6 +30,9 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
+      - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
+        run: npm audit signatures
+
       - name: Test
         run: yarn test
 
@@ -37,19 +45,9 @@ jobs:
 
       - name: Release (npm)
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release --dry-run
 
       - name: Record version after release
         id: version-after
         run: echo "version=$(node -e 'console.log(JSON.parse(require("fs").readFileSync("package.json","utf8")).version)')" >> $GITHUB_OUTPUT
-
-      - name: Publish to GitHub Packages
-        if: steps.version-before.outputs.version != steps.version-after.outputs.version
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo "@welingtonms:registry=https://npm.pkg.github.com" >> .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
-          npm publish --registry=https://npm.pkg.github.com --access public
