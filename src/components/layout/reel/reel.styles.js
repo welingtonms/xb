@@ -17,18 +17,16 @@ function styles() {
 				--xb-reel-border-style: none;
 				--xb-reel-border-width: 1px;
 				--xb-reel-color: unset;
-				--xb-reel-margin: var( --xb-spacing-4 );
+				--xb-reel-margin: ${ toCSSResult( 'spacing-4' ) };
 				--xb-reel-padding-x: ${ toCSSResult( 'spacing-2' ) };
 				--xb-reel-padding-y: ${ toCSSResult( 'spacing-2' ) };
 				--xb-reel-thumb-color: rgb( var( --xb-color-primary-700 ) );
 				--xb-reel-track-color: rgb( var( --xb-color-primary-500 ) );
+				--xb-reel-item-width: auto;
 
 				width: 100%;
 
 				${ m( toCSSResult( 'spacing-0' ) ) };
-
-				${ px( 'var(--xb-reel-padding-x)' ) };
-				${ py( 'var(--xb-reel-padding-y)' ) };
 
 				display: flex;
 				block-size: auto;
@@ -43,7 +41,7 @@ function styles() {
 			}
 
 			:host::-webkit-scrollbar {
-				block-size: var( --xb-spacing-4 );
+				block-size: ${ toCSSResult( 'spacing-4' ) };
 			}
 
 			:host::-webkit-scrollbar-track {
@@ -64,7 +62,7 @@ function styles() {
 			::slotted( * ) {
 				${ typography( 'text-md' ) };
 
-				flex: 0 0 auto;
+				flex: 0 0 var( --xb-reel-item-width );
 			}
 
 			::slotted( img ) {

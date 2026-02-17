@@ -14,8 +14,8 @@ export class ReelLayout extends BaseLayout {
 	 *  registry: CustomElementRegistry,
 	 * }} config
 	 */
-	static define(config) {
-		XBElement.define({ name: 'xb-reel', ...config, type: ReelLayout });
+	static define( config ) {
+		XBElement.define( { name: 'xb-reel', ...config, type: ReelLayout } );
 	}
 
 	connectedCallback() {
@@ -24,12 +24,12 @@ export class ReelLayout extends BaseLayout {
 		// TODO: should we do this separately and reuse here?
 		this.resizeObserver = new ResizeObserver( ( entries ) => {
 			console.debug( '[xb-reel]', 'resizeObserver' );
-			this._toggleOverflowClass( entries[ 0 ].target );
+			this.#toggleOverflowClass( entries[ 0 ].target );
 		} );
 
 		this.mutationObserver = new MutationObserver( ( entries ) => {
 			console.debug( '[xb-reel]', 'mutationObserver' );
-			this._toggleOverflowClass( entries[ 0 ].target );
+			this.#toggleOverflowClass( entries[ 0 ].target );
 		} );
 	}
 
@@ -49,7 +49,7 @@ export class ReelLayout extends BaseLayout {
 		this.mutationObserver.observe( this, { childList: true } );
 	}
 
-	_toggleOverflowClass( elem ) {
+	#toggleOverflowClass( elem ) {
 		console.debug( '[xb-reel]', elem.scrollWidth > elem.clientWidth );
 		elem.classList.toggle( 'is-overflowing', elem.scrollWidth > elem.clientWidth );
 	}

@@ -1,11 +1,10 @@
-import { html } from 'lit-html';
+import React from 'react';
 
-import { BorderlessArg, PaddinglessArg } from '../../../common/arg-types';
-import '../box';
-import './imposter';
+import { BorderlessArg, PaddinglessArg } from '../../../utils/arg-types';
+import '../box/box.define';
+import './imposter.define';
 
-/** @type {Meta} */
-const meta = {
+export default {
 	title: 'Foundation/Layouts/imposter',
 	component: 'imposter',
 	argTypes: {
@@ -22,12 +21,9 @@ const meta = {
 	parameters: {},
 };
 
-export default meta;
-
-/** @type {ImposterStory} */
 export const Playground = {
-	render: ( args ) => html`
-		<div style="position: relative; width: 100%;">
+	render: ( args ) => (
+		<div style={ { position: 'relative', width: '100%' } }>
 			<p>
 				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin maximus pellentesque maximus.
 				Etiam tempor massa ut ex lacinia, quis venenatis nisi sollicitudin. Nulla eu vulputate quam.
@@ -59,14 +55,17 @@ export const Playground = {
 			</p>
 
 			<xb-imposter
-				style="--xb-imposter-background-color: rgb(var(--xb-color-background));"
-				paddingless=${ args.paddingless }
-				borderless=${ args.borderless }
+				variant={ args.variant }
+				breakout={ args.breakout }
+				paddingless={ args.paddingless }
+				borderless={ args.borderless }
 			>
-				<xb-box paddingless="none" borderless="none">Here goes the imposter content.</xb-box>
+				<xb-box style={ { '--xb-box-background-color': 'lightgray' } }>
+					Here goes the imposter content.
+				</xb-box>
 			</xb-imposter>
 		</div>
-	`,
+	),
 
 	args: {
 		paddingless: 'none',
@@ -75,9 +74,3 @@ export const Playground = {
 		breakout: false,
 	},
 };
-
-/**
- * @typedef {import('./imposter').ImposterLayout} Imposter
- * @typedef {import('@storybook/web-components').StoryObj<Imposter>} ImposterStory
- * @typedef {import('@storybook/web-components').Meta} Meta
- */

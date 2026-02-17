@@ -335,8 +335,6 @@ function styles( selector = ':host' ) {
 	];
 }
 
-console.log( styles() );
-
 export default styles;
 
 // ${ text.enabled.hovered.css() } {

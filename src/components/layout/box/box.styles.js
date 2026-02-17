@@ -8,8 +8,6 @@ import typography from '../../../styles/typography.styles';
 
 import layoutStyles from '../../../styles/layout.styles';
 
-
-
 function styles() {
 	return [
 		layoutStyles(),
@@ -20,6 +18,7 @@ function styles() {
 				--xb-box-border-color: ${ toCSSResult( 'color-gray-300' ) };
 				--xb-box-border-style: solid;
 				--xb-box-border-width: 1px;
+				--xb-box-border-radius: ${ toCSSResult( 'radius-md' ) };
 				--xb-box-color: unset;
 				--xb-box-gap: ${ toCSSResult( 'spacing-2' ) };
 				--xb-box-padding-x: ${ toCSSResult( 'spacing-4' ) };
@@ -43,6 +42,7 @@ function styles() {
 
 				border: var( --xb-box-border-width ) var( --xb-box-border-style )
 					var( --xb-box-border-color );
+				border-radius: var( --xb-box-border-radius );
 				color: var( --xb-box-color );
 				background-color: var( --xb-box-background-color );
 
