@@ -47,7 +47,8 @@ jobs:
       - name: Release (npm)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release --dry-run
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: yarn release
 
       - name: Record version after release
         id: version-after
