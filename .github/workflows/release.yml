@@ -16,6 +16,7 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -47,6 +48,7 @@ jobs:
       - name: Release (npm)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: yarn release
 
       - name: Record version after release
