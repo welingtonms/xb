@@ -39,13 +39,11 @@ function styles( selector = ':host' ) {
 			}
 
 			${ $.attr( '[size="xs"]' ).css() } {
-				${ typography( 'text-xs' ) };
-
 				--xb-button-height: 24px;
 				--xb-button-min-width: 24px;
 
-				--xb-button-padding-x: 8px;
-				--xb-button-padding-y: 6px;
+				--xb-button-padding-x: ${ toCSSResult( 'spacing-2' ) };
+				--xb-button-padding-y: ${ toCSSResult( 'spacing-1' ) };
 			}
 
 			${ $.attr( '[size="xs"]' ).descendant( '.has-slotted-content' ).css() } {
@@ -55,6 +53,9 @@ function styles( selector = ':host' ) {
 			${ $.attr( '[size="xs"]', '[variant="icon"]' ).css() } {
 				--xb-button-padding-x: 2px;
 				--xb-button-padding-y: 2px;
+
+				--xb-button-height: 24px;
+				--xb-button-width: 24px;
 			}
 
 			${ $.attr( '[size="sm"]' ).css() } {
@@ -72,6 +73,9 @@ function styles( selector = ':host' ) {
 			${ $.attr( '[size="sm"]', '[variant="icon"]' ).css() } {
 				--xb-button-padding-x: 8px;
 				--xb-button-padding-y: 8px;
+
+				--xb-button-height: 36px;
+				--xb-button-width: 36px;
 			}
 
 			${ $.attr( '[size="md"]' ).css() } {
@@ -89,6 +93,9 @@ function styles( selector = ':host' ) {
 			${ $.attr( '[size="md"]', '[variant="icon"]' ).css() } {
 				--xb-button-padding-x: 10px;
 				--xb-button-padding-y: 10px;
+
+				--xb-button-height: 40px;
+				--xb-button-width: 40px;
 			}
 
 			${ $.attr( '[size="lg"]' ).css() } {
@@ -106,6 +113,9 @@ function styles( selector = ':host' ) {
 			${ $.attr( '[size="lg"]', '[variant="icon"]' ).css() } {
 				--xb-button-padding-x: 12px;
 				--xb-button-padding-y: 12px;
+
+				--xb-button-height: 44px;
+				--xb-button-width: 44px;
 			}
 
 			${ $.attr( '[size="xl"]' ).css() } {
@@ -123,6 +133,9 @@ function styles( selector = ':host' ) {
 			${ $.attr( '[size="xl"]', '[variant="icon"]' ).css() } {
 				--xb-button-padding-x: 14px;
 				--xb-button-padding-y: 14px;
+
+				--xb-button-height: 48px;
+				--xb-button-width: 48px;
 			}
 
 			${ $.attr( '[size="2xl"]' ).css() } {
@@ -140,6 +153,9 @@ function styles( selector = ':host' ) {
 			${ $.attr( '[size="2xl"]', '[variant="icon"]' ).css() } {
 				--xb-button-padding-x: 16px;
 				--xb-button-padding-y: 16px;
+
+				--xb-button-height: 60px;
+				--xb-button-width: 60px;
 			}
 
 			/* Variants */

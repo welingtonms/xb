@@ -8,30 +8,59 @@ import toCSSResult from '../../utils/to-css-result';
 import transition from '../../styles/transition.styles';
 import typography from '../../styles/typography.styles';
 
-// ${ scaleStyles( { target: selector, property: '--xb-button-height' } ) }
-
 export function baseButtonHostStyles() {
+	const $ = select( ':host' );
+
 	return css`
-		:host {
+		${ $.css() } {
 			--xb-button-background-color: transparent;
 			--xb-button-color: black;
 			--xb-button-border-color: transparent;
-			--xb-button-border-radius: 8px;
+			--xb-button-border-radius: ${ toCSSResult( 'radius-md' ) };
 			--xb-button-outline-color: transparent;
 			--xb-button-outline-offset: 2px;
 
 			--xb-button-padding-x: unset;
 			--xb-button-padding-y: unset;
+			--xb-button-min-height: unset;
 			--xb-button-height: unset;
 			--xb-button-min-width: unset;
+			--xb-button-width: unset;
 			--xb-button-gap: unset;
 
 			--xb-button-text-align: center;
 
 			display: inline-block;
 			position: relative;
+		}
 
+		${ $.attr( '[size="xs"]' ).css() } {
+			${ typography( 'text-xs' ) };
+			font-weight: ${ toCSSResult( 'font-weight-medium' ) };
+		}
+
+		${ $.attr( '[size="sm"]' ).css() }, ${ $.not( '[size]' ).css() } {
 			${ typography( 'text-sm' ) };
+			font-weight: ${ toCSSResult( 'font-weight-medium' ) };
+		}
+
+		${ $.attr( '[size="md"]' ).css() } {
+			${ typography( 'text-md' ) };
+			font-weight: ${ toCSSResult( 'font-weight-medium' ) };
+		}
+
+		${ $.attr( '[size="lg"]' ).css() } {
+			${ typography( 'text-lg' ) };
+			font-weight: ${ toCSSResult( 'font-weight-medium' ) };
+		}
+
+		${ $.attr( '[size="xl"]' ).css() } {
+			${ typography( 'text-xl' ) };
+			font-weight: ${ toCSSResult( 'font-weight-medium' ) };
+		}
+
+		${ $.attr( '[size="2xl"]' ).css() } {
+			${ typography( 'text-xl' ) };
 			font-weight: ${ toCSSResult( 'font-weight-medium' ) };
 		}
 	`;
@@ -46,9 +75,6 @@ export function baseButtonStyles( selector ) {
 
 	return css`
 		${ $.css() } {
-			block-size: var( --xb-button-height );
-			min-inline-size: var( --xb-button-height );
-
 			${ transition( [
 				{ property: 'color' },
 				{ property: 'background-color' },
@@ -60,20 +86,26 @@ export function baseButtonStyles( selector ) {
 			font-style: inherit;
 			font-stretch: inherit;
 			letter-spacing: inherit;
+			font-weight: inherit;
+			font-size: inherit;
+			line-height: inherit;
+			letter-spacing: inherit;
 
 			font-synthesis: inherit;
 			text-rendering: inherit;
 			-webkit-font-smoothing: inherit;
 			-moz-osx-font-smoothing: inherit;
 			-webkit-text-size-adjust: inherit;
-			font-weight: inherit;
 
 			cursor: pointer;
 			position: relative;
 
 			contain: content;
 			box-sizing: border-box;
-			inline-size: 100%;
+			inline-size: var( --xb-button-width );
+			min-inline-size: var( --xb-button-min-width );
+			block-size: var( --xb-button-height );
+			min-block-size: var( --xb-button-min-height );
 
 			display: inline-flex;
 			align-items: center;
@@ -91,6 +123,7 @@ export function baseButtonStyles( selector ) {
 			border: 1px solid var( --xb-button-border-color );
 			border-radius: var( --xb-button-border-radius );
 			border-image: initial;
+			-webkit-tap-highlight-color: transparent;
 
 			color: var( --xb-button-color );
 
