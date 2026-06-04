@@ -18,6 +18,7 @@ class BaseSelectorBuilder {
 	 * @param {string[]} base
 	 * @param {string[]} attrs
 	 * @param {string[]} pseudos
+	 * @returns {BaseSelectorBuilder}
 	 */
 	_create( base = this.base, attrs = this.attrs, pseudos = this.pseudos ) {
 		return new this.constructor( base, attrs, pseudos );

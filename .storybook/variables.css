@@ -14,6 +14,10 @@
   --xb-brand-color-brand-700: 105, 65, 198; /** #6941c6 */
   --xb-brand-color-brand-800: 83, 56, 158; /** #53389e */
   --xb-brand-color-brand-900: 66, 48, 125; /** #42307d */
+  --xb-breakpoint-sm: 640px;
+  --xb-breakpoint-md: 768px;
+  --xb-breakpoint-lg: 1024px;
+  --xb-breakpoint-xl: 1280px;
   --xb-color-white: 255, 255, 255;
   --xb-color-black: 0, 0, 0;
   --xb-color-gray-25: 253, 253, 253; /** #FDFDFD */
