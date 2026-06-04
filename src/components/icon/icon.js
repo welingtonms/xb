@@ -27,6 +27,12 @@ export class Icon extends XBElement {
 	@property( { type: String } ) accessor color;
 
 	/**
+	 * Rotate the rendered icon.
+	 * @type {IconAttributes['rotate']}
+	 */
+	@property( { type: Number } ) accessor rotate;
+
+	/**
 	 * @param {{
 	 *  name: string,
 	 *  registry: CustomElementRegistry,
@@ -59,6 +65,14 @@ export class Icon extends XBElement {
 			}
 		}
 
+		if ( changedProperties.has( 'rotate' ) ) {
+			if ( this.rotate ) {
+				this.style.setProperty( '--xb-icon-rotate', `${ this.rotate }deg` );
+			} else {
+				this.style.removeProperty( '--xb-icon-rotate' );
+			}
+		}
+
 		super.update( changedProperties );
 	}
 
@@ -78,4 +92,5 @@ export class Icon extends XBElement {
  * @property {IconName} name
  * @property {number} size
  * @property {string} color
+ * @property {number} rotate
  */

@@ -17,6 +17,7 @@ function styles() {
 
 				--xb-icon-size: 1em;
 				--xb-icon-color: currentColor;
+				--xb-icon-rotate: 0deg;
 
 				display: inline-flex;
 				align-items: center;
@@ -28,6 +29,8 @@ function styles() {
 
 				color: var( --xb-icon-color );
 				fill: var( --xb-icon-color );
+
+				transform: rotate( var( --xb-icon-rotate ) );
 			}
 
 			svg {
