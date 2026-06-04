@@ -6,7 +6,11 @@ const config = {
 		'../src/**/*.mdx',
 		'../src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
 	],
-	addons: [ '@chromatic-com/storybook', '@storybook/addon-docs' ],
+	addons: [
+		'@chromatic-com/storybook',
+		'@storybook/addon-docs',
+		'@github-ui/storybook-addon-performance-panel',
+	],
 	framework: {
 		name: '@storybook/react-webpack5',
 		options: {},

@@ -1,68 +1,70 @@
 {
-  "name": "@welingtonms/xb",
-  "version": "0.0.0",
-  "type": "module",
-  "author": "Welington Silva",
-  "license": "UNLICENSED",
-  "packageManager": "yarn@3.8.7",
-  "publishConfig": {
-    "access": "public"
-  },
-  "description": "XB web components component library",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/welingtonms/xb.git"
-  },
-  "bugs": {
-    "url": "https://github.com/welingtonms/xb/issues"
-  },
-  "readme": "https://github.com/welingtonms/xb#readme",
-  "homepage": "https://github.com/welingtonms/xb#readme",
-  "keywords": [
-    "xb",
-    "web components",
-    "lit"
-  ],
-  "scripts": {
-    "prebuild": "rm -rf dist",
-    "prebuild:tokens": "node ./src/scripts/build-tokens.js",
-    "prebuild:icons": "node ./src/scripts/convert-svg.js",
-    "build": "yarn prebuild && yarn prebuild:tokens && yarn prebuild:icons",
-    "release": "semantic-release",
-    "test": "echo \"Tests passed\" && exit 0",
-    "dev": "yarn storybook",
-    "storybook": "storybook dev -p 6006",
-    "build:docs": "storybook build -o ./docs"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.26.9",
-    "@babel/plugin-proposal-decorators": "^7.25.9",
-    "@babel/preset-env": "^7.26.9",
-    "@babel/preset-react": "^7.26.3",
-    "@chromatic-com/storybook": "^5.0.1",
-    "@commitlint/cli": "^19.7.1",
-    "@commitlint/config-conventional": "^19.7.1",
-    "@semantic-release/github": "^10.0.2",
-    "@semantic-release/npm": "^12.0.0",
-    "@storybook/addon-docs": "^10.2.8",
-    "@storybook/react-webpack5": "^10.2.8",
-    "aria-query": "5.3.2",
-    "babel-loader": "^9.2.1",
-    "glob": "10.3.12",
-    "prettier": "npm:wp-prettier@latest",
-    "prop-types": "^15.8.1",
-    "react": "^19.0.0",
-    "semantic-release": "^24.0.0",
-    "storybook": "^10.2.8",
-    "style-dictionary": "^4.3.3",
-    "svgo": "^3.3.2"
-  },
-  "dependencies": {
-    "@floating-ui/dom": "^1.6.13",
-    "@lit/context": "^1.1.4",
-    "@lit/react": "^1.0.7",
-    "@welingtonms/classy": "^1.2.0",
-    "composed-offset-position": "^0.0.6",
-    "lit": "^3.2.1"
-  }
+	"name": "@welingtonms/xb",
+	"version": "0.0.0",
+	"type": "module",
+	"author": "Welington Silva",
+	"license": "UNLICENSED",
+	"packageManager": "yarn@3.8.7",
+	"publishConfig": {
+		"access": "public"
+	},
+	"description": "XB web components component library",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/welingtonms/xb.git"
+	},
+	"bugs": {
+		"url": "https://github.com/welingtonms/xb/issues"
+	},
+	"readme": "https://github.com/welingtonms/xb#readme",
+	"homepage": "https://github.com/welingtonms/xb#readme",
+	"keywords": [
+		"xb",
+		"web components",
+		"lit"
+	],
+	"scripts": {
+		"prebuild": "rm -rf dist",
+		"prebuild:tokens": "node ./src/scripts/build-tokens.js",
+		"prebuild:icons": "node ./src/scripts/convert-svg.js",
+		"build": "yarn prebuild && yarn prebuild:tokens && yarn prebuild:icons",
+		"release": "semantic-release",
+		"test": "echo \"Tests passed\" && exit 0",
+		"dev": "yarn storybook",
+		"storybook": "storybook dev -p 6006",
+		"build:docs": "storybook build -o ./docs"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.29.0",
+		"@babel/plugin-proposal-decorators": "^7.29.0",
+		"@babel/preset-env": "^7.29.5",
+		"@babel/preset-react": "^7.28.5",
+		"@chromatic-com/storybook": "^5.2.1",
+		"@commitlint/cli": "^21.0.1",
+		"@commitlint/config-conventional": "^21.0.1",
+		"@faker-js/faker": "^10.4.0",
+		"@github-ui/storybook-addon-performance-panel": "^1.1.4",
+		"@semantic-release/github": "^12.0.8",
+		"@semantic-release/npm": "^13.1.5",
+		"@storybook/addon-docs": "^10.4.1",
+		"@storybook/react-webpack5": "^10.4.1",
+		"aria-query": "5.3.2",
+		"babel-loader": "^10.1.1",
+		"glob": "13.0.6",
+		"prettier": "npm:wp-prettier@latest",
+		"prop-types": "^15.8.1",
+		"react": "^19.2.6",
+		"semantic-release": "^25.0.3",
+		"storybook": "^10.4.1",
+		"style-dictionary": "^5.4.1",
+		"svgo": "^4.0.1"
+	},
+	"dependencies": {
+		"@floating-ui/dom": "^1.7.6",
+		"@lit/context": "^1.1.6",
+		"@lit/react": "^1.0.8",
+		"@welingtonms/classy": "^1.2.0",
+		"composed-offset-position": "^0.0.6",
+		"lit": "^3.3.3"
+	}
 }
