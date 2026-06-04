@@ -49,7 +49,7 @@ export function floatingElementStyles( selectors ) {
 					left: 0 !important;
 					right: 0;
 
-					width: 100%;
+					/* width: 100%; */
 					max-width: 100vw;
 
 					border-bottom-left-radius: 0;

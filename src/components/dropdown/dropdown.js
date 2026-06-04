@@ -66,7 +66,7 @@ export class Dropdown extends FloatingElement {
 					handler: ( event ) => {
 						const { target } = event;
 
-						if (!target || this.disabled) {
+						if ( ! target || this.disabled ) {
 							return;
 						}
 
@@ -93,7 +93,7 @@ export class Dropdown extends FloatingElement {
 					handler: ( event ) => {
 						const { target } = event;
 
-						if (!target || this.disabled) {
+						if ( ! target || this.disabled ) {
 							return;
 						}
 
@@ -125,7 +125,7 @@ export class Dropdown extends FloatingElement {
 					handler: ( event ) => {
 						const { target } = event;
 
-						if (!target || this.disabled) {
+						if ( ! target || this.disabled ) {
 							return;
 						}
 
@@ -152,15 +152,15 @@ export class Dropdown extends FloatingElement {
 					/**
 					 * @param {KeyboardEvent} event
 					 */
-					handler: (event) => {
+					handler: ( event ) => {
 						const { target } = event;
 
-						if (!target) {
+						if ( ! target ) {
 							return;
 						}
 
-						if (this.open) {
-							this.collapse({ focusOnTrigger: true });
+						if ( this.open ) {
+							this.collapse( { focusOnTrigger: true } );
 						}
 					},
 				},
@@ -172,7 +172,7 @@ export class Dropdown extends FloatingElement {
 		super.connectedCallback();
 
 		this.addEventListener( 'click', this.#onClick );
-		this.addEventListener('focusin', this.#onFocusIn);
+		this.addEventListener( 'focusin', this.#onFocusIn );
 		this.addEventListener( 'xb:interact-out', this.#onClickOutside );
 	}
 
@@ -180,7 +180,7 @@ export class Dropdown extends FloatingElement {
 		super.disconnectedCallback();
 
 		this.removeEventListener( 'click', this.#onClick );
-		this.removeEventListener('focusin', this.#onFocusIn);
+		this.removeEventListener( 'focusin', this.#onFocusIn );
 		this.removeEventListener( 'xb:interact-out', this.#onClickOutside );
 	}
 
@@ -188,16 +188,16 @@ export class Dropdown extends FloatingElement {
 	 *
 	 * @param {import('lit').PropertyValues<this>} changedProperties
 	 */
-	firstUpdated(changedProperties) {
-		if (this.floating?.id) {
-			this.reference?.setAttribute('aria-controls', this.floating.id);
+	firstUpdated( changedProperties ) {
+		if ( this.floating?.id ) {
+			this.reference?.setAttribute( 'aria-controls', this.floating.id );
 		}
 
-		if (this.reference?.id) {
-			this.floating?.setAttribute('aria-labelledby', this.reference.id);
+		if ( this.reference?.id ) {
+			this.floating?.setAttribute( 'aria-labelledby', this.reference.id );
 		}
 
-		super.firstUpdated(changedProperties);
+		super.firstUpdated( changedProperties );
 	}
 
 	/**
@@ -214,7 +214,7 @@ export class Dropdown extends FloatingElement {
 			}
 		}
 
-		if (changedProperties.has('disabled') && this.reference) {
+		if ( changedProperties.has( 'disabled' ) && this.reference ) {
 			this.reference.disabled = this.disabled;
 		}
 
@@ -285,12 +285,12 @@ export class Dropdown extends FloatingElement {
 		await this.updateComplete;
 
 		this.#controllers.focus.clear();
-		if (focusOnTrigger) {
+		if ( focusOnTrigger ) {
 			this.reference.focus();
 		}
 
 		this.emit( 'xb:dropdown-collapse' );
-	}
+	};
 
 	/**
 	 * Toggle dropdown menu.
@@ -312,7 +312,7 @@ export class Dropdown extends FloatingElement {
 	#onClick = ( event ) => {
 		const { target } = event;
 
-		if (!target) {
+		if ( ! target ) {
 			return;
 		}
 
@@ -324,7 +324,7 @@ export class Dropdown extends FloatingElement {
 			 */
 			this.#controllers.focus.focus( target );
 
-			this.collapse({ focusOnTrigger: true });
+			this.collapse( { focusOnTrigger: true } );
 			return;
 		}
 
@@ -360,8 +360,8 @@ export class Dropdown extends FloatingElement {
 	/**
 	 * @param {FocusEvent} event
 	 */
-	#onFocusIn = (event) => {
-		if (isInsideElement(event, this)) {
+	#onFocusIn = ( event ) => {
+		if ( isInsideElement( event, this ) ) {
 			this.#controllers.boundary.activate();
 			this.#controllers.keyboard.activate();
 		}

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { PlacementArg } from '../../utils/arg-types';
+import { PlacementArg, SizeArg } from '../../utils/arg-types';
 
 import '../layout/layout.define';
 import '../button/button.define';
@@ -28,6 +28,7 @@ export default {
 		responsive: {
 			control: 'boolean',
 		},
+		size: SizeArg,
 	},
 };
 
@@ -36,7 +37,9 @@ export const Playground = {
 	render: ( args ) => (
 		<xb-cluster>
 			<xb-dropdown placement={ args.placement } responsive={ args.responsive }>
-				<xb-dropdown-trigger disabled={ args.disabled }>Actions</xb-dropdown-trigger>
+				<xb-dropdown-trigger disabled={ args.disabled } size={ args.size }>
+					Actions
+				</xb-dropdown-trigger>
 
 				<xb-dropdown-menu>
 					<xb-dropdown-item onclick={ args.click }>View profile</xb-dropdown-item>
@@ -57,7 +60,9 @@ export const Playground = {
 			</xb-dropdown>
 
 			<xb-dropdown placement={ args.placement } responsive={ args.responsive }>
-				<xb-dropdown-trigger disabled={ args.disabled }>Actions</xb-dropdown-trigger>
+				<xb-dropdown-trigger disabled={ args.disabled } size={ args.size }>
+					Actions
+				</xb-dropdown-trigger>
 
 				<xb-dropdown-menu>
 					<xb-dropdown-item onclick={ args.click } icon="user">
@@ -105,6 +110,7 @@ export const Playground = {
 					aria-haspopup="true"
 					aria-label="Life Actions"
 					disabled={ args.disabled }
+					size={ args.size }
 				>
 					<xb-icon name="dots-three-vertical" size={ 16 }></xb-icon>
 				</xb-button>

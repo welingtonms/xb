@@ -5,6 +5,7 @@ import { floatingHostStyles, floatingElementStyles } from '../floating-element';
 import { expandableHostStyles, expandableElementStyles } from '../../controllers/expandable';
 import { menuStyles as baseMenuStyles } from '../menu';
 import { select } from '../../styles/selector';
+import scrollbarStyles from '../../styles/scrollbar.styles';
 import toCSSResult from '../../utils/to-css-result';
 import transition from '../../styles/transition.styles';
 
@@ -50,6 +51,7 @@ export function menuStyles() {
 				--xb-menu-max-width: 20ch;
 			}
 		`,
+		scrollbarStyles( ':host' ),
 	];
 }
 
