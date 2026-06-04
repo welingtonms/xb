@@ -112,7 +112,7 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 		this.placeholder = '';
 		this.position = 'fixed';
 		this.placement = 'bottom-start';
-		this.borderless = 'none';
+		this.borderless = false;
 
 		this.slottedOptions = [];
 		this.filteredOptions = [];
@@ -655,7 +655,7 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 	#onHandleClick = () => {
 		this.toggle();
 
-		this.reference.focus();
+		// this.reference.focus();
 	};
 
 	#onSlotChange = () => {
