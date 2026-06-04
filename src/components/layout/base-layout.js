@@ -7,13 +7,13 @@ export default class BaseLayout extends XBElement {
 	 * Determine borders to be supressed.
 	 * @type {BaseLayoutAttributes['borderless']}
 	 */
-	@property( { type: String } ) accessor borderless;
+	@property( { type: String, reflect: true } ) accessor borderless;
 
 	/**
 	 * Determine paddings to be supressed.
 	 * @type {BaseLayoutAttributes['paddingless']}
 	 */
-	@property( { type: String } ) accessor paddingless;
+	@property( { type: String, reflect: true } ) accessor paddingless;
 
 	constructor() {
 		super();

@@ -6,10 +6,11 @@ import toCSSResult from '../../../utils/to-css-result';
 import typography from '../../../styles/typography.styles';
 
 import layoutStyles from '../../../styles/layout.styles';
-
+import scrollbarStyles from '../../../styles/scrollbar.styles';
 function styles() {
 	return [
 		layoutStyles(),
+		scrollbarStyles(),
 		css`
 			:host {
 				--xb-reel-background-color: initial;
@@ -20,9 +21,10 @@ function styles() {
 				--xb-reel-margin: ${ toCSSResult( 'spacing-4' ) };
 				--xb-reel-padding-x: ${ toCSSResult( 'spacing-2' ) };
 				--xb-reel-padding-y: ${ toCSSResult( 'spacing-2' ) };
-				--xb-reel-thumb-color: rgb( var( --xb-color-primary-700 ) );
-				--xb-reel-track-color: rgb( var( --xb-color-primary-500 ) );
 				--xb-reel-item-width: auto;
+
+				--xb-scrollbar-thumb-color: ${ toCSSResult( 'color-primary-700' ) };
+				--xb-scrollbar-track-color: ${ toCSSResult( 'color-primary-500' ) };
 
 				width: 100%;
 
@@ -32,31 +34,11 @@ function styles() {
 				block-size: auto;
 				overflow-x: auto;
 				overflow-y: hidden;
-				scrollbar-color: var( --xb-reel-thumb-color ) var( --xb-reel-track-color );
 
 				border: var( --xb-reel-border-width ) var( --xb-reel-border-style )
 					var( --xb-reel-border-color );
 				color: var( --xb-reel-color );
 				background-color: var( --xb-reel-background-color );
-			}
-
-			:host::-webkit-scrollbar {
-				block-size: ${ toCSSResult( 'spacing-4' ) };
-			}
-
-			:host::-webkit-scrollbar-track {
-				background-color: var( --xb-reel-track-color );
-			}
-
-			:host::-webkit-scrollbar-thumb {
-				background-color: var( --xb-reel-track-color );
-				background-image: linear-gradient(
-					var( --xb-reel-track-color ) 0,
-					var( --xb-reel-track-color ) 0.25rem,
-					#fff 0.25rem,
-					#fff 0.75rem,
-					var( --xb-reel-track-color ) 0.75rem
-				);
 			}
 
 			::slotted( * ) {
