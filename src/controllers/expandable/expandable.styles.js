@@ -1,5 +1,7 @@
 import { css, unsafeCSS } from 'lit';
 
+import getToken from '../../utils/get-token';
+
 /**
  * @param {Object} options
  * @param {string} options.observedAttribute
@@ -28,7 +30,9 @@ export function expandableHostStyles( options ) {
 			--expandable-pointer-events: auto;
 		}
 
-		@media ( prefers-reduced-motion: no-preference ) {
+		@media ( prefers-reduced-motion: no-preference ) and ( min-width: ${ unsafeCSS(
+				getToken( 'breakpoint-md' )
+			) } ) {
 			:host( .is-showing ) {
 				--expandable-animation: show-expandable 0.2s ease forwards;
 			}
