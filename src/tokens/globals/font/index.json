@@ -2,7 +2,7 @@
 	"font": {
 		"family": {
 			"default": {
-				"value": "{platform.font.default.value}"
+				"value": "{platform.font.default}"
 			}
 		},
 		"weight": {

@@ -45,6 +45,9 @@ StyleDictionary.registerFormat( {
 
 function getStyleDictionaryConfig( brand, platform ) {
 	return {
+		// log: {
+		// 	verbosity: 'verbose',
+		// },
 		source: [
 			`src/tokens/brands/${ brand }/*.{js,json}`,
 			'src/tokens/globals/**/*.{js,json}',

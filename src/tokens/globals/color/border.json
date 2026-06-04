@@ -2,22 +2,22 @@
 	"color": {
 		"border": {
 			"primary": {
-				"value": "{color.gray.300.value}"
+				"value": "{color.gray.300}"
 			},
 			"secondary": {
-				"value": "{color.gray.200.value}"
+				"value": "{color.gray.200}"
 			},
 			"tertiary": {
-				"value": "{color.gray.100.value}"
+				"value": "{color.gray.100}"
 			},
 			"disabled": {
-				"value": "{color.gray.300.value}"
+				"value": "{color.gray.300}"
 			},
 			"brand": {
-				"value": "{brand.color.brand.500.value}"
+				"value": "{brand.color.brand.500}"
 			},
 			"error": {
-				"value": "{color.error.500.value}"
+				"value": "{color.error.500}"
 			}
 		}
 	}
