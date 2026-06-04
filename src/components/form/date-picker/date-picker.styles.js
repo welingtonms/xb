@@ -15,7 +15,6 @@ export const MENU_SELECTOR = '[role="dialog"]';
 
 export function datePickerStyles() {
 	const outerContainer = select( '.outer-container' );
-	const focusContainer = select( '.focus-container' );
 	const menuContainer = select( MENU_SELECTOR );
 
 	return [

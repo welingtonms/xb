@@ -10,14 +10,25 @@ export default {
 			options: [ 'en-US', 'pt-BR', 'es-MX', 'ja-JP' ],
 		},
 		value: { control: 'text' },
+		disabled: {
+			control: 'boolean',
+		},
+		responsive: {
+			control: 'boolean',
+		},
 	},
 };
 
-const Template = ( { locale = 'en-US', value = '' } ) => {
+const Template = ( { locale = 'en-US', value = '', disabled = false, responsive = true } ) => {
 	return (
 		<div style={ { padding: '2rem' } }>
 			<xb-i18n-provider locale={ locale }>
-				<xb-date-picker clearable value={ value }></xb-date-picker>
+				<xb-date-picker
+					clearable
+					value={ value }
+					disabled={ disabled }
+					responsive={ responsive }
+				></xb-date-picker>
 			</xb-i18n-provider>
 		</div>
 	);
