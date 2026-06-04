@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker';
 import React from 'react';
 
 import '../badge/badge.define';
@@ -7,6 +8,115 @@ import '../icon/icon.define';
 import '../layout';
 import '../text/text.define';
 import './table.define';
+
+/** Number of generated data rows in the Playground story (colspan example row is always appended). */
+const PLAYGROUND_ROW_COUNT = 15;
+
+faker.seed( 42 );
+
+function formatRowId( index ) {
+	const n = index + 1;
+	// Reserve 004 for the colspan example row appended below generated rows.
+	return String( n >= 4 ? n + 1 : n ).padStart( 3, '0' );
+}
+
+function generatePlaygroundRows( count ) {
+	return Array.from( { length: count }, ( _, index ) => {
+		const isActive = faker.datatype.boolean();
+
+		return {
+			id: formatRowId( index ),
+			name: faker.person.fullName(),
+			role: faker.person.jobTitle(),
+			status: isActive ? 'Active' : 'Inactive',
+			statusColor: isActive ? 'success' : 'warning',
+			statusIcon: isActive ? 'circle-fill' : 'circle',
+			projects: faker.helpers.multiple( () => faker.commerce.productName(), {
+				count: { min: 2, max: 4 },
+			} ),
+			skills: faker.helpers.multiple( () => faker.hacker.ingverb(), {
+				count: { min: 3, max: 5 },
+			} ),
+		};
+	} );
+}
+
+const playgroundRows = generatePlaygroundRows( PLAYGROUND_ROW_COUNT );
+
+function RowActions() {
+	return (
+		<xb-table-cell>
+			<xb-dropdown>
+				<xb-button variant="icon" aria-haspopup="true" aria-label="Row actions">
+					<xb-icon name="dots-three-vertical" size={ 16 }></xb-icon>
+				</xb-button>
+
+				<xb-dropdown-menu>
+					<xb-dropdown-item icon="trash">Remove</xb-dropdown-item>
+					<xb-dropdown-item icon="pencil">Edit</xb-dropdown-item>
+				</xb-dropdown-menu>
+			</xb-dropdown>
+		</xb-table-cell>
+	);
+}
+
+function PlaygroundDataRow( { row } ) {
+	return (
+		<xb-table-row value={ row.id }>
+			<xb-table-row-select></xb-table-row-select>
+			<xb-table-row-expand></xb-table-row-expand>
+
+			<xb-table-cell>{ row.id }</xb-table-cell>
+			<xb-table-cell>
+				<xb-text ellipsize>{ row.name }</xb-text>
+			</xb-table-cell>
+			<xb-table-cell>{ row.role }</xb-table-cell>
+			<xb-table-cell>
+				<xb-badge color={ row.statusColor } icon={ row.statusIcon }>
+					{ row.status }
+				</xb-badge>
+			</xb-table-cell>
+			<RowActions />
+
+			<xb-table-cell slot="expansion" colspan={ 3 }>
+				<h4>Current Projects</h4>
+				<ul>
+					{ row.projects.map( ( project ) => (
+						<li key={ project }>{ project }</li>
+					) ) }
+				</ul>
+			</xb-table-cell>
+			<xb-table-cell slot="expansion" colspan={ 2 }>
+				<h4>Skills</h4>
+				<ul>
+					{ row.skills.map( ( skill ) => (
+						<li key={ skill }>{ skill }</li>
+					) ) }
+				</ul>
+			</xb-table-cell>
+		</xb-table-row>
+	);
+}
+
+function ColspanExampleRow() {
+	return (
+		<xb-table-row value="004">
+			<xb-table-row-select></xb-table-row-select>
+			<xb-table-row-expand></xb-table-row-expand>
+
+			<xb-table-cell colspan={ 4 }>
+				This cell spans the entire width of the table.
+			</xb-table-cell>
+
+			<RowActions />
+
+			<xb-table-cell slot="expansion">004</xb-table-cell>
+			<xb-table-cell slot="expansion">Mary Poppins</xb-table-cell>
+			<xb-table-cell slot="expansion">Designer</xb-table-cell>
+			<xb-table-cell slot="expansion">Active</xb-table-cell>
+		</xb-table-row>
+	);
+}
 
 export default {
 	title: 'Components/Table',
@@ -26,7 +136,7 @@ export default {
 
 export const Playground = {
 	args: {
-		expandable: false,
+		expandable: true,
 		selectable: true,
 	},
 	render: ( args ) => (
@@ -48,155 +158,10 @@ export const Playground = {
 			</xb-table-header>
 
 			<xb-table-body>
-				{ /* Row with column spanning in details */ }
-				<xb-table-row value="001">
-					<xb-table-row-select></xb-table-row-select>
-					<xb-table-row-expand></xb-table-row-expand>
-
-					<xb-table-cell>001</xb-table-cell>
-					<xb-table-cell>
-						<xb-text ellipsize>John Doe</xb-text>
-					</xb-table-cell>
-					<xb-table-cell>Developer</xb-table-cell>
-					<xb-table-cell>
-						<xb-badge color="success" icon="circle-fill">
-							Active
-						</xb-badge>
-					</xb-table-cell>
-					<xb-table-cell>
-						<xb-dropdown>
-							<xb-button variant="icon" aria-haspopup="true" aria-label="Row actions">
-								<xb-icon name="dots-three-vertical" size={ 16 }></xb-icon>
-							</xb-button>
-
-							<xb-dropdown-menu>
-								<xb-dropdown-item icon="trash">Remove</xb-dropdown-item>
-								<xb-dropdown-item icon="pencil">Edit</xb-dropdown-item>
-							</xb-dropdown-menu>
-						</xb-dropdown>
-					</xb-table-cell>
-
-					<xb-table-cell slot="expansion" colspan={ 3 }>
-						<h4>Current Projects</h4>
-						<ul>
-							<li>Project Alpha</li>
-							<li>Project Beta</li>
-						</ul>
-					</xb-table-cell>
-					<xb-table-cell slot="expansion" colspan={ 2 }>
-						<h4>Skills</h4>
-						<ul>
-							<li>JavaScript</li>
-							<li>React</li>
-							<li>Node.js</li>
-						</ul>
-					</xb-table-cell>
-				</xb-table-row>
-
-				{ /* Row with full-width details */ }
-				<xb-table-row value="002">
-					<xb-table-row-select></xb-table-row-select>
-					<xb-table-row-expand></xb-table-row-expand>
-
-					<xb-table-cell>002</xb-table-cell>
-					<xb-table-cell colspan={ 2 }>
-						<xb-text ellipsize>Jane Smith (Engineering Lead)</xb-text>
-					</xb-table-cell>
-					<xb-table-cell>
-						<xb-badge color="warning" icon="circle">
-							Inactive
-						</xb-badge>
-					</xb-table-cell>
-					<xb-table-cell>
-						<xb-dropdown>
-							<xb-button variant="icon" aria-haspopup="true" aria-label="Row actions">
-								<xb-icon name="dots-three-vertical" size={ 16 }></xb-icon>
-							</xb-button>
-
-							<xb-dropdown-menu>
-								<xb-dropdown-item icon="trash">Remove</xb-dropdown-item>
-								<xb-dropdown-item icon="pencil">Edit</xb-dropdown-item>
-							</xb-dropdown-menu>
-						</xb-dropdown>
-					</xb-table-cell>
-
-					<xb-table-cell slot="expansion" colspan={ 5 }>
-						<div>
-							<h4>Team Performance</h4>
-							<div style={ { display: 'flex', gap: '20px' } }>
-								<div>
-									<h5>Current Sprint</h5>
-									<p>15 tasks completed</p>
-									<p>3 tasks in progress</p>
-								</div>
-								<div>
-									<h5>Team Members</h5>
-									<ul>
-										<li>Alice (Frontend)</li>
-										<li>Bob (Backend)</li>
-										<li>Charlie (QA)</li>
-									</ul>
-								</div>
-							</div>
-						</div>
-					</xb-table-cell>
-				</xb-table-row>
-
-				<xb-table-row value="003">
-					<xb-table-row-select></xb-table-row-select>
-
-					<xb-table-cell>003</xb-table-cell>
-
-					<xb-table-cell>
-						<xb-text ellipsize>Bob Johnson</xb-text>
-					</xb-table-cell>
-					<xb-table-cell>Manager</xb-table-cell>
-					<xb-table-cell>
-						<xb-badge color="success" icon="circle-fill">
-							Active
-						</xb-badge>
-					</xb-table-cell>
-
-					<xb-table-cell>
-						<xb-dropdown>
-							<xb-button variant="icon" aria-haspopup="true" aria-label="Row actions">
-								<xb-icon name="dots-three-vertical" size={ 16 }></xb-icon>
-							</xb-button>
-
-							<xb-dropdown-menu>
-								<xb-dropdown-item icon="trash">Remove</xb-dropdown-item>
-								<xb-dropdown-item icon="pencil">Edit</xb-dropdown-item>
-							</xb-dropdown-menu>
-						</xb-dropdown>
-					</xb-table-cell>
-				</xb-table-row>
-
-				<xb-table-row value="004">
-					<xb-table-row-select></xb-table-row-select>
-					<xb-table-row-expand></xb-table-row-expand>
-
-					<xb-table-cell colspan={ 4 }>
-						This cell spans the entire width of the table.
-					</xb-table-cell>
-
-					<xb-table-cell>
-						<xb-dropdown>
-							<xb-button variant="icon" aria-haspopup="true" aria-label="Row actions">
-								<xb-icon name="dots-three-vertical" size={ 16 }></xb-icon>
-							</xb-button>
-
-							<xb-dropdown-menu>
-								<xb-dropdown-item icon="trash">Remove</xb-dropdown-item>
-								<xb-dropdown-item icon="pencil">Edit</xb-dropdown-item>
-							</xb-dropdown-menu>
-						</xb-dropdown>
-					</xb-table-cell>
-
-					<xb-table-cell slot="expansion">004</xb-table-cell>
-					<xb-table-cell slot="expansion">Mary Poppins</xb-table-cell>
-					<xb-table-cell slot="expansion">Designer</xb-table-cell>
-					<xb-table-cell slot="expansion">Active</xb-table-cell>
-				</xb-table-row>
+				{ playgroundRows.map( ( row ) => (
+					<PlaygroundDataRow key={ row.id } row={ row } />
+				) ) }
+				<ColspanExampleRow />
 			</xb-table-body>
 		</xb-table>
 	),
