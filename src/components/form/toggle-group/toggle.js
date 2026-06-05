@@ -1,30 +1,57 @@
-import { html } from 'lit';
+import { html, LitElement } from 'lit';
+import { classMap } from 'lit/directives/class-map.js';
+import { ContextConsumer } from '@lit/context';
 import { property } from 'lit/decorators.js';
+import { query } from 'lit/decorators/query.js';
 
-import { FormElement } from '../../../common/form-element';
+import { FormElement } from '../../form-element';
 import { WithAriaMixin } from '../../../mixins/with-aria';
 import { WithIDMixin } from '../../../mixins/with-id';
-import { XBElement } from '../../../common/xb-element';
+import { XBElement } from '../../xb-element';
+import { toggleGroupContext } from './toggle-group.context';
+import { trackSlot } from '../../../decorators/track-slot';
 import createLogger from '../../../utils/logger';
 
-import styles from './toggle.styles';
+import { toggleStyles } from './toggle-group.styles';
 
-const logger = createLogger('toggle');
+const logger = createLogger( 'toggle' );
 
-export class Toggle extends WithAriaMixin(WithIDMixin(FormElement)) {
-	static styles = [styles()];
+export class Toggle extends WithAriaMixin( WithIDMixin( FormElement ) ) {
+	static shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
+	static styles = [ toggleStyles() ];
+
+	/** @type {HTMLButtonElement} */
+	@query( '#control' )
+	accessor #control;
 
 	/**
 	 * Should the toggle be checked.
 	 * @type {boolean}
 	 */
-	@property({ type: Boolean, reflect: true }) accessor checked;
+	@property( { type: Boolean, reflect: true } ) accessor checked;
 
 	/**
 	 * Button emphasis variant.
 	 * @type {String}
 	 */
-	@property({ type: String }) accessor value;
+	@property( { type: String, reflect: true } ) accessor value;
+
+	/** @type {boolean} */
+	@trackSlot( 'leading' )
+	accessor hasSlottedLeading;
+
+	/** @type {boolean} */
+	@trackSlot( 'trailing' )
+	accessor hasSlottedTrailing;
+
+	/** @type {ContextConsumer<ToggleGroupContext>} */
+	#context = new ContextConsumer( this, {
+		context: toggleGroupContext,
+		subscribe: true,
+		callback: () => {
+			this.#onDisabledChange( Boolean( this.disabled ) );
+		},
+	} );
 
 	/**
 	 * @param {{
@@ -32,44 +59,57 @@ export class Toggle extends WithAriaMixin(WithIDMixin(FormElement)) {
 	 *  registry: CustomElementRegistry,
 	 * }} config
 	 */
-	static define(config) {
-		XBElement.define({ name: 'xb-toggle', ...config, type: Toggle });
+	static define( config ) {
+		XBElement.define( { name: 'xb-toggle', ...config, type: Toggle } );
 	}
 
 	constructor() {
 		super();
 
-		this.addEventListener('click', this.#onClick);
+		this.addEventListener( 'click', this.#onClick );
 	}
 
 	/**
 	 * @param {import("lit").PropertyValues} changedProperties
 	 */
-	update(changedProperties) {
-		if (changedProperties.has('disabled')) {
-			this.#onDisabledChange(this.disabled);
+	update( changedProperties ) {
+		if ( changedProperties.has( 'disabled' ) ) {
+			this.#onDisabledChange( this.disabled );
 		}
 
-		if (changedProperties.has('checked')) {
-			this.#onCheckedChange(this.checked);
+		if ( changedProperties.has( 'checked' ) ) {
+			this.#onCheckedChange( this.checked );
 		}
 
-		super.update(changedProperties);
+		super.update( changedProperties );
 	}
 
 	render() {
 		return html`
-			<slot name="leading"></slot>
-			<slot></slot>
-			<slot name="trailing"></slot>
+			<button
+				id="control"
+				part="control"
+				class=${ classMap( {
+					'has-slotted-content': this.hasSlottedLeading || this.hasSlottedTrailing,
+				} ) }
+				type="button"
+			>
+				<slot name="leading"></slot>
+				<slot></slot>
+				<slot name="trailing"></slot>
+			</button>
 		`;
+	}
+
+	get button() {
+		return this.#control;
 	}
 
 	/**
 	 * @param {Event} event
 	 */
-	#onClick = (event) => {
-		if (this.disabled) {
+	#onClick = ( event ) => {
+		if ( this.disabled ) {
 			event.stopPropagation();
 			return;
 		}
@@ -78,50 +118,58 @@ export class Toggle extends WithAriaMixin(WithIDMixin(FormElement)) {
 	/**
 	 * @param {boolean} checked
 	 */
-	#onCheckedChange = (checked) => {
-		if (!this.name) {
-			logger.warn('no name attribute set on the toggle. Is it intentionally?');
+	#onCheckedChange = ( checked ) => {
+		if ( ! this.name ) {
+			const group = this.closest( 'xb-toggle-group' );
+			this.name = group?.name ?? '';
+
+			logger.warn(
+				`no name attribute set on the toggle. Is it intentionally? setting name to ${ group?.name }`
+			);
 		}
 
-		this.internals.setFormValue(checked ? this.value : null);
-		this.setBooleanAttribute('aria-checked', checked);
+		this.internals.setFormValue( checked ? this.value : null );
+		this.setBooleanAttribute( 'aria-checked', checked );
 	};
 
 	/**
 	 * @param {boolean} disabled
 	 */
-	#onDisabledChange = (disabled) => {
-		this.setAttribute('aria-disabled', disabled);
+	#onDisabledChange = ( disabled ) => {
+		this.queuedWorkManager.push(
+			() => {
+				return Boolean( this.button );
+			},
+			() => {
+				const isDisabled = Boolean( this.#context.value?.disabled || disabled );
+				this.setAttribute( 'aria-disabled', String( isDisabled ) );
 
-		if (this.disabled) {
-			this.removeAttribute('tabindex');
-		} else {
-			this.setAttribute('tabindex', '-1');
-		}
+				this.button.disabled = isDisabled;
+			}
+		);
 	};
 
 	formResetCallback() {
 		// toggle-group will take care of this
 	}
 
-	formStateRestoreCallback(state) {
-		if (state) {
+	formStateRestoreCallback( state ) {
+		if ( state ) {
 			this.checked = state;
 		}
 	}
 
-	formDisabledCallback(disabled) {
-		super.formDisabledCallback(disabled);
+	formDisabledCallback( disabled ) {
+		super.formDisabledCallback( disabled );
 
-		if (!this.isConnected) {
+		if ( ! this.isConnected ) {
 			return;
 		}
 
-		this.#onDisabledChange(disabled);
+		this.#onDisabledChange( disabled );
 	}
 }
 
 /**
- * @typedef {('text' | 'ghost' | 'flat')} ButtonEmphasis
- * @typedef {('small' | 'medium' | 'large')} ButtonSize
+ * @typedef {import('./toggle-group.context').ToggleGroupContext} ToggleGroupContext
  */

@@ -1,6 +1,7 @@
-import { html, nothing } from 'lit';
+import { html, LitElement, nothing } from 'lit';
 import { ContextConsumer } from '@lit/context';
 import { property } from 'lit/decorators.js';
+import { query } from 'lit/decorators/query.js';
 
 import { FormElement } from '../../form-element';
 import { trackSlot } from '../../../decorators/track-slot';
@@ -11,6 +12,7 @@ import createLogger from '../../../utils/logger';
 
 import { radioStyles } from './radio.styles';
 import { radioGroupContext } from './radio-group.context';
+
 import '../../layout/stack/stack.define';
 import '../../layout/cluster/cluster.define';
 import '../../icon/icon.define';
@@ -22,7 +24,12 @@ const logger = createLogger( 'radio' );
  * @template WithAriaMixin, WithIDMixin, FormElement
  */
 export class Radio extends WithAriaMixin( WithIDMixin( FormElement ) ) {
+	static shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
 	static styles = [ radioStyles() ];
+
+	/** @type {HTMLButtonElement} */
+	@query( '#control' )
+	accessor #control;
 
 	/**
 	 * Should the button be checked.
@@ -103,11 +110,7 @@ export class Radio extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 
 	render() {
 		return html`
-			<button
-				id="control"
-				type="button"
-				?disabled=${ Boolean( this.#context.value?.disabled || this.disabled ) }
-			></button>
+			<button id="control" part="control" type="button"></button>
 			<span id="button" aria-hidden="true">
 				<xb-icon id="check" name="circle-fill"></xb-icon>
 			</span>
@@ -122,6 +125,10 @@ export class Radio extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 			<span style="display: ${ ! this.hasDescriptionContent ? 'none' : nothing }"></span>
 			<slot name="description"></slot>
 		`;
+	}
+
+	get button() {
+		return this.#control;
 	}
 
 	/**
@@ -142,8 +149,11 @@ export class Radio extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 	#onCheckedChange = ( checked ) => {
 		if ( ! this.name ) {
 			const group = this.closest( 'xb-radio-group' );
+			this.name = group?.name ?? '';
 
-			this.name = group?.name ?? group?.getAttribute( 'name' ) ?? '';
+			logger.warn(
+				`no name attribute set on the radio. Is it intentionally? setting name to ${ group?.name }`
+			);
 		}
 
 		this.internals.setFormValue( checked ? this.value : null );
@@ -154,14 +164,23 @@ export class Radio extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 	 * @param {boolean} disabled
 	 */
 	#onDisabledChange = ( disabled ) => {
-		const isDisabled = Boolean( this.#context.value?.disabled || disabled );
-		this.setAttribute( 'aria-disabled', String( isDisabled ) );
+		this.queuedWorkManager.push(
+			() => {
+				return Boolean( this.button );
+			},
+			() => {
+				const isDisabled = Boolean( this.#context.value?.disabled || disabled );
+				this.setAttribute( 'aria-disabled', String( isDisabled ) );
 
-		if ( this.disabled ) {
-			this.removeAttribute( 'tabindex' );
-		} else {
-			this.setAttribute( 'tabindex', '-1' );
-		}
+				this.button.disabled = isDisabled;
+
+				if ( this.disabled ) {
+					this.removeAttribute( 'tabindex' );
+				} else {
+					this.setAttribute( 'tabindex', '-1' );
+				}
+			}
+		);
 	};
 
 	formResetCallback() {

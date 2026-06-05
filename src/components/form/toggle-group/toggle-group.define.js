@@ -1,5 +1,5 @@
-import { ToggleGroup } from './toggle-group';
-import { Toggle } from './toggle';
+import { ToggleGroup } from './toggle-group.js';
+import { Toggle } from './toggle.js';
 
 Toggle.define();
 ToggleGroup.define();

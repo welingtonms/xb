@@ -1,4 +1,4 @@
-import { DateRangePicker } from './date-range-picker';
+import { DateRangePicker } from './date-range-picker.js';
 
 DateRangePicker.define();
 

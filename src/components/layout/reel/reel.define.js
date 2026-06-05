@@ -1,3 +1,3 @@
-import { ReelLayout } from './reel';
+import { ReelLayout } from './reel.js';
 
 ReelLayout.define();

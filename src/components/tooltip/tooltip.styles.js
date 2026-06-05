@@ -17,6 +17,8 @@ function styles() {
 				--m-tooltip-min-width: 80px;
 				--m-tooltip-max-width: 240px;
 
+				z-index: 99;
+
 				/* position: absolute; */
 				/* position-area: top; */
 				/* position-try-fallbacks: flip-block; */

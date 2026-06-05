@@ -20,5 +20,5 @@ export function WithIDMixin( BaseClass, prefix = 'xb-element' ) {
 
 /**
  * @typedef {import('../xb-element').XBElement} XBElement
- * @typedef {import('../../common/prop-types').Constructable} Constructable
+ * @typedef {import('../../utils/prop-types.js').Constructable} Constructable
  */

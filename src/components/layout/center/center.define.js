@@ -1,3 +1,3 @@
-import { CenterLayout } from './center';
+import { CenterLayout } from './center.js';
 
 CenterLayout.define();

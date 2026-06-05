@@ -1,3 +1,3 @@
-import { Spinner } from './spinner';
+import { Spinner } from './spinner.js';
 
 Spinner.define();

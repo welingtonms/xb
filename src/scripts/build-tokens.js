@@ -1,5 +1,8 @@
 // Based on https://github.com/amzn/style-dictionary/tree/main/examples/advanced/multi-brand-multi-platform
 
+import { copyFile, mkdir } from 'node:fs/promises';
+import { dirname } from 'node:path';
+
 import StyleDictionary from 'style-dictionary';
 import { usesReferences, getReferences } from 'style-dictionary/utils';
 
@@ -55,8 +58,7 @@ function getStyleDictionaryConfig( brand, platform ) {
 		],
 		platforms: {
 			web: {
-				buildPath: `.storybook/`,
-				// buildPath: `dist/tokens/web/${ brand }/`,
+				buildPath: `dist/tokens/`,
 				prefix: 'xb',
 				transforms: [ 'attribute/cti', 'name/kebab', 'size/rem' ],
 				files: [
@@ -118,6 +120,10 @@ async function buildTokens() {
 			const config = new StyleDictionary( getStyleDictionaryConfig( brand, platform ) );
 
 			await config.buildPlatform( platform );
+
+			const variablesCss = `dist/tokens/variables.css`;
+			await mkdir( dirname( variablesCss ), { recursive: true } );
+			await copyFile( variablesCss, '.storybook/variables.css' );
 
 			console.log( '\nEnd processing' );
 		}

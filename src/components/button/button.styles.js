@@ -1,9 +1,8 @@
 import { css } from 'lit';
 
 import { baseButtonHostStyles, baseButtonStyles } from './base-button.styles';
-import toCSSResult from '../../utils/to-css-result';
 import { select } from '../../styles/selector';
-import typography from '../../styles/typography.styles';
+import toCSSResult from '../../utils/to-css-result';
 
 /**
  * @param {string} [selector]

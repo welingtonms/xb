@@ -38,7 +38,7 @@ export class RadioGroup extends WithSelectionMixin( XBElement ) {
 	 * Radio name.
 	 * @type {string}
 	 */
-	@property( { type: String } ) accessor name;
+	@property( { type: String, reflect: true } ) accessor name;
 
 	/**
 	 * Should the button be disabled.
@@ -157,6 +157,7 @@ export class RadioGroup extends WithSelectionMixin( XBElement ) {
 	update( changedProperties ) {
 		if ( changedProperties.has( 'disabled' ) ) {
 			this.#onDisabledChange( Boolean( this.disabled ) );
+			this.#updateContext();
 		}
 
 		if (
@@ -212,10 +213,6 @@ export class RadioGroup extends WithSelectionMixin( XBElement ) {
 
 	#onDisabledChange = ( disabled ) => {
 		disabled = Boolean( disabled );
-
-		this.#contextProvider.setValue( {
-			disabled,
-		} );
 
 		if ( disabled ) {
 			this.removeAttribute( 'tabindex' );
@@ -278,6 +275,12 @@ export class RadioGroup extends WithSelectionMixin( XBElement ) {
 		this.#updateRadios();
 
 		this.emit( 'change' );
+	};
+
+	#updateContext = () => {
+		this.#contextProvider.setValue( {
+			disabled: this.disabled,
+		} );
 	};
 
 	#updateRadios = () => {

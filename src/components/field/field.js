@@ -1,10 +1,10 @@
 import { html, nothing } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import withClassy from '@welingtonms/classy';
 
-import XBElement from '../xb-element';
+import { XBElement } from '../xb-element.js';
 
-import styles from './field.styles';
+import styles from './field.styles.js';
 
 import '../form/toggle-group';
 import '../text';
@@ -12,9 +12,20 @@ import '../text';
 import '../layout/stack';
 import '../layout/box';
 
-@customElement( 'xb-field' )
 export class Field extends XBElement {
 	static styles = [ styles() ];
+
+	/**
+	 * Determine borders to be supressed.
+	 * @type {FieldAttributes['borderless']}
+	 */
+	@property( { type: String, reflect: true } ) accessor borderless;
+
+	/**
+	 * Determine paddings to be supressed.
+	 * @type {FieldAttributes['paddingless']}
+	 */
+	@property( { type: String, reflect: true } ) accessor paddingless;
 
 	/**
 	 * Field label string.
@@ -52,9 +63,20 @@ export class Field extends XBElement {
 	constructor() {
 		super();
 
+		this.borderless = 'none';
+		this.paddingless = 'none';
 		this.required = false;
-
 		this.status = 'info';
+	}
+
+	/**
+	 * @param {{
+	 *  name: string,
+	 *  registry: CustomElementRegistry,
+	 * }} config
+	 */
+	static define( config ) {
+		XBElement.define( { name: 'xb-field', ...config, type: Field } );
 	}
 
 	/**
@@ -164,8 +186,10 @@ export class Field extends XBElement {
 }
 
 /**
- * @typedef {import('../../common/prop-types').StatusProp} StatusProp
- * @typedef {import('../../common/prop-types').HTMLTag} HTMLTag
+ * @typedef {import('../../utils/prop-types.js').StatusProp} StatusProp
+ * @typedef {import('../../utils/prop-types.js').HTMLTag} HTMLTag
+ * @typedef {import('../../utils/prop-types.js').BorderlessProp} BorderlessProp
+ * @typedef {import('../../utils/prop-types.js').PaddinglessProp} PaddinglessProp
  */
 
 /**

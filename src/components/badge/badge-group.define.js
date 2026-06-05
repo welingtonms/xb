@@ -1,3 +1,3 @@
-import { BadgeGroup } from './badge-group';
+import { BadgeGroup } from './badge-group.js';
 
 BadgeGroup.define();

@@ -1,11 +1,14 @@
 import React from 'react';
 
-import { userEvent, expect, fn } from 'storybook/test';
+import { userEvent, expect, within } from 'storybook/test';
 
 import '../layout';
 
 import '../i18n/i18n.provider';
 import './form.define.js';
+
+import '../../components/icon/icon.define';
+import '../../components/tooltip/tooltip.define';
 
 export default {
 	title: 'Components/Form/Form',
@@ -95,24 +98,54 @@ export const Playground = {
 									</xb-switch>
 								</xb-cluster>
 
-								{ /* <xb-cluster>
-								<xb-toggle-group type="multiple" name="xb-toggle-group">
-									<xb-toggle value="accept">
-										<span slot="leading">&diams;</span>
-										Accept
-									</xb-toggle>
+								<xb-cluster>
+									<xb-toggle-group
+										type="single-strict"
+										name="xb-toggle-group"
+										disabled={ args.disabled }
+										onChange={ args.change }
+									>
+										<xb-toggle
+											id="left-toggle"
+											value="align-left"
+											aria-label="Align text to the left"
+										>
+											<xb-icon name="text-align-left" />
+										</xb-toggle>
+										<xb-tooltip anchor="left-toggle">Align text to the left</xb-tooltip>
 
-									<xb-toggle value="change">
-										<span slot="leading">&hearts;</span>
-										Change
-									</xb-toggle>
+										<xb-toggle
+											id="center-toggle"
+											value="align-center"
+											aria-label="Align text to the center"
+										>
+											<xb-icon name="text-align-center" />
+										</xb-toggle>
+										<xb-tooltip anchor="center-toggle" placement="bottom">
+											Align text to the center
+										</xb-tooltip>
 
-									<xb-toggle value="leave">
-										<span slot="leading">&clubs;</span>
-										Leave
-									</xb-toggle>
-								</xb-toggle-group>
-							</xb-cluster> */ }
+										<xb-toggle
+											id="right-toggle"
+											value="align-right"
+											aria-label="Align text to the right"
+										>
+											<xb-icon name="text-align-right" />
+										</xb-toggle>
+										<xb-tooltip anchor="right-toggle">Align text to the right</xb-tooltip>
+
+										<xb-toggle
+											id="justify-toggle"
+											value="align-justify"
+											aria-label="Align text to the justify"
+										>
+											<xb-icon name="text-align-justify" />
+										</xb-toggle>
+										<xb-tooltip anchor="justify-toggle" placement="bottom">
+											Align text to the justify
+										</xb-tooltip>
+									</xb-toggle-group>
+								</xb-cluster>
 
 								<xb-cluster>
 									{ /* <select name="favorite-letter">
@@ -161,17 +194,26 @@ export const Playground = {
 			</xb-i18n-provider>
 		</xb-cluster>
 	),
-	// play: async ( { canvasElement, args } ) => {
-	// 	const canvas = within( canvasElement );
+	play: async ( { canvasElement } ) => {
+		const canvas = within( canvasElement );
 
-	// },
+		await userEvent.click( canvas.getByRole( 'radio', { name: /^no$/i } ) );
+		await userEvent.click( canvas.getByRole( 'radio', { name: /^Align text to the left$/i } ) );
+
+		/** @type {HTMLFormElement | null} */
+		const form = canvasElement.querySelector( 'form' );
+		const formData = new FormData( form );
+
+		expect( formData.get( 'xb-radio-group' ) ).toBe( 'no' );
+		expect( formData.get( 'xb-toggle-group' ) ).toBe( 'align-left' );
+	},
 
 	args: {
 		disabled: false,
 	},
 };
 
-/** @type {import('../../common/arg-types').StoryObj} */
+/** @type {import('../../utils/arg-types.js').StoryObj} */
 // export const Link = {
 // 	render: ( args ) => html`
 // 		<xb-button

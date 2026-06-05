@@ -1,3 +1,3 @@
-import { SidebarLayout } from './sidebar';
+import { SidebarLayout } from './sidebar.js';
 
 SidebarLayout.define();

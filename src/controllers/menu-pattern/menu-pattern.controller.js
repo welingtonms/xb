@@ -140,9 +140,9 @@ export default MenuPatternController;
  */
 
 /**
- * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionType} SelectionType
- * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionState} SelectionState
- * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionStrategy} SelectionStrategy
+ * @typedef {import('../../utils/selection/index.js').SelectionType} SelectionType
+ * @typedef {import('../../utils/selection/index.js').SelectionState} SelectionState
+ * @typedef {import('../../utils/selection/index.js').SelectionStrategy} SelectionStrategy
  * @typedef {'select' | 'unselect' | 'toggle'} SelectionOperation
  */
 

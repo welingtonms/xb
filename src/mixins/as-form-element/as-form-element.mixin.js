@@ -92,5 +92,5 @@ export const AsFormElementMixin = (BaseClass) => {
 
 /**
  * @typedef {import('../xb-element').XBElement} XBElement
- * @typedef {import('../../common/prop-types').Constructable} Constructable
+ * @typedef {import('../../utils/prop-types.js').Constructable} Constructable
  */

@@ -1,3 +1,3 @@
-import { BoxLayout } from './box';
+import { BoxLayout } from './box.js';
 
 BoxLayout.define();

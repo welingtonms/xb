@@ -1,3 +1,3 @@
-import { FrameLayout } from './frame';
+import { FrameLayout } from './frame.js';
 
 FrameLayout.define();

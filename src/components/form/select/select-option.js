@@ -132,10 +132,12 @@ export class Option extends AsFormElementMixin( WithIDMixin( XBElement, 'xb-opti
 	 */
 	#onSelectedChange = ( selected ) => {
 		if ( ! this.name ) {
-			logger.warn( 'no name attribute set on the option. Is it intentionally?' );
-
 			const select = this.closest( 'xb-select' );
 			this.name = select?.name ?? '';
+
+			logger.warn(
+				`no name attribute set on the option. Is it intentionally? setting name to ${ select?.name }`
+			);
 		}
 
 		this.internals.setFormValue( selected ? this.value : null );

@@ -9,6 +9,9 @@ import { fromAttribute, toAttribute, hasValueChanged } from './with-selection.he
  */
 export const WithSelectionMixin = ( BaseClass ) => {
 	return class WithSelection extends BaseClass {
+		/** @type {HTMLFormElement | null} */
+		form;
+
 		connectedCallback() {
 			super.connectedCallback();
 
@@ -35,13 +38,13 @@ export const WithSelectionMixin = ( BaseClass ) => {
 
 /**
  * @typedef {import('../xb-element').XBElement} XBElement
- * @typedef {import('../../common/prop-types').Constructable} Constructable
+ * @typedef {import('../../utils/prop-types.js').Constructable} Constructable
  */
 
 /**
- * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionType} SelectionType
- * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionState} SelectionState
- * @typedef {import('@welingtonms/xb-toolset/dist/selection').SelectionStrategy} SelectionStrategy
+ * @typedef {import('../../utils/selection/index.js').SelectionType} SelectionType
+ * @typedef {import('../../utils/selection/index.js').SelectionState} SelectionState
+ * @typedef {import('../../utils/selection/index.js').SelectionStrategy} SelectionStrategy
  */
 
 /**

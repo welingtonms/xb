@@ -2,7 +2,7 @@ import React from 'react';
 
 import './spinner.define';
 
-/** @type {import('../../common/arg-types').Meta} */
+/** @type {import('../../utils/arg-types.js').Meta} */
 export default {
 	title: 'Components/Spinner',
 	parameters: {
@@ -11,7 +11,7 @@ export default {
 	argTypes: {},
 };
 
-/** @type {import('../../common/arg-types').StoryObj} */
+/** @type {import('../../utils/arg-types.js').StoryObj} */
 export const Playground = {
 	args: {},
 	render: () => {

@@ -1,3 +1,3 @@
-import { GridLayout } from './grid';
+import { GridLayout } from './grid.js';
 
 GridLayout.define();

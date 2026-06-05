@@ -123,6 +123,8 @@ export function radioStyles() {
 			font-weight: ${ toCSSResult( 'font-weight-medium' ) };
 
 			color: ${ toCSSResult( 'color-gray-700' ) };
+
+			outline: none;
 		}
 
 		${ $.hidden.css() } {

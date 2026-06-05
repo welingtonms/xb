@@ -1,3 +1,3 @@
-import { CoverLayout } from './cover';
+import { CoverLayout } from './cover.js';
 
 CoverLayout.define();

@@ -1,4 +1,4 @@
-import { TextInput } from './text-input';
+import { TextInput } from './text-input.js';
 
 TextInput.define();
 

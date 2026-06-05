@@ -1,72 +1,175 @@
-# xb
+# @welingtonms/xb
 
-Welcome to the XB component library. This is just a playground for practicing web components development.
+Lit-based **custom elements** (`xb-*` tags) for framework-agnostic UIs. Use them in bundled apps or plain HTML after **registration**.
 
-## How to develop
+Domain vocabulary: [CONTEXT.md](./CONTEXT.md).
 
-This project uses [Lerna](https://lerna.js.org/) alongside [Yarn workspaces](https://yarnpkg.com/features/workspaces). Lerna uses the amazing [`Nx`](https://nx.dev/) tooling under the hood.
+## Install
 
-First, start by running the command that will install the dependencies for all the packages in the project and link the packages that depend on each other.
+```bash
+yarn add @welingtonms/xb
+# or
+npm install @welingtonms/xb
+```
+
+Run `yarn build` in this repo (or rely on a published package that includes `dist/`) so design-token CSS is available.
+
+## Quick start (custom elements)
+
+**1. Load theme CSS** (design tokens as `--xb-*` variables):
+
+```html
+<link rel="stylesheet" href="/node_modules/@welingtonms/xb/dist/tokens/variables.css" />
+```
+
+**2. Load typography** — tokens reference **Nunito Sans**; without it, components fall back to system fonts and will not match Storybook. Add to your document `<head>` (same as [`.storybook/preview-head.html`](.storybook/preview-head.html)):
+
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+	href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700&display=swap"
+	rel="stylesheet"
+/>
+```
+
+Optional base page styles so body text uses token defaults:
+
+```html
+<style>
+	body {
+		font-family: var(--xb-font-family-default);
+		font-weight: var(--xb-font-weight-regular);
+		font-size: var(--xb-font-size-base);
+		line-height: var(--xb-line-height-default);
+		color: rgba(var(--xb-color-gray-700), 1);
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+</style>
+```
+
+Self-host or use another CDN if you prefer; weights **300, 400, 600, 700** must be available for `--xb-font-*` tokens to resolve correctly.
+
+**3. Register** the elements you need, then **4. use tags** in markup.
+
+```html
+<script type="module">
+  import '@welingtonms/xb/button/register';
+</script>
+
+<xb-button variant="primary">Save</xb-button>
+```
+
+Registration must run **before** the browser upgrades unknown tags. Import `/register` subpaths in the same module graph as your page (or earlier in document order).
+
+## Bundled apps (Vite, webpack, Lit, etc.)
+
+```js
+import '@welingtonms/xb/tokens/css';
+import '@welingtonms/xb/button/register';
+// import '@welingtonms/xb/form/register';  // whole form kit
+// import '@welingtonms/xb/table/register';  // table family (7 tags)
+```
+
+```html
+<xb-button>Click</xb-button>
+```
+
+- **Classes** (subclassing, types): `import { Button } from '@welingtonms/xb/button'`
+- **Tags only** (typical): `import '@welingtonms/xb/button/register'`
+- **Tree-shaking**: prefer per-element or per-family `/register` imports instead of importing many families you do not use.
+
+### Families
+
+| Import | Registers |
+|--------|-----------|
+| `@welingtonms/xb/layout/register` | Layout primitives (`xb-stack`, `xb-cluster`, …) |
+| `@welingtonms/xb/form/register` | Form controls (`xb-checkbox`, `xb-select`, …) |
+| `@welingtonms/xb/table/register` | Table kit (`xb-table`, `xb-table-row`, …) |
+| `@welingtonms/xb/badge/register` | `xb-badge`, `xb-badge-group` |
+
+Leaf controls also expose `./button/register`, `./dropdown/register`, `./dialog/register`, etc. See `package.json` `"exports"`.
+
+### Tokens (JS)
+
+```js
+import theme from '@welingtonms/xb/tokens';
+```
+
+## Plain HTML (no bundler)
+
+Serve files over HTTP (not `file://`). Use an **import map** so bare specifiers (`lit`, …) resolve:
+
+```html
+<link rel="stylesheet" href="./node_modules/@welingtonms/xb/dist/tokens/variables.css" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+	href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700&display=swap"
+	rel="stylesheet"
+/>
+
+<script type="importmap">
+{
+  "imports": {
+    "lit": "./node_modules/lit/index.js",
+    "lit/": "./node_modules/lit/",
+    "@welingtonms/xb/": "./node_modules/@welingtonms/xb/"
+  }
+}
+</script>
+
+<script type="module">
+  import '@welingtonms/xb/button/register.js';
+</script>
+
+<xb-button>Hello</xb-button>
+```
+
+Adjust paths to your install layout. ESM + dependencies are required; there is no single-script IIFE build in v1.
+
+## Storybook (development)
 
 ```bash
 yarn install
+yarn storybook
 ```
 
-To run the `@welingtonms/xb-wc` Storybook, run:
+Component docs are maintained in Storybook locally; static `docs/` is not shipped in the npm package.
+
+## Base classes
+
+- `@welingtonms/xb/xb-element` — root element base
+- `@welingtonms/xb/floating-element` — floating UI base (no tag)
+- `@welingtonms/xb/form-element` — form-associated base (no tag)
+
+## Develop this repo
 
 ```bash
-yarn pkg:wc dev
+yarn install
+yarn build    # tokens → dist/tokens/ + themes; icons
+yarn storybook
 ```
 
-To run commands only in the affected packages affected:
+### Pre-publish smoke test (local only)
+
+Pack the library, install the tarball in a throwaway Vite app, and run `vite build`:
 
 ```bash
-nx affected --target=test
+yarn test:consumer
 ```
 
-Run specific command for package:
+This generates `examples/vite-consumer/` (gitignored — not pushed). The consumer uses Babel to transpile Lit decorators from the installed tarball (same as a real Vite app would need for source-first ESM).
+
+To browse the result:
 
 ```bash
-nx run myapp:build
-```
-
-Run specific command for all packages:
-
-```bash
-nx run build
-```
-
-In the example above, we are running `test` only for the packages affected by any change we have made. Check the command [reference](https://nx.dev/using-nx/affected) for more details.
-
-<!-- ## How to use
-
-The libraries generated from this project are [published through Gitlab](To use the published module), add an _.npmrc_ file to your project.
-
-For example, to use the `@welingtonms/xb-wc` module:
-
-```bash
-@welington:registry=https://gitlab.com/api/v4/packages/npm/
-```
-
-Then, install the module:
-
-```bash
-npm install --save @welingtonms/xb-wc
-```
-
-Or
-
-```bash
-yarn add --save @welingtonms/xb-wc
-``` -->
-
-## How to build
-
-```bash
-yarn lerna run build --scope=@welingtonms/xb-tokens
+cd examples/vite-consumer && npm run dev
 ```
 
 ## References
 
-- [Yarn Workspaces](https://yarnpkg.com/features/workspaces)
-- [Lerna & Nx](https://lerna.js.org/docs/lerna-and-nx)
+- [Lit](https://lit.dev/)
+- [Custom elements](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements)

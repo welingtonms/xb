@@ -50,7 +50,7 @@ export default AsLinkMixin;
 
 /**
  * @typedef {import('../xb-element').default} XBElement
- * @typedef {import('../../common/prop-types').Constructor} Constructor
+ * @typedef {import('../../utils/prop-types.js').Constructable} Constructor
  */
 
 /**

@@ -1,17 +1,24 @@
+// @ts-check
 import { html } from 'lit';
 import { property } from 'lit/decorators.js';
+import { ContextProvider } from '@lit/context';
 
 import toArray from '../../../utils/to-array';
 
-import { FocusManagerController } from '../../../controllers/focus-manager';
+import { FocusManagerController, RovingFocusController } from '../../../controllers/focus-manager';
 import { KeyboardSupportController } from '../../../controllers/keyboard-support';
 import { SelectionManagerController } from '../../../controllers/selection-manager';
 import { WithSelectionMixin } from '../../../mixins/with-selection';
-import { XBElement } from '../../../common/xb-element';
-
+import { attachContextRoot } from '../../../utils/context';
+import { toggleGroupContext } from './toggle-group.context';
+import { XBElement } from '../../xb-element';
 import '../../layout/cluster';
 
+import { toggleGroupStyles } from './toggle-group.styles';
+
 const ITEM_QUERY = 'xb-toggle';
+
+attachContextRoot();
 
 /**
  * @param {ToggleGroupType} role
@@ -32,13 +39,13 @@ function getToggleRole( type ) {
  * @template WithSelection, XBElement
  */
 export class ToggleGroup extends WithSelectionMixin( XBElement ) {
-	// static styles = [ styles() ];
+	static styles = [ toggleGroupStyles() ];
 
 	/**
 	 * Radio name.
 	 * @type {ToggleGroupAttributes['name']}
 	 */
-	@property( { type: String } ) accessor name;
+	@property( { type: String, reflect: true } ) accessor name;
 
 	/**
 	 * Should the button be disabled.
@@ -51,7 +58,7 @@ export class ToggleGroup extends WithSelectionMixin( XBElement ) {
 	 * `reflect` added for React.
 	 * @type {String | undefined}
 	 */
-	@property( { type: String, attribute: 'default-value', reflect: true } ) accessor defaultValue;
+	@property( { type: String, attribute: 'initial-value', reflect: true } ) accessor initialValue;
 
 	/**
 	 * Selection strategy.
@@ -59,11 +66,19 @@ export class ToggleGroup extends WithSelectionMixin( XBElement ) {
 	 */
 	@property( { type: String } ) accessor type;
 
+	#isFocusWithin = false;
+
 	/** @type {ToggleGroupControllers} */
 	#controllers;
 
-	/** @type {HTMLFormElement | null} */
-	#form;
+	/** @type {ContextProvider<ToggleGroupContext>} */
+	#contextProvider = new ContextProvider( this, {
+		context: toggleGroupContext,
+		initialValue: {
+			disabled: false,
+			type: this.type,
+		},
+	} );
 
 	/**
 	 * @param {{
@@ -78,51 +93,55 @@ export class ToggleGroup extends WithSelectionMixin( XBElement ) {
 	constructor() {
 		super();
 
+		this.type = 'single';
 		this.disabled = false;
 
 		this.#controllers = {
-			focus: new FocusManagerController( this, {
-				query: [ ITEM_QUERY ],
-			} ),
+			// focus: new FocusManagerController( this, {
+			// 	query: [ ITEM_QUERY ],
+			// } ),
 			keyboard: new KeyboardSupportController( this, [
-				{
-					shortcut: [
-						{
-							key: 'ArrowUp',
-						},
-						{
-							key: 'ArrowLeft',
-						},
-					],
-					handler: () => {
-						this.#controllers.focus.focusPrevious();
-					},
-				},
-				{
-					shortcut: [
-						{
-							key: 'ArrowDown',
-						},
-						{
-							key: 'ArrowRight',
-						},
-					],
-					handler: () => {
-						this.#controllers.focus.focusNext();
-					},
-				},
+				// {
+				// 	shortcut: [
+				// 		{
+				// 			key: 'ArrowUp',
+				// 		},
+				// 		{
+				// 			key: 'ArrowLeft',
+				// 		},
+				// 	],
+				// 	handler: () => {
+				// 		this.#controllers.focus.focusPrevious();
+				// 	},
+				// },
+				// {
+				// 	shortcut: [
+				// 		{
+				// 			key: 'ArrowDown',
+				// 		},
+				// 		{
+				// 			key: 'ArrowRight',
+				// 		},
+				// 	],
+				// 	handler: () => {
+				// 		this.#controllers.focus.focusNext();
+				// 	},
+				// },
 				{
 					shortcut: {
 						key: ' ',
 					},
 					handler: () => {
-						/** @type {Toggle | null} */
-						const toggle = this.#controllers.focus.focused;
-						if ( toggle?.disabled ) {
+						const activeElement = document.activeElement;
+						if ( ! activeElement.matches( ITEM_QUERY ) ) {
 							return;
 						}
 
-						this.#toggleValue( toggle.value );
+						/** @type {Toggle | null} */
+						const toggle = activeElement;
+						if ( toggle ) {
+							this.#toggleValue( toggle.value );
+						}
 					},
 				},
 			] ),
@@ -142,21 +161,11 @@ export class ToggleGroup extends WithSelectionMixin( XBElement ) {
 		// this is necessary for the React wrapper.
 		await this.updateComplete;
 
-		this.#initialize();
-
-		this.#form = this.closest( 'form' );
-
-		if ( this.#form ) {
-			this.#form.addEventListener( 'reset', this.#onFormReset );
-		}
+		this.#initialize( this.getAttribute( 'value' ) ?? this.getAttribute( 'initial-value' ) );
 	}
 
 	disconnectedCallback() {
 		super.disconnectedCallback();
-
-		if ( this.#form ) {
-			this.#form.removeEventListener( 'reset', this.#onFormReset );
-		}
 	}
 
 	/**
@@ -165,14 +174,17 @@ export class ToggleGroup extends WithSelectionMixin( XBElement ) {
 	update( changedProperties ) {
 		if ( changedProperties.has( 'disabled' ) ) {
 			this.#onDisabledChange( this.disabled );
+			this.#updateContext();
 		}
 
 		if ( changedProperties.has( 'value' ) ) {
 			this.#onValueChange( this.getRawValue( value ) );
+			this.#updateContext();
 		}
 
 		if ( changedProperties.has( 'type' ) ) {
 			this.#onTypeChange( this.type );
+			this.#updateContext();
 		}
 
 		super.update( changedProperties );
@@ -188,6 +200,10 @@ export class ToggleGroup extends WithSelectionMixin( XBElement ) {
 		return this.#controllers.selection.value();
 	}
 
+	get options() {
+		return Array.from( this.querySelectorAll( ITEM_QUERY ) );
+	}
+
 	/**
 	 * @param {string | string[]} value
 	 */
@@ -195,16 +211,21 @@ export class ToggleGroup extends WithSelectionMixin( XBElement ) {
 		this.#onValueChange( this.getRawValue( value ) );
 	}
 
-	#initialize() {
+	/**
+	 * @param {string | string[]} value
+	 */
+	#initialize( value ) {
 		/**
-		 * Prioritize the value attribute set on the select
-		 * over the `selected` property on the individual options.
+		 * Prioritize the value attribute set on the toggle-group
+		 * over the `checked` property on the individual toggles.
 		 */
-		const value = this.getRawValue( this.defaultValue );
+		const consolidatedValue = toArray( value ?? this.initialValue ).filter( Boolean );
 
-		this.#controllers.selection.init( value );
+		this.#onValueChange( consolidatedValue );
 
-		this.#updateToggles();
+		this.#onDisabledChange( Boolean( this.disabled ) );
+
+		// this.#updateToggles();
 	}
 
 	/**
@@ -213,34 +234,35 @@ export class ToggleGroup extends WithSelectionMixin( XBElement ) {
 	#onDisabledChange = ( disabled ) => {
 		disabled = Boolean( disabled );
 
-		if ( disabled ) {
-			this.removeAttribute( 'tabindex' );
-		} else {
-			this.setAttribute( 'tabindex', 0 );
-		}
+		this.#contextProvider.setValue( {
+			type: this.type,
+			disabled,
+		} );
 
 		this.setAttribute( 'aria-disabled', disabled );
-
-		this.#controllers.focus.queried.forEach( ( item ) => {
-			item.disabled = disabled || item.hasAttribute( 'disabled' );
-		} );
 	};
 
-	#onFocusIn = () => {
-		// TODO: adjust to comply with https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#focusabilityofdisabledcontrols
-		const firstSelected = this.#controllers.focus.queried.find(
-			( item ) => item.checked && ! item.hasAttribute( 'disabled' )
-		);
-
-		if ( ! firstSelected ) {
-			this.#controllers.focus.focusFirst();
-		} else {
-			this.#controllers.focus.focus( firstSelected );
-		}
+	#onFocusIn = ( event ) => {
+		// if ( ! event.target.matches( ITEM_QUERY ) || this.#isFocusWithin ) {
+		// 	return;
+		// }
+		// this.#isFocusWithin = true;
+		// console.log( 'onFocusIn', this.options, event.target );
+		// // TODO: adjust to comply with https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#focusabilityofdisabledcontrols
+		// const firstSelected = this.options.find(
+		// 	( item ) => item.checked && ! item.hasAttribute( 'disabled' )
+		// );
+		// this.#controllers.keyboard.activate();
+		// if ( ! firstSelected ) {
+		// 	this.options[ 0 ].focus();
+		// } else {
+		// 	firstSelected.focus();
+		// }
 	};
 
 	#onFocusOut = () => {
-		this.#controllers.focus.clear();
+		// this.#isFocusWithin = false;
+		// this.#controllers.keyboard.deactivate();
 	};
 
 	#onFormReset = () => {
@@ -254,6 +276,9 @@ export class ToggleGroup extends WithSelectionMixin( XBElement ) {
 		const { target } = event;
 
 		if ( target.matches( ITEM_QUERY ) ) {
+			event.stopPropagation();
+
+			// this.#controllers.focus.focus( target );
 			this.#toggleValue( target.value );
 		}
 	};
@@ -265,7 +290,8 @@ export class ToggleGroup extends WithSelectionMixin( XBElement ) {
 		this.internals.role = getGroupRole( type );
 
 		const toggleRole = getToggleRole( type );
-		this.#controllers.focus.queried.forEach( ( /** @type {Toggle} */ item ) => {
+		this.options.forEach( ( /** @type {Toggle} */ item ) => {
+			item.setAttribute( 'role', toggleRole );
 			item.internals.role = toggleRole;
 		} );
 	};
@@ -276,7 +302,7 @@ export class ToggleGroup extends WithSelectionMixin( XBElement ) {
 	#onValueChange = ( value ) => {
 		this.#controllers.selection.init( value );
 
-		this.#updateToggles();
+		// this.#updateToggles();
 	};
 
 	#toggleValue = ( value ) => {
@@ -287,9 +313,15 @@ export class ToggleGroup extends WithSelectionMixin( XBElement ) {
 		this.emit( 'change' );
 	};
 
+	#updateContext = () => {
+		this.#contextProvider.setValue( {
+			type: this.type,
+			disabled: this.disabled,
+		} );
+	};
+
 	#updateToggles = () => {
-		for ( const element of this.#controllers.focus.queried ) {
-			element.name = this.name;
+		for ( const element of this.options ) {
 			element.checked = this.#controllers.selection.has( element.value );
 		}
 	};
@@ -301,6 +333,8 @@ export class ToggleGroup extends WithSelectionMixin( XBElement ) {
  * @typedef {import('../../../utils/selection').SelectionState} SelectionState
  */
 
+/** @typedef {import('./toggle-group.context').ToggleGroupContext} ToggleGroupContext */
+
 /**
  * @typedef {import('../../../controllers/focus-manager').FocusManagerController} FocusManagerController
  * @typedef {import('../../../controllers/keyboard-support').KeyboardSupportController} KeyboardSupportController
@@ -309,7 +343,6 @@ export class ToggleGroup extends WithSelectionMixin( XBElement ) {
 
 /**
  * @typedef {{
- * 	focus: FocusManagerController;
  * 	keyboard: KeyboardSupportController;
  * 	selection: SelectionManagerController;
  * }} ToggleGroupControllers

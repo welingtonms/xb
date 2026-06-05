@@ -1,3 +1,3 @@
-import { ImposterLayout } from './imposter';
+import { ImposterLayout } from './imposter.js';
 
 ImposterLayout.define();

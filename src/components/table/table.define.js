@@ -1,10 +1,10 @@
-import { Table } from './table';
-import { TableBody } from './table-body';
-import { TableCell } from './table-cell';
-import { TableHeader } from './table-header';
-import { TableRow } from './table-row';
-import { TableRowExpand } from './table-row-expand';
-import { TableRowSelect } from './table-row-select';
+import { Table } from './table.js';
+import { TableBody } from './table-body.js';
+import { TableCell } from './table-cell.js';
+import { TableHeader } from './table-header.js';
+import { TableRow } from './table-row.js';
+import { TableRowExpand } from './table-row-expand.js';
+import { TableRowSelect } from './table-row-select.js';
 
 Table.define();
 TableBody.define();

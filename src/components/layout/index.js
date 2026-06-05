@@ -10,4 +10,4 @@ export { SidebarLayout } from './sidebar';
 export { StackLayout } from './stack';
 export { SwitcherLayout } from './switcher';
 
-import './layout.define';
+import './layout.define.js';

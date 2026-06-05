@@ -1,3 +1,3 @@
-import { StackLayout } from './stack';
+import { StackLayout } from './stack.js';
 
 StackLayout.define();

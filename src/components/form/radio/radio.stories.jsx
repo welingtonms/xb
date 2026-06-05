@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { userEvent, expect } from 'storybook/test';
-
 // import { within } from '../../../utils/test-tools';
 
 import '../../layout/stack';
@@ -39,7 +37,8 @@ export const Playground = {
 						Save my login details for next time.
 					</xb-text>
 				</xb-radio>
-				<xb-radio value="leave">Leave
+				<xb-radio value="leave">
+					Leave
 					<xb-text variant="text-sm" slot="description">
 						Save my login details for next time.
 					</xb-text>

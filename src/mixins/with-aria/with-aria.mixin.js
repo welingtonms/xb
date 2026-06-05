@@ -48,6 +48,7 @@ export function WithAriaMixin( BaseClass ) {
 	return class WithAria extends BaseClass {
 		@property( { attribute: 'aria-atomic' } ) accessor ariaAtomic;
 		@property( { attribute: 'aria-busy' } ) accessor ariaBusy;
+		@property( { attribute: 'aria-checked' } ) accessor ariaChecked;
 		@property( { attribute: 'aria-current' } ) accessor ariaCurrent;
 		@property( { attribute: 'aria-disabled' } ) accessor ariaDisabled;
 		@property( { attribute: 'aria-haspopup' } ) accessor ariaHasPopup;
@@ -98,5 +99,5 @@ export function WithAriaMixin( BaseClass ) {
 }
 
 /**
- * @typedef {import('../../common/prop-types').Constructable} Constructable
+ * @typedef {import('../../utils/prop-types.js').Constructable} Constructable
  */

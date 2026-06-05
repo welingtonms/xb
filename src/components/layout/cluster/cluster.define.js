@@ -1,3 +1,3 @@
-import { ClusterLayout } from './cluster';
+import { ClusterLayout } from './cluster.js';
 
 ClusterLayout.define();

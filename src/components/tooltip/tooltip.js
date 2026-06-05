@@ -210,8 +210,8 @@ export class Tooltip extends WithIDMixin( FloatingElement ) {
 		}
 	};
 
-	#hasTrigger( triggerType ) {
-		return this.trigger.includes( triggerType );
+	#hasTrigger( ...triggerTypes ) {
+		return this.trigger.some( ( triggerType ) => triggerTypes.includes( triggerType ) );
 	}
 }
 

@@ -1,3 +1,3 @@
-import { SwitcherLayout } from './switcher';
+import { SwitcherLayout } from './switcher.js';
 
 SwitcherLayout.define();

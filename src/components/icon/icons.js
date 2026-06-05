@@ -2,7 +2,7 @@
 /**
  * Do not modify this file manually.
  * You can re-generate it by running the convert-svg script.
-* Generated on Sun, 22 Feb 2026 13:46:39 GMT
+* Generated on Fri, 05 Jun 2026 23:06:12 GMT
  */
 import { svg } from 'lit';
 

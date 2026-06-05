@@ -58,7 +58,7 @@ export default {
 	</xb-stack>
 `;*/
 
-/** @type {import('../../../common/arg-types').StoryObj} */
+/** @type {import('../../../utils/arg-types.js').StoryObj} */
 export const Playground = {
 	render: ( args ) => (
 		<xb-stack>
