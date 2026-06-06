@@ -38,11 +38,11 @@ Optional base page styles so body text uses token defaults:
 ```html
 <style>
 	body {
-		font-family: var(--xb-font-family-default);
-		font-weight: var(--xb-font-weight-regular);
-		font-size: var(--xb-font-size-base);
-		line-height: var(--xb-line-height-default);
-		color: rgba(var(--xb-color-gray-700), 1);
+		font-family: var( --xb-font-family-default );
+		font-weight: var( --xb-font-weight-regular );
+		font-size: var( --xb-font-size-base );
+		line-height: var( --xb-line-height-default );
+		color: rgba( var( --xb-color-gray-700 ), 1 );
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 	}
@@ -55,7 +55,7 @@ Self-host or use another CDN if you prefer; weights **300, 400, 600, 700** must 
 
 ```html
 <script type="module">
-  import '@welingtonms/xb/button/register';
+	import '@welingtonms/xb/button/register';
 </script>
 
 <xb-button variant="primary">Save</xb-button>
@@ -82,12 +82,12 @@ import '@welingtonms/xb/button/register';
 
 ### Families
 
-| Import | Registers |
-|--------|-----------|
+| Import                            | Registers                                       |
+| --------------------------------- | ----------------------------------------------- |
 | `@welingtonms/xb/layout/register` | Layout primitives (`xb-stack`, `xb-cluster`, …) |
-| `@welingtonms/xb/form/register` | Form controls (`xb-checkbox`, `xb-select`, …) |
-| `@welingtonms/xb/table/register` | Table kit (`xb-table`, `xb-table-row`, …) |
-| `@welingtonms/xb/badge/register` | `xb-badge`, `xb-badge-group` |
+| `@welingtonms/xb/form/register`   | Form controls (`xb-checkbox`, `xb-select`, …)   |
+| `@welingtonms/xb/table/register`  | Table kit (`xb-table`, `xb-table-row`, …)       |
+| `@welingtonms/xb/badge/register`  | `xb-badge`, `xb-badge-group`                    |
 
 Leaf controls also expose `./button/register`, `./dropdown/register`, `./dialog/register`, etc. See `package.json` `"exports"`.
 
@@ -112,17 +112,17 @@ Serve files over HTTP (not `file://`). Use an **import map** so bare specifiers 
 />
 
 <script type="importmap">
-{
-  "imports": {
-    "lit": "./node_modules/lit/index.js",
-    "lit/": "./node_modules/lit/",
-    "@welingtonms/xb/": "./node_modules/@welingtonms/xb/"
-  }
-}
+	{
+		"imports": {
+			"lit": "./node_modules/lit/index.js",
+			"lit/": "./node_modules/lit/",
+			"@welingtonms/xb/": "./node_modules/@welingtonms/xb/"
+		}
+	}
 </script>
 
 <script type="module">
-  import '@welingtonms/xb/button/register.js';
+	import '@welingtonms/xb/button/register.js';
 </script>
 
 <xb-button>Hello</xb-button>
@@ -158,7 +158,7 @@ yarn storybook
 Pack the library, install the tarball in a throwaway Vite app, and run `vite build`:
 
 ```bash
-yarn test:consumer
+yarn verify:consumer
 ```
 
 This generates `examples/vite-consumer/` (gitignored — not pushed). The consumer uses Babel to transpile Lit decorators from the installed tarball (same as a real Vite app would need for source-first ESM).
