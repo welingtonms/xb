@@ -1,7 +1,4 @@
-import { html } from 'lit/static-html.js';
-
-import { XBElement } from '../../xb-element';
-import BaseLayout from '../base-layout';
+import { BaseLayout } from '../base-layout';
 
 import styles from './center.styles';
 
@@ -10,17 +7,12 @@ export class CenterLayout extends BaseLayout {
 
 	/**
 	 * @param {{
-	 *  name: string,
-	 *  registry: CustomElementRegistry,
+	 *  name?: string,
+	 *  registry?: CustomElementRegistry,
 	 * }} config
 	 */
-	static define(config) {
-		XBElement.define({ name: 'xb-center', ...config, type: CenterLayout });
-	}
-	render() {
-		return html`
-			<slot></slot>
-		`;
+	static define( config ) {
+		BaseLayout.defineLayout( { name: 'xb-center', type: CenterLayout, ...config } );
 	}
 }
 

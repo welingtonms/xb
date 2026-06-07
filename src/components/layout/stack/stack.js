@@ -1,7 +1,4 @@
-import { html } from 'lit';
-
-import { XBElement } from '../../xb-element';
-import BaseLayout from '../base-layout';
+import { BaseLayout } from '../base-layout';
 
 import styles from './stack.styles';
 
@@ -10,18 +7,12 @@ export class StackLayout extends BaseLayout {
 
 	/**
 	 * @param {{
-	 *  name: string,
-	 *  registry: CustomElementRegistry,
+	 *  name?: string,
+	 *  registry?: CustomElementRegistry,
 	 * }} config
 	 */
-	static define(config) {
-		XBElement.define({ name: 'xb-stack', ...config, type: StackLayout });
-	}
-
-	render() {
-		return html`
-			<slot></slot>
-		`;
+	static define( config ) {
+		BaseLayout.defineLayout( { name: 'xb-stack', type: StackLayout, ...config } );
 	}
 }
 

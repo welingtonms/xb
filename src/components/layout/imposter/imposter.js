@@ -1,8 +1,6 @@
-import { html } from 'lit';
 import { property } from 'lit/decorators.js';
 
-import { XBElement } from '../../xb-element';
-import BaseLayout from '../base-layout';
+import { BaseLayout } from '../base-layout';
 
 import styles from './imposter.styles';
 
@@ -21,18 +19,12 @@ export class ImposterLayout extends BaseLayout {
 
 	/**
 	 * @param {{
-	 *  name: string,
-	 *  registry: CustomElementRegistry,
+	 *  name?: string,
+	 *  registry?: CustomElementRegistry,
 	 * }} config
 	 */
-	static define(config) {
-		XBElement.define({ name: 'xb-imposter', ...config, type: ImposterLayout });
-	}
-
-	render() {
-		return html`
-			<slot></slot>
-		`;
+	static define( config ) {
+		BaseLayout.defineLayout( { name: 'xb-imposter', type: ImposterLayout, ...config } );
 	}
 }
 

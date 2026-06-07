@@ -1,7 +1,4 @@
-import { html } from 'lit';
-
-import { XBElement } from '../../xb-element';
-import BaseLayout from '../base-layout';
+import { BaseLayout } from '../base-layout';
 
 import styles from './frame.styles';
 
@@ -10,18 +7,12 @@ export class FrameLayout extends BaseLayout {
 
 	/**
 	 * @param {{
-	 *  name: string,
-	 *  registry: CustomElementRegistry,
+	 *  name?: string,
+	 *  registry?: CustomElementRegistry,
 	 * }} config
 	 */
-	static define(config) {
-		XBElement.define({ name: 'xb-frame', ...config, type: FrameLayout });
-	}
-
-	render() {
-		return html`
-			<slot></slot>
-		`;
+	static define( config ) {
+		BaseLayout.defineLayout( { name: 'xb-frame', type: FrameLayout, ...config } );
 	}
 }
 

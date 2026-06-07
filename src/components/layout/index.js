@@ -1,3 +1,4 @@
+export { BaseLayout } from './base-layout';
 export { BoxLayout } from './box';
 export { CenterLayout } from './center';
 export { ClusterLayout } from './cluster';
@@ -9,5 +10,9 @@ export { ReelLayout } from './reel';
 export { SidebarLayout } from './sidebar';
 export { StackLayout } from './stack';
 export { SwitcherLayout } from './switcher';
+
+/**
+ * @typedef {import('./base-layout').BaseLayoutAttributes} BaseLayoutAttributes
+ */
 
 import './layout.define.js';

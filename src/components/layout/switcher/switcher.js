@@ -1,8 +1,7 @@
 import { html } from 'lit';
 import { property } from 'lit/decorators.js';
 
-import { XBElement } from '../../xb-element';
-import BaseLayout from '../base-layout';
+import { BaseLayout } from '../base-layout';
 
 import styles from './switcher.styles';
 
@@ -17,13 +16,13 @@ export class SwitcherLayout extends BaseLayout {
 
 	/**
 	 * @param {{
-	*  name: string,
-	*  registry: CustomElementRegistry,
-	* }} config
-	*/
-   static define(config) {
-	   XBElement.define({ name: 'xb-switcher', ...config, type: SwitcherLayout });
-   }
+	 *  name?: string,
+	 *  registry?: CustomElementRegistry,
+	 * }} config
+	 */
+	static define( config ) {
+		BaseLayout.defineLayout( { name: 'xb-switcher', type: SwitcherLayout, ...config } );
+	}
 
 	constructor() {
 		super();

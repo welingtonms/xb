@@ -1,8 +1,6 @@
-import { html } from 'lit';
 import { property } from 'lit/decorators.js';
 
-import { XBElement } from '../../xb-element';
-import BaseLayout from '../base-layout';
+import { BaseLayout } from '../base-layout';
 
 import styles from './sidebar.styles';
 
@@ -17,12 +15,12 @@ export class SidebarLayout extends BaseLayout {
 
 	/**
 	 * @param {{
-	*  name: string,
-	*  registry: CustomElementRegistry,
-	* }} config
-	*/
-	static define(config) {
-		XBElement.define({ name: 'xb-sidebar', ...config, type: SidebarLayout });
+	 *  name?: string,
+	 *  registry?: CustomElementRegistry,
+	 * }} config
+	 */
+	static define( config ) {
+		BaseLayout.defineLayout( { name: 'xb-sidebar', type: SidebarLayout, ...config } );
 	}
 
 	constructor() {
@@ -30,12 +28,6 @@ export class SidebarLayout extends BaseLayout {
 
 		/** @type {SidebarAttributes['sidePosition']} */
 		this.sidePosition = 'left';
-	}
-
-	render() {
-		return html`
-			<slot></slot>
-		`;
 	}
 }
 

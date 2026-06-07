@@ -1,8 +1,9 @@
+import { html } from 'lit';
 import { property } from 'lit/decorators.js';
 
 import { XBElement } from '../xb-element';
 
-export default class BaseLayout extends XBElement {
+export class BaseLayout extends XBElement {
 	/**
 	 * Determine borders to be supressed.
 	 * @type {BaseLayoutAttributes['borderless']}
@@ -20,6 +21,26 @@ export default class BaseLayout extends XBElement {
 
 		this.borderless = 'none';
 		this.paddingless = 'none';
+	}
+
+	/**
+	 * Register a layout **Tag** with the custom element registry.
+	 * @param {{
+	 *  name: string,
+	 *  type: typeof BaseLayout,
+	 *  registry?: CustomElementRegistry,
+	 * }} config
+	 */
+	static defineLayout( config ) {
+		const { name, type, registry, ...rest } = config;
+
+		XBElement.define( { name, type, registry, ...rest } );
+	}
+
+	render() {
+		return html`
+			<slot></slot>
+		`;
 	}
 }
 

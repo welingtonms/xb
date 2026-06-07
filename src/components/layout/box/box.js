@@ -1,7 +1,6 @@
 import { html } from 'lit';
 
-import { XBElement } from '../../xb-element';
-import BaseLayout from '../base-layout';
+import { BaseLayout } from '../base-layout';
 
 import styles from './box.styles';
 
@@ -10,13 +9,13 @@ export class BoxLayout extends BaseLayout {
 
 	/**
 	 * @param {{
-	*  name: string,
-	*  registry: CustomElementRegistry,
-	* }} config
-	*/
-   static define(config) {
-	   XBElement.define({ name: 'xb-box', ...config, type: BoxLayout });
-   }
+	 *  name?: string,
+	 *  registry?: CustomElementRegistry,
+	 * }} config
+	 */
+	static define( config ) {
+		BaseLayout.defineLayout( { name: 'xb-box', type: BoxLayout, ...config } );
+	}
 
 	render() {
 		return html`

@@ -32,6 +32,14 @@ _Avoid_: Utility module
 An Every Layout–style layout **Element** (`xb-stack`, `xb-cluster`, `xb-box`, etc.) from the layout family.
 _Avoid_: Layout component, wrapper div
 
+**Borderless**:
+A reflected attribute on **Layout primitives** that suppresses border on named sides. Value `none` leaves borders intact; other values name sides or compounds (`all`, `top`, `bottom`, `left`, `right`, `vertical`, `horizontal`, or comma-separated pairs such as `top,left`).
+_Avoid_: No border class, border-none utility
+
+**Paddingless**:
+Same side vocabulary as **Borderless**, but suppresses padding instead of border on **Layout primitives**.
+_Avoid_: No padding class, p-0 utility
+
 ## Example dialogue
 
 **Dev:** I dropped `<xb-button>` in my page but the browser shows an undefined element.
@@ -41,6 +49,10 @@ _Avoid_: Layout component, wrapper div
 **Dev:** I only imported `@welingtonms/xb/button` for the class.
 
 **Expert:** That exports the **Element** class, not registration. Use the `/register` subpath for tags in HTML, or a family `./form/register` when you need the whole form kit.
+
+**Dev:** I nested `<xb-stack paddingless="bottom">` inside `<xb-box borderless="all">` but the inner stack still shows a top border.
+
+**Expert:** **Borderless** and **Paddingless** apply per **Layout primitive** host — they do not inherit from an ancestor. Set suppression on each **Tag** whose chrome you want to remove, or pick a primitive whose default spacing already fits the composition.
 
 ## Flagged (implementation notes)
 
