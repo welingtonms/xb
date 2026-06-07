@@ -49,7 +49,7 @@ class CheckboxGroupController extends CheckboxController {
 			promises.push( checkbox.updateCompleted );
 			this.group.set( checkbox.id, checkbox );
 
-			checkbox.addEventListener( 'xb:change', this._handleChange );
+			checkbox.addEventListener( 'change', this._handleChange );
 		}
 
 		/**
@@ -67,7 +67,7 @@ class CheckboxGroupController extends CheckboxController {
 		super.hostDisconnected();
 
 		for ( const [ , checkbox ] of this.group ) {
-			checkbox.removeEventListener( 'xb:change', this._handleChange );
+			checkbox.removeEventListener( 'change', this._handleChange );
 		}
 	}
 
@@ -136,7 +136,7 @@ class CheckboxGroupController extends CheckboxController {
 	};
 
 	/**
-	 * Handle `xb-change` event from the checkboxes from the `aria-controls` attribute.
+	 * Handle `change` event from the checkboxes from the `aria-controls` attribute.
 	 * @param {CustomEvent<CheckboxEventDetail>} event
 	 * @returns
 	 */

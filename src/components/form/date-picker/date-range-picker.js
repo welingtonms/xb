@@ -126,7 +126,6 @@ export class DateRangePicker extends DatePicker {
 			const s = this.selectedRange[ 0 ] ? CalendarDate.fromISO( this.selectedRange[ 0 ] ) : null;
 			const e = this.selectedRange[ 1 ] ? CalendarDate.fromISO( this.selectedRange[ 1 ] ) : null;
 			this.draftSelectedRange = [ s, e ];
-			this.emit( 'xb-dropdown-expand' );
 		}
 		super.expand( args ); // DatePicker.expand also does draftSelectedDate logic but we ignore it here
 	}

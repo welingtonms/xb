@@ -350,7 +350,7 @@ export class FloatingElement extends XBElement {
 		// 	`${ [ 'top-start', 'right-end' ].includes( placement ) ? 0 : 4 }px`
 		// );
 
-		this.emit( 'xb-floating:reposition', {
+		this.emit( 'reposition', {
 			detail: { reason },
 		} );
 	};

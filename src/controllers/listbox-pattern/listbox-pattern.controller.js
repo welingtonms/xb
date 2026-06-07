@@ -128,7 +128,7 @@ class ListboxPatternController {
 	_toggleValue = ( value ) => {
 		this.controllers.selection.toggle( value );
 
-		this.host.emit( 'xb:change', {
+		this.host.emit( 'change', {
 			detail: { value: this.controllers.selection.toValue() },
 		} );
 	};

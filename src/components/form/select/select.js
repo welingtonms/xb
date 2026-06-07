@@ -276,7 +276,7 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 		super.connectedCallback();
 
 		this.addEventListener( 'focusin', this.#onFocusIn );
-		this.addEventListener( 'xb:interact-out', this.#onClickOutside );
+		this.addEventListener( 'interact-out', this.#onClickOutside );
 		this.addEventListener( 'toggle', this.#onOptionToggle );
 
 		// this is necessary for the React wrapper.
@@ -299,7 +299,7 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 		}
 
 		this.removeEventListener( 'focusin', this.#onFocusIn );
-		this.removeEventListener( 'xb:interact-out', this.#onClickOutside );
+		this.removeEventListener( 'interact-out', this.#onClickOutside );
 		this.removeEventListener( 'toggle', this.#onOptionToggle );
 	}
 

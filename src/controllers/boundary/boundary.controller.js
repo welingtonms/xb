@@ -67,7 +67,7 @@ export class BoundaryController extends ToggleableController {
 
 		if ( ! isInside ) {
 			event.stopPropagation();
-			this.host.dispatchEvent( new CustomEvent( 'xb:interact-out' ) );
+			this.host.dispatchEvent( new CustomEvent( 'interact-out' ) );
 		}
 	};
 
@@ -101,7 +101,7 @@ export class BoundaryController extends ToggleableController {
 
 		if ( ! doesHostContainRelatedTarget ) {
 			event.stopPropagation();
-			this.host.dispatchEvent( new CustomEvent( 'xb:interact-out' ) );
+			this.host.dispatchEvent( new CustomEvent( 'interact-out' ) );
 		}
 	};
 
@@ -129,7 +129,7 @@ export class BoundaryController extends ToggleableController {
 
 		if ( ! this.host.contains( relatedTarget ) ) {
 			event.stopPropagation();
-			this.host.dispatchEvent( new CustomEvent( 'xb:interact-out' ) );
+			this.host.dispatchEvent( new CustomEvent( 'interact-out' ) );
 		}
 	};
 }

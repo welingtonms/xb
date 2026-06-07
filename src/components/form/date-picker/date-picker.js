@@ -176,7 +176,7 @@ export class DatePicker extends AsFormElementMixin( FloatingElement ) {
 		this.addEventListener( 'focusin', this.#handleFocusIn );
 		this.addEventListener( 'focusout', this.#handleFocusOut );
 		this.addEventListener( 'click', this.#handleClick );
-		this.addEventListener( 'xb:interact-out', this.#handleInteractOut );
+		this.addEventListener( 'interact-out', this.#handleInteractOut );
 	}
 
 	disconnectedCallback() {
@@ -184,7 +184,7 @@ export class DatePicker extends AsFormElementMixin( FloatingElement ) {
 		this.removeEventListener( 'focusin', this.#handleFocusIn );
 		this.removeEventListener( 'focusout', this.#handleFocusOut );
 		this.removeEventListener( 'click', this.#handleClick );
-		this.removeEventListener( 'xb:interact-out', this.#handleInteractOut );
+		this.removeEventListener( 'interact-out', this.#handleInteractOut );
 	}
 
 	/**

@@ -43,13 +43,13 @@ export class TopNavMenu extends XBElement {
 
 	connectedCallback() {
 		super.connectedCallback();
-		// this.addEventListener( 'xb:interact-out', this.#onInteractOut );
+		// this.addEventListener( 'interact-out', this.#onInteractOut );
 		// this.addEventListener( 'focusin', this.#onFocusIn );
 	}
 
 	disconnectedCallback() {
 		this.clearHoverTimeout();
-		this.removeEventListener( 'xb:interact-out', this.#onInteractOut );
+		this.removeEventListener( 'interact-out', this.#onInteractOut );
 		this.removeEventListener( 'focusin', this.#onFocusIn );
 		super.disconnectedCallback();
 	}

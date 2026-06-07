@@ -173,7 +173,7 @@ export class Dropdown extends FloatingElement {
 
 		this.addEventListener( 'click', this.#onClick );
 		this.addEventListener( 'focusin', this.#onFocusIn );
-		this.addEventListener( 'xb:interact-out', this.#onClickOutside );
+		this.addEventListener( 'interact-out', this.#onClickOutside );
 	}
 
 	disconnectedCallback() {
@@ -181,7 +181,7 @@ export class Dropdown extends FloatingElement {
 
 		this.removeEventListener( 'click', this.#onClick );
 		this.removeEventListener( 'focusin', this.#onFocusIn );
-		this.removeEventListener( 'xb:interact-out', this.#onClickOutside );
+		this.removeEventListener( 'interact-out', this.#onClickOutside );
 	}
 
 	/**
@@ -262,7 +262,7 @@ export class Dropdown extends FloatingElement {
 		this.floating.focus();
 		this.#controllers.focus.focus( position );
 
-		this.emit( 'xb:dropdown-expand' );
+		this.emit( 'expand' );
 	}
 
 	/**
@@ -289,13 +289,13 @@ export class Dropdown extends FloatingElement {
 			this.reference.focus();
 		}
 
-		this.emit( 'xb:dropdown-collapse' );
+		this.emit( 'collapse' );
 	};
 
 	/**
 	 * Toggle dropdown menu.
 	 * @param {Object} args
-	 * @param {boolean} args.emit - should emit `xb:dropdown-expand` or `xb-dropdown-collapse` event. Defaults to `true`.
+	 * @param {boolean} args.emit - should emit `expand` or `collapse` event. Defaults to `true`.
 	 * @param {boolean} args.focusOnTrigger - should focus on the trigger.
 	 */
 	toggle( args ) {

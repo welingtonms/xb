@@ -40,6 +40,10 @@ _Avoid_: No border class, border-none utility
 Same side vocabulary as **Borderless**, but suppresses padding instead of border on **Layout primitives**.
 _Avoid_: No padding class, p-0 utility
 
+**Event**:
+A custom DOM event dispatched from an **Element** host. Names are host-scoped plain verbs (`expand`, `change`, `interact-out`) — no `xb:` prefix. The `xb` prefix is reserved for **Tags** and **Tokens**, not events. Form controls that wrap native inputs re-emit native event names (e.g. `change`) so consumers get a familiar API. Hyphenated compound verbs are fine when the action is genuinely compound (`select-all`, `interact-out`).
+_Avoid_: `xb:dropdown-expand`, namespaced event strings
+
 ## Example dialogue
 
 **Dev:** I dropped `<xb-button>` in my page but the browser shows an undefined element.
