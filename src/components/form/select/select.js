@@ -3,9 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
 import { AsFormElementMixin } from '../../../mixins/as-form-element';
-import { BoundaryController } from '../../../controllers/boundary';
-import { FloatingElement } from '../../floating-element';
-import { ExpandableController } from '../../../controllers/expandable';
+import { DisclosureFloatingElement } from '../../disclosure-floating-element';
 import { FormElement } from '../../form-element';
 import { KeyboardSupportController } from '../../../controllers/keyboard-support';
 import { RovingFocusController } from '../../../controllers/focus-manager';
@@ -26,9 +24,9 @@ const logger = createLogger( 'select' );
 
 /**
  * @class
- * @template WithSelectionMixin, FloatingElement
+ * @template WithSelectionMixin, DisclosureFloatingElement
  */
-export class Select extends WithSelectionMixin( FloatingElement ) {
+export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
 	static styles = [ selectStyles(), menuStyles() ];
 
 	/**
@@ -118,13 +116,6 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 		this.filteredOptions = [];
 
 		this.#controllers = {
-			boundary: new BoundaryController( this ),
-			expandable: new ExpandableController( this, {
-				getExpandableElement: () => {
-					return this.getFloatingElement();
-				},
-				isExpanded: () => Boolean( this.open ),
-			} ),
 			// data: new DataController( this, this.datasources ),
 			focus: new RovingFocusController( this, {
 				query: () => {
@@ -275,8 +266,6 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 	async connectedCallback() {
 		super.connectedCallback();
 
-		this.addEventListener( 'focusin', this.#onFocusIn );
-		this.addEventListener( 'interact-out', this.#onClickOutside );
 		this.addEventListener( 'toggle', this.#onOptionToggle );
 
 		// this is necessary for the React wrapper.
@@ -298,8 +287,6 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 			this.#form.removeEventListener( 'reset', this.#onFormReset );
 		}
 
-		this.removeEventListener( 'focusin', this.#onFocusIn );
-		this.removeEventListener( 'interact-out', this.#onClickOutside );
 		this.removeEventListener( 'toggle', this.#onOptionToggle );
 	}
 
@@ -447,10 +434,21 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 	};
 
 	/**
-	 * @see {@link FloatingElement.handleExternalClose}
+	 * @param {FocusEvent} event
+	 * @protected
 	 */
-	handleExternalClose() {
-		this.collapse();
+	shouldActivateOnFocusIn( event ) {
+		return event.target === this;
+	}
+
+	/** @protected */
+	onDisclosureActivate() {
+		this.#controllers.keyboard.activate();
+	}
+
+	/** @protected */
+	onDisclosureDeactivate() {
+		this.#controllers.keyboard.deactivate();
 	}
 
 	/**
@@ -619,20 +617,6 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
 		if ( event.target.matches( '[aria-haspopup="true"]' ) && event.detail > 0 ) {
 			this.toggle();
 		}
-	};
-
-	#onFocusIn = ( event ) => {
-		if ( event.target === this ) {
-			this.#controllers.boundary.activate();
-			this.#controllers.keyboard.activate();
-		}
-	};
-
-	#onClickOutside = async () => {
-		this.#controllers.boundary.deactivate();
-		this.#controllers.keyboard.deactivate();
-
-		this.collapse();
 	};
 
 	/**
@@ -814,7 +798,6 @@ export class Select extends WithSelectionMixin( FloatingElement ) {
  * @typedef {{
  * 	focus: RovingFocusController;
  * 	keyboard: KeyboardSupportController;
- *  boundary: BoundaryController;
  *  selection: SelectionManagerController;
  * }} SelectControllers
  */

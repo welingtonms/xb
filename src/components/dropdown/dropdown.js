@@ -1,18 +1,14 @@
 import { html } from 'lit';
 import { property } from 'lit/decorators.js';
 
-import { BoundaryController } from '../../controllers/boundary';
-import { ExpandableController } from '../../controllers/expandable';
-import { FloatingElement } from '../floating-element';
+import { DisclosureFloatingElement } from '../disclosure-floating-element';
 import { FocusManagerController, TypeAheadPlugin } from '../../controllers/focus-manager';
-import { isInsideElement } from '../../utils/events';
 import { KeyboardSupportController } from '../../controllers/keyboard-support';
-import { supportsPopover } from '../../utils/top-layer';
 import { XBElement } from '../xb-element';
 
 import { dropdownStyles } from './dropdown.styles';
 
-export class Dropdown extends FloatingElement {
+export class Dropdown extends DisclosureFloatingElement {
 	static styles = [ dropdownStyles() ];
 
 	/**
@@ -42,13 +38,6 @@ export class Dropdown extends FloatingElement {
 		this.disabled = false;
 
 		this.#controllers = {
-			boundary: new BoundaryController( this ),
-			expandable: new ExpandableController( this, {
-				getExpandableElement: () => {
-					return this.getFloatingElement();
-				},
-				isExpanded: () => Boolean( this.open ),
-			} ),
 			focus: new FocusManagerController( this, {
 				query: '[role="menuitem"]',
 				getControllerTarget: ( host ) => {
@@ -172,16 +161,22 @@ export class Dropdown extends FloatingElement {
 		super.connectedCallback();
 
 		this.addEventListener( 'click', this.#onClick );
-		this.addEventListener( 'focusin', this.#onFocusIn );
-		this.addEventListener( 'interact-out', this.#onClickOutside );
 	}
 
 	disconnectedCallback() {
 		super.disconnectedCallback();
 
 		this.removeEventListener( 'click', this.#onClick );
-		this.removeEventListener( 'focusin', this.#onFocusIn );
-		this.removeEventListener( 'interact-out', this.#onClickOutside );
+	}
+
+	/** @protected */
+	onDisclosureActivate() {
+		this.#controllers.keyboard.activate();
+	}
+
+	/** @protected */
+	onDisclosureDeactivate() {
+		this.#controllers.keyboard.deactivate();
 	}
 
 	/**
@@ -248,62 +243,34 @@ export class Dropdown extends FloatingElement {
 	}
 
 	/**
-	 * Expand dropdown menu.
-	 * @param {Object} args
-	 * @param {'first' | 'last'} args.position - should focus on first or last dropdown item.
+	 * @param {import('../disclosure-floating-element').DisclosureExpandArgs} args
+	 * @protected
 	 */
-	async expand( args = { position: 'first' } ) {
-		const { position = 'first' } = args;
+	async onExpanded( args = {} ) {
+		const { position = 'first', emit = true } = args;
 
-		this.show();
-
-		await this.updateComplete;
-
-		this.floating.focus();
+		this.floating?.focus();
 		this.#controllers.focus.focus( position );
 
-		this.emit( 'expand' );
+		if ( emit !== false ) {
+			this.emit( 'expand' );
+		}
 	}
 
 	/**
-	 * @see {@link FloatingElement.handleExternalClose}
+	 * @param {import('../disclosure-floating-element').DisclosureCollapseArgs} args
+	 * @protected
 	 */
-	handleExternalClose() {
-		this.collapse();
-	}
-
-	/**
-	 * Collapse dropdown menu.
-	 * @param {Object} args
-	 * @param {boolean} args.focusOnTrigger - should focus on the trigger.
-	 */
-	collapse = async ( args = { focusOnTrigger: false } ) => {
+	async onCollapsed( args = {} ) {
 		const { focusOnTrigger = false } = args;
 
-		this.hide();
-
-		await this.updateComplete;
-
 		this.#controllers.focus.clear();
+
 		if ( focusOnTrigger ) {
-			this.reference.focus();
+			this.reference?.focus();
 		}
 
 		this.emit( 'collapse' );
-	};
-
-	/**
-	 * Toggle dropdown menu.
-	 * @param {Object} args
-	 * @param {boolean} args.emit - should emit `expand` or `collapse` event. Defaults to `true`.
-	 * @param {boolean} args.focusOnTrigger - should focus on the trigger.
-	 */
-	toggle( args ) {
-		if ( this.open ) {
-			this.collapse( args );
-		} else {
-			this.expand( args );
-		}
 	}
 
 	/**
@@ -343,33 +310,10 @@ export class Dropdown extends FloatingElement {
 			this.toggle();
 		}
 	};
-
-	#onClickOutside = () => {
-		this.#controllers.boundary.deactivate();
-		this.#controllers.keyboard.deactivate();
-
-		/**
-		 * When collapsing, the floating element (which received focus in expand())
-		 * will be hidden. The browser's default behavior is to automatically restore
-		 * focus to the previously focused element (the trigger) when a focused element
-		 * is removed or hidden from the DOM.
-		 */
-		this.collapse();
-	};
-
-	/**
-	 * @param {FocusEvent} event
-	 */
-	#onFocusIn = ( event ) => {
-		if ( isInsideElement( event, this ) ) {
-			this.#controllers.boundary.activate();
-			this.#controllers.keyboard.activate();
-		}
-	};
 }
 
 /**
- * @typedef {import('../../common/floating-element').FloatingElementPlacement} DropdownPlacement
+ * @typedef {import('../floating-element').FloatingElementPlacement} DropdownPlacement
  * @typedef {import('../../styles/size.styles').ElementSize} DropdownSize
  */
 
@@ -384,15 +328,11 @@ export class Dropdown extends FloatingElement {
 /**
  * @typedef {import('../../controllers/focus-manager').default} FocusManagerController
  * @typedef {import('../../controllers/keyboard-support').default} KeyboardSupportController
- * @typedef {import('../../controllers/boundary').default} BoundaryController
- * @typedef {import('../../controllers/expandable').ExpandableController} ExpandableController
  */
 
 /**
  * @typedef {{
- *  boundary: BoundaryController;
  * 	focus: FocusManagerController;
  * 	keyboard: KeyboardSupportController;
- * 	expandable: ExpandableController;
  * }} DropdownControllers
  */

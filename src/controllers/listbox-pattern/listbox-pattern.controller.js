@@ -1,6 +1,6 @@
-import FocusManagerController from '../focus-manager';
-import KeyboardSupportController from '../keyboard-support';
-import SelectionManagerController from '../selection-manager';
+import { FocusManagerController } from '../focus-manager';
+import { KeyboardSupportController } from '../keyboard-support';
+import { SelectionManagerController } from '../selection-manager';
 
 const ITEM_QUERY = '[role="option"]';
 

@@ -25,8 +25,20 @@ A Lit `ReactiveController` in `src/controllers/` composed into **Elements** for 
 _Avoid_: Mixin (when the code is a controller, not a class mixin)
 
 **Pattern**:
-A composed bundle of controllers shared by related **Elements** (e.g. menu-pattern for menus).
+A composed bundle of controllers shared by related **Elements** (e.g. menu-pattern for static menus; listbox-pattern for selectable lists).
 _Avoid_: Utility module
+
+**Disclosure**:
+Open/close lifecycle for a **Panel** anchored to a **Reference** (e.g. dropdown, select popup, date-picker calendar).
+_Avoid_: Popover (when you mean the full disclosure lifecycle, not only the Popover API)
+
+**Reference**:
+The trigger surface that toggles **Disclosure** (button, input, icon).
+_Avoid_: Trigger element (when overloaded with event target)
+
+**Panel**:
+The floating surface shown when disclosure is open (menu, listbox popup, calendar grid).
+_Avoid_: Floating element (when you mean the positioned surface, not the positioning base class)
 
 **Layout primitive**:
 An Every Layout–style layout **Element** (`xb-stack`, `xb-cluster`, `xb-box`, etc.) from the layout family.
@@ -72,4 +84,4 @@ _Avoid_: Toggle group (when you mean optional/deselectable segmented control sem
 
 ## Flagged (implementation notes)
 
-**Listbox pattern** (`src/controllers/listbox-pattern/`): Kept intentionally for future Select/deepening work (Candidate C). Not wired to any **Element** today; do not treat as public API.
+**Listbox pattern** (`src/controllers/listbox-pattern/`): Kept for future **`xb-list`** migration (selectable ARIA listbox host). Not wired to **Select** (combobox). Do not treat as public API.

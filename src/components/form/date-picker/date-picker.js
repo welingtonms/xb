@@ -4,13 +4,11 @@ import { property, state } from 'lit/decorators.js';
 import { ContextConsumer } from '@lit/context';
 
 import { AsFormElementMixin } from '../../../mixins/as-form-element';
-import { BoundaryController } from '../../../controllers/boundary';
-import { ExpandableController } from '../../../controllers/expandable';
 import { FocusManagerController } from '../../../controllers/focus-manager';
 import { KeyboardSupportController } from '../../../controllers/keyboard-support';
 
 import { XBElement } from '../../../components/xb-element';
-import { FloatingElement } from '../../../components/floating-element';
+import { DisclosureFloatingElement } from '../../../components/disclosure-floating-element';
 import { CalendarDate } from '../../../utils/date-time/date';
 import { Parser } from '../../../utils/date-time/parser';
 import { Formatter } from '../../../utils/date-time/formatter';
@@ -34,7 +32,7 @@ const logger = createLogger( 'date-picker' );
  * @mixes AsFormElementMixin
  * @mixes WithFocusMixin
  */
-export class DatePicker extends AsFormElementMixin( FloatingElement ) {
+export class DatePicker extends AsFormElementMixin( DisclosureFloatingElement ) {
 	static styles = [ datePickerStyles() ];
 
 	/**
@@ -112,7 +110,7 @@ export class DatePicker extends AsFormElementMixin( FloatingElement ) {
 	 */
 	@state() accessor selectedDate;
 
-	/** @type {{ boundary: BoundaryController; expandable: ExpandableController; focus: FocusManagerController; keyboard: KeyboardSupportController }} */
+	/** @type {{ focus: FocusManagerController; keyboard: KeyboardSupportController }} */
 	#controllers;
 
 	/** @type {ContextConsumer<import('@lit/context').Context<unknown, I18nContextValue>, I18nContextValue>} */
@@ -147,13 +145,6 @@ export class DatePicker extends AsFormElementMixin( FloatingElement ) {
 		this.placement = 'bottom-start';
 
 		this.#controllers = {
-			boundary: new BoundaryController( this ),
-			expandable: new ExpandableController( this, {
-				getExpandableElement: () => {
-					return this.getFloatingElement();
-				},
-				isExpanded: () => Boolean( this.open ),
-			} ),
 			focus: new FocusManagerController( this, {
 				query: () => {
 					const selectors = 'button.day:not(.-blocked)';
@@ -173,10 +164,7 @@ export class DatePicker extends AsFormElementMixin( FloatingElement ) {
 
 	connectedCallback() {
 		super.connectedCallback();
-		this.addEventListener( 'focusin', this.#handleFocusIn );
-		this.addEventListener( 'focusout', this.#handleFocusOut );
 		this.addEventListener( 'click', this.#handleClick );
-		this.addEventListener( 'interact-out', this.#handleInteractOut );
 	}
 
 	async firstUpdated( changedProperties ) {
@@ -211,10 +199,7 @@ export class DatePicker extends AsFormElementMixin( FloatingElement ) {
 
 	disconnectedCallback() {
 		super.disconnectedCallback();
-		this.removeEventListener( 'focusin', this.#handleFocusIn );
-		this.removeEventListener( 'focusout', this.#handleFocusOut );
 		this.removeEventListener( 'click', this.#handleClick );
-		this.removeEventListener( 'interact-out', this.#handleInteractOut );
 	}
 
 	/**
@@ -270,19 +255,40 @@ export class DatePicker extends AsFormElementMixin( FloatingElement ) {
 	}
 
 
-	#handleFocusIn = ( event ) => {
-		if ( this.contains( event.target ) || event.target === this ) {
-			this.#controllers.keyboard.activate();
-			this.#controllers.boundary.activate();
-		}
-	};
+	/** @protected */
+	get useFocusOutDeactivation() {
+		return true;
+	}
 
-	#handleFocusOut = ( event ) => {
-		if ( ! this.contains( event.relatedTarget ) ) {
-			this.#controllers.keyboard.deactivate();
-			this.#controllers.boundary.deactivate();
-		}
-	};
+	/**
+	 * @param {FocusEvent} event
+	 * @protected
+	 */
+	shouldActivateOnFocusIn( event ) {
+		return this.contains( event.target ) || event.target === this;
+	}
+
+	/** @protected */
+	shouldCollapseOnInteractOut() {
+		return this.open;
+	}
+
+	/** @protected */
+	onDisclosureActivate() {
+		this.#controllers.keyboard.activate();
+	}
+
+	/** @protected */
+	onDisclosureDeactivate() {
+		this.#controllers.keyboard.deactivate();
+	}
+
+	/**
+	 * @see {@link FloatingElement.handleExternalClose}
+	 */
+	handleExternalClose() {
+		this.hide();
+	}
 
 	#handleClick = ( event ) => {
 		if ( this.disabled ) return;
@@ -291,13 +297,6 @@ export class DatePicker extends AsFormElementMixin( FloatingElement ) {
 		if ( ! this.open && ( target.matches?.( '.trigger' ) || target.closest( '#picker' ) ) ) {
 			// Handled mostly by input click
 		}
-	};
-
-	#handleInteractOut = () => {
-		if ( ! this.open ) return;
-		this.#controllers.boundary.deactivate();
-		this.#controllers.keyboard.deactivate();
-		this.collapse();
 	};
 
 	#getKeyboardShortcuts() {
