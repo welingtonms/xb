@@ -161,7 +161,14 @@ export class ToggleGroup extends WithSelectionMixin( XBElement ) {
 		// this is necessary for the React wrapper.
 		await this.updateComplete;
 
-		this.#initialize( this.getAttribute( 'value' ) ?? this.getAttribute( 'initial-value' ) );
+		const attributeValue =
+			this.getAttribute( 'value' ) ?? this.getAttribute( 'initial-value' );
+		const currentValue = this.value;
+		const hasCurrentValue = Array.isArray( currentValue )
+			? currentValue.length > 0
+			: Boolean( currentValue );
+
+		this.#initialize( attributeValue ?? ( hasCurrentValue ? currentValue : null ) );
 	}
 
 	disconnectedCallback() {

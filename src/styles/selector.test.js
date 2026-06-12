@@ -226,12 +226,16 @@ describe( 'HostSelectorBuilder', () => {
 	} );
 
 	describe( 'host-specific state getters', () => {
-		it( 'enabled uses :not([disabled])', () => {
-			expect( select( ':host' ).enabled.toString() ).toBe( ':host(:not([disabled]))' );
+		it( 'enabled uses :not(:disabled) and aria-disabled', () => {
+			expect( select( ':host' ).enabled.toString() ).toBe(
+				':host(:not(:disabled, [aria-disabled="false"]))'
+			);
 		} );
 
-		it( 'disabled uses the [disabled] attribute', () => {
-			expect( select( ':host' ).disabled.toString() ).toBe( ':host([disabled])' );
+		it( 'disabled uses :disabled and aria-disabled', () => {
+			expect( select( ':host' ).disabled.toString() ).toBe(
+				':host(:is(:disabled, [aria-disabled="true"]))'
+			);
 		} );
 
 		it( 'checked uses the [checked] attribute', () => {
@@ -300,7 +304,9 @@ describe( 'HostSelectorBuilder', () => {
 
 	describe( 'css()', () => {
 		it( 'wraps the host selector in Lit unsafeCSS', () => {
-			expect( select( ':host' ).disabled.css().cssText ).toBe( ':host([disabled])' );
+			expect( select( ':host' ).disabled.css().cssText ).toBe(
+				':host(:is(:disabled, [aria-disabled="true"]))'
+			);
 		} );
 	} );
 } );
