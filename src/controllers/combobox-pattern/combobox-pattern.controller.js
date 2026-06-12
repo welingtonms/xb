@@ -1,8 +1,7 @@
 import { RovingFocusController } from '../focus-manager';
 import { KeyboardSupportController } from '../keyboard-support';
+import { isFocusable, isNotHidden, QueryController } from '../query';
 import { SelectionManagerController } from '../selection-manager';
-
-const DEFAULT_OPTION_QUERY = 'xb-option:not([hidden])';
 
 /**
  * Focus, keyboard, and selection policy for a combobox disclosure host.
@@ -31,9 +30,12 @@ export class ComboboxPatternController {
 		this.#options = options;
 
 		this.controllers = {
+			query: new QueryController( host, {
+				getMembers: ( comboboxHost ) => comboboxHost.slottedOptions ?? [],
+			} ),
 			focus: new RovingFocusController( host, {
-				query: () => {
-					return this.#queryOptions();
+				getFocusable: () => {
+					return this.controllers.query.filter( isFocusable, isNotHidden );
 				},
 				searchable: false,
 			} ),
@@ -101,10 +103,8 @@ export class ComboboxPatternController {
 		return this.controllers.selection;
 	}
 
-	#queryOptions() {
-		const query = this.#options.optionQuery ?? DEFAULT_OPTION_QUERY;
-
-		return Array.from( this.host.querySelectorAll( query ) );
+	get query() {
+		return this.controllers.query;
 	}
 
 	async #handleArrowUp() {
@@ -201,19 +201,24 @@ export class ComboboxPatternController {
  * @property {function(ComboboxPatternControllerHost): HTMLElement | null | undefined} [getFirstSelected]
  * @property {function(ComboboxPatternControllerHost, string): void} [toggleValue]
  * @property {function(ComboboxPatternControllerHost): EventTarget} [getControllerTarget]
- * @property {string} [optionQuery]
  */
 
 /**
  * @typedef {ReactiveControllerHost & DisclosureFloatingElement & {
  * 	type: SelectionType;
+ * 	slottedOptions?: HTMLElement[];
  * 	expand: (args?: import('../../components/disclosure-floating-element').DisclosureExpandArgs) => void | Promise<void>;
  * 	collapse: (args?: import('../../components/disclosure-floating-element').DisclosureCollapseArgs) => void | Promise<void>;
  * }} ComboboxPatternControllerHost
  */
 
 /**
+ * @typedef {import('../query').QueryController} QueryController
+ */
+
+/**
  * @typedef {{
+ * 	query: QueryController;
  * 	focus: RovingFocusController;
  * 	keyboard: KeyboardSupportController;
  * 	selection: SelectionManagerController;

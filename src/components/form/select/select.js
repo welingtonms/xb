@@ -445,7 +445,7 @@ export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
 	 */
 	#initialize( value ) {
 		/** @type {SelectOption | undefined} */
-		const firstOption = this.#pattern.focus.queried?.[ 0 ];
+		const firstOption = this.#pattern.query.members?.[ 0 ];
 
 		if ( ! firstOption ) {
 			logger.warn( 'No options found in the select' );
@@ -499,7 +499,7 @@ export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
 
 		this.setAttribute( 'aria-disabled', disabled );
 
-		this.#pattern.focus.queried.forEach( ( item ) => {
+		this.#pattern.query.members.forEach( ( item ) => {
 			item.disabled = disabled || item.hasAttribute( 'disabled' );
 		} );
 	};
