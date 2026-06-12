@@ -7,6 +7,7 @@ import toArray from '../../../utils/to-array';
 import createLogger from '../../../utils/logger';
 import { FocusManagerController } from '../../../controllers/focus-manager';
 import { KeyboardSupportController } from '../../../controllers/keyboard-support';
+import { isFocusable, isNotHidden, QueryController } from '../../../controllers/query';
 import { SelectionManagerController } from '../../../controllers/selection-manager';
 import { WithSelectionMixin, fromAttribute } from '../../../mixins/with-selection';
 import { XBElement } from '../../xb-element';
@@ -62,7 +63,7 @@ export class RadioGroup extends WithSelectionMixin( XBElement ) {
 	@property( { type: String, attribute: 'value', reflect: true } ) accessor providedValue;
 
 	/** @type {RadioGroupControllers} */
-	#controllers;
+	controllers;
 
 	#contextProvider = new ContextProvider( this, {
 		context: radioGroupContext,
@@ -86,9 +87,14 @@ export class RadioGroup extends WithSelectionMixin( XBElement ) {
 
 		this.internals.role = 'radiogroup';
 
-		this.#controllers = {
-			focus: new FocusManagerController( this, {
+		this.controllers = {
+			query: new QueryController( this, {
 				query: [ ITEM_QUERY ],
+			} ),
+			focus: new FocusManagerController( this, {
+				getFocusable: () => {
+					return this.controllers.query.filter( isFocusable, isNotHidden );
+				},
 			} ),
 			keyboard: new KeyboardSupportController( this, [
 				{
@@ -101,7 +107,7 @@ export class RadioGroup extends WithSelectionMixin( XBElement ) {
 						},
 					],
 					handler: () => {
-						this.#controllers.focus.focusPrevious( ( /** @type {Radio} */ element ) => {
+						this.controllers.focus.focusPrevious( ( /** @type {Radio} */ element ) => {
 							this.#selectValue( element.value );
 						} );
 					},
@@ -116,7 +122,7 @@ export class RadioGroup extends WithSelectionMixin( XBElement ) {
 						},
 					],
 					handler: () => {
-						this.#controllers.focus.focusNext( ( /** @type {Radio} */ element ) => {
+						this.controllers.focus.focusNext( ( /** @type {Radio} */ element ) => {
 							this.#selectValue( element.value );
 						} );
 					},
@@ -178,7 +184,7 @@ export class RadioGroup extends WithSelectionMixin( XBElement ) {
 	}
 
 	get value() {
-		return this.#controllers.selection.value();
+		return this.controllers.selection.value();
 	}
 
 	/**
@@ -191,7 +197,7 @@ export class RadioGroup extends WithSelectionMixin( XBElement ) {
 	#initialize( value ) {
 		// TODO: check if it's not hidden or disabled
 		/** @type {Radio} */
-		const firstRadio = this.#controllers.focus.queried?.[ 0 ];
+		const firstRadio = this.controllers.query.members?.[ 0 ];
 
 		if ( ! firstRadio ) {
 			logger.warn( 'No radio found in the group' );
@@ -224,22 +230,22 @@ export class RadioGroup extends WithSelectionMixin( XBElement ) {
 	};
 
 	#onFocusIn = () => {
-		const firstChecked = this.#controllers.focus.queried.find(
-			( item ) => item.checked && ! item.hasAttribute( 'disabled' )
-		);
+		const firstChecked = this.controllers.query
+			.filter( isFocusable, isNotHidden )
+			.find( ( item ) => item.checked && ! item.hasAttribute( 'disabled' ) );
 
-		this.#controllers.keyboard.activate();
+		this.controllers.keyboard.activate();
 
 		if ( ! firstChecked ) {
-			this.#controllers.focus.focusFirst();
+			this.controllers.focus.focusFirst();
 		} else {
-			this.#controllers.focus.focus( firstChecked );
+			this.controllers.focus.focus( firstChecked );
 		}
 	};
 
 	#onFocusOut = () => {
-		this.#controllers.focus.clear();
-		this.#controllers.keyboard.deactivate();
+		this.controllers.focus.clear();
+		this.controllers.keyboard.deactivate();
 	};
 
 	handleFormReset = () => {
@@ -255,7 +261,7 @@ export class RadioGroup extends WithSelectionMixin( XBElement ) {
 		if ( target.matches( ITEM_QUERY ) ) {
 			event.stopPropagation();
 
-			this.#controllers.focus.focus( target );
+			this.controllers.focus.focus( target );
 			this.#selectValue( target.value );
 		}
 	};
@@ -264,13 +270,13 @@ export class RadioGroup extends WithSelectionMixin( XBElement ) {
 	 * @param {string[]} value
 	 */
 	#onValueChange = ( value ) => {
-		this.#controllers.selection.init( value );
+		this.controllers.selection.init( value );
 
 		this.#updateRadios();
 	};
 
 	#selectValue = ( value ) => {
-		this.#controllers.selection.toggle( value );
+		this.controllers.selection.toggle( value );
 
 		this.#updateRadios();
 
@@ -284,8 +290,8 @@ export class RadioGroup extends WithSelectionMixin( XBElement ) {
 	};
 
 	#updateRadios = () => {
-		for ( const element of this.#controllers.focus.queried ) {
-			element.checked = this.#controllers.selection.selection.has( element.value );
+		for ( const element of this.controllers.query.members ) {
+			element.checked = this.controllers.selection.selection.has( element.value );
 		}
 	};
 }
@@ -302,6 +308,7 @@ export class RadioGroup extends WithSelectionMixin( XBElement ) {
 
 /**
  * @typedef {{
+ * 	query: import('../../../controllers/query').QueryController;
  * 	focus: FocusManagerController;
  * 	keyboard: KeyboardSupportController;
  * 	selection: SelectionManagerController;

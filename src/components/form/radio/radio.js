@@ -24,7 +24,7 @@ const logger = createLogger( 'radio' );
  * @template WithAriaMixin, WithIDMixin, FormElement
  */
 export class Radio extends WithAriaMixin( WithIDMixin( FormElement ) ) {
-	static shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
+	// static shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
 	static styles = [ radioStyles() ];
 
 	/** @type {HTMLButtonElement} */
@@ -110,7 +110,7 @@ export class Radio extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 
 	render() {
 		return html`
-			<button id="control" part="control" type="button"></button>
+			<button id="control" part="control" type="button" tabindex="-1"></button>
 			<span id="button" aria-hidden="true">
 				<xb-icon id="check" name="circle-fill"></xb-icon>
 			</span>
