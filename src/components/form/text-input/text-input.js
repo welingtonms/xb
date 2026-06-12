@@ -253,7 +253,7 @@ export class TextInput extends WithAriaMixin( FormElement ) {
 					</span>
 					<input
 						id="control"
-						?disabled="${ this.disabled }"
+						?disabled="${ this.effectiveDisabled }"
 						?multiple=${ this.multiple }
 						?readonly=${ this.readonly }
 						?required=${ this.required }
@@ -288,6 +288,10 @@ export class TextInput extends WithAriaMixin( FormElement ) {
 		return this.#control;
 	}
 
+	getControlSurface() {
+		return this.input;
+	}
+
 	// get value() {
 	// 	return this.input?.value;
 	// }
@@ -315,44 +319,44 @@ export class TextInput extends WithAriaMixin( FormElement ) {
 	};
 
 	#onValueChange = ( value ) => {
-		this.input.value = value;
-		this.internals.setFormValue( value );
-
-		this.#updateValidity();
+		this.queuedWorkManager.push(
+			() => {
+				return Boolean( this.input );
+			},
+			() => {
+				this.input.value = value;
+				this.setFormValue( value, { syncValidity: true } );
+			}
+		);
 	};
 
-	/**
-	 * @param {boolean} disabled
-	 */
-	#onDisabledChange = ( disabled ) => {
-		if ( this.input ) {
-			this.input.disabled = disabled;
-		}
+	#onDisabledChange = () => {
+		const disabled = this.effectiveDisabled;
+
+		this.queuedWorkManager.push(
+			() => {
+				return Boolean( this.input );
+			},
+			() => {
+				this.input.disabled = disabled;
+			}
+		);
 	};
 
-	#updateValidity() {
-		this.internals.setValidity( this.input.validity, this.input.validationMessage, this.input );
+	onFormDisabled( disabled ) {
+		super.onFormDisabled( disabled );
+
+		this.#onDisabledChange();
 	}
 
-	formResetCallback() {
-		this.#initialize();
-		// this.value = this.getAttribute('value');
+	onFormReset() {
+		this.#onValueChange( this.getAttribute( 'default-value' ) ?? '' );
 	}
 
-	formStateRestoreCallback( state, mode ) {
+	onFormStateRestore( state, mode ) {
 		if ( state ) {
 			this.value = state;
 		}
-	}
-
-	formDisabledCallback( disabled ) {
-		super.formDisabledCallback( disabled );
-
-		if ( ! this.isConnected ) {
-			return;
-		}
-
-		this.#onDisabledChange( disabled );
 	}
 }
 

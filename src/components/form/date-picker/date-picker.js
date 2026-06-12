@@ -178,7 +178,9 @@ export class DatePicker extends AsFormElementMixin( DisclosureFloatingElement ) 
 	 * @returns {string | null | undefined}
 	 */
 	getInitialFormValue() {
-		return this.getAttribute( 'value' ) ?? this.getAttribute( 'initial-value' ) ?? this.initialValue;
+		return (
+			this.getAttribute( 'value' ) ?? this.getAttribute( 'initial-value' ) ?? this.initialValue
+		);
 	}
 
 	/**
@@ -206,10 +208,7 @@ export class DatePicker extends AsFormElementMixin( DisclosureFloatingElement ) 
 	 * @param {import('lit').PropertyValues<this>} changedProperties
 	 */
 	willUpdate( changedProperties ) {
-		if (
-			changedProperties.has( 'initialValue' ) &&
-			typeof this.initialValue === 'string'
-		) {
+		if ( changedProperties.has( 'initialValue' ) && typeof this.initialValue === 'string' ) {
 			const newDate = this.initialValue ? CalendarDate.fromISO( this.initialValue ) : null;
 
 			if ( newDate?.toString() !== this.selectedDate?.toString() ) {
@@ -254,7 +253,6 @@ export class DatePicker extends AsFormElementMixin( DisclosureFloatingElement ) 
 		return true;
 	}
 
-
 	/** @protected */
 	get useFocusOutDeactivation() {
 		return true;
@@ -291,7 +289,7 @@ export class DatePicker extends AsFormElementMixin( DisclosureFloatingElement ) 
 	}
 
 	#handleClick = ( event ) => {
-		if ( this.disabled ) return;
+		if ( this.effectiveDisabled ) return;
 
 		const target = event.target;
 		if ( ! this.open && ( target.matches?.( '.trigger' ) || target.closest( '#picker' ) ) ) {
@@ -416,7 +414,7 @@ export class DatePicker extends AsFormElementMixin( DisclosureFloatingElement ) 
 
 	async expand( args ) {
 		const { focusOnTrigger = false } = args || {};
-		if ( this.disabled ) return;
+		if ( this.effectiveDisabled ) return;
 
 		if ( ! this.open ) {
 			// Sync draft state with committed state
@@ -556,25 +554,47 @@ export class DatePicker extends AsFormElementMixin( DisclosureFloatingElement ) 
 	}
 
 	updateFormValue() {
-		// Sync internal form value with selectedDate
-		this.internals.setFormValue( this.value || null );
+		this.setFormValue( this.value || null );
 	}
 
-	formResetCallback() {
+	onFormReset() {
 		this.initializeFormValue();
 	}
 
-	formStateRestoreCallback( state ) {
+	onFormStateRestore( state, mode ) {
 		if ( state ) {
 			this.value = state; // Uses setter -> updates selectedDate
 			this.updateFormValue();
 		}
 	}
 
-	// Call this in firstUpdated or constructor?
-	// It's good to sync initially.
+	#onDisabledChange = () => {
+		const disabled = this.effectiveDisabled;
+
+		this.queuedWorkManager.push(
+			() => {
+				const trigger = this.getReferenceElement();
+				return Boolean( trigger && 'disabled' in trigger );
+			},
+			() => {
+				this.triggers.forEach( ( trigger ) => {
+					trigger.disabled = disabled;
+				} );
+			}
+		);
+	};
+
+	onFormDisabled( disabled ) {
+		super.onFormDisabled( disabled );
+		this.#onDisabledChange();
+	}
+
 	updated( changedProperties ) {
 		super.updated( changedProperties );
+
+		if ( changedProperties.has( 'disabled' ) ) {
+			this.#onDisabledChange();
+		}
 
 		if ( changedProperties.has( 'open' ) && ! this.open ) {
 			this.draftSelectedDate = null;
@@ -791,6 +811,7 @@ export class DatePicker extends AsFormElementMixin( DisclosureFloatingElement ) 
 				type="text"
 				class="trigger"
 				role="combobox"
+				?disabled=${ this.effectiveDisabled }
 				aria-haspopup="dialog"
 				aria-expanded=${ this.open ? 'true' : 'false' }
 				aria-controls="dialog"
@@ -861,5 +882,9 @@ export class DatePicker extends AsFormElementMixin( DisclosureFloatingElement ) 
 				</div>
 			</div>
 		`;
+	}
+
+	get triggers() {
+		return Array.from( this.renderRoot?.querySelectorAll( '.trigger' ) );
 	}
 }

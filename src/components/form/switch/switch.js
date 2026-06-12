@@ -104,10 +104,6 @@ export class Switch extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 		}
 	}
 
-	firstUpdated() {
-		this.queuedWorkManager.flush();
-	}
-
 	render() {
 		return html`
 			<input id="control" type="checkbox" name="${ this.name }" @click=${ this.#onInternalClick } />
@@ -133,6 +129,10 @@ export class Switch extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 		return this.#control;
 	}
 
+	getControlSurface() {
+		return this.input;
+	}
+
 	set checked( checked ) {
 		this.#onCheckedChange( checked );
 	}
@@ -145,11 +145,8 @@ export class Switch extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 		this.#onCheckedChange( checked ?? this.hasAttribute( 'initial-checked' ) );
 	}
 
-	/**
-	 * @param {boolean} disabled
-	 */
-	#onDisabledChange = ( disabled ) => {
-		this.disabled = disabled;
+	#onDisabledChange = () => {
+		const disabled = this.effectiveDisabled;
 
 		this.queuedWorkManager.push(
 			() => {
@@ -199,7 +196,7 @@ export class Switch extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 				 * <input type="hidden"> within the form with a value indicating an unchecked state."
 				 * @see {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#value|Checkbox value}
 				 */
-				this.internals.setFormValue( checked ? 'on' : 'off' );
+				this.setFormValue( checked ? 'on' : 'off' );
 
 				this.internals.ariaChecked = checked ? 'true' : 'false';
 			}
@@ -238,24 +235,19 @@ export class Switch extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 		this.reemit( event );
 	};
 
-	formResetCallback() {
+	onFormReset() {
 		this.#initialize();
 	}
 
-	formStateRestoreCallback( state, mode ) {
+	onFormDisabled( disabled ) {
+		super.onFormDisabled( disabled );
+		this.#onDisabledChange();
+	}
+
+	onFormStateRestore( state, mode ) {
 		if ( state ) {
 			this.checked = state === 'on';
 		}
-	}
-
-	formDisabledCallback( disabled ) {
-		super.formDisabledCallback( disabled );
-
-		if ( ! this.isConnected ) {
-			return;
-		}
-
-		this.#onDisabledChange( disabled );
 	}
 }
 

@@ -16,6 +16,7 @@ export const MENU_SELECTOR = '[role="dialog"]';
 export function datePickerStyles() {
 	const outerContainer = select( '.outer-container' );
 	const menuContainer = select( MENU_SELECTOR );
+	const trigger = select( '.trigger' );
 
 	return [
 		floatingStyles( {
@@ -55,6 +56,7 @@ export function datePickerStyles() {
 				position: relative;
 			}
 
+			:host( :disabled ),
 			:host( [disabled] ) {
 				pointer-events: none;
 			}
@@ -145,8 +147,9 @@ export function datePickerStyles() {
 				block-size: 100%;
 			}
 
-			input {
-				${ transition( [ { property: 'color' } ] ) };
+			${ trigger.css() } {
+				${ transition( [ { property: 'color' }, { property: 'opacity' } ] ) };
+				opacity: 1;
 
 				${ typography( 'text-sm' ) };
 
@@ -165,7 +168,12 @@ export function datePickerStyles() {
 				box-sizing: border-box;
 
 				border-radius: ${ toCSSResult( 'radius-md' ) };
+				background-color: var( --xb-date-picker-background-color );
 				color: ${ toCSSResult( 'color-gray-900' ) };
+			}
+
+			${ trigger.disabled.css() } {
+				opacity: 0.5;
 			}
 
 			${ outerContainer.focused.css() } {

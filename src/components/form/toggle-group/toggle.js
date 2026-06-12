@@ -5,18 +5,16 @@ import { property } from 'lit/decorators.js';
 import { query } from 'lit/decorators/query.js';
 
 import { FormElement } from '../../form-element';
+import { FormMemberMixin } from '../../form-element/form-member-element';
 import { WithAriaMixin } from '../../../mixins/with-aria';
 import { WithIDMixin } from '../../../mixins/with-id';
 import { XBElement } from '../../xb-element';
 import { toggleGroupContext } from './toggle-group.context';
 import { trackSlot } from '../../../decorators/track-slot';
-import createLogger from '../../../utils/logger';
 
 import { toggleStyles } from './toggle-group.styles';
 
-const logger = createLogger( 'toggle' );
-
-export class Toggle extends WithAriaMixin( WithIDMixin( FormElement ) ) {
+export class Toggle extends WithAriaMixin( WithIDMixin( FormMemberMixin( FormElement ) ) ) {
 	static shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
 	static styles = [ toggleStyles() ];
 
@@ -49,7 +47,7 @@ export class Toggle extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 		context: toggleGroupContext,
 		subscribe: true,
 		callback: () => {
-			this.#onDisabledChange( Boolean( this.disabled ) );
+			this.#onDisabledChange();
 		},
 	} );
 
@@ -74,7 +72,7 @@ export class Toggle extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 	 */
 	update( changedProperties ) {
 		if ( changedProperties.has( 'disabled' ) ) {
-			this.#onDisabledChange( this.disabled );
+			this.#onDisabledChange();
 		}
 
 		if ( changedProperties.has( 'checked' ) ) {
@@ -119,54 +117,35 @@ export class Toggle extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 	 * @param {boolean} checked
 	 */
 	#onCheckedChange = ( checked ) => {
-		if ( ! this.name ) {
-			const group = this.closest( 'xb-toggle-group' );
-			this.name = group?.name ?? '';
-
-			logger.warn(
-				`no name attribute set on the toggle. Is it intentionally? setting name to ${ group?.name }`
-			);
-		}
-
-		this.internals.setFormValue( checked ? this.value : null );
+		this.ensureGroupName( 'xb-toggle-group', 'toggle' );
+		this.setMemberFormValue( checked, this.value );
 		this.setBooleanAttribute( 'aria-checked', checked );
 	};
 
-	/**
-	 * @param {boolean} disabled
-	 */
-	#onDisabledChange = ( disabled ) => {
+	#onDisabledChange = () => {
 		this.queuedWorkManager.push(
 			() => {
 				return Boolean( this.button );
 			},
 			() => {
-				const isDisabled = Boolean( this.#context.value?.disabled || disabled );
-				this.setAttribute( 'aria-disabled', String( isDisabled ) );
+				const isDisabled = Boolean( this.#context.value?.disabled || this.effectiveDisabled );
+				this.setBooleanAttribute( 'aria-disabled', isDisabled );
 
 				this.button.disabled = isDisabled;
 			}
 		);
 	};
 
-	formResetCallback() {
-		// toggle-group will take care of this
-	}
-
-	formStateRestoreCallback( state ) {
+	onFormStateRestore( state, mode ) {
 		if ( state ) {
 			this.checked = state;
 		}
 	}
 
-	formDisabledCallback( disabled ) {
-		super.formDisabledCallback( disabled );
+	onFormDisabled( disabled ) {
+		super.onFormDisabled( disabled );
 
-		if ( ! this.isConnected ) {
-			return;
-		}
-
-		this.#onDisabledChange( disabled );
+		this.#onDisabledChange();
 	}
 }
 

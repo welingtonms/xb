@@ -111,14 +111,10 @@ export class Button extends WithAriaMixin( FormElement ) {
 	 */
 	update( changedProperties ) {
 		if ( changedProperties.has( 'disabled' ) ) {
-			this.#onDisabledChange( this.disabled );
+			this.#onDisabledChange();
 		}
 
 		super.update( changedProperties );
-	}
-
-	firstUpdated() {
-		this.queuedWorkManager.flush();
 	}
 
 	render() {
@@ -135,6 +131,7 @@ export class Button extends WithAriaMixin( FormElement ) {
 				formmethod=${ ifDefined( this.formmethod ) }
 				?formnovalidate=${ this.formnovalidate }
 				formtarget=${ ifDefined( this.formtarget ) }
+				?disabled=${ this.effectiveDisabled }
 			>
 				<slot name="leading"></slot>
 				<slot>
@@ -158,7 +155,7 @@ export class Button extends WithAriaMixin( FormElement ) {
 	}
 
 	#onClick = () => {
-		if ( this.disabled ) {
+		if ( this.effectiveDisabled ) {
 			return;
 		}
 
@@ -199,29 +196,25 @@ export class Button extends WithAriaMixin( FormElement ) {
 		this.form?.reset();
 	};
 
-	/**
-	 * @param {boolean} disabled
-	 */
-	#onDisabledChange = ( disabled ) => {
+	#onDisabledChange = () => {
+		const disabled = this.effectiveDisabled;
+
 		this.queuedWorkManager.push(
 			() => {
 				return Boolean( this.button );
 			},
 			() => {
-				this.disabled = disabled;
+				this.setBooleanAttribute( 'aria-disabled', disabled );
+
 				this.button.disabled = disabled;
 			}
 		);
 	};
 
-	formDisabledCallback( disabled ) {
-		super.formDisabledCallback( disabled );
+	onFormDisabled( disabled ) {
+		super.onFormDisabled( disabled );
 
-		if ( ! this.isConnected ) {
-			return;
-		}
-
-		this.#onDisabledChange( disabled );
+		this.#onDisabledChange();
 	}
 }
 

@@ -13,6 +13,7 @@ import layoutStyles from '../../../styles/layout.styles';
 
 export function selectStyles() {
 	const $ = select( ':host' );
+	const trigger = select( '#trigger' );
 
 	return [
 		layoutStyles( { descendantSelector: '#picker' } ),
@@ -20,6 +21,7 @@ export function selectStyles() {
 		expandableHostStyles(),
 		css`
 			${ $.css() } {
+				--xb-select-background-color: ${ toCSSResult( 'color-white' ) };
 				--xb-select-outline-color: transparent;
 				--xb-select-outline-offset: 2px;
 
@@ -65,8 +67,10 @@ export function selectStyles() {
 				block-size: 40px;
 			}
 
-			#trigger {
+			${ trigger.css() } {
+				${ transition( [ { property: 'opacity' } ] ) };
 				${ typography( 'text-sm' ) };
+				opacity: 1;
 
 				field-sizing: content;
 				min-width: 40px;
@@ -79,8 +83,13 @@ export function selectStyles() {
 				padding-inline: 0;
 				outline: none;
 
+				background-color: var( --xb-select-background-color );
 				color: ${ toCSSResult( 'color-gray-900' ) };
 				font-weight: ${ toCSSResult( 'font-weight-regular' ) };
+			}
+
+			${ trigger.disabled.css() } {
+				opacity: 0.5;
 			}
 
 			#leading {

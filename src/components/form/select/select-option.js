@@ -5,15 +5,14 @@ import { XBElement } from '../../xb-element';
 
 import { WithIDMixin } from '../../../mixins/with-id';
 import { AsFormElementMixin } from '../../../mixins/as-form-element';
-import createLogger from '../../../utils/logger';
+import { FormMemberMixin } from '../../form-element/form-member-element';
+import { getTextContent } from '../../../utils/slot.js';
 
 import { optionStyles } from './select.styles';
 
 import '../../icon/icon.define';
 
-const logger = createLogger( 'select-option' );
-
-export class Option extends AsFormElementMixin( WithIDMixin( XBElement, 'xb-option' ) ) {
+export class Option extends FormMemberMixin( AsFormElementMixin( WithIDMixin( XBElement, 'xb-option' ) ) ) {
 	static styles = [ optionStyles() ];
 
 	/**
@@ -64,7 +63,7 @@ export class Option extends AsFormElementMixin( WithIDMixin( XBElement, 'xb-opti
 	 */
 	update( changedProperties ) {
 		if ( changedProperties.has( 'disabled' ) ) {
-			this.#onDisabledChange( this.disabled );
+			this.#onDisabledChange();
 		}
 
 		if ( changedProperties.has( 'selected' ) ) {
@@ -119,7 +118,7 @@ export class Option extends AsFormElementMixin( WithIDMixin( XBElement, 'xb-opti
 	 * @param {Event} event
 	 */
 	#onClick = ( event ) => {
-		if ( this.disabled ) {
+		if ( this.effectiveDisabled ) {
 			event.stopPropagation();
 			return;
 		}
@@ -131,44 +130,24 @@ export class Option extends AsFormElementMixin( WithIDMixin( XBElement, 'xb-opti
 	 * @param {boolean} selected
 	 */
 	#onSelectedChange = ( selected ) => {
-		if ( ! this.name ) {
-			const select = this.closest( 'xb-select' );
-			this.name = select?.name ?? '';
-
-			logger.warn(
-				`no name attribute set on the option. Is it intentionally? setting name to ${ select?.name }`
-			);
-		}
-
-		this.internals.setFormValue( selected ? this.value : null );
+		this.ensureGroupName( 'xb-select', 'option' );
+		this.setMemberFormValue( selected, this.value );
 		this.setBooleanAttribute( 'aria-selected', selected );
 	};
 
-	/**
-	 * @param {boolean} disabled
-	 */
-	#onDisabledChange = ( disabled ) => {
-		this.setAttribute( 'aria-disabled', disabled );
+	#onDisabledChange = () => {
+		this.setBooleanAttribute( 'aria-disabled', this.effectiveDisabled );
 	};
 
-	formResetCallback() {
-		// select will take care of this
-	}
-
-	formStateRestoreCallback( state ) {
+	onFormStateRestore( state, mode ) {
 		if ( state ) {
 			this.selected = state;
 		}
 	}
 
-	formDisabledCallback( disabled ) {
-		super.formDisabledCallback( disabled );
-
-		if ( ! this.isConnected ) {
-			return;
-		}
-
-		this.#onDisabledChange( disabled );
+	onFormDisabled( disabled ) {
+		super.onFormDisabled( disabled );
+		this.#onDisabledChange();
 	}
 }
 

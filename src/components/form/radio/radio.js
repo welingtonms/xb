@@ -4,26 +4,23 @@ import { property } from 'lit/decorators.js';
 import { query } from 'lit/decorators/query.js';
 
 import { FormElement } from '../../form-element';
+import { FormMemberMixin } from '../../form-element/form-member-element';
 import { trackSlot } from '../../../decorators/track-slot';
 import { WithAriaMixin } from '../../../mixins/with-aria';
 import { WithIDMixin } from '../../../mixins/with-id';
 import { XBElement } from '../../xb-element';
-import createLogger from '../../../utils/logger';
 
 import { radioStyles } from './radio.styles';
 import { radioGroupContext } from './radio-group.context';
 
 import '../../layout/stack/stack.define';
-import '../../layout/cluster/cluster.define';
 import '../../icon/icon.define';
-
-const logger = createLogger( 'radio' );
 
 /**
  * @class
- * @template WithAriaMixin, WithIDMixin, FormElement
+ * @template WithAriaMixin, WithIDMixin, FormMemberMixin, FormElement
  */
-export class Radio extends WithAriaMixin( WithIDMixin( FormElement ) ) {
+export class Radio extends WithAriaMixin( WithIDMixin( FormMemberMixin( FormElement ) ) ) {
 	// static shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
 	static styles = [ radioStyles() ];
 
@@ -59,7 +56,7 @@ export class Radio extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 		context: radioGroupContext,
 		subscribe: true,
 		callback: () => {
-			this.#onDisabledChange( Boolean( this.disabled ) );
+			this.#onDisabledChange();
 		},
 	} );
 
@@ -97,15 +94,15 @@ export class Radio extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 	 * @param {import("lit").PropertyValues<this>} changedProperties
 	 */
 	update( changedProperties ) {
+		super.update( changedProperties );
+
 		if ( changedProperties.has( 'disabled' ) ) {
-			this.#onDisabledChange( Boolean( this.disabled ) );
+			this.#onDisabledChange();
 		}
 
 		if ( changedProperties.has( 'checked' ) ) {
 			this.#onCheckedChange( Boolean( this.checked ) );
 		}
-
-		super.update( changedProperties );
 	}
 
 	render() {
@@ -135,7 +132,7 @@ export class Radio extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 	 * @param {Event} event
 	 */
 	#onClick = ( event ) => {
-		if ( this.disabled ) {
+		if ( this.effectiveDisabled ) {
 			event.stopPropagation();
 			return;
 		}
@@ -147,34 +144,30 @@ export class Radio extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 	 * @param {boolean} checked
 	 */
 	#onCheckedChange = ( checked ) => {
-		if ( ! this.name ) {
-			const group = this.closest( 'xb-radio-group' );
-			this.name = group?.name ?? '';
-
-			logger.warn(
-				`no name attribute set on the radio. Is it intentionally? setting name to ${ group?.name }`
-			);
-		}
-
-		this.internals.setFormValue( checked ? this.value : null );
-		this.setBooleanAttribute( 'aria-checked', checked );
-	};
-
-	/**
-	 * @param {boolean} disabled
-	 */
-	#onDisabledChange = ( disabled ) => {
 		this.queuedWorkManager.push(
 			() => {
 				return Boolean( this.button );
 			},
 			() => {
-				const isDisabled = Boolean( this.#context.value?.disabled || disabled );
-				this.setAttribute( 'aria-disabled', String( isDisabled ) );
+				this.ensureGroupName( 'xb-radio-group', 'radio' );
+				this.setMemberFormValue( checked, this.value );
+				this.setBooleanAttribute( 'aria-checked', checked );
+			}
+		);
+	};
+
+	#onDisabledChange = () => {
+		this.queuedWorkManager.push(
+			() => {
+				return Boolean( this.button );
+			},
+			() => {
+				const isDisabled = Boolean( this.#context.value?.disabled || this.effectiveDisabled );
+				this.setBooleanAttribute( 'aria-disabled', isDisabled );
 
 				this.button.disabled = isDisabled;
 
-				if ( this.disabled ) {
+				if ( isDisabled ) {
 					this.removeAttribute( 'tabindex' );
 				} else {
 					this.setAttribute( 'tabindex', '-1' );
@@ -183,24 +176,15 @@ export class Radio extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 		);
 	};
 
-	formResetCallback() {
-		// radio-group will take care of this
-	}
-
-	formStateRestoreCallback( state ) {
+	onFormStateRestore( state, mode ) {
 		if ( state ) {
 			this.checked = Boolean( state );
 		}
 	}
 
-	formDisabledCallback( disabled ) {
-		super.formDisabledCallback( disabled );
-
-		if ( ! this.isConnected ) {
-			return;
-		}
-
-		this.#onDisabledChange( disabled );
+	onFormDisabled( disabled ) {
+		super.onFormDisabled( disabled );
+		this.#onDisabledChange();
 	}
 }
 

@@ -135,10 +135,6 @@ export class Checkbox extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 		}
 	}
 
-	firstUpdated() {
-		this.queuedWorkManager.flush();
-	}
-
 	render() {
 		return html`
 			<input
@@ -161,6 +157,10 @@ export class Checkbox extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 
 	get input() {
 		return this.#control;
+	}
+
+	getControlSurface() {
+		return this.input;
 	}
 
 	set checked( checked ) {
@@ -189,11 +189,8 @@ export class Checkbox extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 		this.#onIndeterminateChange( this.hasAttribute( 'indeterminate' ) );
 	}
 
-	/**
-	 * @param {boolean} disabled
-	 */
-	#onDisabledChange = ( disabled ) => {
-		this.disabled = disabled;
+	#onDisabledChange = () => {
+		const disabled = this.effectiveDisabled;
 
 		this.queuedWorkManager.push(
 			() => {
@@ -293,7 +290,7 @@ export class Checkbox extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 		 * <input type="hidden"> within the form with a value indicating an unchecked state."
 		 * @see {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#value|Checkbox value}
 		 */
-		this.internals.setFormValue( this.input.checked ? value ?? 'on' : null );
+		this.setFormValue( this.input.checked ? value ?? 'on' : null );
 	};
 
 	#onChange = ( event ) => {
@@ -305,24 +302,19 @@ export class Checkbox extends WithAriaMixin( WithIDMixin( FormElement ) ) {
 		this.reemit( event );
 	};
 
-	formResetCallback() {
+	onFormReset() {
 		this.#initialize();
 	}
 
-	formStateRestoreCallback( state, mode ) {
+	onFormDisabled( disabled ) {
+		super.onFormDisabled( disabled );
+		this.#onDisabledChange();
+	}
+
+	onFormStateRestore( state, mode ) {
 		if ( state ) {
 			this.checked = Boolean( state );
 		}
-	}
-
-	formDisabledCallback( disabled ) {
-		super.formDisabledCallback( disabled );
-
-		if ( ! this.isConnected ) {
-			return;
-		}
-
-		this.#onDisabledChange( disabled );
 	}
 }
 

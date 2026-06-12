@@ -202,7 +202,6 @@ export function toggleStyles() {
 	];
 }
 
-console.log( toggleStyles() );
 // :host {
 // 	--xb-button-background-color: ${ toCSSResult( 'color-white', 0 ) };
 // 	--xb-button-border-color: ${ toCSSResult( 'color-white', 0 ) };

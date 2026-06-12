@@ -72,6 +72,18 @@ _Avoid_: Default value (when you mean an explicit HTML attribute), placeholder
 A single-selection form control (`xb-radio-group`) wrapping mutually exclusive options (`xb-radio`). When no initial value is supplied, the first option is selected at mount (**Mount default**). `form.reset()` restores the attribute state (`value` / `initial-value`) via group re-initialization.
 _Avoid_: Toggle group (when you mean optional/deselectable segmented control semantics)
 
+**Form control**:
+A form-associated **Element** that participates in native submit, reset, restore, and disabled lifecycles through `ElementInternals`.
+_Avoid_: Input wrapper (when you mean the full form contract, not just a shadow input)
+
+**Composite control**:
+A host **Element** plus **Members** that share one `name` — e.g. **Select**, **Radio group**, **Toggle group**. The host manages selection and **Disclosure** where applicable; **Members** contribute to `FormData` when active.
+_Avoid_: Form group (when you mean a native `<fieldset>`)
+
+**Control surface**:
+The shadow `#control` or **Member** element that receives disabled state and ARIA reflection from the host.
+_Avoid_: Native input (when the surface is a custom button or option, not an `<input>`)
+
 ## Example dialogue
 
 **Dev:** I dropped `<xb-button>` in my page but the browser shows an undefined element.
@@ -85,6 +97,10 @@ _Avoid_: Toggle group (when you mean optional/deselectable segmented control sem
 **Dev:** I nested `<xb-stack paddingless="bottom">` inside `<xb-box borderless="all">` but the inner stack still shows a top border.
 
 **Expert:** **Borderless** and **Paddingless** apply per **Layout primitive** host — they do not inherit from an ancestor. Set suppression on each **Tag** whose chrome you want to remove, or pick a primitive whose default spacing already fits the composition.
+
+**Dev:** After `form.reset()`, my **Radio group** shows the first option selected again — is that correct?
+
+**Expert:** Yes. **Composite controls** re-initialize from their attributes (`value` / `initial-value`) or **Mount default**. The host syncs **Members**; each active **Member** updates its form value. The host itself is not a **Form control** — submission runs through the selected **Member**.
 
 ## Flagged (implementation notes)
 

@@ -91,6 +91,10 @@ export class XBElement extends LitElement {
 			this.removeAttribute( name );
 		}
 	}
+
+	firstUpdated() {
+		this.queuedWorkManager.flush();
+	}
 }
 /**
  * @typedef {Object} XBElementDefinition

@@ -16,6 +16,8 @@ import {
 	expectFormData,
 	fillAllFields,
 	getIntegrationForm,
+	expectIntegrationControlsFormDisabled,
+	setIntegrationFieldsetDisabled,
 	renderIntegrationForm,
 	waitForIntegrationFormReady,
 } from './form.test-helpers.js';
@@ -69,8 +71,8 @@ export const Playground = {
 						console.log( 'form submitted with', ...new FormData( event.target ) );
 					} }
 				>
-					<xb-stack>
-						<fieldset style={ { padding: 0, margin: 0, border: 'none' } }>
+					<fieldset style={ { padding: 0, margin: 0, border: 'none' } } disabled={ args.disabled }>
+						<xb-stack>
 							<xb-stack>
 								<xb-cluster>
 									{ /* <input type="text" name="input" placeholder="Greeting" value="hello world" /> */ }
@@ -188,8 +190,6 @@ export const Playground = {
 								</xb-cluster>
 							</xb-stack>
 
-							<hr />
-
 							<xb-cluster>
 								<xb-button variant="tertiary-gray">Cancel</xb-button>
 								<xb-button type="reset" variant="secondary-color">
@@ -199,8 +199,8 @@ export const Playground = {
 									Submit
 								</xb-button>
 							</xb-cluster>
-						</fieldset>
-					</xb-stack>
+						</xb-stack>
+					</fieldset>
 				</form>
 			</xb-i18n-provider>
 		</xb-cluster>
@@ -263,6 +263,40 @@ export const TestReset = {
 		await step( 'reset restores mount attribute values', async () => {
 			await clickReset( canvas );
 			await expectFormData( getIntegrationForm( canvasElement ), INITIAL_FORM_DATA );
+		} );
+	},
+};
+
+export const TestFieldsetDisable = {
+	name: 'Test: Fieldset disable',
+	tags: [ '!autodocs' ],
+	render: () => renderIntegrationForm( 'initial', { fieldset: true } ),
+	play: async ( { canvasElement, step } ) => {
+		await step( 'form-associated controls start enabled', async () => {
+			await waitForIntegrationFormReady( canvasElement );
+			await expectIntegrationControlsFormDisabled( canvasElement, false );
+		} );
+
+		await step( 'disabling the fieldset disables controls via formDisabledCallback', async () => {
+			await setIntegrationFieldsetDisabled( canvasElement, true );
+			await expectIntegrationControlsFormDisabled( canvasElement, true );
+		} );
+
+		await step( 're-enabling the fieldset restores controls', async () => {
+			await setIntegrationFieldsetDisabled( canvasElement, false );
+			await expectIntegrationControlsFormDisabled( canvasElement, false );
+		} );
+	},
+};
+
+export const TestFieldsetStartsDisabled = {
+	name: 'Test: Fieldset starts disabled',
+	tags: [ '!autodocs' ],
+	render: () => renderIntegrationForm( 'initial', { fieldset: true, fieldsetDisabled: true } ),
+	play: async ( { canvasElement, step } ) => {
+		await step( 'controls mount disabled inside an already-disabled fieldset', async () => {
+			await waitForIntegrationFormReady( canvasElement );
+			await expectIntegrationControlsFormDisabled( canvasElement, true );
 		} );
 	},
 };

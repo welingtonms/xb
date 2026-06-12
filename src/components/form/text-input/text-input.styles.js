@@ -15,12 +15,14 @@ import { select } from '../../../styles/selector';
 export function textInputStyles() {
 	const outerContainer = select( '.outer-container' );
 	const focusContainer = select( '.focus-container' );
+	const input = select( 'input' );
 
 	return [
 		// layoutStyles(),
 		css`
 			:host {
 				--xb-text-input-height: 40px;
+				--xb-text-input-background-color: ${ toCSSResult( 'color-white' ) };
 				--xb-text-input-border-color: ${ toCSSResult( 'color-border-primary' ) };
 				--xb-text-input-outline-color: ${ toCSSResult( 'color-white', 0 ) };
 				--xb-text-input-outline-offset: 2px;
@@ -114,8 +116,8 @@ export function textInputStyles() {
 				height: 100%;
 			}
 
-			input {
-				${ transition( [ { property: 'color' } ] ) };
+			${ input.css() } {
+				${ transition( [ { property: 'color' }, { property: 'opacity' } ] ) };
 
 				${ typography( 'text-sm' ) };
 
@@ -131,8 +133,14 @@ export function textInputStyles() {
 
 				box-sizing: border-box;
 
+				opacity: 1;
 				border-radius: ${ toCSSResult( 'radius-md' ) };
+				background-color: var( --xb-text-input-background-color );
 				color: ${ toCSSResult( 'color-gray-900' ) };
+			}
+
+			${ input.disabled.css() } {
+				opacity: 0.5;
 			}
 
 			${ outerContainer.css() }:has(${ focusContainer.focused.css() }) {

@@ -2,18 +2,19 @@ import { html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
-import { AsFormElementMixin } from '../../../mixins/as-form-element';
 import { DisclosureFloatingElement } from '../../disclosure-floating-element';
 import { ComboboxPatternController } from '../../../controllers/combobox-pattern';
-import { FormElement } from '../../form-element';
 import { WithSelectionMixin } from '../../../mixins/with-selection';
+import { AsFormElementMixin } from '../../../mixins/as-form-element';
 import { XBElement } from '../../xb-element';
 import createLogger from '../../../utils/logger';
 import toArray from '../../../utils/to-array';
 
 import { selectStyles, menuStyles } from './select.styles';
 
-import '../../layout/box';
+import '../../button/button.define';
+import '../../icon/icon.define';
+import '../../spinner/spinner.define';
 
 const ITEM_QUERY = 'xb-option';
 
@@ -23,20 +24,8 @@ const logger = createLogger( 'select' );
  * @class
  * @template WithSelectionMixin, DisclosureFloatingElement
  */
-export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
+export class Select extends AsFormElementMixin( WithSelectionMixin( DisclosureFloatingElement ) ) {
 	static styles = [ selectStyles(), menuStyles() ];
-
-	/**
-	 * Radio name.
-	 * @type {string}
-	 */
-	@property( { type: String, reflect: true } ) accessor name;
-
-	/**
-	 * Should the dropdown be disabled.
-	 * @type {Boolean}
-	 */
-	@property( { type: Boolean, reflect: true } ) accessor disabled;
 
 	/**
 	 * Select is loading options.
@@ -167,7 +156,7 @@ export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
 	 */
 	update( changedProperties ) {
 		if ( changedProperties.has( 'disabled' ) ) {
-			this.#onDisabledChange( Boolean( this.disabled ) );
+			this.#onDisabledChange();
 		}
 
 		if ( changedProperties.has( 'type' ) ) {
@@ -194,10 +183,6 @@ export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
 		if ( changedProperties.has( 'slottedOptions' ) ) {
 			this.#updateTrigger();
 		}
-	}
-
-	firstUpdated() {
-		this.queuedWorkManager.flush();
 	}
 
 	/**
@@ -236,7 +221,7 @@ export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
 						type="text"
 						@change=${ this.#onTriggerChange }
 						@input=${ this.#onTriggerInput }
-						?disabled=${ this.disabled }
+						?disabled=${ this.effectiveDisabled }
 					/>
 
 					<xb-button
@@ -247,7 +232,7 @@ export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
 						tabindex="-1"
 						aria-controls="menu"
 						aria-expanded=${ this.open ? 'true' : 'false' }
-						?disabled=${ this.disabled }
+						?disabled=${ this.effectiveDisabled }
 						@click=${ this.#onHandleClick }
 					>
 						<xb-icon aria-hidden="true" name="caret-down"></xb-icon>
@@ -294,7 +279,7 @@ export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
 	 * @param {'first' | 'last'} args.position - should focus on first or last dropdown item.
 	 */
 	expand = ( args = { position: 'first' } ) => {
-		if ( this.disabled ) {
+		if ( this.effectiveDisabled ) {
 			return;
 		}
 
@@ -367,7 +352,7 @@ export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
 	search = async ( query = '', options = { expand: true } ) => {
 		const normalizedQuery = query.trim().toLowerCase();
 
-		if ( this.disabled ) {
+		if ( this.effectiveDisabled ) {
 			return;
 		}
 
@@ -491,18 +476,16 @@ export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
 		}
 	};
 
-	/**
-	 * @param {boolean} disabled
-	 */
-	#onDisabledChange = ( disabled ) => {
-		disabled = Boolean( disabled );
+	#onDisabledChange = () => {
+		const disabled = this.effectiveDisabled;
 
-		this.setAttribute( 'aria-disabled', disabled );
-
-		this.#pattern.query.members.forEach( ( item ) => {
-			item.disabled = disabled || item.hasAttribute( 'disabled' );
-		} );
+		this.setAttribute( 'aria-disabled', String( disabled ) );
 	};
+
+	onFormDisabled( disabled ) {
+		super.onFormDisabled( disabled );
+		this.#onDisabledChange();
+	}
 
 	#onFormReset = () => {
 		this.#initialize();

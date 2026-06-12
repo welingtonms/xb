@@ -76,7 +76,10 @@ export default defineConfig( {
 					name: 'unit',
 					environment: 'node',
 					globals: true,
-					include: [ 'src/utils/**/*.test.{js,ts}' ],
+					include: [
+						'src/utils/**/*.test.{js,ts}',
+						'src/styles/**/*.test.{js,ts}',
+					],
 				},
 			},
 			{
@@ -85,7 +88,10 @@ export default defineConfig( {
 					name: 'controllers',
 					browser: controllersBrowserConfig,
 					setupFiles: [ path.join( dirname, 'src/controllers/vitest.setup.js' ) ],
-					include: [ 'src/controllers/**/*.test.{js,ts}' ],
+					include: [
+						'src/controllers/**/*.test.{js,ts}',
+						'src/components/form-element/**/*.test.{js,ts}',
+					],
 				},
 			},
 		],

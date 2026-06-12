@@ -231,11 +231,11 @@ class HostSelectorBuilder extends BaseSelectorBuilder {
 	}
 
 	get enabled() {
-		return this.not( '[disabled]' );
+		return this.not( ':disabled', '[aria-disabled="false"]' );
 	}
 
 	get disabled() {
-		return this.attr( '[disabled]' );
+		return this.is( ':disabled', '[aria-disabled="true"]' );
 	}
 
 	get checked() {

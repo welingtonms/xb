@@ -75,27 +75,6 @@ export class DateRangePicker extends DatePicker {
 		this.updateFormValue();
 	}
 
-	/* Start/End date accessors handled by selectedRange setters in logic or explicit updates?
-	   With draft state, start/end dates are derived from selectedRange or draftSelectedRange.
-	   Let's keep them as derived or synced for convenience?
-	   Actually, DatePicker has selectedDate. DateRangePicker has selectedRange.
-	   The individual startDate/endDate properties are less critical now if we use range.
-	   But let's keep them for compatibility if needed.
-	   Wait, let's look at implementation.
-	*/
-
-	/**
-	 * Start date accessor.
-	 * @type {CalendarDate|null}
-	 */
-	// @state() accessor startDate = null; // Removed, use selectedRange/draftSelectedRange
-
-	/**
-	 * End date accessor.
-	 * @type {CalendarDate|null}
-	 */
-	// @state() accessor endDate = null; // Removed
-
 	get startDate() {
 		// Return committed start date unless picking? No.
 		// Internal usage: renderDay checks this.startDate.
@@ -391,16 +370,15 @@ export class DateRangePicker extends DatePicker {
 		if ( start ) {
 			formData.append( this.nameStart ?? `${ this.name }-start`, start );
 		}
+
 		if ( end ) {
 			formData.append( this.nameEnd ?? `${ this.name }-end`, end );
 		}
-		this.internals.setFormValue( formData );
+
+		this.setFormValue( formData );
 	}
 
-	/**
-	 * @override
-	 */
-	formResetCallback() {
+	onFormReset() {
 		this.initializeFormValue();
 	}
 
