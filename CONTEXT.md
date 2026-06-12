@@ -25,8 +25,12 @@ A Lit `ReactiveController` in `src/controllers/` composed into **Elements** for 
 _Avoid_: Mixin (when the code is a controller, not a class mixin)
 
 **Pattern**:
-A composed bundle of controllers shared by related **Elements** (e.g. menu-pattern for static menus, menu-button-pattern for disclosure menus, combobox-pattern for **Select**, listbox-pattern for future **`xb-list`**).
+A composed bundle of controllers shared by related **Elements** (e.g. menu-pattern for static menus, menu-button-pattern for disclosure menus, combobox-pattern for **Select**, listbox-pattern for **`xb-list`**).
 _Avoid_: Utility module
+
+**Members**:
+Child elements managed by a composite host (options, radios, list items). Distinct from the **Virtual focus** roster, built explicitly with `query.filter(...)` (e.g. `isFocusable`, `isNotHidden`) or consumed via `focus.queried`. Host chores (disable sync, selection sync, init fallbacks) iterate **Members**, not the focus roster.
+_Avoid_: Using `queried` outside focus code
 
 **Disclosure**:
 Open/close lifecycle for a **Panel** anchored to a **Reference** (e.g. dropdown, select popup, date-picker calendar).
@@ -84,4 +88,4 @@ _Avoid_: Toggle group (when you mean optional/deselectable segmented control sem
 
 ## Flagged (implementation notes)
 
-**Listbox pattern** (`src/controllers/listbox-pattern/`): Kept for future **`xb-list`** migration (selectable ARIA listbox host). Not wired to **Select** (combobox). Do not treat as public API.
+**Listbox pattern** (`src/controllers/listbox-pattern/`): Wired to **`xb-list`**. Not used by **Select** (combobox). Do not treat as public API outside **`xb-list`**.
