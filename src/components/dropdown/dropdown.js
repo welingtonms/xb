@@ -2,8 +2,7 @@ import { html } from 'lit';
 import { property } from 'lit/decorators.js';
 
 import { DisclosureFloatingElement } from '../disclosure-floating-element';
-import { FocusManagerController, TypeAheadPlugin } from '../../controllers/focus-manager';
-import { KeyboardSupportController } from '../../controllers/keyboard-support';
+import { MenuButtonPatternController } from '../../controllers/menu-button-pattern';
 import { XBElement } from '../xb-element';
 
 import { dropdownStyles } from './dropdown.styles';
@@ -17,8 +16,8 @@ export class Dropdown extends DisclosureFloatingElement {
 	 */
 	@property( { type: Boolean, reflect: true } ) accessor disabled;
 
-	/** @type {DropdownControllers} */
-	#controllers;
+	/** @type {MenuButtonPatternController} */
+	#pattern;
 
 	/**
 	 * @param {{
@@ -37,124 +36,7 @@ export class Dropdown extends DisclosureFloatingElement {
 		this.placement = 'bottom-end';
 		this.disabled = false;
 
-		this.#controllers = {
-			focus: new FocusManagerController( this, {
-				query: '[role="menuitem"]',
-				getControllerTarget: ( host ) => {
-					return host.getFloatingElement();
-				},
-			} ).use( new TypeAheadPlugin() ),
-			keyboard: new KeyboardSupportController( this, [
-				{
-					shortcut: {
-						key: 'ArrowUp',
-					},
-					/**
-					 * @param {KeyboardEvent} event
-					 */
-					handler: ( event ) => {
-						const { target } = event;
-
-						if ( ! target || this.disabled ) {
-							return;
-						}
-
-						if ( target.matches( '[aria-haspopup="true"]' ) ) {
-							this.expand( { position: 'last' } );
-
-							return;
-						}
-
-						if ( event.target.matches( '[role="menu"]' ) ) {
-							this.#controllers.focus.focusPrevious();
-
-							return;
-						}
-					},
-				},
-				{
-					shortcut: {
-						key: 'ArrowDown',
-					},
-					/**
-					 * @param {KeyboardEvent} event
-					 */
-					handler: ( event ) => {
-						const { target } = event;
-
-						if ( ! target || this.disabled ) {
-							return;
-						}
-
-						if ( target.matches( '[aria-haspopup="true"]' ) ) {
-							this.expand( { emit: false, position: 'first' } );
-
-							return;
-						}
-
-						if ( event.target.matches( '[role="menu"]' ) ) {
-							this.#controllers.focus.focusNext();
-
-							return;
-						}
-					},
-				},
-				{
-					shortcut: [
-						{
-							key: 'Enter',
-						},
-						{
-							key: ' ',
-						},
-					],
-					/**
-					 * @param {KeyboardEvent} event
-					 */
-					handler: ( event ) => {
-						const { target } = event;
-
-						if ( ! target || this.disabled ) {
-							return;
-						}
-
-						if ( event.target.matches( '[aria-haspopup="true"]' ) ) {
-							this.toggle( { emit: false, position: 'first' } );
-
-							return;
-						}
-
-						if ( event.target.matches( '[role="menu"]' ) ) {
-							const item = this.#controllers.focus.focused;
-							if ( item?.disabled ) {
-								return;
-							}
-
-							item.click();
-						}
-					},
-				},
-				{
-					shortcut: {
-						key: 'Escape',
-					},
-					/**
-					 * @param {KeyboardEvent} event
-					 */
-					handler: ( event ) => {
-						const { target } = event;
-
-						if ( ! target ) {
-							return;
-						}
-
-						if ( this.open ) {
-							this.collapse( { focusOnTrigger: true } );
-						}
-					},
-				},
-			] ),
-		};
+		this.#pattern = new MenuButtonPatternController( this );
 	}
 
 	connectedCallback() {
@@ -171,12 +53,12 @@ export class Dropdown extends DisclosureFloatingElement {
 
 	/** @protected */
 	onDisclosureActivate() {
-		this.#controllers.keyboard.activate();
+		this.#pattern.keyboard.activate();
 	}
 
 	/** @protected */
 	onDisclosureDeactivate() {
-		this.#controllers.keyboard.deactivate();
+		this.#pattern.keyboard.deactivate();
 	}
 
 	/**
@@ -250,7 +132,7 @@ export class Dropdown extends DisclosureFloatingElement {
 		const { position = 'first', emit = true } = args;
 
 		this.floating?.focus();
-		this.#controllers.focus.focus( position );
+		this.#pattern.focus.focus( position );
 
 		if ( emit !== false ) {
 			this.emit( 'expand' );
@@ -264,7 +146,7 @@ export class Dropdown extends DisclosureFloatingElement {
 	async onCollapsed( args = {} ) {
 		const { focusOnTrigger = false } = args;
 
-		this.#controllers.focus.clear();
+		this.#pattern.focus.clear();
 
 		if ( focusOnTrigger ) {
 			this.reference?.focus();
@@ -283,29 +165,13 @@ export class Dropdown extends DisclosureFloatingElement {
 			return;
 		}
 
-		// we are only interested in dropdown items
 		if ( target.matches( '[role="menuitem"]' ) ) {
-			/**
-			 * we set focus so we can trigger the item click event when the user
-			 * presses <Enter> or <Space>, through the KeyboardSupportController.
-			 */
-			this.#controllers.focus.focus( target );
+			this.#pattern.focus.focus( target );
 
 			this.collapse( { focusOnTrigger: true } );
 			return;
 		}
 
-		/**
-		 * <Enter> or <Space> keys also trigger the click event.
-		 * In that case, we do not want to respond to the key event, since
-		 * the keyboard shortcut will handle it for us.
-		 * To distinguish between a keypress event and click, we can use the `detail` property,
-		 * which determines how many times the element was clicked. For a keyboard event, this
-		 * should be 0; for a click event, it should be at least 1.
-		 * References:
-		 * - https://css-tricks.com/when-a-click-is-not-just-a-click/
-		 * - https://developer.mozilla.org/en-US/docs/Web/API/UIEvent/detail
-		 */
 		if ( event.target.matches( '[aria-haspopup="true"]' ) && event.detail > 0 ) {
 			this.toggle();
 		}
@@ -323,16 +189,4 @@ export class Dropdown extends DisclosureFloatingElement {
  * @property {boolean} [open] - Should the dropdown menu be open.
  * @property {boolean} [disabled] - Should the dropdown be disabled.
  * @property {DropdownSize} size
- */
-
-/**
- * @typedef {import('../../controllers/focus-manager').default} FocusManagerController
- * @typedef {import('../../controllers/keyboard-support').default} KeyboardSupportController
- */
-
-/**
- * @typedef {{
- * 	focus: FocusManagerController;
- * 	keyboard: KeyboardSupportController;
- * }} DropdownControllers
  */

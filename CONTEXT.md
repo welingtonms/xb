@@ -25,7 +25,7 @@ A Lit `ReactiveController` in `src/controllers/` composed into **Elements** for 
 _Avoid_: Mixin (when the code is a controller, not a class mixin)
 
 **Pattern**:
-A composed bundle of controllers shared by related **Elements** (e.g. menu-pattern for static menus; listbox-pattern for selectable lists).
+A composed bundle of controllers shared by related **Elements** (e.g. menu-pattern for static menus, menu-button-pattern for disclosure menus, combobox-pattern for **Select**, listbox-pattern for future **`xb-list`**).
 _Avoid_: Utility module
 
 **Disclosure**:

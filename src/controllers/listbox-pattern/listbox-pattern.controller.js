@@ -24,8 +24,11 @@ class ListboxPatternController {
 
 	/**
 	 * @param {ListboxPatternControllerHost} host
+	 * @param {ListboxPatternControllerOptions} [options]
 	 */
-	constructor( host ) {
+	constructor( host, options = {} ) {
+		this.host = host;
+
 		this.controllers = {
 			focus: new FocusManagerController( host, {
 				// complies with https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#focusabilityofdisabledcontrols
@@ -60,11 +63,13 @@ class ListboxPatternController {
 				},
 			] ),
 			selection: new SelectionManagerController( host, {
-				getSelectionType: () => 'multiple',
+				getSelectionType: () => {
+					return options.getSelectionType?.( host ) ?? host.type ?? 'multiple';
+				},
 			} ),
 		};
 
-		( this.host = host ).addController( this );
+		host.addController( this );
 	}
 
 	get focus() {
@@ -181,6 +186,12 @@ export default ListboxPatternController;
 /**
  * @typedef {ReactiveControllerHost & XBElement & {
  * 	selection: SelectionType,
- * 	value: SelectionOption | SelectionOption[] | null
+ * 	value: SelectionOption | SelectionOption[] | null,
+ * 	type?: SelectionType,
  * }} ListboxPatternControllerHost
+ */
+
+/**
+ * @typedef {Object} ListboxPatternControllerOptions
+ * @property {function(ListboxPatternControllerHost): SelectionType} [getSelectionType]
  */

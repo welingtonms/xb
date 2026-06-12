@@ -4,11 +4,8 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 
 import { AsFormElementMixin } from '../../../mixins/as-form-element';
 import { DisclosureFloatingElement } from '../../disclosure-floating-element';
+import { ComboboxPatternController } from '../../../controllers/combobox-pattern';
 import { FormElement } from '../../form-element';
-import { KeyboardSupportController } from '../../../controllers/keyboard-support';
-import { RovingFocusController } from '../../../controllers/focus-manager';
-import { SelectionManagerController } from '../../../controllers/selection-manager';
-import { supportsPopover } from '../../../utils/top-layer';
 import { WithSelectionMixin } from '../../../mixins/with-selection';
 import { XBElement } from '../../xb-element';
 import createLogger from '../../../utils/logger';
@@ -77,8 +74,8 @@ export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
 	/** @type {boolean} */
 	// @state() accessor isCollapsing = false;
 
-	/** @type {SelectControllers} */
-	#controllers;
+	/** @type {ComboboxPatternController} */
+	#pattern;
 
 	/** @type {number} */
 	#searchTimeout;
@@ -115,139 +112,14 @@ export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
 		this.slottedOptions = [];
 		this.filteredOptions = [];
 
-		this.#controllers = {
-			// data: new DataController( this, this.datasources ),
-			focus: new RovingFocusController( this, {
-				query: () => {
-					const selectors = 'xb-option:not([hidden])';
-
-					return Array.from( this.querySelectorAll( selectors ) );
-				},
-				// search should happen via the input, not keyboard shortcuts.
-				searchable: false,
-			} ),
-			keyboard: new KeyboardSupportController(
-				this,
-				[
-					{
-						shortcut: {
-							key: 'ArrowUp',
-						},
-						/**
-						 * @param {KeyboardEvent} event
-						 */
-						handler: async () => {
-							if ( ! this.open ) {
-								this.expand();
-
-								await this.updateComplete;
-
-								const firstSelected = this.#getFirstSelected();
-								if ( firstSelected ) {
-									this.#controllers.focus.focus( firstSelected );
-								} else {
-									this.#controllers.focus.focusLast(); // ArrowUp focuses last on open
-								}
-							} else {
-								// Roving focus handles moving focus itself
-								this.#controllers.focus.focusPrevious();
-							}
-						},
-					},
-					{
-						shortcut: {
-							key: 'ArrowDown',
-						},
-						/**
-						 * @param {KeyboardEvent} event
-						 */
-						handler: async () => {
-							if ( ! this.open ) {
-								this.expand();
-								// Delay the initial focus call to allow rendering
-								await this.updateComplete;
-
-								const firstSelected = this.#getFirstSelected();
-								if ( firstSelected ) {
-									// Focus the element itself
-									this.#controllers.focus.focus( firstSelected );
-								} else {
-									// Focus the first available option
-									this.#controllers.focus.focusFirst(); // ArrowDown focuses first on open
-								}
-							} else {
-								// Roving focus handles moving focus itself
-								this.#controllers.focus.focusNext();
-							}
-						},
-					},
-					{
-						shortcut: {
-							key: 'Enter',
-						},
-
-						/**
-						 * @param {KeyboardEvent} event
-						 */
-						handler: ( event ) => {
-							/** @type {HTMLElement} */
-							const element = event.target;
-
-							if ( ! element.matches( 'xb-option' ) ) {
-								return;
-							}
-
-							/**
-							 * Intercept Enter keydown when focus is on the trigger input.
-							 */
-							// if ( element.matches( '[aria-haspopup="true"]' ) ) {
-							// If the dropdown is open, Enter should select the focused option.
-							// If closed, Enter might submit a form or perform another default action.
-							if ( this.open ) {
-								/** @type {SelectOption | null} */
-								const option = this.#controllers.focus.focused;
-
-								if ( ! option || option.disabled ) {
-									return;
-								}
-
-								this.#toggleValue( option.value );
-
-								if ( this.type !== 'multiple' ) {
-									this.collapse( { focusOnTrigger: true } );
-								}
-							}
-						},
-					},
-					{
-						shortcut: {
-							key: 'Escape',
-						},
-						/**
-						 * @param {KeyboardEvent} event
-						 */
-						handler: ( event ) => {
-							const { target } = event;
-
-							if ( ! target ) {
-								return;
-							}
-
-							if ( this.open ) {
-								this.collapse( { focusOnTrigger: true } );
-							}
-						},
-					},
-				],
-				{
-					// Target the host component for keyboard events
-					getControllerTarget: () => this,
-				}
-			),
-			selection: new SelectionManagerController( this, {
-				getSelectionType: () => this.type,
-			} ),
-		};
+		this.#pattern = new ComboboxPatternController( this, {
+			getFirstSelected: () => {
+				return this.#getFirstSelected();
+			},
+			toggleValue: ( host, value ) => {
+				this.#toggleValue( value );
+			},
+		} );
 	}
 
 	createRenderRoot() {
@@ -402,7 +274,7 @@ export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
 	}
 
 	get value() {
-		return this.#controllers.selection.value();
+		return this.#pattern.selection.value();
 	}
 
 	/**
@@ -443,12 +315,12 @@ export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
 
 	/** @protected */
 	onDisclosureActivate() {
-		this.#controllers.keyboard.activate();
+		this.#pattern.keyboard.activate();
 	}
 
 	/** @protected */
 	onDisclosureDeactivate() {
-		this.#controllers.keyboard.deactivate();
+		this.#pattern.keyboard.deactivate();
 	}
 
 	/**
@@ -459,7 +331,7 @@ export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
 	collapse = async ( options = { focusOnTrigger: false } ) => {
 		this.hide();
 
-		this.#controllers.focus.clear();
+		this.#pattern.focus.clear();
 
 		this.#updateTrigger();
 
@@ -520,7 +392,7 @@ export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
 			this.loading = false;
 			// Re-initialize focus controller after filtering changes visible options
 			await this.updateComplete;
-			this.#controllers.focus.initialize();
+			this.#pattern.focus.initialize();
 		}
 	};
 
@@ -541,7 +413,7 @@ export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
 
 		// Re-initialize focus controller after clearing search restores all options
 		requestAnimationFrame( () => {
-			this.#controllers.focus.initialize();
+			this.#pattern.focus.initialize();
 		} );
 	};
 
@@ -573,7 +445,7 @@ export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
 	 */
 	#initialize( value ) {
 		/** @type {SelectOption | undefined} */
-		const firstOption = this.#controllers.focus.queried?.[ 0 ];
+		const firstOption = this.#pattern.focus.queried?.[ 0 ];
 
 		if ( ! firstOption ) {
 			logger.warn( 'No options found in the select' );
@@ -593,7 +465,7 @@ export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
 		}
 
 		this.#onValueChange( consolidatedValue );
-		// this.#controllers.selection.init( value );
+		// this.#pattern.selection.init( value );
 
 		// this.#updateOptions();
 		// this.#updateTrigger();
@@ -627,7 +499,7 @@ export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
 
 		this.setAttribute( 'aria-disabled', disabled );
 
-		this.#controllers.focus.queried.forEach( ( item ) => {
+		this.#pattern.focus.queried.forEach( ( item ) => {
 			item.disabled = disabled || item.hasAttribute( 'disabled' );
 		} );
 	};
@@ -662,7 +534,7 @@ export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
 
 				this.slottedOptions = elements;
 				// Initialize focus controller now that options are slotted
-				this.#controllers.focus.initialize();
+				this.#pattern.focus.initialize();
 			}
 		);
 	};
@@ -714,7 +586,7 @@ export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
 	 * @param {string[]} value
 	 */
 	#onValueChange = ( value ) => {
-		this.#controllers.selection.init( value );
+		this.#pattern.selection.init( value );
 
 		this.#updateOptions();
 		this.#updateTrigger();
@@ -724,7 +596,7 @@ export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
 	 * @param {string} value
 	 */
 	#toggleValue = ( value ) => {
-		this.#controllers.selection.toggle( value );
+		this.#pattern.selection.toggle( value );
 
 		this.#updateOptions();
 		this.#updateTrigger();
@@ -738,12 +610,12 @@ export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
 	 */
 	#updateOptions = () => {
 		for ( const element of this.slottedOptions ) {
-			element.selected = this.#controllers.selection.has( element.value );
+			element.selected = this.#pattern.selection.has( element.value );
 		}
 	};
 
 	#updateTrigger() {
-		const values = this.#controllers.selection.value();
+		const values = this.#pattern.selection.value();
 
 		this.queuedWorkManager.push(
 			() => Boolean( this.reference ),
@@ -792,14 +664,6 @@ export class Select extends WithSelectionMixin( DisclosureFloatingElement ) {
 
 /**
  * @typedef {import('./select-option').Option} SelectOption
- */
-
-/**
- * @typedef {{
- * 	focus: RovingFocusController;
- * 	keyboard: KeyboardSupportController;
- *  selection: SelectionManagerController;
- * }} SelectControllers
  */
 
 /**
