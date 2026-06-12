@@ -75,6 +75,8 @@
 		"./field/register": "./src/components/field/field.define.js",
 		"./icon": "./src/components/icon/index.js",
 		"./icon/register": "./src/components/icon/icon.define.js",
+		"./list": "./src/components/list/index.js",
+		"./list/register": "./src/components/list/list.define.js",
 		"./menu": "./src/components/menu/index.js",
 		"./menu/register": "./src/components/menu/menu.define.js",
 		"./separator": "./src/components/separator/index.js",
