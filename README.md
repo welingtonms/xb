@@ -2,7 +2,7 @@
 
 Lit-based **custom elements** (`xb-*` tags) for framework-agnostic UIs. Use them in bundled apps or plain HTML after **registration**.
 
-Domain vocabulary: [CONTEXT.md](./CONTEXT.md).
+Domain vocabulary: [CONTEXT.md](./CONTEXT.md). Architecture decisions: [docs/adr/](./docs/adr/).
 
 ## Install
 
@@ -70,6 +70,7 @@ import '@welingtonms/xb/tokens/css';
 import '@welingtonms/xb/button/register';
 // import '@welingtonms/xb/form/register';  // whole form kit
 // import '@welingtonms/xb/table/register';  // table family (7 tags)
+// import '@welingtonms/xb/register';        // all families — demos only; not tree-shakeable
 ```
 
 ```html
@@ -78,12 +79,13 @@ import '@welingtonms/xb/button/register';
 
 - **Classes** (subclassing, types): `import { Button } from '@welingtonms/xb/button'`
 - **Tags only** (typical): `import '@welingtonms/xb/button/register'`
-- **Tree-shaking**: prefer per-element or per-family `/register` imports instead of importing many families you do not use.
+- **Tree-shaking**: prefer per-element or per-family `/register` imports instead of importing many families you do not use. Avoid `@welingtonms/xb/register` in production — it registers every published family.
 
 ### Families
 
 | Import                            | Registers                                       |
 | --------------------------------- | ----------------------------------------------- |
+| `@welingtonms/xb/register`        | All families below + `xb-i18n-provider` (demos) |
 | `@welingtonms/xb/layout/register` | Layout primitives (`xb-stack`, `xb-cluster`, …) |
 | `@welingtonms/xb/form/register`   | Form controls (`xb-checkbox`, `xb-select`, …)   |
 | `@welingtonms/xb/table/register`  | Table kit (`xb-table`, `xb-table-row`, …)       |
@@ -122,7 +124,7 @@ Serve files over HTTP (not `file://`). Use an **import map** so bare specifiers 
 </script>
 
 <script type="module">
-	import '@welingtonms/xb/button/register.js';
+	import '@welingtonms/xb/button/register';
 </script>
 
 <xb-button>Hello</xb-button>
@@ -137,13 +139,14 @@ yarn install
 yarn storybook
 ```
 
-Component docs are maintained in Storybook locally; static `docs/` is not shipped in the npm package.
+Component docs are maintained in Storybook locally (`yarn build:docs` → `storybook-static/`, gitignored). Architecture decisions live in [`docs/adr/`](./docs/adr/) and are shipped in the npm package. On push to `main` or `alpha`, CI builds Storybook and deploys to [GitHub Pages](https://welingtonms.github.io/xb/).
 
 ## Base classes
 
 - `@welingtonms/xb/xb-element` — root element base
 - `@welingtonms/xb/floating-element` — floating UI base (no tag)
-- `@welingtonms/xb/form-element` — form-associated base (no tag)
+- `@welingtonms/xb/disclosure-floating-element` — Reference + Panel disclosure base + `disclosureStyles` presets (no tag)
+- `@welingtonms/xb/form-element` — form-associated base; exports `FormElement`, `FormMemberMixin` (no tag)
 
 ## Develop this repo
 

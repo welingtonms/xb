@@ -2196,15 +2196,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lit/react@npm:^1.0.8":
-  version: 1.0.8
-  resolution: "@lit/react@npm:1.0.8"
-  peerDependencies:
-    "@types/react": 17 || 18 || 19
-  checksum: 043d6567ba4c5ebd7ace6f17955cf6341d3e8913cca255718945019553ffdf70fe51fc479a2bdf6f4201d5459fd2eb1d6a974229f89953f464572179e487a8a0
-  languageName: node
-  linkType: hard
-
 "@lit/reactive-element@npm:^1.6.2 || ^2.1.0, @lit/reactive-element@npm:^2.1.0":
   version: 2.1.2
   resolution: "@lit/reactive-element@npm:2.1.2"
@@ -3772,7 +3763,6 @@ __metadata:
     "@floating-ui/dom": ^1.7.6
     "@github-ui/storybook-addon-performance-panel": ^1.1.4
     "@lit/context": ^1.1.6
-    "@lit/react": ^1.0.8
     "@semantic-release/github": ^12.0.8
     "@semantic-release/npm": ^13.1.5
     "@storybook/addon-docs": ^10.4.2

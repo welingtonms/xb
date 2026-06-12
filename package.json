@@ -28,17 +28,21 @@
 		"src",
 		"dist",
 		"CONTEXT.md",
-		"README.md"
+		"README.md",
+		"docs/adr"
 	],
 	"sideEffects": [
 		"**/*.define.js",
 		"**/*.register.js",
+		"src/register.js",
 		"src/components/i18n/i18n.provider.js"
 	],
 	"exports": {
 		"./package.json": "./package.json",
+		"./register": "./src/register.js",
 		"./xb-element": "./src/components/xb-element.js",
 		"./floating-element": "./src/components/floating-element/index.js",
+		"./disclosure-floating-element": "./src/components/disclosure-floating-element/index.js",
 		"./form-element": "./src/components/form-element/index.js",
 		"./tokens": "./src/themes/xb.theme.js",
 		"./tokens/css": "./dist/tokens/variables.css",
@@ -108,7 +112,7 @@
 		"verify:exports": "node scripts/verify-exports.mjs",
 		"dev": "yarn storybook",
 		"storybook": "storybook dev -p 6006",
-		"build:docs": "storybook build -o ./docs"
+		"build:docs": "storybook build -o ./storybook-static"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.29.0",
@@ -147,7 +151,6 @@
 	"dependencies": {
 		"@floating-ui/dom": "^1.7.6",
 		"@lit/context": "^1.1.6",
-		"@lit/react": "^1.0.8",
 		"@welingtonms/classy": "^1.2.0",
 		"composed-offset-position": "^0.0.6",
 		"lit": "^3.3.3"

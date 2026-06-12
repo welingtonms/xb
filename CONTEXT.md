@@ -130,6 +130,13 @@ _Avoid_: Native input (when the surface is a custom button or option, not an `<i
 
 **Expert:** Different **Overlay adapter**, different **Event** names — both mean the surface closed. **Modal** aligns with native dialog vocabulary; **Disclosure** keeps `expand` / `collapse` for **Reference** + **Panel** lifecycle. Listen for the event your **Tag** documents, not a single global overlay event.
 
+## Decisions
+
+Recorded architecture decisions (also shipped in the npm package under `docs/adr/`):
+
+- [0001 — Composite controls submit via Members, not host](./docs/adr/0001-composite-form-members-submit.md)
+- [0002 — Three overlay adapters, no unified TopLayer class](./docs/adr/0002-overlay-adapters.md)
+
 ## Flagged (implementation notes)
 
 **Listbox pattern** (`src/controllers/listbox-pattern/`): Wired to **`xb-list`**. Not used by **Select** (combobox). Do not treat as public API outside **`xb-list`**.
