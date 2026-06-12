@@ -82,3 +82,53 @@ jobs:
       - name: Record version after release
         id: version-after
         run: echo "version=$(node -e 'console.log(JSON.parse(require("fs").readFileSync("package.json","utf8")).version)')" >> $GITHUB_OUTPUT
+
+  docs-build:
+    needs: release
+    if: github.event_name == 'push' && contains(fromJSON('["main", "alpha"]'), github.ref_name)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '25'
+          cache: yarn
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build Storybook
+        run: yarn build:docs
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./docs
+
+  docs-deploy:
+    needs: docs-build
+    if: github.event_name == 'push' && contains(fromJSON('["main", "alpha"]'), github.ref_name)
+    runs-on: ubuntu-latest
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
