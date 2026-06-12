@@ -27,9 +27,12 @@
 	"files": [
 		"src",
 		"dist",
+		"AGENTS.md",
 		"CONTEXT.md",
 		"README.md",
-		"docs/adr"
+		"llms.txt",
+		"docs/adr",
+		"examples/cursor-rule"
 	],
 	"sideEffects": [
 		"**/*.define.js",
@@ -39,6 +42,7 @@
 	],
 	"exports": {
 		"./package.json": "./package.json",
+		"./agents": "./AGENTS.md",
 		"./register": "./src/register.js",
 		"./xb-element": "./src/components/xb-element.js",
 		"./floating-element": "./src/components/floating-element/index.js",

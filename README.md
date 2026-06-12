@@ -2,7 +2,7 @@
 
 Lit-based **custom elements** (`xb-*` tags) for framework-agnostic UIs. Use them in bundled apps or plain HTML after **registration**.
 
-Domain vocabulary: [CONTEXT.md](./CONTEXT.md). Architecture decisions: [docs/adr/](./docs/adr/).
+Domain vocabulary: [CONTEXT.md](./CONTEXT.md). Architecture decisions: [docs/adr/](./docs/adr/). **AI agents:** start with [AGENTS.md](./AGENTS.md).
 
 ## Install
 
@@ -174,5 +174,6 @@ cd examples/vite-consumer && npm run dev
 
 ## References
 
+- [AGENTS.md](./AGENTS.md) — guide for AI agents building apps with XB
 - [Lit](https://lit.dev/)
 - [Custom elements](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements)

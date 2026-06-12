@@ -1,0 +1,33 @@
+---
+description: Use @welingtonms/xb custom elements in this app
+alwaysApply: true
+---
+
+# @welingtonms/xb web components
+
+This app uses **@welingtonms/xb** — Lit custom elements with `xb-*` HTML tags. Not React components.
+
+## Before building UI
+
+1. Read `node_modules/@welingtonms/xb/AGENTS.md` (catalog + rules)
+2. Read `node_modules/@welingtonms/xb/CONTEXT.md` (vocabulary)
+3. Check examples: https://welingtonms.github.io/xb/
+
+## Required setup
+
+- Entry imports `@welingtonms/xb/tokens/css` and Nunito Sans (see package README)
+- Register only needed families via `@welingtonms/xb/<family>/register` in `src/xb.js` (or equivalent), imported before any UI renders
+- Vite/webpack must transpile `@welingtonms/xb` with Babel decorators plugin (see AGENTS.md § Vite setup)
+- Forms with date pickers: wrap in `<xb-i18n-provider locale="en-US">` and import `@welingtonms/xb/i18n`
+
+## Usage rules
+
+- Write markup with **tags**: `<xb-button>`, `<xb-stack>`, `<xb-select>`, etc.
+- Do **not** import Element classes for rendering unless subclassing
+- Prefer family registers (`form/register`, `layout/register`) over `@welingtonms/xb/register`
+- Blocking overlay → `xb-dialog` / `xb-drawer`; floating pickers → `xb-dropdown` / `xb-select`; nav flyouts → `xb-top-nav`
+- Composite form hosts (`xb-select`, `xb-radio-group`) submit through **Members** (`xb-option`, `xb-radio`), not the host
+
+## When unsure
+
+Inspect `node_modules/@welingtonms/xb/src/components/<name>/` and matching `*.stories.jsx`, or ask for the Storybook story name — do not invent attributes or events.

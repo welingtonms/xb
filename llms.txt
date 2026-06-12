@@ -1,0 +1,19 @@
+# @welingtonms/xb
+
+> Lit custom elements (`xb-*` tags) for framework-agnostic UIs.
+
+## Docs for AI agents
+
+- [AGENTS.md](./AGENTS.md): rules, tag catalog, registration, Vite setup
+- [README.md](./README.md): install and quick start
+- [CONTEXT.md](./CONTEXT.md): domain vocabulary
+- [docs/adr/](./docs/adr/): architecture decisions
+- [Storybook](https://welingtonms.github.io/xb/): component examples
+
+## Install
+
+```bash
+npm install @welingtonms/xb
+```
+
+Import `@welingtonms/xb/tokens/css`, register families via `/register` paths, use `xb-*` tags in HTML.
