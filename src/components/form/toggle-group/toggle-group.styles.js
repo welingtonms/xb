@@ -111,20 +111,25 @@ export function toggleGroupStyles() {
 export function toggleStyles() {
 	const $ = select( ':host' );
 	const button = select( 'button' );
+
 	return [
 		css`
 			${ $.css() } {
 				display: inline-block;
 				position: relative;
 				contain: layout style;
+
+				z-index: 0;
+			}
+
+			${ $.focused.css() } {
+				z-index: 1;
 			}
 		`,
 		baseButtonHostStyles(),
 		baseButtonStyles( 'button' ),
 		css`
 			${ button.css() } {
-				z-index: 0;
-
 				justify-content: space-between;
 
 				border-top-left-radius: var( --xb-toggle-top-left-border-radius );
@@ -150,8 +155,6 @@ export function toggleStyles() {
 			}
 
 			${ button.enabled.focused.css() } {
-				z-index: 1;
-
 				--xb-button-background-color: ${ toCSSResult( 'color-primary-50' ) };
 				--xb-button-border-color: ${ toCSSResult( 'color-primary-50' ) };
 				--xb-button-color: ${ toCSSResult( 'color-primary-700' ) };
@@ -199,6 +202,7 @@ export function toggleStyles() {
 	];
 }
 
+console.log( toggleStyles() );
 // :host {
 // 	--xb-button-background-color: ${ toCSSResult( 'color-white', 0 ) };
 // 	--xb-button-border-color: ${ toCSSResult( 'color-white', 0 ) };
