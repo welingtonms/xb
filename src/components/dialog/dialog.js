@@ -12,7 +12,9 @@ import { dialogStyles } from './dialog.styles';
 
 /**
  * A dialog (panel) based on the native `<dialog>` element.
- * Uses `showModal()` for top-layer, backdrop, focus trap, and escape-to-close.
+ * Uses `showModal()` for **Top layer**, backdrop, focus trap, and escape-to-close.
+ *
+ * **Overlay adapter:** `native-dialog` — see CONTEXT.md (**Modal**) and `docs/adr/0002-overlay-adapters.md`.
  */
 export class XBDialog extends XBElement {
 	static shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };

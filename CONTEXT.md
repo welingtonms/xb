@@ -36,6 +36,22 @@ _Avoid_: Using `queried` outside focus code
 Open/close lifecycle for a **Panel** anchored to a **Reference** (e.g. dropdown, select popup, date-picker calendar).
 _Avoid_: Popover (when you mean the full disclosure lifecycle, not only the Popover API)
 
+**Modal**:
+A **Top layer** surface that blocks interaction with the page behind it, using native `<dialog showModal>` — backdrop and focus trap owned by the platform (`xb-dialog`, `xb-drawer`).
+_Avoid_: Disclosure (when you mean Reference + **Panel** popover, not a blocking dialog)
+
+**Top layer**:
+The browser painting plane above the document (modal top layer, popover top layer, etc.) where overlay **Elements** render.
+_Avoid_: z-index stack (when you mean CSS stacking, not the platform top layer)
+
+**Overlay adapter**:
+The implementation choice for putting an **Element** on the **Top layer**: `native-dialog` (**Modal**), `popover-floating` (**Disclosure**), or `inline-expandable` (accordion / hover flyout, e.g. **TopNav**).
+_Avoid_: Overlay component, portal wrapper
+
+**Floating hint**:
+A transient positioned surface that is neither **Modal** nor full **Disclosure** — typically hover- or focus-triggered, with no Reference toggle lifecycle (e.g. **Tooltip**).
+_Avoid_: Popover (when you mean **Disclosure** or the Popover API generically)
+
 **Reference**:
 The trigger surface that toggles **Disclosure** (button, input, icon).
 _Avoid_: Trigger element (when overloaded with event target)
@@ -61,7 +77,7 @@ Same side vocabulary as **Borderless**, but suppresses padding instead of border
 _Avoid_: No padding class, p-0 utility
 
 **Event**:
-A custom DOM event dispatched from an **Element** host. Names are host-scoped plain verbs (`expand`, `change`, `interact-out`) — no `xb:` prefix. The `xb` prefix is reserved for **Tags** and **Tokens**, not events. Form controls that wrap native inputs re-emit native event names (e.g. `change`) so consumers get a familiar API. Hyphenated compound verbs are fine when the action is genuinely compound (`select-all`, `interact-out`).
+A custom DOM event dispatched from an **Element** host. Names are host-scoped plain verbs (`expand`, `change`, `interact-out`) — no `xb:` prefix. The `xb` prefix is reserved for **Tags** and **Tokens**, not events. Form controls that wrap native inputs re-emit native event names (e.g. `change`) so consumers get a familiar API. Hyphenated compound verbs are fine when the action is genuinely compound (`select-all`, `interact-out`). **Modal** **Elements** emit `open` and `close`; **Disclosure** **Elements** emit `expand` and `collapse` — same lifecycle idea, different vocabulary per **Overlay adapter**.
 _Avoid_: `xb:dropdown-expand`, namespaced event strings
 
 **Virtual focus**:
@@ -105,6 +121,14 @@ _Avoid_: Native input (when the surface is a custom button or option, not an `<i
 **Dev:** After `form.reset()`, my **Radio group** shows the first option selected again — is that correct?
 
 **Expert:** Yes. **Composite controls** re-initialize from their attributes (`value` / `initial-value`) or **Mount default**. The host syncs **Members**; each active **Member** updates its form value. The host itself is not a **Form control** — submission runs through the selected **Member**.
+
+**Dev:** Should my settings screen use `xb-dialog`, `xb-dropdown`, or `xb-top-nav-menu` for a pick list?
+
+**Expert:** Pick the **Overlay adapter** for the interaction. Blocking confirmation with backdrop → **Modal** (`xb-dialog`). **Reference** toggles a floating **Panel** (form field, toolbar) → **Disclosure** (`xb-dropdown`, `xb-select`). Site chrome with hover flyout or mobile accordion → inline-expandable **TopNav**. A hover label with no toggle → **Floating hint** (`xb-tooltip`), not **Disclosure**.
+
+**Dev:** Why does my dialog fire `close` but the dropdown fires `collapse`?
+
+**Expert:** Different **Overlay adapter**, different **Event** names — both mean the surface closed. **Modal** aligns with native dialog vocabulary; **Disclosure** keeps `expand` / `collapse` for **Reference** + **Panel** lifecycle. Listen for the event your **Tag** documents, not a single global overlay event.
 
 ## Flagged (implementation notes)
 

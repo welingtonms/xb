@@ -5,7 +5,11 @@ import { isInsideElement } from '../../utils/events';
 import { FloatingElement } from '../floating-element/floating-element';
 
 /**
- * Floating **Element** with Reference + Panel disclosure lifecycle.
+ * Floating **Element** with **Reference** + **Panel** **Disclosure** lifecycle.
+ *
+ * **Overlay adapter:** `popover-floating` — optional Popover API on **Panel**,
+ * `@floating-ui/dom` positioning, boundary/expandable dismiss. Emits `expand` / `collapse`.
+ * Not a **Modal** — no `showModal`; see `docs/adr/0002-overlay-adapters.md`.
  *
  * Owns boundary/expandable wiring, focus-boundary listeners, outside dismiss,
  * and expand/collapse orchestration around {@link FloatingElement.show} / hide.

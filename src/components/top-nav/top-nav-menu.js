@@ -13,6 +13,9 @@ const HOVER_DELAY_MS = 150;
  * A submenu for the top-nav: trigger + panel.
  * Desktop (default): hover to open, panel is positioned below trigger.
  * Mobile (expandable): click to toggle, panel is inline (accordion).
+ *
+ * **Overlay adapter:** `inline-expandable` — hover timing and accordion mode,
+ * not `DisclosureFloatingElement`. See CONTEXT.md and `docs/adr/0002-overlay-adapters.md`.
  */
 export class TopNavMenu extends XBElement {
 	static styles = [ topNavMenuStyles() ];

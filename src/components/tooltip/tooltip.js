@@ -14,6 +14,9 @@ import styles from './tooltip.styles';
 const logger = createLogger( 'tooltip' );
 
 /**
+ * Hover/focus **Floating hint** — {@link FloatingElement} only, not **Modal** or **Disclosure**.
+ * See CONTEXT.md (**Floating hint**).
+ *
  * @template WithIDMixin, FloatingElement
  */
 export class Tooltip extends WithIDMixin( FloatingElement ) {

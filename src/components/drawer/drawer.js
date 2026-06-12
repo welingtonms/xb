@@ -8,7 +8,9 @@ import { drawerStyles } from './drawer.styles';
 
 /**
  * A drawer (panel) based on the native `<dialog>` element.
- * Uses `showModal()` for top-layer, backdrop, focus trap, and escape-to-close.
+ * Style-only subclass of {@link XBDialog}; same **Modal** / `native-dialog` adapter.
+ *
+ * @see {@link XBDialog}
  */
 export class XBDrawer extends XBDialog {
 	static styles = [ drawerStyles() ];

@@ -1,3 +1,7 @@
+/**
+ * Feature detection for Popover API and top-layer element kinds.
+ * Not a behavioral **Overlay adapter** — see CONTEXT.md and `docs/adr/0002-overlay-adapters.md`.
+ */
 export function supportsPopover() {
 	return Object.hasOwn( HTMLElement.prototype, 'popover' );
 }
