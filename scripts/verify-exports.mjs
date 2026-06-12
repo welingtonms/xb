@@ -17,6 +17,9 @@ for ( const [ subpath, target ] of Object.entries( pkg.exports ) ) {
 		await access( file );
 	} catch {
 		console.error( `MISSING: ${ subpath } → ${ target }` );
+		if ( target.startsWith( './dist/' ) ) {
+			console.error( '  Hint: run `yarn build` to generate dist/ artifacts' );
+		}
 		failed++;
 	}
 }
