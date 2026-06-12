@@ -14,10 +14,16 @@ export class BaseFocusController {
 	host;
 
 	/**
-	 * Query to get focusable elements.
+	 * Query to get managed elements when `getFocusable` is not provided.
 	 * @type {((host: BaseFocusControllerHost) => HTMLElement[])}
 	 */
 	query;
+
+	/**
+	 * Optional focus roster supplied by {@link QueryController} or the host.
+	 * @type {(() => HTMLElement[]) | undefined}
+	 */
+	getFocusable;
 
 	/**
 	 * `buffer`: Keys (printable characters) the user typed.
@@ -42,10 +48,25 @@ export class BaseFocusController {
 	constructor( host, options = {} ) {
 		// super( options );
 
-		this.query =
-			typeof options.query === 'function'
-				? options.query
-				: () => Array.from( this.host.querySelectorAll( toArray( options.query ).join( ',' ) ) );
+		this.getFocusable = options.getFocusable;
+
+		if ( options.getFocusable ) {
+			this.query =
+				typeof options.query === 'function'
+					? options.query
+					: () =>
+							Array.from(
+								this.host.querySelectorAll( toArray( options.query ?? [] ).join( ',' ) )
+							);
+		} else {
+			this.query =
+				typeof options.query === 'function'
+					? options.query
+					: () =>
+							Array.from(
+								this.host.querySelectorAll( toArray( options.query ).join( ',' ) )
+							);
+		}
 
 		this.search = {
 			buffer: '',
@@ -108,6 +129,10 @@ export class BaseFocusController {
 	 * @return {HTMLElement[]}
 	 */
 	get queried() {
+		if ( this.getFocusable ) {
+			return Array.from( this.getFocusable() );
+		}
+
 		// Filter out disabled elements for focus management
 		return Array.from( this.query( this.host ) ).filter(
 			( el ) => ! el.disabled && ! el.hasAttribute( 'disabled' )
@@ -202,7 +227,8 @@ export class BaseFocusController {
 
 /**
  * @typedef {{
- * 	query: string | string[] | ((host: BaseFocusControllerHost) => HTMLElement[]);
+ * 	query?: string | string[] | ((host: BaseFocusControllerHost) => HTMLElement[]);
+ * 	getFocusable?: () => HTMLElement[];
  * }} BaseFocusControllerOptions
  */
 
