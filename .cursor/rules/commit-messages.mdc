@@ -1,0 +1,42 @@
+---
+description: Conventional commit message format and 50-character header limit
+alwaysApply: true
+---
+
+# Commit messages
+
+Follow [Conventional Commits](https://www.conventionalcommits.org/) and keep the **subject line at most 50 characters** (enforced by `commitlint.config.cjs`).
+
+## Format
+
+```
+type(scope): subject
+
+Optional body wrapped at ~72 columns. Explain why, not what.
+```
+
+- **type**: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, …
+- **scope**: optional area (`form`, `button`, `select`, …)
+- **subject**: imperative, lowercase, no trailing period
+
+## Examples
+
+```
+feat(form): honor fieldset disable via callback
+fix(button): sync shadow control on form disable
+docs: add ADR for composite member submission
+```
+
+## Avoid
+
+```
+Deepen form control lifecycle seam and fix fieldset disable propagation.
+```
+
+Too long (72 chars), not conventional, no type prefix.
+
+## Before committing
+
+```bash
+echo "feat(form): short subject here" | yarn commitlint
+```
