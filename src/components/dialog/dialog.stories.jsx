@@ -1,10 +1,42 @@
 import React, { useState, useEffect, useRef } from 'react';
 
+import { userEvent, expect, fn, waitFor } from 'storybook/test';
+
+import { queryShadow, waitForUpgrade, pressKey } from '../../utils/test-tools.js';
+
 import '../layout/cluster/cluster.define';
 import '../button/button.define';
 import '../icon/icon.define';
 import '../text/text.define';
 import './dialog.define';
+
+/**
+ * @param {Element | null | undefined} dialogHost
+ */
+async function getDialog( dialogHost ) {
+	await waitForUpgrade( dialogHost );
+
+	return /** @type {import('./dialog').XBDialog} */ ( dialogHost );
+}
+
+/**
+ * @param {import('./dialog').XBDialog} dialog
+ */
+async function expectDialogOpen( dialog ) {
+	await waitFor( async () => {
+		await expect( dialog.open ).toBe( true );
+		await expect( queryShadow( dialog, 'dialog' )?.open ).toBe( true );
+	} );
+}
+
+/**
+ * @param {import('./dialog').XBDialog} dialog
+ */
+async function expectDialogClosed( dialog ) {
+	await waitFor( async () => {
+		await expect( dialog.open ).toBe( false );
+	} );
+}
 
 /** @type {import('../../utils/arg-types').Meta} */
 export default {
@@ -180,5 +212,128 @@ export const Playground = {
 	},
 	args: {
 		open: false,
+	},
+};
+
+export const OpensAndCloses = {
+	name: 'Test: Opens and closes',
+	tags: [ '!autodocs' ],
+	args: {
+		onClose: fn(),
+		onOpen: fn(),
+	},
+	render: () => (
+		<xb-dialog header="Dialog title">
+			<div slot="body">Body content</div>
+		</xb-dialog>
+	),
+	play: async ( { canvasElement, args, step } ) => {
+		const dialog = await getDialog( canvasElement.querySelector( 'xb-dialog' ) );
+		dialog.addEventListener( 'close', args.onClose );
+		dialog.addEventListener( 'open', args.onOpen );
+
+		await step( 'starts closed', async () => {
+			await expectDialogClosed( dialog );
+		} );
+
+		await step( 'show opens the dialog and emits open', async () => {
+			dialog.show();
+			await expectDialogOpen( dialog );
+			await expect( args.onOpen ).toHaveBeenCalled();
+		} );
+
+		await step( 'close closes the dialog and emits close', async () => {
+			args.onClose.mockClear();
+			dialog.close();
+			await expectDialogClosed( dialog );
+			await expect( args.onClose ).toHaveBeenCalled();
+		} );
+	},
+};
+
+export const CloseButton = {
+	name: 'Test: Close button',
+	tags: [ '!autodocs' ],
+	args: {
+		onClose: fn(),
+	},
+	render: () => (
+		<xb-dialog header="Dialog title" open>
+			<div slot="body">Body content</div>
+		</xb-dialog>
+	),
+	play: async ( { canvasElement, args, step } ) => {
+		const dialog = await getDialog( canvasElement.querySelector( 'xb-dialog' ) );
+		dialog.addEventListener( 'close', args.onClose );
+
+		await step( 'dialog is open initially', async () => {
+			await expectDialogOpen( dialog );
+		} );
+
+		await step( 'close button closes the dialog', async () => {
+			const closeButton = queryShadow( dialog, '.close-button' );
+			await waitForUpgrade( closeButton );
+			await userEvent.click( closeButton );
+			await expectDialogClosed( dialog );
+			await expect( args.onClose ).toHaveBeenCalled();
+		} );
+	},
+};
+
+export const EscapeCloses = {
+	name: 'Test: Escape closes',
+	tags: [ '!autodocs' ],
+	args: {
+		onClose: fn(),
+	},
+	render: () => (
+		<xb-dialog header="Dialog title" closed-by="any" open>
+			<div slot="body">Body content</div>
+		</xb-dialog>
+	),
+	play: async ( { canvasElement, args, step } ) => {
+		const dialog = await getDialog( canvasElement.querySelector( 'xb-dialog' ) );
+		dialog.addEventListener( 'close', args.onClose );
+
+		await step( 'dialog is open initially', async () => {
+			dialog.closedBy = 'any';
+			await dialog.updateComplete;
+			await expectDialogOpen( dialog );
+		} );
+
+		await step( 'Escape closes the dialog', async () => {
+			const nativeDialog = queryShadow( dialog, 'dialog' );
+			pressKey( nativeDialog, 'Escape' );
+			await expectDialogClosed( dialog );
+			await expect( args.onClose ).toHaveBeenCalled();
+		} );
+	},
+};
+
+export const HeaderAndSlots = {
+	name: 'Test: Header and slots',
+	tags: [ '!autodocs' ],
+	render: () => (
+		<xb-dialog open header="Default header">
+			<div slot="body">Body text</div>
+			<div slot="footer">Footer actions</div>
+		</xb-dialog>
+	),
+	play: async ( { canvasElement, step } ) => {
+		const dialog = await getDialog( canvasElement.querySelector( 'xb-dialog' ) );
+
+		await step( 'header prop renders in the dialog', async () => {
+			const headerText = queryShadow( dialog, '.header xb-text' );
+			await expect( headerText?.textContent?.trim() ).toBe( 'Default header' );
+		} );
+
+		await step( 'body and footer slots render slotted content', async () => {
+			await expect( canvasElement.querySelector( '[slot="body"]' ) ).toHaveTextContent(
+				'Body text'
+			);
+			await expect( canvasElement.querySelector( '[slot="footer"]' ) ).toHaveTextContent(
+				'Footer actions'
+			);
+		} );
 	},
 };

@@ -1,4 +1,5 @@
 import { FocusManagerController } from '../focus-manager';
+import { TypeAheadPlugin } from '../focus-manager/type-ahead.plugin';
 import { isInsideElement } from '../../utils/events';
 import { KeyboardSupportController } from '../keyboard-support';
 
@@ -30,7 +31,7 @@ export class MenuPatternController {
 			focus: new FocusManagerController( host, {
 				// TODO: adjust to comply with https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#focusabilityofdisabledcontrols
 				query: [ `${ ITEM_QUERY }:not([disabled])` ],
-			} ),
+			} ).use( new TypeAheadPlugin() ),
 			keyboard: new KeyboardSupportController( host, [
 				{
 					shortcut: {

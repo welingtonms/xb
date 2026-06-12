@@ -1,14 +1,19 @@
 import React from 'react';
 
-import toCSSValue from '../../../utils/to-css-value';
-
-import { FRUITS, USERS } from './select.fixtures';
-
+import { userEvent, expect, fn, waitFor } from 'storybook/test';
+import { pressKey } from '../../../utils/test-tools.js';
+import { expectSelectOpen, getOption, getSelectParts } from './select.test-helpers.js';
 import '../../layout';
 import '../../icon/icon.define';
 import './select.define';
-import { Select as SelectElement } from './select';
-import { Option as OptionElement } from './select-option';
+
+const STATIC_OPTIONS = (
+	<>
+		<xb-option value="first">First</xb-option>
+		<xb-option value="second">Second</xb-option>
+		<xb-option value="third">Third</xb-option>
+	</>
+);
 
 export default {
 	title: 'Components/Form/Select',
@@ -41,22 +46,6 @@ export default {
 		},
 	},
 };
-
-/* const fixtures = html`
-	<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
-		<xb-text variant="subtitle-2">Users</xb-text>
-		<output>
-			<xb-text variant="caption">${ USERS.map( ( { name } ) => name ).join( ', ' ) }</xb-text>
-		</output>
-	</xb-stack>
-
-	<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
-		<xb-text variant="subtitle-2">Fruits</xb-text>
-		<output>
-			<xb-text variant="caption">${ FRUITS.map( ( { label } ) => label ).join( ', ' ) }</xb-text>
-		</output>
-	</xb-stack>
-`;*/
 
 /** @type {import('../../../utils/arg-types.js').StoryObj} */
 export const Playground = {
@@ -99,7 +88,6 @@ export const Playground = {
 	),
 
 	args: {
-		// placement: 'bottom-start',
 		loading: false,
 		type: 'single',
 		disabled: false,
@@ -107,122 +95,234 @@ export const Playground = {
 	},
 };
 
-/**
- * This is the select filled with statically rendered options.
- */
-// export const StaticOptions = {
-// 	render: ( args ) => html`
-// 		<xb-stack>
-// 			<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
-// 				<xb-text variant="subtitle-2">Static options</xb-text>
-// 				<xb-select
-// 					@xb:change=${ args.change }
-// 					?disabled=${ args.disabled }
-// 					type=${ args.type }
-// 				>
-// 					<xb-option value="change">Change</xb-option>
-// 					<xb-option value="accept">Accept</xb-option>
-// 					<xb-option value="leave">Leave</xb-option>
-// 				</xb-select>
-// 			</xb-stack>
+/** @type {import('../../../utils/arg-types.js').StoryObj} */
+export const ExpandCollapse = {
+	name: 'Test: Expand collapse',
+	tags: [ '!autodocs' ],
+	render: () => (
+		<xb-select type="single" loading={ false } disabled={ false }>
+			{ STATIC_OPTIONS }
+		</xb-select>
+	),
+	play: async ( { canvasElement, step } ) => {
+		const { searchInput, select } = await getSelectParts( canvasElement );
+		const option = ( value ) => getOption( canvasElement, value );
 
-// 			<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
-// 				<xb-text variant="subtitle-2">Static options with initial value</xb-text>
-// 				<xb-select
-// 					@xb:change=${ args.change }
-// 					?disabled=${ args.disabled }
-// 					type=${ args.type }
-// 					.value=${ { label: 'Accept', value: 'accept' } }
-// 				>
-// 					<xb-option value="change">Change</xb-option>
-// 					<xb-option value="accept">Accept</xb-option>
-// 					<xb-option value="leave">Leave</xb-option>
-// 				</xb-select>
-// 			</xb-stack>
-// 		</xb-stack>
-// 	`,
+		await step( 'expands when search input is clicked', async () => {
+			await userEvent.click( searchInput );
+			await expectSelectOpen( select, true );
 
-// 	args: {
-// 		type: 'single',
-// 	},
-// };
+			await waitFor( async () => {
+				await expect( option( 'first' ) ).toBeInTheDocument();
+				await expect( option( 'second' ) ).toBeInTheDocument();
+				await expect( option( 'third' ) ).toBeInTheDocument();
+			} );
+		} );
 
-// export const SyncDatasource = {
-// 	render: ( args ) => html`
-// 		<xb-stack>
-// 			<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
-// 				<xb-text variant="subtitle-2">Fruits</xb-text>
-// 				<output>
-// 					<xb-text variant="caption">
-// 						${ FRUITS.map( ( { label } ) => label ).join( ', ' ) }
-// 					</xb-text>
-// 				</output>
-// 			</xb-stack>
+		await step( 'collapses when search input is clicked again', async () => {
+			await userEvent.click( searchInput );
+			await expectSelectOpen( select, false );
+		} );
+	},
+};
 
-// 			<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
-// 				<xb-text variant="subtitle-2">Sync datasource</xb-text>
-// 				<xb-select
-// 					@xb:change=${ args.change }
-// 					?disabled=${ args.disabled }
-// 					type=${ args.type }
-// 					.datasources=${ [ useSyncFruits ] }
-// 				></xb-select>
-// 			</xb-stack>
+/** @type {import('../../../utils/arg-types.js').StoryObj} */
+export const KeyboardNavigation = {
+	name: 'Test: Keyboard navigation',
+	tags: [ '!autodocs' ],
+	args: {
+		change: fn(),
+	},
+	render: ( args ) => (
+		<xb-select type="single" loading={ false } disabled={ false } onchange={ args.change }>
+			{ STATIC_OPTIONS }
+		</xb-select>
+	),
+	play: async ( { canvasElement, step } ) => {
+		const { searchInput, select } = await getSelectParts( canvasElement );
+		const option = ( value ) => getOption( canvasElement, value );
 
-// 			<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
-// 				<xb-text variant="subtitle-2">Sync datasource with initial value</xb-text>
-// 				<xb-select
-// 					@xb:change=${ args.change }
-// 					?disabled=${ args.disabled }
-// 					type=${ args.type }
-// 					.datasources=${ [ useSyncFruits ] }
-// 					.value=${ { label: 'Papaya', value: 'papaya' } }
-// 				></xb-select>
-// 			</xb-stack>
-// 		</xb-stack>
-// 	`,
+		await step( 'menu starts collapsed', async () => {
+			await expectSelectOpen( select, false );
+		} );
 
-// 	args: {
-// 		type: 'single',
-// 	},
-// };
+		await step( 'ArrowDown opens menu and focuses first option', async () => {
+			searchInput.focus();
+			pressKey( select, 'ArrowDown' );
 
-// export const AsyncDatasource = {
-// 	render: ( args ) => html`
-// 		<xb-stack>
-// 			${ fixtures }
+			await expectSelectOpen( select, true );
+			await waitFor( async () => {
+				await expect( option( 'first' ) ).toHaveClass( 'is-focused' );
+			} );
+			await expect( option( 'second' ) ).not.toHaveClass( 'is-focused' );
+			await expect( option( 'third' ) ).not.toHaveClass( 'is-focused' );
+		} );
 
-// 			<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
-// 				<xb-text variant="subtitle-2">Async datasource</xb-text>
-// 				<xb-select
-// 					@xb:change=${ args.change }
-// 					?disabled=${ args.disabled }
-// 					type=${ args.type }
-// 					.datasources=${ [ useAsyncFruits, useAsyncUsers ] }
-// 				></xb-select>
-// 			</xb-stack>
+		await step( 'ArrowDown moves focus through options and wraps', async () => {
+			pressKey( select, 'ArrowDown' );
+			await waitFor( async () => {
+				await expect( option( 'second' ) ).toHaveClass( 'is-focused' );
+			} );
 
-// 			<xb-stack style="--xb-stack-gap: var(--xb-spacing-1);">
-// 				<xb-text variant="subtitle-2">Async datasource with initial value</xb-text>
-// 				<xb-select
-// 					type=${ args.type }
-// 					@xb:change=${ args.change }
-// 					?disabled=${ args.disabled }
-// 					.datasources=${ [ useAsyncUsers, useAsyncFruits ] }
-// 					.value=${ [
-// 						{ label: 'Papaya', value: 'papaya' },
-// 						{
-// 							guid: '56d851fa-1036-4c90-9ef4-38ad90488b07',
-// 							name: 'Enid Myers',
-// 							_type: 'user',
-// 						},
-// 					] }
-// 				></xb-select>
-// 			</xb-stack>
-// 		</xb-stack>
-// 	`,
+			pressKey( select, 'ArrowDown' );
+			await waitFor( async () => {
+				await expect( option( 'third' ) ).toHaveClass( 'is-focused' );
+			} );
 
-// 	args: {
-// 		type: 'single',
-// 	},
-// };
+			pressKey( select, 'ArrowDown' );
+			await waitFor( async () => {
+				await expect( option( 'first' ) ).toHaveClass( 'is-focused' );
+			} );
+		} );
+
+		await step( 'ArrowUp moves focus backward and wraps', async () => {
+			pressKey( select, 'ArrowUp' );
+			await waitFor( async () => {
+				await expect( option( 'third' ) ).toHaveClass( 'is-focused' );
+			} );
+
+			pressKey( select, 'ArrowUp' );
+			await waitFor( async () => {
+				await expect( option( 'second' ) ).toHaveClass( 'is-focused' );
+			} );
+
+			pressKey( select, 'ArrowUp' );
+			await waitFor( async () => {
+				await expect( option( 'first' ) ).toHaveClass( 'is-focused' );
+			} );
+		} );
+
+		await step( 'Escape closes menu', async () => {
+			pressKey( select, 'Escape' );
+			await expectSelectOpen( select, false );
+		} );
+
+		await step( 'ArrowUp opens menu and focuses last option', async () => {
+			pressKey( select, 'ArrowUp' );
+
+			await expectSelectOpen( select, true );
+			await waitFor( async () => {
+				await expect( option( 'third' ) ).toHaveClass( 'is-focused' );
+			} );
+		} );
+	},
+};
+
+/** @type {import('../../../utils/arg-types.js').StoryObj} */
+export const SingleSelection = {
+	name: 'Test: Single selection',
+	tags: [ '!autodocs' ],
+	render: () => (
+		<xb-select type="single" loading={ false } disabled={ false }>
+			{ STATIC_OPTIONS }
+		</xb-select>
+	),
+	play: async ( { canvasElement, step } ) => {
+		const { handleButton, select } = await getSelectParts( canvasElement );
+		const option = ( value ) => getOption( canvasElement, value );
+
+		await step( 'selects third option from expanded menu', async () => {
+			await userEvent.click( handleButton );
+			await expectSelectOpen( select, true );
+
+			await userEvent.click( option( 'third' ) );
+
+			await expectSelectOpen( select, false );
+			await expect( option( 'first' ) ).not.toHaveAttribute( 'selected' );
+			await expect( option( 'first' ) ).not.toHaveAttribute( 'aria-selected' );
+			await expect( option( 'second' ) ).not.toHaveAttribute( 'selected' );
+			await expect( option( 'second' ) ).not.toHaveAttribute( 'aria-selected' );
+			await expect( option( 'third' ) ).toHaveAttribute( 'selected' );
+			await expect( option( 'third' ) ).toHaveAttribute( 'aria-selected', 'true' );
+		} );
+	},
+};
+
+/** @type {import('../../../utils/arg-types.js').StoryObj} */
+export const SingleSelectionOnChange = {
+	name: 'Test: Single selection on change',
+	tags: [ '!autodocs' ],
+	args: {
+		change: fn(),
+	},
+	render: ( args ) => (
+		<xb-select type="single" loading={ false } disabled={ false } onchange={ args.change }>
+			{ STATIC_OPTIONS }
+		</xb-select>
+	),
+	play: async ( { canvasElement, args, step } ) => {
+		const { handleButton, select } = await getSelectParts( canvasElement );
+		const option = ( value ) => getOption( canvasElement, value );
+		select.addEventListener( 'change', args.change );
+
+		await step( 'fires change when selecting first option', async () => {
+			await userEvent.click( handleButton );
+			await expectSelectOpen( select, true );
+
+			await userEvent.click( option( 'first' ) );
+
+			await expectSelectOpen( select, false );
+			await expect( args.change ).toHaveBeenCalled();
+			await expect( select.value ).toBe( 'first' );
+		} );
+	},
+};
+
+/** @type {import('../../../utils/arg-types.js').StoryObj} */
+export const SingleSelectionWithKeyboard = {
+	name: 'Test: Single selection with keyboard',
+	tags: [ '!autodocs' ],
+	args: {
+		change: fn(),
+	},
+	render: ( args ) => (
+		<xb-select type="single" loading={ false } disabled={ false } onchange={ args.change }>
+			{ STATIC_OPTIONS }
+		</xb-select>
+	),
+	play: async ( { canvasElement, args, step } ) => {
+		const { searchInput, handleButton, select } = await getSelectParts( canvasElement );
+		const option = ( value ) => getOption( canvasElement, value );
+		select.addEventListener( 'change', args.change );
+
+		await step( 'filters options while typing', async () => {
+			await expectSelectOpen( select, false );
+
+			await userEvent.type( searchInput, 'second' );
+
+			await waitFor(
+				async () => {
+					await expectSelectOpen( select, true );
+					await expect( option( 'first' ) ).toHaveAttribute( 'hidden' );
+					await expect( option( 'second' ) ).not.toHaveAttribute( 'hidden' );
+					await expect( option( 'third' ) ).toHaveAttribute( 'hidden' );
+				},
+				{ timeout: 2000 }
+			);
+		} );
+
+		await step( 'selects focused option after keyboard navigation', async () => {
+			pressKey( select, 'ArrowDown' );
+			await waitFor( async () => {
+				await expect( option( 'second' ) ).toHaveClass( 'is-focused' );
+			} );
+
+			await userEvent.click( option( 'second' ) );
+
+			await expectSelectOpen( select, false );
+		} );
+
+		await step( 'persists selection after reopening menu', async () => {
+			await userEvent.click( handleButton );
+
+			await expect( option( 'first' ) ).toBeInTheDocument();
+			await expect( option( 'second' ) ).toBeInTheDocument();
+			await expect( option( 'third' ) ).toBeInTheDocument();
+
+			await expect( option( 'first' ) ).not.toHaveAttribute( 'selected' );
+			await expect( option( 'second' ) ).toHaveAttribute( 'selected' );
+			await expect( option( 'third' ) ).not.toHaveAttribute( 'selected' );
+			await expect( args.change ).toHaveBeenCalled();
+		} );
+	},
+};

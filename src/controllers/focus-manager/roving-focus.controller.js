@@ -21,6 +21,8 @@ export class RovingFocusController extends BaseFocusController {
 	 */
 	constructor( host, options = {} ) {
 		super( host, options );
+
+		this.searchable = Boolean( options.searchable );
 	}
 
 	hostConnected() {

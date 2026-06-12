@@ -1,4 +1,9 @@
-/** @type { import('@storybook/react-webpack5').StorybookConfig } */
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { mergeConfig } from 'vite';
+import babel from 'vite-plugin-babel';
+
+/** @type { import('@storybook/react-vite').StorybookConfig } */
 const config = {
 	stories: [
 		'../stories/**/*.mdx',
@@ -9,42 +14,28 @@ const config = {
 	addons: [
 		'@chromatic-com/storybook',
 		'@storybook/addon-docs',
+		'@storybook/addon-vitest',
 		'@github-ui/storybook-addon-performance-panel',
 	],
 	framework: {
-		name: '@storybook/react-webpack5',
+		name: '@storybook/react-vite',
 		options: {},
 	},
-	webpackFinal: async ( config ) => {
-		// Add support for Lit elements with Babel
-		config.module.rules.push( {
-			test: /\.(js|jsx)$/,
-			exclude: /node_modules/,
-			use: {
-				loader: 'babel-loader',
-				options: {
-					// The options here should match .babelrc
-					presets: [
-						'@babel/preset-env',
-						[
-							'@babel/preset-react',
-							{
-								runtime: 'automatic',
-							},
-						],
-					],
-					plugins: [
-						[
-							'@babel/plugin-proposal-decorators',
-							{
-								version: '2023-05',
-							},
-						],
-					],
-				},
-			},
+	async viteFinal( config ) {
+		const dirname = path.dirname( fileURLToPath( import.meta.url ) );
+
+		return mergeConfig( config, {
+			plugins: [
+				babel( {
+					babelConfig: {
+						babelrc: true,
+						configFile: path.join( dirname, '..', '.babelrc' ),
+					},
+					include: [ '../src/**/*.{js,jsx,mjs,cjs,ts,tsx}' ],
+					exclude: [ /node_modules/ ],
+				} ),
+			],
 		} );
-		return config;
 	},
 };
 

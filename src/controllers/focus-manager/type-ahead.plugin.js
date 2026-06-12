@@ -77,7 +77,7 @@ export class TypeAheadPlugin {
 	// }
 
 	#onKeyPress = ( event ) => {
-		if ( ! this.controller.active ) {
+		if ( ! this.controller.focused ) {
 			return;
 		}
 

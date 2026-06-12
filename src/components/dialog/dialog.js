@@ -105,7 +105,41 @@ export class XBDialog extends XBElement {
 
 	firstUpdated( changedProperties ) {
 		super.firstUpdated( changedProperties );
+
+		this.dialog?.addEventListener( 'close', this.#handleNativeClose );
+		this.dialog?.addEventListener( 'cancel', this.#handleNativeCancel );
+		this.dialog?.addEventListener( 'keydown', this.#handleNativeKeyDown );
 	}
+
+	#handleNativeKeyDown = ( event ) => {
+		if ( event.key !== 'Escape' || this.closedBy === 'none' || ! this.open ) {
+			return;
+		}
+
+		event.preventDefault();
+		this.close();
+	};
+
+	#handleNativeCancel = ( event ) => {
+		if ( this.closedBy === 'none' ) {
+			event.preventDefault();
+			return;
+		}
+
+		if ( this.open ) {
+			this.open = false;
+			this.emit( 'close' );
+		}
+	};
+
+	#handleNativeClose = () => {
+		if ( ! this.open ) {
+			return;
+		}
+
+		this.open = false;
+		this.emit( 'close' );
+	};
 
 	/**
 	 * Close the dialog (e.g. escape key or programmatic).

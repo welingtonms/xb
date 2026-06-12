@@ -44,6 +44,18 @@ _Avoid_: No padding class, p-0 utility
 A custom DOM event dispatched from an **Element** host. Names are host-scoped plain verbs (`expand`, `change`, `interact-out`) — no `xb:` prefix. The `xb` prefix is reserved for **Tags** and **Tokens**, not events. Form controls that wrap native inputs re-emit native event names (e.g. `change`) so consumers get a familiar API. Hyphenated compound verbs are fine when the action is genuinely compound (`select-all`, `interact-out`).
 _Avoid_: `xb:dropdown-expand`, namespaced event strings
 
+**Virtual focus**:
+DOM focus stays on a composite host (e.g. `xb-radio-group`); the active option is indicated to users and assistive tech without that option receiving `document.activeElement`.
+_Avoid_: Roving tabindex (when focus actually moves to each descendant)
+
+**Mount default**:
+The value a form control contributes to native `FormData` on first render when no initial attribute (`value`, `initial-value`, `default-value`, `checked`, etc.) is set. Controls differ: e.g. a **Radio group** selects its first option; an empty **Text input** submits an empty string; an unchecked **Checkbox** is omitted; a **Switch** submits `off`.
+_Avoid_: Default value (when you mean an explicit HTML attribute), placeholder
+
+**Radio group**:
+A single-selection form control (`xb-radio-group`) wrapping mutually exclusive options (`xb-radio`). When no initial value is supplied, the first option is selected at mount (**Mount default**). `form.reset()` restores the attribute state (`value` / `initial-value`) via group re-initialization.
+_Avoid_: Toggle group (when you mean optional/deselectable segmented control semantics)
+
 ## Example dialogue
 
 **Dev:** I dropped `<xb-button>` in my page but the browser shows an undefined element.

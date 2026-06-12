@@ -1,6 +1,9 @@
 import React, { useEffect } from 'react';
 
+import { expect, userEvent, waitFor } from 'storybook/test';
+
 import { PlacementArg } from '../../utils/arg-types';
+import { waitForUpgrade } from '../../utils/test-tools.js';
 
 import '../layout';
 import '../button/button.define';
@@ -99,6 +102,99 @@ export const Playground = {
 	args: {
 		placement: 'bottom-start',
 		trigger: [ 'click' ],
+	},
+};
+
+const TooltipTriggerTemplate = ( { trigger } ) => (
+	<div style={ { padding: '4rem' } }>
+		<button id="tooltip-anchor" type="button">
+			reference
+		</button>
+		<xb-tooltip anchor="tooltip-anchor" trigger={ trigger }>
+			Lorem ipsum dolor sit amet.
+		</xb-tooltip>
+	</div>
+);
+
+export const TriggerOnClick = {
+	name: 'Test: Trigger on click',
+	tags: [ '!autodocs' ],
+	render: () => <TooltipTriggerTemplate trigger={ [ 'click' ] } />,
+	play: async ( { canvasElement, step } ) => {
+		const tooltip = canvasElement.querySelector( 'xb-tooltip' );
+		const anchor = canvasElement.querySelector( '#tooltip-anchor' );
+
+		await waitForUpgrade( tooltip );
+
+		if ( tooltip.open ) {
+			await tooltip.hide();
+		}
+
+		await step( 'tooltip is hidden initially', async () => {
+			await expect( tooltip.open ).toBe( false );
+		} );
+
+		await step( 'click opens tooltip', async () => {
+			await userEvent.click( anchor );
+			await waitFor( () => expect( tooltip.open ).toBe( true ) );
+		} );
+
+		await step( 'click again closes tooltip', async () => {
+			await userEvent.click( anchor );
+			await waitFor( () => expect( tooltip.open ).toBe( false ) );
+		} );
+	},
+};
+
+export const TriggerOnHover = {
+	name: 'Test: Trigger on hover',
+	tags: [ '!autodocs' ],
+	render: () => <TooltipTriggerTemplate trigger={ [ 'hover' ] } />,
+	play: async ( { canvasElement, step } ) => {
+		const tooltip = canvasElement.querySelector( 'xb-tooltip' );
+		const anchor = canvasElement.querySelector( '#tooltip-anchor' );
+
+		await waitForUpgrade( tooltip );
+
+		if ( tooltip.open ) {
+			await tooltip.hide();
+		}
+
+		await step( 'hover opens tooltip', async () => {
+			await userEvent.hover( anchor );
+			await waitFor( () => expect( tooltip.open ).toBe( true ), { timeout: 1000 } );
+		} );
+
+		await step( 'unhover closes tooltip', async () => {
+			await userEvent.unhover( anchor );
+			await waitFor( () => expect( tooltip.open ).toBe( false ), { timeout: 1500 } );
+		} );
+	},
+};
+
+export const TriggerOnFocus = {
+	name: 'Test: Trigger on focus',
+	tags: [ '!autodocs' ],
+	render: () => <TooltipTriggerTemplate trigger={ [ 'focus' ] } />,
+	play: async ( { canvasElement, step } ) => {
+		const tooltip = canvasElement.querySelector( 'xb-tooltip' );
+		const anchor = canvasElement.querySelector( '#tooltip-anchor' );
+
+		await waitForUpgrade( tooltip );
+
+		if ( tooltip.open ) {
+			await tooltip.hide();
+		}
+
+		await step( 'focus opens tooltip', async () => {
+			anchor.focus();
+			await waitFor( () => expect( tooltip.open ).toBe( true ) );
+		} );
+
+		await step( 'blur closes tooltip', async () => {
+			anchor.blur();
+			await waitFor( () => expect( tooltip.open ).toBe( false ), { timeout: 1000 } );
+		} );
 	},
 };
 

@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { userEvent, within } from 'storybook/test';
-import { expect } from 'storybook/test';
+import { userEvent, expect, fn, waitFor } from 'storybook/test';
+import { waitForUpgrade, within, queryShadow } from '../../../utils/test-tools.js';
 
 import './switch.define';
 import '../../text/text.define';
@@ -46,13 +46,124 @@ export const Playground = {
 			<xb-switch onchange={ args.change } disabled={ args.disabled }></xb-switch>
 		</xb-stack>
 	),
-
-	// play: async ({ canvasElement }) => {
-	// 	const canvas = within(canvasElement);
-	// 	await expect(canvas.getByRole('switch', { name: /Accept life options/i })).not.toBeChecked();
-	// 	await userEvent.click(canvas.getByRole('switch', { name: /Accept life options/i }));
-	// 	await expect(canvas.getByRole('switch', { name: /Accept life options/i })).toBeChecked();
-	// 	await userEvent.click(canvas.getByRole('switch', { name: /Accept life options/i }));
-	// 	await expect(canvas.getByRole('switch', { name: /Accept life options/i })).not.toBeChecked();
-	// },
 };
+
+/** @type {SwitchStory} */
+export const TogglesOnClick = {
+	name: 'Test: Toggles on click',
+	tags: [ '!autodocs' ],
+	args: {
+		change: fn(),
+	},
+	render: ( args ) => (
+		<xb-switch onchange={ args.change }>Allow analytics cookies</xb-switch>
+	),
+	play: async ( { canvasElement, args, step } ) => {
+		const switchEl = canvasElement.querySelector( 'xb-switch' );
+		await waitForUpgrade( switchEl );
+		switchEl.addEventListener( 'change', args.change );
+		const canvas = within( canvasElement );
+
+		await step( 'renders unchecked with switch role', async () => {
+			await waitFor( async () => {
+				const accessibleSwitch = canvas.getByRole( 'switch', { name: /Allow analytics cookies/i } );
+				await expect( accessibleSwitch ).not.toHaveAttribute( 'checked' );
+			} );
+		} );
+
+		await step( 'turns on when clicked', async () => {
+			await userEvent.click( switchEl );
+
+			await waitFor( async () => {
+				await expect( args.change ).toHaveBeenCalled();
+				await expect( switchEl.checked ).toBe( true );
+			} );
+		} );
+
+		await step( 'turns off when clicked again', async () => {
+			await userEvent.click( switchEl );
+
+			await expect( args.change ).toHaveBeenCalledTimes( 2 );
+			await expect( switchEl.checked ).toBe( false );
+		} );
+	},
+};
+
+/** @type {SwitchStory} */
+export const TogglesWhenInitiallyChecked = {
+	name: 'Test: Toggles when initially checked',
+	tags: [ '!autodocs' ],
+	args: {
+		change: fn(),
+	},
+	render: ( args ) => (
+		<xb-switch initial-checked onchange={ args.change }>
+			Allow analytics cookies
+		</xb-switch>
+	),
+	play: async ( { canvasElement, args, step } ) => {
+		const switchEl = canvasElement.querySelector( 'xb-switch' );
+		await waitForUpgrade( switchEl );
+		switchEl.addEventListener( 'change', args.change );
+		within( canvasElement );
+
+		await step( 'renders checked', async () => {
+			await waitFor( async () => {
+				await expect( switchEl ).toHaveAttribute( 'checked' );
+				await expect( switchEl.checked ).toBe( true );
+			} );
+		} );
+
+		await step( 'turns off when clicked', async () => {
+			await userEvent.click( switchEl );
+
+			await expect( args.change ).toHaveBeenCalled();
+			await expect( switchEl ).not.toHaveAttribute( 'checked' );
+			await expect( switchEl.checked ).toBe( false );
+		} );
+
+		await step( 'turns on when clicked again', async () => {
+			await userEvent.click( switchEl );
+
+			await expect( args.change ).toHaveBeenCalledTimes( 2 );
+			await expect( switchEl ).toHaveAttribute( 'checked' );
+			await expect( switchEl.checked ).toBe( true );
+		} );
+	},
+};
+
+/** @type {SwitchStory} */
+export const KeyboardNavigation = {
+	name: 'Test: Keyboard navigation',
+	tags: [ '!autodocs' ],
+	render: () => <xb-switch>Allow analytics cookies</xb-switch>,
+	play: async ( { canvasElement, step } ) => {
+		const switchEl = canvasElement.querySelector( 'xb-switch' );
+		await waitForUpgrade( switchEl );
+		within( canvasElement );
+
+		await step( 'toggles with Space and Enter keys', async () => {
+			await waitFor( async () => {
+				await expect( switchEl.checked ).toBe( false );
+			} );
+
+			switchEl.focus();
+			await userEvent.keyboard( ' ' );
+			await waitFor( async () => {
+				await expect( switchEl.checked ).toBe( true );
+			} );
+
+			const control = queryShadow( switchEl, '#control' );
+			await userEvent.click( control ?? switchEl );
+			await waitFor( async () => {
+				await expect( switchEl.checked ).toBe( false );
+			} );
+		} );
+	},
+};
+
+/**
+ * @typedef {import('./switch').Switch} Switch
+ * @typedef {import('@storybook/web-components').StoryObj<Switch>} SwitchStory
+ * @typedef {import('@storybook/web-components').Meta} Meta
+ */

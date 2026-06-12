@@ -1,9 +1,10 @@
-import { html, unsafeStatic } from 'lit/static-html.js';
-import { ReactiveControllerHost } from '@lit/reactive-element';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { html, render } from 'lit';
+import { html as staticHtml, unsafeStatic } from 'lit/static-html.js';
 
-import { generateElementName } from '../../utils/test-tools';
-import XBElement from '../xb-element';
-import KeyboardSupportController from './keyboard-support.controller';
+import { generateElementName, pressKey, queryShadow, waitForUpgrade } from '../../utils/test-tools';
+import { XBElement } from '../../components/xb-element';
+import { KeyboardSupportController } from './keyboard-support.controller';
 
 /**
  * @param {(host: KeyboardSupportControllerHost) => [Keymap | Keymap[], KeyboardSupportControllerOptions | null]} getControllerConfig
@@ -34,8 +35,33 @@ const defineTestElement = ( getControllerConfig ) => {
 	return [ unsafeStatic( elementName ), elementName ];
 };
 
+let container;
+
+beforeEach( () => {
+	container = document.createElement( 'div' );
+	document.body.appendChild( container );
+} );
+
+afterEach( () => {
+	container?.remove();
+} );
+
+/**
+ * @param {import('lit').TemplateResult} template
+ */
+async function mount( template ) {
+	render( template, container );
+
+	const host = container.firstElementChild;
+
+	if ( host ) {
+		await waitForUpgrade( host );
+		host.controller.activate();
+	}
+}
+
 describe( 'KeyboardSupportController', () => {
-	it( 'should support a single shortcut', () => {
+	it( 'should support a single shortcut', async () => {
 		const [ tag, elementName ] = defineTestElement( ( host ) => [
 			{
 				shortcut: {
@@ -49,22 +75,24 @@ describe( 'KeyboardSupportController', () => {
 			null,
 		] );
 
-		cy.mount(
-			html`
+		await mount(
+			staticHtml`
 				<${ tag } tabindex="0" style="background: lightgray; display: block; width: 100px; height: 100px;"></${ tag }>
 			`
 		);
 
-		cy.get( elementName ).as( 'element' );
-		cy.get( '@element' ).find( 'output', { includeShadowDom: true } ).as( 'output' );
+		const element = container.querySelector( elementName );
+		const output = queryShadow( element, 'output' );
 
-		cy.get( '@element' ).type( '{upArrow}' );
-		cy.get( '@output' ).should( 'have.text', '' );
-		cy.get( '@element' ).type( '{downArrow}' );
-		cy.get( '@output' ).should( 'have.text', 'Pressed ArrowDown' );
+		element.focus();
+		pressKey( element, 'ArrowUp' );
+		expect( output.textContent ).toBe( '' );
+
+		pressKey( element, 'ArrowDown' );
+		expect( output.textContent ).toBe( 'Pressed ArrowDown' );
 	} );
 
-	it( 'should support multiple shortcuts', () => {
+	it( 'should support multiple shortcuts', async () => {
 		const [ tag, elementName ] = defineTestElement( ( host ) => [
 			[
 				{
@@ -91,24 +119,27 @@ describe( 'KeyboardSupportController', () => {
 			null,
 		] );
 
-		cy.mount(
-			html`
+		await mount(
+			staticHtml`
 				<${ tag } tabindex="0" style="background: lightgray; display: block; width: 100px; height: 100px;"></${ tag }>
 			`
 		);
 
-		cy.get( elementName ).as( 'element' );
-		cy.get( '@element' ).find( 'output', { includeShadowDom: true } ).as( 'output' );
+		const element = container.querySelector( elementName );
+		const output = queryShadow( element, 'output' );
 
-		cy.get( '@element' ).type( '{downArrow}' );
-		cy.get( '@output' ).should( 'have.text', '' );
-		cy.get( '@element' ).type( '{upArrow}' );
-		cy.get( '@output' ).should( 'have.text', 'Pressed ArrowUp' );
-		cy.get( '@element' ).type( '{shift+alt+b}' );
-		cy.get( '@output' ).should( 'have.text', 'Pressed something weird' );
+		element.focus();
+		pressKey( element, 'ArrowDown' );
+		expect( output.textContent ).toBe( '' );
+
+		pressKey( element, 'ArrowUp' );
+		expect( output.textContent ).toBe( 'Pressed ArrowUp' );
+
+		pressKey( element, 'b', { altKey: true, shiftKey: true } );
+		expect( output.textContent ).toBe( 'Pressed something weird' );
 	} );
 
-	it( 'should support multiple shortcuts for the same handler', () => {
+	it( 'should support multiple shortcuts for the same handler', async () => {
 		const [ tag, elementName ] = defineTestElement( ( host ) => [
 			[
 				{
@@ -136,24 +167,27 @@ describe( 'KeyboardSupportController', () => {
 			null,
 		] );
 
-		cy.mount(
-			html`
+		await mount(
+			staticHtml`
 				<${ tag } tabindex="0" style="background: lightgray; display: block; width: 100px; height: 100px;"></${ tag }>
 			`
 		);
 
-		cy.get( elementName ).as( 'element' );
-		cy.get( '@element' ).find( 'output', { includeShadowDom: true } ).as( 'output' );
+		const element = container.querySelector( elementName );
+		const output = queryShadow( element, 'output' );
 
-		cy.get( '@element' ).type( '{upArrow}' );
-		cy.get( '@output' ).should( 'have.text', 'Moving forward' );
-		cy.get( '@element' ).type( '{downArrow}' );
-		cy.get( '@output' ).should( 'have.text', '' );
-		cy.get( '@element' ).type( '{rightArrow}' );
-		cy.get( '@output' ).should( 'have.text', 'Moving forward' );
+		element.focus();
+		pressKey( element, 'ArrowUp' );
+		expect( output.textContent ).toBe( 'Moving forward' );
+
+		pressKey( element, 'ArrowDown' );
+		expect( output.textContent ).toBe( '' );
+
+		pressKey( element, 'ArrowRight' );
+		expect( output.textContent ).toBe( 'Moving forward' );
 	} );
 
-	it( "should support specifing the listener's event target", () => {
+	it( "should support specifing the listener's event target", async () => {
 		const [ tag, elementName ] = defineTestElement( ( host ) => [
 			{
 				shortcut: {
@@ -171,8 +205,8 @@ describe( 'KeyboardSupportController', () => {
 			},
 		] );
 
-		cy.mount(
-			html`
+		await mount(
+			staticHtml`
 				<${ tag } tabindex="0" style="background: lightgray; display: block;">
 					<p>
 						Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce at lacinia sem. Donec porta tortor ut tellus faucibus, ut dapibus leo eleifend. Pellentesque non eros eu quam venenatis posuere. Aliquam erat arcu, posuere ut odio nec, viverra scelerisque nisi. In fermentum, dui ac fermentum tempor, mauris mi laoreet sem, a blandit risus risus at tellus.
@@ -185,14 +219,17 @@ describe( 'KeyboardSupportController', () => {
 			`
 		);
 
-		cy.get( elementName ).as( 'element' );
-		cy.get( '@element' ).find( 'output', { includeShadowDom: true } ).as( 'output' );
-		cy.get( '@element' ).find( 'div' ).as( 'event-target' );
+		const element = container.querySelector( elementName );
+		const output = queryShadow( element, 'output' );
+		const eventTarget = element.querySelector( 'div' );
 
-		cy.get( '@element' ).type( '{downArrow}' );
-		cy.get( '@output' ).should( 'have.text', '' );
-		cy.get( '@event-target' ).type( '{downArrow}' );
-		cy.get( '@output' ).should( 'have.text', 'Pressed ArrowDown' );
+		element.focus();
+		pressKey( element, 'ArrowDown' );
+		expect( output.textContent ).toBe( '' );
+
+		eventTarget.focus();
+		pressKey( eventTarget, 'ArrowDown' );
+		expect( output.textContent ).toBe( 'Pressed ArrowDown' );
 	} );
 } );
 

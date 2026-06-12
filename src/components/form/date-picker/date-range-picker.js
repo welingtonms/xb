@@ -15,10 +15,10 @@ export class DateRangePicker extends DatePicker {
 	static styles = [ datePickerStyles() ];
 
 	/**
-	 * Date range value [start, end] (ISO Strings).
+	 * Initial range value [start, end] (ISO strings).
 	 * @type {[string|null, string|null]}
 	 */
-	@property( { type: Array } ) accessor providedValue = [ null, null ];
+	@property( { type: Array, attribute: 'initial-value' } ) accessor initialValue = [ null, null ];
 
 	/**
 	 * Draft selected range (interactive state).
@@ -40,11 +40,38 @@ export class DateRangePicker extends DatePicker {
 	}
 
 	set value( val ) {
-		this.selectedRange = val;
+		this.selectedRange = this.#normalizeRange( val );
+		this.updateFormValue();
+	}
 
-		// Update internal date objects
-		// this.startDate = val[ 0 ] ? CalendarDate.fromISO( val[ 0 ] ) : null; // Removed, use selectedRange/draftSelectedRange
-		// this.endDate = val[ 1 ] ? CalendarDate.fromISO( val[ 1 ] ) : null; // Removed
+	/**
+	 * @param {unknown} value
+	 * @returns {[string|null, string|null]}
+	 */
+	#normalizeRange( value ) {
+		if ( ! Array.isArray( value ) ) {
+			return [ null, null ];
+		}
+
+		return [ value[ 0 ] ?? null, value[ 1 ] ?? null ];
+	}
+
+	/**
+	 * @override
+	 * @returns {[string|null, string|null]}
+	 */
+	getInitialFormValue() {
+		return this.initialValue;
+	}
+
+	/**
+	 * @override
+	 * @param {unknown} [value]
+	 */
+	initializeFormValue( value = this.getInitialFormValue() ) {
+		const consolidated = this.#normalizeRange( value ?? this.initialValue );
+		this.selectedRange = consolidated;
+		this.draftSelectedRange = [ null, null ];
 		this.updateFormValue();
 	}
 
@@ -166,12 +193,10 @@ export class DateRangePicker extends DatePicker {
 	 * @param {import('lit').PropertyValues<this>} changedProperties
 	 */
 	willUpdate( changedProperties ) {
-		if ( changedProperties.has( 'providedValue' ) ) {
-			// Check if it's an array and sync to selectedRange via setter
-			if ( Array.isArray( this.providedValue ) ) {
-				this.value = this.providedValue;
-			}
+		if ( changedProperties.has( 'initialValue' ) && Array.isArray( this.initialValue ) ) {
+			this.initializeFormValue( this.initialValue );
 		}
+
 		super.willUpdate( changedProperties );
 	}
 
@@ -376,13 +401,7 @@ export class DateRangePicker extends DatePicker {
 	 * @override
 	 */
 	formResetCallback() {
-		this.providedValue = [ null, null ]; // Or parse attribute 'value'
-		// If attribute is JSON string?
-		// Basic reset.
-		// this.startDate = null; // Removed
-		// this.endDate = null; // Removed
-		this.selectedRange = [ null, null ];
-		this.updateFormValue();
+		this.initializeFormValue();
 	}
 
 	/* DatePicker handles this automatically via the nav buttons bound to these methods */

@@ -2,13 +2,17 @@ import toCSSVariable from './to-css-variable';
 
 describe( 'toCSSVariable', () => {
 	it( 'returns token correctly', () => {
-		expect( toCSSVariable( 'color-background' ) ).toBe(
-			'--xb-color-background'
+		expect( toCSSVariable( 'color-white' ) ).toBe( '--xb-color-white' );
+		expect( toCSSVariable( 'color-warning-500' ) ).toBe(
+			'--xb-color-warning-500'
 		);
-		expect( toCSSVariable( 'color-warn' ) ).toBe( '--xb-color-warn' );
-		expect( toCSSVariable( 'color-success' ) ).toBe( '--xb-color-success' );
-		expect( toCSSVariable( 'color-danger' ) ).toBe( '--xb-color-danger' );
-		expect( toCSSVariable( 'color-info' ) ).toBe( '--xb-color-info' );
+		expect( toCSSVariable( 'color-success-500' ) ).toBe(
+			'--xb-color-success-500'
+		);
+		expect( toCSSVariable( 'color-error-500' ) ).toBe( '--xb-color-error-500' );
+		expect( toCSSVariable( 'color-primary-500' ) ).toBe(
+			'--xb-color-primary-500'
+		);
 	} );
 
 	it( 'returns token not found for non-existing tokens', () => {

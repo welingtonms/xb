@@ -242,7 +242,7 @@ export class RadioGroup extends WithSelectionMixin( XBElement ) {
 		this.#controllers.keyboard.deactivate();
 	};
 
-	#onFormReset = () => {
+	handleFormReset = () => {
 		this.#initialize();
 	};
 

@@ -265,7 +265,7 @@ export class ToggleGroup extends WithSelectionMixin( XBElement ) {
 		// this.#controllers.keyboard.deactivate();
 	};
 
-	#onFormReset = () => {
+	handleFormReset = () => {
 		this.#initialize();
 	};
 
@@ -302,7 +302,7 @@ export class ToggleGroup extends WithSelectionMixin( XBElement ) {
 	#onValueChange = ( value ) => {
 		this.#controllers.selection.init( value );
 
-		// this.#updateToggles();
+		this.#updateToggles();
 	};
 
 	#toggleValue = ( value ) => {

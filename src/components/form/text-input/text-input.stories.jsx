@@ -6,6 +6,7 @@ import './text-input.define';
 import '../../button/button.define';
 import '../../icon/icon.define';
 import '../../text/text.define';
+import '../../layout/layout.define';
 import '../select/select.define';
 
 
@@ -35,9 +36,7 @@ export default {
 			},
 		},
 		size: SizeArg,
-		disabled: { control: 'boolean' },
 	},
-	parameters: {},
 };
 
 /** @type {StoryObj} */

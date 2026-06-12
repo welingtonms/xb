@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { userEvent, expect, within } from 'storybook/test';
-
 import '../layout';
 
 import '../i18n/i18n.provider';
@@ -9,6 +7,19 @@ import './form.define.js';
 
 import '../../components/icon/icon.define';
 import '../../components/tooltip/tooltip.define';
+
+import {
+	CHANGED_FORM_DATA,
+	EMPTY_FORM_DATA,
+	INITIAL_FORM_DATA,
+	clickReset,
+	expectFormData,
+	fillAllFields,
+	getIntegrationForm,
+	renderIntegrationForm,
+	waitForIntegrationFormReady,
+} from './form.test-helpers.js';
+import { within } from '../../utils/test-tools.js';
 
 export default {
 	title: 'Components/Form/Form',
@@ -194,22 +205,65 @@ export const Playground = {
 			</xb-i18n-provider>
 		</xb-cluster>
 	),
-	play: async ( { canvasElement } ) => {
-		const canvas = within( canvasElement );
-
-		await userEvent.click( canvas.getByRole( 'radio', { name: /^no$/i } ) );
-		await userEvent.click( canvas.getByRole( 'radio', { name: /^Align text to the left$/i } ) );
-
-		/** @type {HTMLFormElement | null} */
-		const form = canvasElement.querySelector( 'form' );
-		const formData = new FormData( form );
-
-		expect( formData.get( 'xb-radio-group' ) ).toBe( 'no' );
-		expect( formData.get( 'xb-toggle-group' ) ).toBe( 'align-left' );
-	},
 
 	args: {
 		disabled: false,
+	},
+};
+
+export const TestSubmitEmpty = {
+	name: 'Test: Submit empty',
+	tags: [ '!autodocs' ],
+	render: () => renderIntegrationForm( 'empty' ),
+	play: async ( { canvasElement, step } ) => {
+		await step( 'submits mount defaults when no initial values are set', async () => {
+			await waitForIntegrationFormReady( canvasElement );
+			await expectFormData( getIntegrationForm( canvasElement ), EMPTY_FORM_DATA );
+		} );
+	},
+};
+
+export const TestSubmitInitialValues = {
+	name: 'Test: Submit initial values',
+	tags: [ '!autodocs' ],
+	render: () => renderIntegrationForm( 'initial' ),
+	play: async ( { canvasElement, step } ) => {
+		await step( 'submits HTML attribute values set at mount', async () => {
+			await waitForIntegrationFormReady( canvasElement );
+			await expectFormData( getIntegrationForm( canvasElement ), INITIAL_FORM_DATA );
+		} );
+	},
+};
+
+export const TestSubmitAfterChange = {
+	name: 'Test: Submit after change',
+	tags: [ '!autodocs' ],
+	render: () => renderIntegrationForm( 'empty' ),
+	play: async ( { canvasElement, step } ) => {
+		await step( 'changes every control then reads FormData', async () => {
+			await fillAllFields( canvasElement );
+			await expectFormData( getIntegrationForm( canvasElement ), CHANGED_FORM_DATA );
+		} );
+	},
+};
+
+export const TestReset = {
+	name: 'Test: Reset',
+	tags: [ '!autodocs' ],
+	render: () => renderIntegrationForm( 'initial' ),
+	play: async ( { canvasElement, step } ) => {
+		const canvas = within( canvasElement );
+
+		await step( 'changes every control', async () => {
+			await waitForIntegrationFormReady( canvasElement );
+			await fillAllFields( canvasElement );
+			await expectFormData( getIntegrationForm( canvasElement ), CHANGED_FORM_DATA );
+		} );
+
+		await step( 'reset restores mount attribute values', async () => {
+			await clickReset( canvas );
+			await expectFormData( getIntegrationForm( canvasElement ), INITIAL_FORM_DATA );
+		} );
 	},
 };
 

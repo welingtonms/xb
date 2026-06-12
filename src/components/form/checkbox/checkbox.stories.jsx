@@ -1,11 +1,8 @@
 import React from 'react';
 
-import { userEvent, expect } from 'storybook/test';
+import { userEvent, expect, fn, waitFor } from 'storybook/test';
 import { SizeArg } from '../../../utils/arg-types';
-
-// import { within } from '../../../utils/test-tools';
-
-// import createComponent from '../../../utils/create-component';
+import { within, waitForUpgrade } from '../../../utils/test-tools.js';
 
 import '../../layout';
 import '../../text/text.define';
@@ -39,222 +36,103 @@ export const Playground = {
 	},
 	render: ( args ) => (
 		<xb-stack>
-			<xb-checkbox onchange={ args.change } disabled={ args.disabled } size={ args.size } value="accept">
+			<xb-checkbox
+				onchange={ args.change }
+				disabled={ args.disabled }
+				size={ args.size }
+				value="accept"
+			>
 				Remember me
 			</xb-checkbox>
-			<xb-checkbox onchange={ args.change } disabled={ args.disabled } size={ args.size } value="accept">
+			<xb-checkbox
+				onchange={ args.change }
+				disabled={ args.disabled }
+				size={ args.size }
+				value="accept"
+			>
 				Remember me
 				<xb-text variant="text-sm" slot="description">
 					Save my login details for next time.
 				</xb-text>
 			</xb-checkbox>
-			<xb-checkbox onchange={ args.change } disabled={ args.disabled } size={ args.size }></xb-checkbox>
+			<xb-checkbox
+				onchange={ args.change }
+				disabled={ args.disabled }
+				size={ args.size }
+			></xb-checkbox>
 		</xb-stack>
 	),
-
-	// play: async ({ canvasElement }) => {
-	// 	const canvas = within(canvasElement);
-
-	// 	await expect(canvas.getByRole('checkbox', { name: /accept/i })).not.toBeChecked();
-
-	// 	await userEvent.click(canvas.getByRole('checkbox', { name: /accept/i }));
-
-	// 	await expect(canvas.getByRole('checkbox', { name: /accept/i })).toBeChecked();
-
-	// 	await userEvent.click(canvas.getByRole('checkbox', { name: /accept/i }));
-
-	// 	await expect(canvas.getByRole('checkbox', { name: /accept/i })).not.toBeChecked();
-	// },
 };
 
 /** @type {CheckboxStory} */
-// export const Mixed = {
-// 	args: {
-// 		disabled: false,
-// 		size: 'extra-small',
-// 	},
-// 	render: ( args ) => html`
-// 		<xb-stack role="group">
-// 			<xb-checkbox
-// 				id="xb-checkbox-1"
-// 				size=${ args.size }
-// 				?disabled=${ args.disabled }
-// 				@xb:change=${ args.change }
-// 				aria-controls="xb-checkbox-1-1 xb-checkbox-1-2"
-// 			>
-// 				1.
-// 			</xb-checkbox>
-// 			<xb-box borderless="all">
-// 				<xb-checkbox
-// 					id="xb-checkbox-1-1"
-// 					size=${ args.size }
-// 					?disabled=${ args.disabled }
-// 					@xb:change=${ args.change }
-// 					aria-controls="xb-checkbox-1-1-1 xb-checkbox-1-1-2 xb-checkbox-1-1-3"
-// 				>
-// 					1.1.
-// 				</xb-checkbox>
-// 				<xb-box borderless="all">
-// 					<xb-checkbox
-// 						id="xb-checkbox-1-1-1"
-// 						value="1.1.1."
-// 						size=${ args.size }
-// 						?disabled=${ args.disabled }
-// 						@xb:change=${ args.change }
-// 					>
-// 						1.1.1.
-// 					</xb-checkbox>
-// 					<xb-checkbox
-// 						id="xb-checkbox-1-1-2"
-// 						value="1.1.2."
-// 						size=${ args.size }
-// 						?disabled=${ args.disabled }
-// 						@xb:change=${ args.change }
-// 					>
-// 						1.1.2.
-// 					</xb-checkbox>
-// 					<xb-checkbox
-// 						id="xb-checkbox-1-1-3"
-// 						value="1.1.3."
-// 						size=${ args.size }
-// 						?disabled=${ args.disabled }
-// 						@xb:change=${ args.change }
-// 					>
-// 						1.1.3.
-// 					</xb-checkbox>
-// 				</xb-box>
-// 				<xb-checkbox
-// 					id="xb-checkbox-1-2"
-// 					value="1.2."
-// 					size=${ args.size }
-// 					?disabled=${ args.disabled }
-// 					@xb:change=${ args.change }
-// 				>
-// 					1.2.
-// 				</xb-checkbox>
-// 			</xb-box>
-// 		</xb-stack>
-// 	`,
+export const RendersChildren = {
+	name: 'Test: Renders children',
+	tags: [ '!autodocs' ],
+	args: {
+		change: fn(),
+	},
+	render: ( args ) => (
+		<xb-checkbox value="enable" onchange={ args.change }>
+			Enable newsletters
+		</xb-checkbox>
+	),
+	play: async ( { canvasElement, args, step } ) => {
+		const checkbox = canvasElement.querySelector( 'xb-checkbox' );
+		await waitForUpgrade( checkbox );
+		checkbox.addEventListener( 'change', args.change );
+		const canvas = within( canvasElement );
 
-// 	play: async ( { canvasElement, step } ) => {
-// 		const idt = 'indeterminate';
-// 		const canvas = within( canvasElement );
+		await step( 'renders with expected attributes', async () => {
+			await waitFor( async () => {
+				await expect( checkbox ).toHaveTextContent( 'Enable newsletters' );
+				await expect( checkbox ).not.toHaveAttribute( 'disabled' );
+				await expect( checkbox ).not.toHaveAttribute( 'indeterminate' );
+				await expect( checkbox.checked ).toBe( false );
+			} );
 
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.' } ) ).not.toBeChecked();
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.1.' } ) ).not.toBeChecked();
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.1.1.' } ) ).not.toBeChecked();
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.1.2.' } ) ).not.toBeChecked();
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.1.3.' } ) ).not.toBeChecked();
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.2.' } ) ).not.toBeChecked();
+			await expect(
+				canvas.getByRole( 'checkbox', { name: /Enable newsletters/i } )
+			).toBeInTheDocument();
+		} );
 
-// 		await userEvent.click( canvas.getByRole( 'checkbox', { name: '1.1.1.' } ) );
+		await step( 'toggles on click and fires change', async () => {
+			await userEvent.click( canvas.getByRole( 'checkbox', { name: /Enable newsletters/i } ) );
 
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.' } ) ).toHaveAttribute( idt );
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.1.' } ) ).toHaveAttribute( idt );
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.1.1.' } ) ).toBeChecked();
+			await waitFor( async () => {
+				await expect( args.change ).toHaveBeenCalled();
+				await expect( checkbox.checked ).toBe( true );
+			} );
+		} );
+	},
+};
 
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.2.' } ) ).not.toBeChecked();
+/** @type {CheckboxStory} */
+export const SpaceKeyChange = {
+	name: 'Test: Space key change',
+	tags: [ '!autodocs' ],
+	args: {
+		change: fn(),
+	},
+	render: ( args ) => (
+		<xb-checkbox value="enable" onchange={ args.change }>
+			Enable newsletters
+		</xb-checkbox>
+	),
+	play: async ( { canvasElement, args, step } ) => {
+		const checkbox = canvasElement.querySelector( 'xb-checkbox' );
+		await waitForUpgrade( checkbox );
+		checkbox.addEventListener( 'change', args.change );
 
-// 		await step(
-// 			'Cycles the tri-state checkbox among unchecked, mixed, and checked states.',
-// 			async () => {
-// 				await step( 'checked', async () => {
-// 					await userEvent.click( canvas.getByRole( 'checkbox', { name: '1.1.' } ) );
+		await step( 'toggles on Space key', async () => {
+			checkbox.focus();
+			await userEvent.keyboard( ' ' );
 
-// 					await expect( canvas.getByRole( 'checkbox', { name: '1.' } ) ).toHaveAttribute( idt );
-// 					await expect( canvas.getByRole( 'checkbox', { name: '1.' } ) ).not.toBeChecked();
-
-// 					await expect( canvas.getByRole( 'checkbox', { name: '1.1.' } ) ).not.toHaveAttribute(
-// 						idt
-// 					);
-// 					await expect( canvas.getByRole( 'checkbox', { name: '1.1.' } ) ).toBeChecked();
-
-// 					await expect( canvas.getByRole( 'checkbox', { name: '1.1.1.' } ) ).toBeChecked();
-// 					await expect( canvas.getByRole( 'checkbox', { name: '1.1.2.' } ) ).toBeChecked();
-// 					await expect( canvas.getByRole( 'checkbox', { name: '1.1.3.' } ) ).toBeChecked();
-
-// 					await expect( canvas.getByRole( 'checkbox', { name: '1.2.' } ) ).not.toBeChecked();
-// 				} );
-
-// 				await step( 'unchecked', async () => {
-// 					await userEvent.click( canvas.getByRole( 'checkbox', { name: '1.1.' } ) );
-
-// 					await expect( canvas.getByRole( 'checkbox', { name: '1.' } ) ).not.toHaveAttribute( idt );
-// 					await expect( canvas.getByRole( 'checkbox', { name: '1.' } ) ).not.toBeChecked();
-
-// 					await expect( canvas.getByRole( 'checkbox', { name: '1.1.' } ) ).not.toHaveAttribute(
-// 						idt
-// 					);
-// 					await expect( canvas.getByRole( 'checkbox', { name: '1.1.' } ) ).not.toBeChecked();
-
-// 					await expect( canvas.getByRole( 'checkbox', { name: '1.1.1.' } ) ).not.toBeChecked();
-// 					await expect( canvas.getByRole( 'checkbox', { name: '1.1.2.' } ) ).not.toBeChecked();
-// 					await expect( canvas.getByRole( 'checkbox', { name: '1.1.3.' } ) ).not.toBeChecked();
-
-// 					await expect( canvas.getByRole( 'checkbox', { name: '1.2.' } ) ).not.toBeChecked();
-// 				} );
-
-// 				await step( 'mixed (restores the previous state)', async () => {
-// 					await userEvent.click( canvas.getByRole( 'checkbox', { name: '1.1.' } ) );
-
-// 					await expect( canvas.getByRole( 'checkbox', { name: '1.' } ) ).toHaveAttribute( idt );
-// 					await expect( canvas.getByRole( 'checkbox', { name: '1.' } ) ).not.toBeChecked();
-
-// 					await expect( canvas.getByRole( 'checkbox', { name: '1.1.' } ) ).toHaveAttribute( idt );
-// 					await expect( canvas.getByRole( 'checkbox', { name: '1.1.' } ) ).not.toBeChecked();
-
-// 					await expect( canvas.getByRole( 'checkbox', { name: '1.1.1.' } ) ).toBeChecked();
-// 					await expect( canvas.getByRole( 'checkbox', { name: '1.1.2.' } ) ).not.toBeChecked();
-// 					await expect( canvas.getByRole( 'checkbox', { name: '1.1.3.' } ) ).not.toBeChecked();
-
-// 					await expect( canvas.getByRole( 'checkbox', { name: '1.2.' } ) ).not.toBeChecked();
-// 				} );
-// 			}
-// 		);
-
-// 		await userEvent.click( canvas.getByRole( 'checkbox', { name: '1.1.2.' } ) );
-
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.' } ) ).toHaveAttribute( idt );
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.' } ) ).not.toBeChecked();
-
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.1.' } ) ).toHaveAttribute( idt );
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.1.' } ) ).not.toBeChecked();
-
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.1.1.' } ) ).toBeChecked();
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.1.2.' } ) ).toBeChecked();
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.1.3.' } ) ).not.toBeChecked();
-
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.2.' } ) ).not.toBeChecked();
-
-// 		await userEvent.click( canvas.getByRole( 'checkbox', { name: '1.1.3.' } ) );
-
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.' } ) ).toHaveAttribute( idt );
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.' } ) ).not.toBeChecked();
-
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.1.' } ) ).not.toHaveAttribute( idt );
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.1.' } ) ).toBeChecked();
-
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.1.1.' } ) ).toBeChecked();
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.1.2.' } ) ).toBeChecked();
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.1.3.' } ) ).toBeChecked();
-
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.2.' } ) ).not.toBeChecked();
-
-// 		await userEvent.click( canvas.getByRole( 'checkbox', { name: '1.2.' } ) );
-
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.' } ) ).not.toHaveAttribute( idt );
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.' } ) ).toBeChecked();
-
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.1.' } ) ).not.toHaveAttribute( idt );
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.1.' } ) ).toBeChecked();
-
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.1.1.' } ) ).toBeChecked();
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.1.2.' } ) ).toBeChecked();
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.1.3.' } ) ).toBeChecked();
-
-// 		await expect( canvas.getByRole( 'checkbox', { name: '1.2.' } ) ).toBeChecked();
-// 	},
-// };
+			await waitFor( async () => {
+				await expect( args.change ).toHaveBeenCalled();
+			} );
+		} );
+	},
+};
 
 /**
  * @typedef {import('./checkbox').Checkbox} Checkbox

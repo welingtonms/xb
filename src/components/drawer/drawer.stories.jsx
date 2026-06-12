@@ -1,5 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 
+import { expect, waitFor } from 'storybook/test';
+
+import { waitForUpgrade } from '../../utils/test-tools.js';
+
 import '../layout/cluster/cluster.define';
 import '../button/button.define';
 import '../icon/icon.define';
@@ -61,5 +65,30 @@ export const Playground = {
 	},
 	args: {
 		open: false,
+	},
+};
+
+export const Opens = {
+	name: 'Test: Opens',
+	tags: [ '!autodocs' ],
+	render: () => (
+		<xb-drawer header="Drawer title">
+			<div slot="body">Drawer body</div>
+		</xb-drawer>
+	),
+	play: async ( { canvasElement, step } ) => {
+		const drawer = canvasElement.querySelector( 'xb-drawer' );
+		await waitForUpgrade( drawer );
+
+		await step( 'starts closed', async () => {
+			await expect( drawer.open ).toBe( false );
+		} );
+
+		await step( 'show opens the drawer', async () => {
+			drawer.show();
+			await waitFor( async () => {
+				await expect( drawer.open ).toBe( true );
+			} );
+		} );
 	},
 };

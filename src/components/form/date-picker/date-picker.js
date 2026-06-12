@@ -41,7 +41,7 @@ export class DatePicker extends AsFormElementMixin( FloatingElement ) {
 	 * Date value.
 	 * @type {string | null}
 	 */
-	@state() accessor providedValue = null;
+	@property( { type: String, attribute: 'initial-value', reflect: true } ) accessor initialValue;
 
 	/**
 	 * Draft selected date (interactive state).
@@ -179,6 +179,36 @@ export class DatePicker extends AsFormElementMixin( FloatingElement ) {
 		this.addEventListener( 'interact-out', this.#handleInteractOut );
 	}
 
+	async firstUpdated( changedProperties ) {
+		await this.updateComplete;
+		this.initializeFormValue( this.getInitialFormValue() );
+
+		super.firstUpdated( changedProperties );
+	}
+
+	/**
+	 * @returns {string | null | undefined}
+	 */
+	getInitialFormValue() {
+		return this.getAttribute( 'value' ) ?? this.getAttribute( 'initial-value' ) ?? this.initialValue;
+	}
+
+	/**
+	 * @param {string | null | undefined} [value]
+	 */
+	initializeFormValue( value = this.getInitialFormValue() ) {
+		const consolidated = value ?? this.initialValue ?? this.getInitialFormValue() ?? '';
+		const date = consolidated ? CalendarDate.fromISO( String( consolidated ) ) : null;
+
+		this.selectedDate = date;
+		this.draftSelectedDate = null;
+		this.updateFormValue();
+
+		if ( date ) {
+			this.viewDate = new CalendarDate( date.year, date.month, 1 );
+		}
+	}
+
 	disconnectedCallback() {
 		super.disconnectedCallback();
 		this.removeEventListener( 'focusin', this.#handleFocusIn );
@@ -191,16 +221,13 @@ export class DatePicker extends AsFormElementMixin( FloatingElement ) {
 	 * @param {import('lit').PropertyValues<this>} changedProperties
 	 */
 	willUpdate( changedProperties ) {
-		if ( changedProperties.has( 'providedValue' ) ) {
-			// Attribute changed (external source of truth for initialization)
-			// Only update state if providedValue is different from current selectedDate representation
-			const newDate =
-				this.providedValue && typeof this.providedValue === 'string'
-					? CalendarDate.fromISO( this.providedValue )
-					: null;
+		if (
+			changedProperties.has( 'initialValue' ) &&
+			typeof this.initialValue === 'string'
+		) {
+			const newDate = this.initialValue ? CalendarDate.fromISO( this.initialValue ) : null;
+
 			if ( newDate?.toString() !== this.selectedDate?.toString() ) {
-				// Use #selectDate to enforce constraints and logging
-				// emitChange = false because this is a reactive prop update, not user interaction
 				this.#selectDate( newDate, false );
 			}
 		}
@@ -242,16 +269,6 @@ export class DatePicker extends AsFormElementMixin( FloatingElement ) {
 		return true;
 	}
 
-	/**
-	 * @param {import('lit').PropertyValues<this>} changedProperties
-	 */
-	firstUpdated( changedProperties ) {
-		if ( this.selectedDate ) {
-			this.viewDate = new CalendarDate( this.selectedDate.year, this.selectedDate.month, 1 );
-		}
-
-		super.firstUpdated( changedProperties );
-	}
 
 	#handleFocusIn = ( event ) => {
 		if ( this.contains( event.target ) || event.target === this ) {
@@ -317,6 +334,18 @@ export class DatePicker extends AsFormElementMixin( FloatingElement ) {
 				shortcut: { key: 'Escape' },
 				handler: () => {
 					if ( this.open ) this.collapse( { focusOnTrigger: true } );
+				},
+			},
+			{
+				shortcut: { key: 'PageUp' },
+				handler: () => {
+					if ( this.open ) this.#handlePrevMonth();
+				},
+			},
+			{
+				shortcut: { key: 'PageDown' },
+				handler: () => {
+					if ( this.open ) this.#handleNextMonth();
 				},
 			},
 			{
@@ -456,9 +485,8 @@ export class DatePicker extends AsFormElementMixin( FloatingElement ) {
 	}
 
 	set value( value ) {
-		// If setting value programmatically, update state
 		const date = value ? CalendarDate.fromISO( value ) : null;
-		this.#selectDate( date, false ); // No change event for programmatic set?
+		this.#selectDate( date, false );
 	}
 
 	// --- FloatingElement Implementation ---
@@ -534,9 +562,7 @@ export class DatePicker extends AsFormElementMixin( FloatingElement ) {
 	}
 
 	formResetCallback() {
-		this.providedValue = this.getAttribute( 'value' ) || '';
-		this.selectedDate = this.providedValue ? CalendarDate.fromISO( this.providedValue ) : null;
-		this.updateFormValue();
+		this.initializeFormValue();
 	}
 
 	formStateRestoreCallback( state ) {

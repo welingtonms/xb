@@ -1,13 +1,16 @@
 import React from 'react';
 
+import { userEvent, expect, waitFor } from 'storybook/test';
+
+import { queryShadow, waitForUpgrade } from '../../utils/test-tools.js';
+import toCSSValue from '../../utils/to-css-value';
+
 import '../button/button.define';
 import '../icon/icon.define';
 import './top-nav.define';
 import '../layout/cluster/cluster.define';
 
 import '../text/text.define';
-
-import toCSSValue from '../../utils/to-css-value';
 
 /** @type {import('../../utils/arg-types').Meta} */
 export default {
@@ -16,6 +19,53 @@ export default {
 		layout: 'fullscreen',
 	},
 };
+
+const TestNavContent = () => (
+	<>
+		<span slot="logo">Logo</span>
+		<xb-top-nav-item slot="nav-item" href="#products">
+			Products
+		</xb-top-nav-item>
+		<xb-top-nav-item slot="nav-item" href="#services">
+			Services
+		</xb-top-nav-item>
+		<xb-button slot="action" variant="primary">
+			Sign up
+		</xb-button>
+	</>
+);
+
+/**
+ * @param {import('./top-nav').TopNav} topNav
+ * @param {boolean} isDesktop
+ */
+async function setLayoutMode( topNav, isDesktop ) {
+	topNav.isDesktop = isDesktop;
+	await topNav.updateComplete;
+}
+
+/**
+ * @param {import('./top-nav').TopNav} topNav
+ */
+function getMobileTrigger( topNav ) {
+	return queryShadow( topNav, '.mobile-trigger' );
+}
+
+/**
+ * @param {import('./top-nav').TopNav} topNav
+ */
+function getDrawer( topNav ) {
+	return queryShadow( topNav, 'xb-drawer' );
+}
+
+/**
+ * @param {HTMLElement} canvasElement
+ */
+async function getTopNav( canvasElement ) {
+	const topNav = canvasElement.querySelector( 'xb-top-nav' );
+	await waitForUpgrade( topNav );
+	return /** @type {import('./top-nav').TopNav} */ ( topNav );
+}
 
 const resourcesPanel = (
 	<>
@@ -89,6 +139,120 @@ export const Playground = {
 			</xb-button>
 		</xb-top-nav>
 	),
+};
+
+export const DesktopLayout = {
+	name: 'Test: Desktop layout',
+	tags: [ '!autodocs' ],
+	render: () => (
+		<xb-top-nav is-desktop>
+			<TestNavContent />
+		</xb-top-nav>
+	),
+	play: async ( { canvasElement, step } ) => {
+		const topNav = await getTopNav( canvasElement );
+		await setLayoutMode( topNav, true );
+
+		await step( 'renders inline navigation and actions', async () => {
+			await expect( queryShadow( topNav, 'header .nav' ) ).toBeTruthy();
+			await expect( queryShadow( topNav, 'header .actions' ) ).toBeTruthy();
+			await expect( topNav ).toHaveTextContent( 'Products' );
+			await expect( topNav ).toHaveTextContent( 'Sign up' );
+		} );
+
+		await step( 'does not render a mobile drawer', async () => {
+			await expect( getDrawer( topNav ) ).toBeNull();
+		} );
+	},
+};
+
+export const MobileDrawerOpens = {
+	name: 'Test: Mobile drawer opens',
+	tags: [ '!autodocs' ],
+	render: () => (
+		<xb-top-nav>
+			<TestNavContent />
+		</xb-top-nav>
+	),
+	play: async ( { canvasElement, step } ) => {
+		const topNav = await getTopNav( canvasElement );
+		await setLayoutMode( topNav, false );
+		const trigger = getMobileTrigger( topNav );
+		await waitForUpgrade( trigger );
+
+		await step( 'hamburger opens the drawer', async () => {
+			await expect( trigger ).toHaveAttribute( 'aria-expanded', 'false' );
+			await userEvent.click( trigger );
+			await waitFor( async () => {
+				await expect( trigger ).toHaveAttribute( 'aria-expanded', 'true' );
+				await expect( getDrawer( topNav )?.open ).toBe( true );
+			} );
+		} );
+	},
+};
+
+export const MobileDrawerCloses = {
+	name: 'Test: Mobile drawer closes',
+	tags: [ '!autodocs' ],
+	render: () => (
+		<xb-top-nav>
+			<TestNavContent />
+		</xb-top-nav>
+	),
+	play: async ( { canvasElement, step } ) => {
+		const topNav = await getTopNav( canvasElement );
+		await setLayoutMode( topNav, false );
+		const trigger = getMobileTrigger( topNav );
+		await waitForUpgrade( trigger );
+
+		await step( 'opens the drawer', async () => {
+			await userEvent.click( trigger );
+			await waitFor( async () => {
+				await expect( trigger ).toHaveAttribute( 'aria-expanded', 'true' );
+			} );
+		} );
+
+		await step( 'close button closes the drawer', async () => {
+			const drawer = getDrawer( topNav );
+			const closeButton = queryShadow( drawer, '.close-button' );
+			await waitForUpgrade( closeButton );
+			await userEvent.click( closeButton );
+			await waitFor( async () => {
+				await expect( trigger ).toHaveAttribute( 'aria-expanded', 'false' );
+				await expect( drawer?.open ).toBe( false );
+			} );
+		} );
+	},
+};
+
+export const MobileDrawerShowsSlots = {
+	name: 'Test: Mobile drawer shows slots',
+	tags: [ '!autodocs' ],
+	render: () => (
+		<xb-top-nav>
+			<TestNavContent />
+		</xb-top-nav>
+	),
+	play: async ( { canvasElement, step } ) => {
+		const topNav = await getTopNav( canvasElement );
+		await setLayoutMode( topNav, false );
+		const trigger = getMobileTrigger( topNav );
+		await waitForUpgrade( trigger );
+
+		await step( 'opens the drawer', async () => {
+			await userEvent.click( trigger );
+			await waitFor( async () => {
+				await expect( getDrawer( topNav )?.open ).toBe( true );
+			} );
+		} );
+
+		await step( 'slotted logo, nav items, and actions are visible', async () => {
+			await expect( topNav ).toHaveTextContent( 'Logo' );
+			await expect( topNav ).toHaveTextContent( 'Products' );
+			await expect( topNav ).toHaveTextContent( 'Services' );
+			await expect( topNav ).toHaveTextContent( 'Sign up' );
+		} );
+	},
 };
 
 // <div

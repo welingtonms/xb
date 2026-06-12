@@ -1,8 +1,8 @@
 import addonPerformancePanel from '@github-ui/storybook-addon-performance-panel';
-import { definePreview } from '@storybook/react-webpack5';
+import { definePreview } from '@storybook/react-vite';
 import './variables.css';
 
-/** @type { import('@storybook/react-webpack5').Preview } */
+/** @type { import('@storybook/react-vite').Preview } */
 const preview = definePreview( {
 	parameters: {
 		controls: {
