@@ -1,7 +1,6 @@
 import { css, unsafeCSS } from 'lit';
 
-import { floatingStyles } from '../../../components/floating-element';
-import { expandableStyles } from '../../../controllers/expandable';
+import { disclosureStyles } from '../../../components/disclosure-floating-element';
 import { visuallyHidden } from '../../../styles/a11y';
 import { typography } from '../../../styles/typography.styles';
 import transition from '../../../styles/transition.styles';
@@ -19,11 +18,8 @@ export function datePickerStyles() {
 	const trigger = select( '.trigger' );
 
 	return [
-		floatingStyles( {
-			floatingSelector: MENU_SELECTOR,
-		} ),
-		expandableStyles( {
-			expandableSelector: MENU_SELECTOR,
+		...disclosureStyles( {
+			panelSelector: MENU_SELECTOR,
 		} ),
 		css`
 			:host {

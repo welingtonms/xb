@@ -1,4 +1,9 @@
 export { DisclosureFloatingElement } from './disclosure-floating-element';
+export {
+	disclosureHostStyles,
+	disclosurePanelStyles,
+	disclosureStyles,
+} from './disclosure.styles';
 
 /**
  * @typedef {import('./disclosure-floating-element').DisclosureExpandArgs} DisclosureExpandArgs

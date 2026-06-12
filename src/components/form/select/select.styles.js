@@ -1,8 +1,7 @@
 import { css } from 'lit';
 
 import { baseButtonStyles } from '../../button';
-import { expandableHostStyles, expandableElementStyles } from '../../../controllers/expandable';
-import { floatingHostStyles, floatingElementStyles } from '../../floating-element';
+import { disclosureHostStyles, disclosurePanelStyles } from '../../disclosure-floating-element';
 import { menuHostStyles, menuContentStyles, menuItemStyles } from '../../menu';
 import { select } from '../../../styles/selector';
 import outline from '../../../styles/outline.styles';
@@ -17,8 +16,7 @@ export function selectStyles() {
 
 	return [
 		layoutStyles( { descendantSelector: '#picker' } ),
-		floatingHostStyles(),
-		expandableHostStyles(),
+		disclosureHostStyles(),
 		css`
 			${ $.css() } {
 				--xb-select-background-color: ${ toCSSResult( 'color-white' ) };
@@ -112,12 +110,7 @@ export function menuStyles() {
 	return [
 		menuHostStyles(),
 		menuContentStyles( '[role="listbox"]' ),
-		floatingElementStyles( {
-			floatingSelector: '[role="listbox"]',
-		} ),
-		expandableElementStyles( {
-			expandableSelector: '[role="listbox"]',
-		} ),
+		...disclosurePanelStyles( { panelSelector: '[role="listbox"]' } ),
 		css``,
 	];
 }

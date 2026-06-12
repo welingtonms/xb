@@ -44,6 +44,10 @@ _Avoid_: Trigger element (when overloaded with event target)
 The floating surface shown when disclosure is open (menu, listbox popup, calendar grid).
 _Avoid_: Floating element (when you mean the positioned surface, not the positioning base class)
 
+**Style preset**:
+A factory returning Lit `CSSResult[]` for a recurring style composition shared across **Elements** (e.g. **Disclosure** host vars plus **Panel** positioning).
+_Avoid_: Style mixin, shared CSS helper
+
 **Layout primitive**:
 An Every Layout–style layout **Element** (`xb-stack`, `xb-cluster`, `xb-box`, etc.) from the layout family.
 _Avoid_: Layout component, wrapper div

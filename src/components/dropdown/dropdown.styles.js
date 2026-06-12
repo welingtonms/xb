@@ -1,8 +1,7 @@
 import { css } from 'lit';
 
 import { baseButtonHostStyles, baseButtonStyles } from '../button';
-import { floatingHostStyles, floatingElementStyles } from '../floating-element';
-import { expandableHostStyles, expandableElementStyles } from '../../controllers/expandable';
+import { disclosureHostStyles, disclosurePanelStyles } from '../disclosure-floating-element';
 import { menuStyles as baseMenuStyles } from '../menu';
 import { select } from '../../styles/selector';
 import scrollbarStyles from '../../styles/scrollbar.styles';
@@ -13,8 +12,7 @@ export function dropdownStyles() {
 	const $ = select( ':host' );
 
 	return [
-		floatingHostStyles(),
-		expandableHostStyles(),
+		disclosureHostStyles(),
 		css`
 			${ $.css() } {
 				--xb-dropdown-outline-color: transparent;
@@ -39,12 +37,7 @@ export function dropdownStyles() {
 export function menuStyles() {
 	return [
 		baseMenuStyles(),
-		floatingElementStyles( {
-			floatingSelector: ':host',
-		} ),
-		expandableElementStyles( {
-			expandableSelector: ':host',
-		} ),
+		...disclosurePanelStyles( { panelSelector: ':host' } ),
 		css`
 			:host {
 				--xb-menu-max-height: 20rem;
