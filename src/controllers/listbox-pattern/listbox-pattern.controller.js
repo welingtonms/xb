@@ -1,5 +1,6 @@
 import { FocusManagerController } from '../focus-manager';
 import { KeyboardSupportController } from '../keyboard-support';
+import { isFocusable, isNotHidden, QueryController } from '../query';
 import { SelectionManagerController } from '../selection-manager';
 
 const ITEM_QUERY = '[role="option"]';
@@ -30,9 +31,13 @@ class ListboxPatternController {
 		this.host = host;
 
 		this.controllers = {
+			query: new QueryController( host, {
+				query: ITEM_QUERY,
+			} ),
 			focus: new FocusManagerController( host, {
-				// complies with https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#focusabilityofdisabledcontrols
-				query: [ ITEM_QUERY ],
+				getFocusable: () => {
+					return this.controllers.query.filter( isFocusable, isNotHidden );
+				},
 			} ),
 			keyboard: new KeyboardSupportController( host, [
 				{
@@ -49,16 +54,6 @@ class ListboxPatternController {
 					},
 					handler: () => {
 						this.controllers.focus.focusNext();
-					},
-				},
-				{
-					shortcut: {
-						key: ' ',
-					},
-					handler: () => {
-						const target = this.controllers.focus.focused;
-
-						this._toggleValue( target.value );
 					},
 				},
 			] ),
@@ -84,24 +79,34 @@ class ListboxPatternController {
 		return this.controllers.selection;
 	}
 
+	get query() {
+		return this.controllers.query;
+	}
+
 	get queried() {
-		return this.controllers.focus.queried;
+		return this.controllers.query.filter( isFocusable, isNotHidden );
 	}
 
 	hostConnected() {
 		this.host.addEventListener( 'focusin', this._handleFocusIn );
 		this.host.addEventListener( 'focusout', this._handleFocusOut );
 		this.host.addEventListener( 'click', this._handleOptionClick );
+		this.host.addEventListener( 'keydown', this._handleKeyDown );
 	}
 
 	hostDisconnected() {
 		this.host.removeEventListener( 'focusin', this._handleFocusIn );
 		this.host.removeEventListener( 'focusout', this._handleFocusOut );
 		this.host.removeEventListener( 'click', this._handleOptionClick );
+		this.host.removeEventListener( 'keydown', this._handleKeyDown );
 	}
 
 	_handleFocusIn = () => {
-		const firstSelected = this.queried.find( ( item ) => item.selected && ! item.disabled );
+		this.controllers.keyboard.activate();
+
+		const firstSelected = this.controllers.query
+			.filter( isFocusable, isNotHidden )
+			.find( ( item ) => item.selected && ! item.disabled );
 
 		if ( ! firstSelected ) {
 			this.controllers.focus.focusFirst();
@@ -112,6 +117,7 @@ class ListboxPatternController {
 
 	_handleFocusOut = () => {
 		this.controllers.focus.clear();
+		this.controllers.keyboard.deactivate();
 	};
 
 	/**
@@ -119,6 +125,10 @@ class ListboxPatternController {
 	 * @param {Event} event
 	 * @returns
 	 */
+	#resolveItemValue( target ) {
+		return target.value ?? target.getAttribute( 'value' );
+	}
+
 	_handleOptionClick = ( event ) => {
 		const { target } = event;
 
@@ -127,7 +137,33 @@ class ListboxPatternController {
 		}
 
 		this.controllers.focus.focus( target );
-		this._toggleValue( target.value );
+		this._toggleValue( this.#resolveItemValue( target ) );
+	};
+
+	/**
+	 * Space must be handled on keydown so focus is not lost before selection runs.
+	 * @param {KeyboardEvent} event
+	 */
+	_handleKeyDown = ( event ) => {
+		if ( event.key !== ' ' ) {
+			return;
+		}
+
+		event.preventDefault();
+
+		const target = this.controllers.focus.focused;
+
+		if ( ! target ) {
+			return;
+		}
+
+		const value = this.#resolveItemValue( target );
+
+		if ( ! value ) {
+			return;
+		}
+
+		this._toggleValue( value );
 	};
 
 	_toggleValue = ( value ) => {
@@ -176,7 +212,12 @@ export default ListboxPatternController;
  */
 
 /**
+ * @typedef {import('../query').QueryController} QueryController
+ */
+
+/**
  * @typedef {{
+ * 	query: QueryController;
  * 	focus: FocusManagerController;
  * 	keyboard: KeyboardSupportController;
  * 	selection: SelectionManagerController;
